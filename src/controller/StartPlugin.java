@@ -1,8 +1,7 @@
 
 package controller;
 
-import gui.nclPlayerPanel.SpatialViewPane;
-import gui.repositoryPanel.Repository;
+import gui.spatialViewPanel.SpatialViewPane;
 import gui.temporalViewPanel.TemporalChainPane;
 
 import java.awt.BorderLayout;
@@ -16,10 +15,14 @@ import java.util.logging.Logger;
 
 import javafx.application.Platform;
 import javafx.embed.swing.JFXPanel;
+import javafx.event.EventHandler;
 import javafx.geometry.Orientation;
 import javafx.scene.Scene;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SplitPane;
+import javafx.scene.input.DragEvent;
+import javafx.scene.input.Dragboard;
+import javafx.scene.input.TransferMode;
 import javafx.scene.layout.BorderPane;
 
 import javax.swing.ImageIcon;
@@ -70,7 +73,7 @@ import br.uff.midiacom.ana.util.exception.XMLException;
 public class StartPlugin extends JInternalFrame {
     
 	private static final long serialVersionUID = 1177049012114416958L;
-	private static final String EDITOR_TITLE = "Temporal View Graphical Editor";
+	private static final String EDITOR_TITLE = "STVEN";
 	static StartPlugin start;
     Doc nclDoc;
     MediaList mediaList;
@@ -82,6 +85,7 @@ public class StartPlugin extends JInternalFrame {
     TemporalView temporalView;
     HTGVertice inputVertice = null,outputVertice = null;
     TemporalChainPane temporalChainPane;
+    BorderPane temporalViewPane;
     Repository repository;
     SpatialViewPane spatialViewPanel;
     SplitPane splitPaneRepoPlayer, splitPane;
@@ -532,7 +536,35 @@ private String getAttributionValue(NCLLink link, NCLBind bind) {
    
    private void createTemporalViewPane(){
 	   
-	   BorderPane temporalViewPane = new BorderPane();
+	   temporalViewPane = new BorderPane();
+	   temporalViewPane.setOnDragOver(new EventHandler<DragEvent>() {
+		   
+           public void handle(DragEvent dragEvent) {
+              
+               if (dragEvent.getGestureSource() != temporalViewPane && dragEvent.getDragboard().hasFiles()) {
+                   dragEvent.acceptTransferModes(TransferMode.COPY);
+               }
+               
+               dragEvent.consume();
+           }
+           
+       });
+	   
+	   temporalViewPane.setOnDragDropped(new EventHandler<DragEvent>() {
+		    public void handle(DragEvent event) {
+		        
+		        Dragboard dragBoard = event.getDragboard();
+		        boolean success = false;
+		        if (dragBoard.hasFiles()) {
+		           //TODO Criar o nó NCL correspondente à mídia arrastada para a temporal View.
+		           success = true;
+		        }
+		        
+		        event.setDropCompleted(success);
+		        
+		        event.consume();
+		     }
+		});
 	   
        temporalChainPane = new TemporalChainPane(temporalView.getMainMediaInfoList());
        
@@ -592,11 +624,11 @@ private String getAttributionValue(NCLLink link, NCLBind bind) {
 	   
 	   splitPaneRepoPlayer = new SplitPane();
 	   splitPaneRepoPlayer.setOrientation(Orientation.HORIZONTAL);
-	   splitPaneRepoPlayer.getItems().addAll(repository, spatialViewPanel);
+	   splitPaneRepoPlayer.getItems().addAll(repository.getRepositoryPanel(), spatialViewPanel);
        
        splitPane = new SplitPane();
        splitPane.setOrientation(Orientation.VERTICAL);
-       splitPane.getItems().addAll(splitPaneRepoPlayer, temporalChainPane);
+       splitPane.getItems().addAll(splitPaneRepoPlayer, temporalViewPane);
 
 	   BorderPane containerBorderPane = new BorderPane();
        containerBorderPane.setCenter(splitPane);

@@ -5,6 +5,7 @@ import java.awt.BorderLayout;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
@@ -28,6 +29,7 @@ import br.uff.midiacom.ana.util.enums.NCLEventType;
  */
 public class PresentationPlan {
     
+	private static final int TIME_COLUMN = 1;
 	private static final String SEPARATOR = "  ----------  ";
 	private static final String NEW_LINE = "\r\n";
 	private Object[][] presentationPlan;
@@ -44,19 +46,10 @@ public class PresentationPlan {
         presentationPlan = new Object[htg.getVerticesSize()][2];
         insertVertices();
         insertTimes();
-        //sort();
+       // sort();
         
     }
-
-    public PresentationPlan(HypermediaTemporalGraph htg, Boolean value){
-        isSecPresentationPlan  = value;
-        this.htg = htg;
-        presentationPlan = new Object[htg.getVerticesSize()][2];
-        insertVertices();
-        insertTimes();
-        //sort();
-    }
-
+    
     private void insertVertices() {
         List<HTGVertice> vertices = htg.getVertices();
         HTGVertice vertice;
@@ -70,15 +63,11 @@ public class PresentationPlan {
     private void insertTimes() {
         HTGVertice initialVertice;
         initialVertice = findInitialVertice();
-        presentationPlan[initialVertice.getPresentPlanPosition()][1] = time;
-        System.out.println("\n Initial Vertice:  " + initialVertice +"tempo inicio"+ time);
-        System.out.println("");
+        presentationPlan[initialVertice.getPresentPlanPosition()][TIME_COLUMN] = time;
         for (HTGVertice vert : htg.getVertices()) {
             vert.setVisited(Boolean.FALSE);
         }
-        System.out.println("Deph First Search: ");
         dephFirstSearchHTG(initialVertice);
-      
     }
     
     @SuppressWarnings("rawtypes")
@@ -109,37 +98,32 @@ public class PresentationPlan {
     private void dephFirstSearchHTG(HTGVertice iniVertice) {
         Double cumulativeTime;
         iniVertice.setVisited(Boolean.TRUE);
-        System.out.println(iniVertice);
         List<HTGEdge> adjList = iniVertice.getAdjacencies();
         for (HTGEdge edge : adjList) {
             HTGCondition condition = edge.getCondition();
             HTGVertice previousVertice = iniVertice;
-            cumulativeTime = (Double) presentationPlan[previousVertice.getPresentPlanPosition()][1];
+            cumulativeTime = (Double) presentationPlan[previousVertice.getPresentPlanPosition()][TIME_COLUMN];
             if(condition.isInteractive()){
                 subInitialVertice = edge.getOutput();
                 HypermediaTemporalGraph subHtg = HtgUtil.constructSubHtg(subInitialVertice);
-                constructSecPresentationPlan(subHtg);
-                System.out.println("\n");
-            }else 
-            if(condition.getValue()!=null && cumulativeTime!=null){
+                PresentationPlan presentationPlan = new PresentationPlan(subHtg);
+//                constructSecPresentationPlan(subHtg);
+//                dephFirstSearchHTG(subInitialVertice);
+            }else if(condition.getValue()!=null && cumulativeTime!=null){
                 time = condition.getValue() + cumulativeTime;
             }else{
                 time = condition.getValue();
             }
             HTGVertice adjVert = edge.getOutput();
             if(!adjVert.getEventType().equalsIgnoreCase(NCLEventType.SELECTION.toString())){
-                 presentationPlan[adjVert.getPresentPlanPosition()][1] = HtgUtil.approximateDouble(time);
+                 presentationPlan[adjVert.getPresentPlanPosition()][TIME_COLUMN] = HtgUtil.approximateDouble(time);
             }
             if(!adjVert.getVisited()){
                 dephFirstSearchHTG(adjVert);
             }
         }
     }
-    
-    private void constructSecPresentationPlan(HypermediaTemporalGraph subHtg) {
-        secPresentationPlan = new PresentationPlan(subHtg, Boolean.TRUE);
-    }
-    
+   
     public void sort() {
         quickSort(presentationPlan,0,presentationPlan.length-1);
         if(secPresentationPlan!=null){

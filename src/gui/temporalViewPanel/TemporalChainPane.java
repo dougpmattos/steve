@@ -10,7 +10,7 @@ import javafx.scene.chart.StackedBarChart;
 import model.nclDocument.extendedAna.Media;
 import model.temporalView.TemporalMediaInfo;
 
-public class TemporalChainPane extends StackedBarChart<Number, String>{
+public class TemporalChainPane extends StackedBarChart<Number, String> {
 
 	private static final String MEDIA = "Media";
 	private static final String TIME = "Time";

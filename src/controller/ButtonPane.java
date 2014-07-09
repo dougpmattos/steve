@@ -39,22 +39,28 @@ public class ButtonPane extends HBox{
         
         setId("button-pane");
         getStylesheets().add("gui/styles/buttonPane.css");
-        setSpacing(10);
+        setSpacing(-20);
         
         addButton = new Button();
         addButton.setId("add-button");
         addButton.setTooltip(new Tooltip("Add media"));
+        addButton.setScaleX(0.5);;
+        addButton.setScaleY(0.5);
         deleteButton = new Button();
         deleteButton.setDisable(true);
         deleteButton.setId("delete-button");
         deleteButton.setTooltip(new Tooltip("Delete media"));
+        deleteButton.setScaleX(0.5);;
+        deleteButton.setScaleY(0.5);
         clearButton = new Button();
         clearButton.setDisable(true);
         clearButton.setId("clear-button");
         clearButton.setTooltip(new Tooltip("Clear repository."));
+        clearButton.setScaleX(0.5);;
+        clearButton.setScaleY(0.5);
 
         getChildren().addAll(addButton, deleteButton, clearButton);
-        
+
         setButtonActions(mediaList, mediaTree);
         
     }
@@ -81,7 +87,7 @@ public class ButtonPane extends HBox{
                         }
                         if(!contains) {
                             mediaList.add(media);
-                            //mediaTree.add(media);
+                            mediaTree.add(media);
                         }
                         if(deleteButton.isDisabled()){ //testar se esta condição vai ser usada mais tarde.
                             deleteButton.setDisable(false);
@@ -109,14 +115,15 @@ public class ButtonPane extends HBox{
         
         deleteButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override public void handle(ActionEvent e) {
-                //Put code here.
+//            	mediaList.delete(mediaList.getSelectionModel().getSelectedItem());
+//            	mediaTree.delete(mediaList.getSelectionModel().getSelectedItem());
             }
         });
         
         clearButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override public void handle(ActionEvent e) {
                 mediaList.clear();
-                //mediaTree.clear();
+                mediaTree.clear();
                 deleteButton.setDisable(true);
                 clearButton.setDisable(true);
             }

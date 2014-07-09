@@ -1,43 +1,28 @@
 package model.repository;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Observable;
+
 import model.nclDocument.extendedAna.Media;
-import gui.repositoryPanel.MediaCellFactory;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.scene.control.ListCell;
-import javafx.scene.control.ListView;
-import javafx.scene.control.SelectionMode;
-import javafx.util.Callback;
 
 /**
  *
  * @author Douglas
  */
-public class MediaList extends ListView<Object>{
+public class MediaList extends Observable {
     
-    public static final ObservableList<Media> images = FXCollections.observableArrayList();
-    public static final ObservableList<Media> video = FXCollections.observableArrayList();
-    public static final ObservableList<Media> audio = FXCollections.observableArrayList();
-    public static final ObservableList<Media> text = FXCollections.observableArrayList();
-    public static final ObservableList<Media> others = FXCollections.observableArrayList();
-    @SuppressWarnings("rawtypes")
-	public static final ObservableList allTypes = FXCollections.observableArrayList();
+    private static final int ADD = 1;
+    private static final int REMOVE = 2;
+    private static final int CLEAR = 3;
     
-    @SuppressWarnings("unchecked")
-	public MediaList() {
-        getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
-        setItems(allTypes);
-        setCellFactory(new Callback<ListView<Object>, 
-            ListCell<Object>>() {
-                @Override 
-                public ListCell<Object> call(ListView<Object> list) {
-                    return new MediaCellFactory();
-                }
-            }
-        );
-    }
-    
-    @SuppressWarnings("unchecked")
+	public static final ArrayList<Media> images = new ArrayList<Media>();
+    public static final ArrayList<Media> video = new ArrayList<Media>();
+    public static final ArrayList<Media> audio = new ArrayList<Media>();
+    public static final ArrayList<Media> text = new ArrayList<Media>();
+    public static final ArrayList<Media> others = new ArrayList<Media>();
+    public static final ArrayList<Media> allTypes = new ArrayList<Media>();
+
 	public void add(Media media) {
         allTypes.add(media);
         switch(media.getImportedMediaType()){
@@ -63,6 +48,43 @@ public class MediaList extends ListView<Object>{
                 break;
                 
         }
+        
+        setChanged();
+        ListUpdateOperation listUpdateOperation = new ListUpdateOperation(media, ADD);
+        notifyObservers(listUpdateOperation);
+        
+    }
+    
+    public void delete(Media media){
+    	allTypes.remove(media);
+    	switch(media.getImportedMediaType()){
+        case IMAGE:
+            images.remove(media);
+            break;
+            
+        case VIDEO:
+            video.remove(media);
+            break;
+            
+        case AUDIO:
+            audio.remove(media);
+            break;
+            
+        case TEXT:
+            text.remove(media);
+            break;
+            
+        case OTHER:
+        case PROCEDURAL:
+            others.remove(media);  
+            break;
+            
+    	}
+    	
+    	 setChanged();
+         ListUpdateOperation listUpdateOperation = new ListUpdateOperation(media, REMOVE);
+         notifyObservers(listUpdateOperation);
+    	
     }
     
     public void clear(){
@@ -72,30 +94,35 @@ public class MediaList extends ListView<Object>{
         text.clear();
         others.clear();
         allTypes.clear();
+        
+        setChanged();
+        ListUpdateOperation listUpdateOperation = new ListUpdateOperation(CLEAR);
+        notifyObservers(listUpdateOperation);
+        
     }
     
-    public ObservableList<Media> getImageList(){
+    public ArrayList<Media> getAllTypesList(){
+        return allTypes;
+    }
+    
+    public ArrayList<Media> getImageList(){
         return images;
     }
     
-    public ObservableList<Media> getVideoList(){
+    public ArrayList<Media> getVideoList(){
         return video;
     }
     
-    public ObservableList<Media> getAudioList(){
+    public ArrayList<Media> getAudioList(){
         return audio;
     }
     
-    public ObservableList<Media> getTextList(){
+    public ArrayList<Media> getTextList(){
         return text;
     }
     
-    public ObservableList<Media> getOthersList(){
+    public ArrayList<Media> getOthersList(){
         return others;
     }
     
-    @SuppressWarnings("rawtypes")
-	public ObservableList getAllTypesList(){
-        return allTypes;
-    }
 }

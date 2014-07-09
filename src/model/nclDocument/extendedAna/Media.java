@@ -1,13 +1,27 @@
 
 package model.nclDocument.extendedAna;
 
+import java.awt.List;
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
+import java.text.DateFormat;
+import java.text.FieldPosition;
+import java.text.ParsePosition;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javafx.event.EventHandler;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.ClipboardContent;
+import javafx.scene.input.DataFormat;
+import javafx.scene.input.Dragboard;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.input.TransferMode;
+import model.repository.Teste;
 import model.utility.htg.HtgUtil;
 import br.uff.midiacom.ana.NCLElement;
 import br.uff.midiacom.ana.descriptor.NCLDescriptor;
@@ -40,6 +54,7 @@ public class Media extends NCLMedia<NCLElement, Area, NCLProperty, NCLLayoutDesc
     private String name, path;
     private NCLMediaType type;
     private ImageView icon;
+    private File mediaFile;
     
    public Media(String id) throws XMLException {
         super(id);
@@ -51,6 +66,7 @@ public class Media extends NCLMedia<NCLElement, Area, NCLProperty, NCLLayoutDesc
    
    public Media(File mediaFile) {
 	   super();
+	   this.mediaFile = mediaFile;
        name = mediaFile.getAbsoluteFile().getName();
        path = mediaFile.getAbsolutePath();
        type = identifyType();
@@ -59,6 +75,7 @@ public class Media extends NCLMedia<NCLElement, Area, NCLProperty, NCLLayoutDesc
        } catch (InterruptedException ex) {
            Logger.getLogger(Media.class.getName()).log(Level.SEVERE, null, ex);
        }
+       
    }
    
    public ImageView generateMediaIcon() throws InterruptedException {
@@ -66,15 +83,14 @@ public class Media extends NCLMedia<NCLElement, Area, NCLProperty, NCLLayoutDesc
        switch(type) { 
            
            case IMAGE:
-           	File imageFile = new File(path);
+           	   File imageFile = new File(path);
                icon = new ImageView(new Image(imageFile.toURI().toString()));
                icon.setPreserveRatio(true);
                icon.setFitWidth(THUMBNAIL_WIDTH);
                break;
                
            case VIDEO:
-               //frame do video
-        	   icon = new ImageView(new Image(getClass().getResourceAsStream("/gui/images/audio.png")));
+        	   icon = new ImageView(new Image(getClass().getResourceAsStream("/gui/images/video.png")));
                break;
                
            case AUDIO:
@@ -90,6 +106,32 @@ public class Media extends NCLMedia<NCLElement, Area, NCLProperty, NCLLayoutDesc
                icon = new ImageView(new Image(getClass().getResourceAsStream("/gui/images/others.png")));
                break;                
        }
+       
+       icon.setOnDragDetected(new EventHandler<MouseEvent>() {
+
+			@Override
+			public void handle(MouseEvent mouseEvent) {
+			
+		        Dragboard dragBoard = icon.startDragAndDrop(TransferMode.COPY);
+		        
+		        ClipboardContent content = new ClipboardContent();
+		        
+		        
+		        //TODO Tentar passar o objeto Media
+//		        Teste teste = new Teste("Name");
+//		        DataFormat dataFormat = new DataFormat(teste.getClass().toString());
+//		        content.put(dataFormat, teste);
+		        
+		        ArrayList<File> fileList = new ArrayList<File>();
+		        fileList.add(mediaFile);
+		        content.putFiles(fileList);
+		        
+		        dragBoard.setContent(content);
+		        
+		        mouseEvent.consume();
+				
+			}
+       });
        
        return icon;
                   

@@ -3,9 +3,12 @@ package gui.temporalViewPanel;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javafx.event.EventHandler;
 import javafx.scene.chart.XYChart;
+import javafx.scene.effect.Glow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundImage;
 import javafx.scene.layout.BorderPane;
@@ -67,44 +70,45 @@ public class TemporalMediaInterface {
 	}
 	
 	private void setListenerEvents(){
-		
-//		n.setEffect(null);
-//		n.setOnMouseEntered(new EventHandler<MouseEvent>() {
-//	        @Override
-//	        public void handle(MouseEvent e) {
-//	            n.setEffect(glow);
-//	        }
-//	    });
-//	    n.setOnMouseExited(new EventHandler<MouseEvent>() {
-//	        @Override
-//	        public void handle(MouseEvent e) {
-//	            n.setEffect(new Glow(0));
-//	        }
-//	    });
-//	    n.setOnMouseDragged(new EventHandler<MouseEvent>() {
-//	        @Override
-//	        public void handle(MouseEvent e) {
-////	        	double newXlower=xAxis.getLowerBound(), newXupper=xAxis.getUpperBound();             
-////		        double Delta=0.1;
-//////		        
-////			        if(rectinitX.get() < e.getX()){    
-////			            newXlower=xAxis.getLowerBound()-Delta;
-////			            newXupper=xAxis.getUpperBound()-Delta;
-////			        }
-////			    else if(rectinitX.get() > e.getX()){    
-////			            newXlower=xAxis.getLowerBound()+Delta;
-////			            newXupper=xAxis.getUpperBound()+Delta;
-////			        }    
-////			        xAxis.setLowerBound( newXlower ); 
-////			        xAxis.setUpperBound( newXupper ); 
+		final Glow glow = new Glow();
+		glow.setLevel(20);
+		node.setEffect(null);
+		node.setOnMouseEntered(new EventHandler<MouseEvent>() {
+	        @Override
+	        public void handle(MouseEvent e) {
+	            node.setEffect(glow);
+	        }
+	    });
+	    node.setOnMouseExited(new EventHandler<MouseEvent>() {
+	        @Override
+	        public void handle(MouseEvent e) {
+	            node.setEffect(new Glow(0));
+	        }
+	    });
+	    node.setOnMouseDragged(new EventHandler<MouseEvent>() {
+	        @Override
+	        public void handle(MouseEvent e) {
+//	        	double newXlower=xAxis.getLowerBound(), newXupper=xAxis.getUpperBound();             
+//		        double Delta=0.1;
+////		        
+//			        if(rectinitX.get() < e.getX()){    
+//			            newXlower=xAxis.getLowerBound()-Delta;
+//			            newXupper=xAxis.getUpperBound()-Delta;
+//			        }
+//			    else if(rectinitX.get() > e.getX()){    
+//			            newXlower=xAxis.getLowerBound()+Delta;
+//			            newXupper=xAxis.getUpperBound()+Delta;
+//			        }    
+//			        xAxis.setLowerBound( newXlower ); 
+//			        xAxis.setUpperBound( newXupper ); 
 //	        	 
 //
 //	        	m1.setXValue(5);
-//	        	n.setTranslateX(60);
-//		
-//		        }
-//	        
-//	    });
+	        	node.setTranslateX(60);
+		
+		        }
+	        
+	    });
 		
 	}
 
@@ -122,10 +126,13 @@ public class TemporalMediaInterface {
 		Image image = imageView.getImage();
 		BackgroundImage backgroundImage = new BackgroundImage(image, null, null, null, null);
 		Background background = new Background(backgroundImage);
+		
 //		BorderPane n = new BorderPane();
 //		n.setBackground(background);
 //		node.setCenter(n);
+		
 		node.setBackground(background);
+
 		
 	}
 	

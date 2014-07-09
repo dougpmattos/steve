@@ -1,6 +1,6 @@
 #button-pane{
     -fx-background-color: #c7c7c7;
-    -fx-padding: 15px 12px 15px 12px;
+    -fx-padding: -5;
 }
 #add-button {
     -fx-graphic: url("../images/add.png");
