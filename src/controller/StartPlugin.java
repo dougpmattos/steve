@@ -42,6 +42,7 @@ import model.nclDocument.extendedAna.Area;
 import model.nclDocument.extendedAna.Doc;
 import model.nclDocument.extendedAna.Media;
 import model.presentationPlan.PresentationPlan;
+import model.temporalView.TemporalMediaInfo;
 import model.temporalView.TemporalView;
 import model.utility.htg.HtgUtil;
 import model.utility.ncl.BindUtil;
@@ -88,9 +89,11 @@ public class StartPlugin extends JInternalFrame {
     BorderPane temporalViewPane;
     Repository repository;
     SpatialViewPane spatialViewPanel;
-    SplitPane splitPaneRepoPlayer, splitPane;
-    JFXPanel containerfxPanel;
+    SplitPane splitPaneRepoSpatial, splitPane;
+    JFXPanel containerfxPane;
     Scene containerScene;
+    ScrollPane sp;
+    int i = 0;
     
    public StartPlugin() throws XMLException, IOException {
        
@@ -537,38 +540,67 @@ private String getAttributionValue(NCLLink link, NCLBind bind) {
    private void createTemporalViewPane(){
 	   
 	   temporalViewPane = new BorderPane();
-	   temporalViewPane.setOnDragOver(new EventHandler<DragEvent>() {
+	   temporalViewPane.setId("temporalViewPane");
+	   
+	   
+	   
+	   temporalViewPane.setOnDragDone(new EventHandler<DragEvent>(){
+
+		@Override
+		public void handle(DragEvent event) {
+			System.out.println("DONE");
+//			Dragboard dragBoard = event.getDragboard();
+//	        boolean success = false;
+//	        if (dragBoard.hasFiles()) {
+//	           //TODO Criar o nó NCL correspondente à mídia arrastada para a temporal View.
+//	        	
+//	        	Media media = new Media(dragBoard.getFiles().get(0));
+//	        	
+//	        	TemporalMediaInfo mediaInfo = new TemporalMediaInfo("teste",0.0,5.0, media);
+//			 	temporalView.getMainMediaInfoList().add(mediaInfo);
+//			 	temporalChainPane = new TemporalChainPane(temporalView.getMainMediaInfoList());
+//			 	sp.setContent(temporalChainPane);   
+//			 	
+//	           success = true;
+//	           
+//	        }
+//	        
+//	        event.setDropCompleted(success);
+//	        
+//	        event.consume();
+			
+		}
 		   
-           public void handle(DragEvent dragEvent) {
-              
-               if (dragEvent.getGestureSource() != temporalViewPane && dragEvent.getDragboard().hasFiles()) {
-                   dragEvent.acceptTransferModes(TransferMode.COPY);
-               }
-               
-               dragEvent.consume();
-           }
-           
-       });
+	   });
 	   
 	   temporalViewPane.setOnDragDropped(new EventHandler<DragEvent>() {
 		    public void handle(DragEvent event) {
 		        
-		        Dragboard dragBoard = event.getDragboard();
-		        boolean success = false;
-		        if (dragBoard.hasFiles()) {
-		           //TODO Criar o nó NCL correspondente à mídia arrastada para a temporal View.
-		           success = true;
-		        }
-		        
-		        event.setDropCompleted(success);
-		        
-		        event.consume();
+		    	System.out.println("DROPPED");
+//		        Dragboard dragBoard = event.getDragboard();
+//		        boolean success = false;
+//		        if (dragBoard.hasFiles()) {
+//		           //TODO Criar o nó NCL correspondente à mídia arrastada para a temporal View.
+//		        	
+//		        	Media media = new Media(dragBoard.getFiles().get(0));
+//		        	
+//		        	TemporalMediaInfo mediaInfo = new TemporalMediaInfo("teste",0.0,5.0, media);
+//				 	temporalView.getMainMediaInfoList().add(mediaInfo);
+//				 	temporalChainPane = new TemporalChainPane(temporalView.getMainMediaInfoList());
+//				 	sp.setContent(temporalChainPane);   
+//				 	
+//		           success = true;
+//		           
+//		        }
+//		        
+//		        event.setDropCompleted(success);
+//		        
+//		        event.consume();
 		     }
 		});
 	   
        temporalChainPane = new TemporalChainPane(temporalView.getMainMediaInfoList());
        
-       ScrollPane sp = new ScrollPane();
        sp.setContent(temporalChainPane);
        sp.setFitToHeight(true);
        sp.setFitToWidth(true);
@@ -577,11 +609,11 @@ private String getAttributionValue(NCLLink link, NCLBind bind) {
  
    }
    
-   private void createRepositoryPanel(){
+   private void createRepositoryPane(){
        repository = new Repository();
    }
    
-   private void createSpatialViewPanel() {
+   private void createSpatialViewPane() {
         spatialViewPanel = new SpatialViewPane();
    }
    
@@ -601,17 +633,18 @@ private String getAttributionValue(NCLLink link, NCLBind bind) {
        setDefaultCloseOperation(JInternalFrame.DISPOSE_ON_CLOSE);
        setVisible(true);
        
-       containerfxPanel = new JFXPanel();
-       add(containerfxPanel,BorderLayout.CENTER);
+       containerfxPane = new JFXPanel();
+       add(containerfxPane,BorderLayout.CENTER);
        
        Platform.runLater(new Runnable() {
            @Override
            public void run() {
+        	   sp = new ScrollPane();
         	   createTemporalViewPane();
-               createRepositoryPanel();
-               createSpatialViewPanel();
+               createRepositoryPane();
+               createSpatialViewPane();
         	   containerScene = createContainerScene();
-               containerfxPanel.setScene(containerScene);
+               containerfxPane.setScene(containerScene);
            }
         });
        
@@ -622,23 +655,26 @@ private String getAttributionValue(NCLLink link, NCLBind bind) {
    
    private Scene createContainerScene(){
 	   
-	   splitPaneRepoPlayer = new SplitPane();
-	   splitPaneRepoPlayer.setOrientation(Orientation.HORIZONTAL);
-	   splitPaneRepoPlayer.getItems().addAll(repository.getRepositoryPanel(), spatialViewPanel);
+	   splitPaneRepoSpatial = new SplitPane();
+	   splitPaneRepoSpatial.setId("splitRepoSpatial");
+	   splitPaneRepoSpatial.setOrientation(Orientation.HORIZONTAL);
+	   splitPaneRepoSpatial.getItems().addAll(repository.getRepositoryPanel(), spatialViewPanel);
        
        splitPane = new SplitPane();
+       splitPane.setId("splitPane");
        splitPane.setOrientation(Orientation.VERTICAL);
-       splitPane.getItems().addAll(splitPaneRepoPlayer, temporalViewPane);
+       splitPane.getItems().addAll(splitPaneRepoSpatial, temporalViewPane);
 
 	   BorderPane containerBorderPane = new BorderPane();
+	   containerBorderPane.setId("containerBorderPane");
        containerBorderPane.setCenter(splitPane);
-       
+ 
        Scene scene = new Scene(containerBorderPane);
        
        return scene;
        
    }
-   
+
    public static void main (String[] args) throws XMLException, IOException {
        start = new StartPlugin();
     }

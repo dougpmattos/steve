@@ -87,7 +87,7 @@ public class TemporalMediaInterface {
 	    });
 	    node.setOnMouseDragged(new EventHandler<MouseEvent>() {
 	        @Override
-	        public void handle(MouseEvent e) {
+	        public void handle(MouseEvent mouseEvent) {
 //	        	double newXlower=xAxis.getLowerBound(), newXupper=xAxis.getUpperBound();             
 //		        double Delta=0.1;
 ////		        
@@ -104,6 +104,8 @@ public class TemporalMediaInterface {
 //	        	 
 //
 //	        	m1.setXValue(5);
+	        	//node.relocate(mouseEvent.getSceneX(), mouseEvent.getSceneY());
+	        	//node.relocate(mouseEvent.getSceneX() - node.getBoundsInLocal().getWidth() / 2, mouseEvent.getSceneY() - node.getBoundsInLocal().getHeight() / 2);
 	        	node.setTranslateX(60);
 		
 		        }

@@ -1,27 +1,18 @@
 
 package model.nclDocument.extendedAna;
 
-import java.awt.List;
+import gui.repositoryPanel.MessageDialog;
+
 import java.io.File;
 import java.io.IOException;
-import java.io.Serializable;
-import java.text.DateFormat;
-import java.text.FieldPosition;
-import java.text.ParsePosition;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javafx.event.EventHandler;
+import javafx.application.Platform;
+import javafx.concurrent.Task;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.ClipboardContent;
-import javafx.scene.input.DataFormat;
-import javafx.scene.input.Dragboard;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.input.TransferMode;
-import model.repository.Teste;
+import model.repository.VideoFrame;
 import model.utility.htg.HtgUtil;
 import br.uff.midiacom.ana.NCLElement;
 import br.uff.midiacom.ana.descriptor.NCLDescriptor;
@@ -49,7 +40,7 @@ public class Media extends NCLMedia<NCLElement, Area, NCLProperty, NCLLayoutDesc
    
 	private static final long serialVersionUID = -5591863977937952316L;
 	private static final int DIVISOR = 1000000;
-	private static int THUMBNAIL_WIDTH = 90;
+	private static int IMAGE_THUMBNAIL_WIDTH = 90;
     
     private String name, path;
     private NCLMediaType type;
@@ -78,7 +69,15 @@ public class Media extends NCLMedia<NCLElement, Area, NCLProperty, NCLLayoutDesc
        
    }
    
-   public ImageView generateMediaIcon() throws InterruptedException {
+   public File getMediaFile() {
+	   return mediaFile;
+   }
+   
+   public void setMediaFile(File mediaFile) {
+	   this.mediaFile = mediaFile;
+   }
+
+public ImageView generateMediaIcon() throws InterruptedException {
        
        switch(type) { 
            
@@ -86,19 +85,20 @@ public class Media extends NCLMedia<NCLElement, Area, NCLProperty, NCLLayoutDesc
            	   File imageFile = new File(path);
                icon = new ImageView(new Image(imageFile.toURI().toString()));
                icon.setPreserveRatio(true);
-               icon.setFitWidth(THUMBNAIL_WIDTH);
+               icon.setFitWidth(IMAGE_THUMBNAIL_WIDTH);
                break;
                
            case VIDEO:
-        	   icon = new ImageView(new Image(getClass().getResourceAsStream("/gui/images/video.png")));
-               break;
+        	   icon = new ImageView();
+        	   VideoFrame videoFrame = new VideoFrame(path, icon);
+        	   break;
                
            case AUDIO:
                icon = new ImageView(new Image(getClass().getResourceAsStream("/gui/images/audio.png")));
                break; 
            
            case TEXT:
-                   icon = new ImageView(new Image(getClass().getResourceAsStream("/gui/images/text.png")));
+               icon = new ImageView(new Image(getClass().getResourceAsStream("/gui/images/text.png")));
                break;
                    
            case OTHER:
@@ -106,32 +106,6 @@ public class Media extends NCLMedia<NCLElement, Area, NCLProperty, NCLLayoutDesc
                icon = new ImageView(new Image(getClass().getResourceAsStream("/gui/images/others.png")));
                break;                
        }
-       
-       icon.setOnDragDetected(new EventHandler<MouseEvent>() {
-
-			@Override
-			public void handle(MouseEvent mouseEvent) {
-			
-		        Dragboard dragBoard = icon.startDragAndDrop(TransferMode.COPY);
-		        
-		        ClipboardContent content = new ClipboardContent();
-		        
-		        
-		        //TODO Tentar passar o objeto Media
-//		        Teste teste = new Teste("Name");
-//		        DataFormat dataFormat = new DataFormat(teste.getClass().toString());
-//		        content.put(dataFormat, teste);
-		        
-		        ArrayList<File> fileList = new ArrayList<File>();
-		        fileList.add(mediaFile);
-		        content.putFiles(fileList);
-		        
-		        dragBoard.setContent(content);
-		        
-		        mouseEvent.consume();
-				
-			}
-       });
        
        return icon;
                   
@@ -141,9 +115,12 @@ public class Media extends NCLMedia<NCLElement, Area, NCLProperty, NCLLayoutDesc
        String ext = "";
        int pos;
        
-       pos = path.indexOf('.');
-       ext = path.substring(pos);
-       ext = ext.toLowerCase();
+       if(path != null){
+    	   
+    	   pos = path.indexOf('.');
+           ext = path.substring(pos);
+           ext = ext.toLowerCase();
+       }
        
        try {
            return NCLMediaType.getEnumType(ext);

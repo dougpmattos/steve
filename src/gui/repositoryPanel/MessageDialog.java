@@ -7,7 +7,6 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
@@ -30,13 +29,14 @@ public class MessageDialog extends Stage {
         setResizable(false);
         initModality(Modality.APPLICATION_MODAL);
         initStyle(StageStyle.TRANSPARENT);
- 
+        
         Label label = new Label(msg);
         label.setWrapText(true);
         label.setGraphicTextGap(20);
-        label.setGraphic(new ImageView(getImage(type)));
+        //label.setGraphic(new ImageView(getImage(type)));
         
         Button button = new Button("OK");
+        button.setId("ok-button");
         button.setOnAction(new EventHandler<ActionEvent>(){
             @Override
             public void handle(ActionEvent arg0) {
@@ -46,7 +46,8 @@ public class MessageDialog extends Stage {
  
         BorderPane borderPane = new BorderPane();
         //borderPane.setId("border-pane");
-        borderPane.getStylesheets().add(getClass().getResource("styles/messageDialog.css").toExternalForm());        
+
+        borderPane.getStylesheets().add("gui/styles/messageDialog.css");       
         borderPane.setTop(label);
  
         HBox hbox2 = new HBox();
@@ -76,9 +77,9 @@ public class MessageDialog extends Stage {
  
     private Image getImage(int type) {
         if (type == ICON_ERROR)
-            return new Image(getClass().getResourceAsStream("images/error.png"));
+            return new Image(getClass().getResourceAsStream("/gui/images/images/error.png"));
         else
-            return new Image(getClass().getResourceAsStream("images/add.png"));
+            return new Image(getClass().getResourceAsStream("/gui/images/images/warning.png"));
     }
  
 }
