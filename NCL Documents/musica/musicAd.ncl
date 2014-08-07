@@ -88,6 +88,10 @@
 			<area id="anchorProduct1" begin="5s" end="9s"/>
 			<area id="anchorProduct2" begin="10s" end="14s"/>
 	</media>
+	
+	<media id="audio2" src="audio.mp3" descriptor="audioDesc">
+	</media>
+	
 	<media id="background" src="background.png" descriptor="screenDesc"/>
 	<media id="icon" src="icon.png" descriptor="iconDesc"/>
 	<media id="logo" src="logo.png" descriptor="logoDesc"/>
@@ -130,6 +134,11 @@
 		</link>
 
 	</context>
+	
+	<link id="lAudio" xconnector="onBeginStartN">
+		<bind role="onBegin" component="introduction"/>
+		<bind role="start" component="audio2"/>
+	</link>
 	
 	<link id="lLogo" xconnector="onBeginStartDelay">
 		<bind role="onBegin" component="introduction"/>

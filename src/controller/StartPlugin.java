@@ -14,16 +14,17 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.JFXPanel;
 import javafx.event.EventHandler;
 import javafx.geometry.Orientation;
 import javafx.scene.Scene;
-import javafx.scene.control.ScrollPane;
+import javafx.scene.control.Label;
 import javafx.scene.control.SplitPane;
 import javafx.scene.input.DragEvent;
-import javafx.scene.input.Dragboard;
-import javafx.scene.input.TransferMode;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.VBox;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
@@ -42,7 +43,6 @@ import model.nclDocument.extendedAna.Area;
 import model.nclDocument.extendedAna.Doc;
 import model.nclDocument.extendedAna.Media;
 import model.presentationPlan.PresentationPlan;
-import model.temporalView.TemporalMediaInfo;
 import model.temporalView.TemporalView;
 import model.utility.htg.HtgUtil;
 import model.utility.ncl.BindUtil;
@@ -92,7 +92,6 @@ public class StartPlugin extends JInternalFrame {
     SplitPane splitPaneRepoSpatial, splitPane;
     JFXPanel containerfxPane;
     Scene containerScene;
-    ScrollPane sp;
     int i = 0;
     
    public StartPlugin() throws XMLException, IOException {
@@ -110,7 +109,7 @@ public class StartPlugin extends JInternalFrame {
    
    private void openNCLDocument() throws XMLException {
 	   nclDoc = new Doc();
-	   nclDoc.loadXML(new File("C:\\Users\\Douglas\\Workspace\\STVEN\\NCL Documents\\musica\\musicAd.ncl"));
+	   nclDoc.loadXML(new File("C:\\Users\\UFF\\Workspace\\STVEN\\stven\\NCL Documents\\musica\\musicAd.ncl"));
 //     nclDoc.loadXML(new File("C:\\Users\\Douglas\\Workspace\\STVEN\\NCL Documents\\apresentacao\\ex.ncl"));
    }
    
@@ -131,7 +130,6 @@ private void constructHTG() throws XMLException, IOException {
        constructAnchorVertices();
        constructLinkEdges();
        htg.generateDOTFile();
-       System.out.println("HTG:\n"+htg);
    }
     
    private void constructMediaVertices() throws XMLException, IOException {
@@ -207,14 +205,11 @@ private void constructSimpleLinkEdges(NCLLink link){
           if(objectDelay!=null){
               condition.addDelay(objectDelay,link);
               edge = new HTGEdge(inputVertice, outputVertice, condition);
-              System.out.println("Condition: " + condition);
           }else{
               edge = new HTGEdge(inputVertice, outputVertice, noDelayCondition);
-              System.out.println("NoDelayCondition: " + condition);
           }
           htg.addEdge(edge);
       }
-      System.out.println("");
    }
    
 @SuppressWarnings("rawtypes")
@@ -247,14 +242,11 @@ private void constructCompoundLinkEdges(NCLLink link) throws XMLException{
           if(objectDelay!=null){
               condition.addDelay(objectDelay,link);
               edge = new HTGEdge(inputVertice, outputVertice, condition);
-              System.out.println("Condition: " + condition);
           }else{
               edge = new HTGEdge(inputVertice, outputVertice, noDelayCondition);
-              System.out.println("NoDelayCondition: " + condition);
           }
           htg.addEdge(edge);
       }
-       System.out.println("");
    }
  
 @SuppressWarnings("rawtypes")
@@ -283,11 +275,11 @@ private void constructSimpleCondition(HTGCondition condition, NCLLink link){
               defaultConditionVertice = htg.getVertice(BindUtil.getEventAction(bind),getAnchorId(bind),BindUtil.getEventType(bind));
               if(BindUtil.roleIsDefaultCondition(bind)){
                   if(defaultConditionVertice==null){
-                      System.out.println("defaultConditionVertice = " + defaultConditionVertice);
+                      //TODO Adiciona outros objetos associados a mesma condicao(att max e qual)
                   }
                   condition.addDefaultCondition(defaultConditionVertice, simpleCondition, null);
               }else{
-                  //condicao com papel definido pelo autor.
+                  //TODO Condicao com papel definido pelo autor.
               }
           }
        }
@@ -519,7 +511,7 @@ private String getAttributionValue(NCLLink link, NCLBind bind) {
    
    private void createTemporalView() throws XMLException {
        temporalView = new TemporalView(presentationPlan, mediaList);
-       displayTemporalView();
+       //displayTemporalView();
    }
    
    @Deprecated
@@ -537,14 +529,58 @@ private String getAttributionValue(NCLLink link, NCLBind bind) {
        }
    }
    
-   private void createTemporalViewPane(){
+   @SuppressWarnings({ "unchecked", "rawtypes" })
+private void createTemporalViewPane(){
 	   
 	   temporalViewPane = new BorderPane();
 	   temporalViewPane.setId("temporalViewPane");
 	   
-	   
-	   
-	   temporalViewPane.setOnDragDone(new EventHandler<DragEvent>(){
+       temporalChainPane = new TemporalChainPane(temporalView.getMainMediaInfoList());
+       temporalChainPane.setHorizontalGridLinesVisible(false);
+       temporalChainPane.setId("temporal-chain-pane");
+       temporalChainPane.getStylesheets().add("gui/styles/temporalViewPane.css");
+       
+       VBox channelPane = new VBox();
+       
+       Label channelPaneTitle = new Label("C h a n n e l s");
+       final Label videoChannelLabel = new Label("Video");
+       final Label audioChannelLabel = new Label("Audio");
+       
+       channelPaneTitle.setPrefHeight(20);
+       channelPaneTitle.setId("channel-pane-title");
+       channelPaneTitle.getStylesheets().add("gui/styles/temporalViewPane.css");
+
+       videoChannelLabel.setPrefHeight(temporalChainPane.getVideoLineNumber()*temporalChainPane.getLineGap());
+       videoChannelLabel.setId("video-channel-label");
+       videoChannelLabel.getStylesheets().add("gui/styles/temporalViewPane.css");
+     
+       audioChannelLabel.setPrefWidth(channelPaneTitle.getWidth());
+       audioChannelLabel.setPrefHeight(temporalChainPane.getAudioLineNumber()*temporalChainPane.getLineGap());
+       audioChannelLabel.setId("audio-channel-label");
+       audioChannelLabel.getStylesheets().add("gui/styles/temporalViewPane.css");
+       
+       channelPaneTitle.widthProperty().addListener(new ChangeListener(){
+           @Override 
+           public void changed(ObservableValue o,Object oldVal, Object newVal){
+        	   videoChannelLabel.setPrefWidth((double) newVal);
+        	   audioChannelLabel.setPrefWidth((double) newVal);
+           }
+         }); 
+       
+       channelPane.getChildren().add(channelPaneTitle);
+       channelPane.getChildren().add(videoChannelLabel);
+       channelPane.getChildren().add(audioChannelLabel);
+       
+         
+       temporalViewPane.setLeft(channelPane);
+       temporalViewPane.setCenter(temporalChainPane);
+    
+       createDragAndDropEvent();
+ 
+   }
+
+private void createDragAndDropEvent() {
+	temporalViewPane.setOnDragDone(new EventHandler<DragEvent>(){
 
 		@Override
 		public void handle(DragEvent event) {
@@ -598,16 +634,7 @@ private String getAttributionValue(NCLLink link, NCLBind bind) {
 //		        event.consume();
 		     }
 		});
-	   
-       temporalChainPane = new TemporalChainPane(temporalView.getMainMediaInfoList());
-       
-       sp.setContent(temporalChainPane);
-       sp.setFitToHeight(true);
-       sp.setFitToWidth(true);
-       
-       temporalViewPane.setCenter(sp);
- 
-   }
+}
    
    private void createRepositoryPane(){
        repository = new Repository();
@@ -639,7 +666,6 @@ private String getAttributionValue(NCLLink link, NCLBind bind) {
        Platform.runLater(new Runnable() {
            @Override
            public void run() {
-        	   sp = new ScrollPane();
         	   createTemporalViewPane();
                createRepositoryPane();
                createSpatialViewPane();

@@ -2,6 +2,8 @@
 (stop,introduction,presentation)  ----------  12.17
 (start,audio,presentation)  ----------  12.17
 (stop,audio,presentation)  ----------  31.2
+(start,audio2,presentation)  ----------  0.0
+(stop,audio2,presentation)  ----------  19.03
 (start,background,presentation)  ----------  12.17
 (stop,background,presentation)  ----------  31.2
 (start,icon,presentation)  ----------  31.2

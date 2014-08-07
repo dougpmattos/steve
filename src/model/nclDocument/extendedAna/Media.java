@@ -1,15 +1,11 @@
 
 package model.nclDocument.extendedAna;
 
-import gui.repositoryPanel.MessageDialog;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javafx.application.Platform;
-import javafx.concurrent.Task;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import model.repository.VideoFrame;
@@ -89,8 +85,9 @@ public ImageView generateMediaIcon() throws InterruptedException {
                break;
                
            case VIDEO:
-        	   icon = new ImageView();
-        	   VideoFrame videoFrame = new VideoFrame(path, icon);
+//        	   icon = new ImageView();
+//        	   VideoFrame videoFrame = new VideoFrame(path, icon);
+        	   icon = new ImageView(new Image(getClass().getResourceAsStream("/gui/images/video.png")));
         	   break;
                
            case AUDIO:

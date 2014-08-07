@@ -28,12 +28,11 @@ public class TemporalView {
             if(vertice.getAction().equalsIgnoreCase(NCLEventAction.START.toString()) && HtgUtil.isMedia(mediaList,vertice.getAnchorId()) && vertice.getEventType().equalsIgnoreCase(NCLEventType.PRESENTATION.toString())){
             	TemporalMediaInfo mediaInfo = new TemporalMediaInfo(vertice.getAnchorId(),((Double) presentationPlan.getMatrix()[i][1]),((Double) presentationPlan.getStopTime(vertice)), mediaList.getMedia(vertice.getAnchorId()));
                 mainMediaInfoList.add(mediaInfo);
-                System.out.println(mediaInfo);
             }
        }
        if(presentationPlan.getSecMatrix()!=null){
            for (int i = 0; i < presentationPlan.getSecMatrix().length; i++) {
-               System.out.println("SECONDARY");
+        
                vertice = (HTGVertice) presentationPlan.getSecMatrix()[i][0];
                if(HtgUtil.isMedia(mediaList,vertice.getAnchorId()) && vertice.getEventType().equalsIgnoreCase(NCLEventType.PRESENTATION.toString())){
                    if(vertice.getAction().equalsIgnoreCase(NCLEventAction.START.toString())){
@@ -41,12 +40,10 @@ public class TemporalView {
                        TemporalMediaInfo mediaInfo = new TemporalMediaInfo(vertice.getAnchorId(), sum, presentationPlan.getStopTime(vertice)+ presentationPlan.getX(), mediaList.getMedia(vertice.getAnchorId()));
                        secMediaInfoList.add(mediaInfo);
                        //temporalViewPanel.addMediaInteractivity(mediaInfo);
-                       System.out.println(mediaInfo);
                    }else if(vertice.getAction().equalsIgnoreCase(NCLEventAction.STOP.toString()) && isStoppedMainTimelineVertice(vertice, presentationPlan)){
                        TemporalMediaInfo mediaInfo = new TemporalMediaInfo(vertice.getAnchorId(), presentationPlan.getStartTime(vertice), (Double)presentationPlan.getSecMatrix()[i][1]+presentationPlan.getX(), mediaList.getMedia(vertice.getAnchorId()));
                        secMediaInfoList.add(mediaInfo);
                        //temporalViewPanel.addMediaInteractivity(mediaInfo);
-                       System.out.println(mediaInfo);
                    }
                }
            }

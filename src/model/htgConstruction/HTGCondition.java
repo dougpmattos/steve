@@ -137,7 +137,6 @@ public class HTGCondition implements Cloneable{
             anchorId = BindUtil.getComponentId(bind);
         }
         String eventType = attributeAssessment.getEventType().toString();
-        System.out.println("role: " +BindUtil.getRoleName(bind)+" transacao: "+BindUtil.getEventAction(bind) + " componente: " + anchorId + " evento: " + eventType);
         assessmentStatement = anchorId+" "+comparator+" "+assessmentValue;
         value = null;
     }
