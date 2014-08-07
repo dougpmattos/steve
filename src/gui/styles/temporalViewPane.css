@@ -1,0 +1,34 @@
+#channel-pane-title{
+    -fx-font: 16px "Calibri";
+    -fx-background-color:
+       -fx-shadow-highlight-color, 
+       -fx-outer-border, 
+       -fx-inner-border, 
+       -fx-body-color;
+    -fx-background-insets: 0 0 -1 0, 0, 1, 2;
+    -fx-alignment: center;
+    -fx-padding: 10px 50px 10px 50px;
+}
+#video-channel-label{
+    -fx-font: 16px "Calibri";
+    -fx-background-color:
+       -fx-inner-border, 
+       -fx-body-color;
+    -fx-alignment: center;
+}
+#audio-channel-label{
+	-fx-font: 16px "Calibri";
+    -fx-background-color: 
+       -fx-inner-border, 
+       -fx-body-color;
+    -fx-alignment: center;
+}
+#temporal-chain-pane{
+	-fx-padding: -2px;
+	-fx-border-color: lightgray;
+	-fx-border-width: 2px;
+	-fx-font: 16px "Calibri";
+}
+
+ 
+
