@@ -2,16 +2,12 @@ package controller;
     
 import gui.repositoryPanel.MessageDialog;
 
-import java.awt.BorderLayout;
 import java.io.File;
 import java.util.Iterator;
 import java.util.List;
 
-import javafx.application.Platform;
-import javafx.embed.swing.JFXPanel;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.HBox;
@@ -44,19 +40,19 @@ public class ButtonPane extends HBox{
         addButton = new Button();
         addButton.setId("add-button");
         addButton.setTooltip(new Tooltip("Add media"));
-        addButton.setScaleX(0.5);;
+        addButton.setScaleX(0.5);
         addButton.setScaleY(0.5);
         deleteButton = new Button();
         deleteButton.setDisable(true);
         deleteButton.setId("delete-button");
         deleteButton.setTooltip(new Tooltip("Delete media"));
-        deleteButton.setScaleX(0.5);;
+        deleteButton.setScaleX(0.5);
         deleteButton.setScaleY(0.5);
         clearButton = new Button();
         clearButton.setDisable(true);
         clearButton.setId("clear-button");
         clearButton.setTooltip(new Tooltip("Clear repository."));
-        clearButton.setScaleX(0.5);;
+        clearButton.setScaleX(0.5);
         clearButton.setScaleY(0.5);
 
         getChildren().addAll(addButton, deleteButton, clearButton);

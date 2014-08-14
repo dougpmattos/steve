@@ -29,7 +29,7 @@ public class TemporalChainPane extends StackedBarChart<Number, String> {
     public TemporalChainPane(List<TemporalMediaInfo> mediaInfoList){
     	
     	super(xAxis, yAxis);
-  
+    	
     	audioLineList = new ArrayList<Number>();
     	videoLineList = new ArrayList<Number>();
     	yAxisCategoriesList = new ArrayList<String>();

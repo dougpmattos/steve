@@ -1,7 +1,5 @@
 #repo-media-item-container{
-	-fx-background-color: 
-       -fx-inner-border, 
-       -fx-body-color;
-  -fx-background-insets: 0 0 -1 0, 0, 1, 2;
-  -fx-background-radius: 3px, 3px, 2px, 1px;
+	-fx-background-color:  
+		-fx-body-color;
+ 	-fx-background-radius: 3px, 3px, 2px, 1px;
 }

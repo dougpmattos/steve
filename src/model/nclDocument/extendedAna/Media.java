@@ -36,7 +36,7 @@ public class Media extends NCLMedia<NCLElement, Area, NCLProperty, NCLLayoutDesc
    
 	private static final long serialVersionUID = -5591863977937952316L;
 	private static final int DIVISOR = 1000000;
-	private static int IMAGE_THUMBNAIL_WIDTH = 90;
+	private static int IMAGE_THUMBNAIL_WIDTH = 70;
     
     private String name, path;
     private NCLMediaType type;
@@ -81,13 +81,14 @@ public ImageView generateMediaIcon() throws InterruptedException {
            	   File imageFile = new File(path);
                icon = new ImageView(new Image(imageFile.toURI().toString()));
                icon.setPreserveRatio(true);
+               icon.setSmooth(true);
                icon.setFitWidth(IMAGE_THUMBNAIL_WIDTH);
                break;
                
            case VIDEO:
-//        	   icon = new ImageView();
-//        	   VideoFrame videoFrame = new VideoFrame(path, icon);
-        	   icon = new ImageView(new Image(getClass().getResourceAsStream("/gui/images/video.png")));
+        	   icon = new ImageView();
+        	   VideoFrame videoFrame = new VideoFrame(path, icon);
+        	   //icon = new ImageView(new Image(getClass().getResourceAsStream("/gui/images/video.png")));
         	   break;
                
            case AUDIO:

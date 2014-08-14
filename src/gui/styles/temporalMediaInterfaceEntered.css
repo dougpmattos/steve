@@ -1,0 +1,9 @@
+.chart-bar {
+	-fx-pref-tile-height: 50px;
+	-fx-background-color: #0069d1;
+	-fx-border-color: lightgray;
+	-fx-border-width: 1px;
+}
+#media-name-container{
+	-fx-background-color: gray;
+}

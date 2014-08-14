@@ -3,6 +3,7 @@ package controller;
 
 import gui.spatialViewPanel.SpatialViewPane;
 import gui.temporalViewPanel.TemporalChainPane;
+import gui.temporalViewPanel.ZoomButton;
 
 import java.awt.BorderLayout;
 import java.io.File;
@@ -17,13 +18,26 @@ import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.JFXPanel;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Orientation;
+import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.Label;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuBar;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.SplitPane;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
 import javafx.scene.input.DragEvent;
+import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
 import javax.swing.ImageIcon;
@@ -85,11 +99,15 @@ public class StartPlugin extends JInternalFrame {
     PresentationPlan presentationPlan;
     TemporalView temporalView;
     HTGVertice inputVertice = null,outputVertice = null;
-    TemporalChainPane temporalChainPane;
     BorderPane temporalViewPane;
+    TabPane temporalViewTabPane;
+    TabPane repoPropAnimTabPane;
+    TemporalChainPane temporalChainPane;
+    SplitPane temporalChaiChannelSplitPane;
     Repository repository;
     SpatialViewPane spatialViewPanel;
     SplitPane splitPaneRepoSpatial, splitPane;
+    MenuBar menuBar;
     JFXPanel containerfxPane;
     Scene containerScene;
     int i = 0;
@@ -532,21 +550,30 @@ private String getAttributionValue(NCLLink link, NCLBind bind) {
    @SuppressWarnings({ "unchecked", "rawtypes" })
 private void createTemporalViewPane(){
 	   
+	   Tab temporalViewTab = new Tab("teste tab");
+	   
 	   temporalViewPane = new BorderPane();
-	   temporalViewPane.setId("temporalViewPane");
+	   
+	   temporalChaiChannelSplitPane = new SplitPane();
+	   temporalChaiChannelSplitPane.setId("temporal-split-pane");
+	   temporalChaiChannelSplitPane.getStylesheets().add("gui/styles/temporalViewPane.css");
+	   temporalChaiChannelSplitPane.setDividerPositions(0);
+	   //TODO implementar zoom setando valores para scale usando o listener so scrollbar Scale scaleTransform = new Scale(5, 5, 0, 0);
+	   //temporalChaiChannelPane.getTransforms().add(scaleTransform);
 	   
        temporalChainPane = new TemporalChainPane(temporalView.getMainMediaInfoList());
        temporalChainPane.setHorizontalGridLinesVisible(false);
-       temporalChainPane.setId("temporal-chain-pane");
        temporalChainPane.getStylesheets().add("gui/styles/temporalViewPane.css");
-       
+        
        VBox channelPane = new VBox();
-       
-       Label channelPaneTitle = new Label("C h a n n e l s");
+       channelPane.setId("channel-pane");
+       channelPane.setMinWidth(35);
+       channelPane.getStylesheets().add("gui/styles/temporalViewPane.css");
+              
+       final Label channelPaneTitle = new Label("Channels");
        final Label videoChannelLabel = new Label("Video");
        final Label audioChannelLabel = new Label("Audio");
-       
-       channelPaneTitle.setPrefHeight(20);
+
        channelPaneTitle.setId("channel-pane-title");
        channelPaneTitle.getStylesheets().add("gui/styles/temporalViewPane.css");
 
@@ -554,33 +581,65 @@ private void createTemporalViewPane(){
        videoChannelLabel.setId("video-channel-label");
        videoChannelLabel.getStylesheets().add("gui/styles/temporalViewPane.css");
      
-       audioChannelLabel.setPrefWidth(channelPaneTitle.getWidth());
        audioChannelLabel.setPrefHeight(temporalChainPane.getAudioLineNumber()*temporalChainPane.getLineGap());
        audioChannelLabel.setId("audio-channel-label");
        audioChannelLabel.getStylesheets().add("gui/styles/temporalViewPane.css");
        
-       channelPaneTitle.widthProperty().addListener(new ChangeListener(){
+       channelPane.widthProperty().addListener(new ChangeListener(){
            @Override 
            public void changed(ObservableValue o,Object oldVal, Object newVal){
+        	   channelPaneTitle.setPrefWidth((double) newVal);
         	   videoChannelLabel.setPrefWidth((double) newVal);
         	   audioChannelLabel.setPrefWidth((double) newVal);
            }
-         }); 
+         });
+       
+       channelPane.heightProperty().addListener(new ChangeListener(){
+           @Override 
+           public void changed(ObservableValue o,Object oldVal, Object newVal){
+        	   //audioChannelLabel.setPrefHeight(temporalChainPane.getAudioLineNumber()*temporalChainPane.getLineGap());
+           }
+         });
        
        channelPane.getChildren().add(channelPaneTitle);
        channelPane.getChildren().add(videoChannelLabel);
        channelPane.getChildren().add(audioChannelLabel);
+
+       temporalChaiChannelSplitPane.getItems().addAll(channelPane,temporalChainPane);
        
-         
-       temporalViewPane.setLeft(channelPane);
-       temporalViewPane.setCenter(temporalChainPane);
-    
+       temporalViewTabPane = new TabPane();
+       temporalViewTab.setId("temporal-view-tab-pane");
+       temporalViewTabPane.getStylesheets().add("gui/styles/temporalViewPane.css");
+       
+       //TODO colocar um for aqui para diversas temporalChainPane
+	   Tab tab = new Tab();
+       tab.setText("Temporal Chain 1");
+       tab.setId("tab");
+       tab.setContent(temporalChaiChannelSplitPane);
+       
+       temporalViewTabPane.getTabs().add(tab);
+      
+       HBox temporalViewButtonPane = new HBox();
+       temporalViewButtonPane.setId("button-pane");
+       temporalViewButtonPane.getStylesheets().add("gui/styles/temporalViewPane.css");
+       temporalViewButtonPane.setSpacing(100);
+       temporalViewButtonPane.setAlignment(Pos.CENTER_RIGHT);
+       
+       ZoomButton zoomButton = new ZoomButton();
+       CheckBox showAnchorsLinksButton = new CheckBox("Show Anchors and Links");
+       
+       temporalViewButtonPane.getChildren().add(zoomButton);
+       temporalViewButtonPane.getChildren().add(showAnchorsLinksButton);
+       
+       temporalViewPane.setCenter(temporalViewTabPane);
+       temporalViewPane.setBottom(temporalViewButtonPane);
+       
        createDragAndDropEvent();
  
    }
 
 private void createDragAndDropEvent() {
-	temporalViewPane.setOnDragDone(new EventHandler<DragEvent>(){
+	temporalChaiChannelSplitPane.setOnDragDone(new EventHandler<DragEvent>(){
 
 		@Override
 		public void handle(DragEvent event) {
@@ -609,7 +668,7 @@ private void createDragAndDropEvent() {
 		   
 	   });
 	   
-	   temporalViewPane.setOnDragDropped(new EventHandler<DragEvent>() {
+	   temporalChaiChannelSplitPane.setOnDragDropped(new EventHandler<DragEvent>() {
 		    public void handle(DragEvent event) {
 		        
 		    	System.out.println("DROPPED");
@@ -681,11 +740,164 @@ private void createDragAndDropEvent() {
    
    private Scene createContainerScene(){
 	   
+	   menuBar = new MenuBar();
+	   
+       Menu menuFile = new Menu("File");
+       Menu menuEdit = new Menu("Edit");
+       Menu menuView = new Menu("View");
+       Menu menuTools = new Menu("Tools");
+       Menu menuHelp = new Menu("Help");
+       
+       MenuItem menuItemNew = new MenuItem("New				");
+       menuItemNew.setAccelerator(KeyCombination.keyCombination("Ctrl+N"));
+       menuItemNew.setOnAction(new EventHandler<ActionEvent>() {
+    	   public void handle(ActionEvent t) {
+    		   //TODO implmentar botão
+               }
+           });
+       MenuItem menuItemOpen = new MenuItem("Open File...");
+       menuItemOpen.setAccelerator(KeyCombination.keyCombination("Ctrl+O"));
+       menuItemOpen.setOnAction(new EventHandler<ActionEvent>() {
+    	   public void handle(ActionEvent t) {
+    		   //TODO implmentar botão
+               }
+           });
+       MenuItem menuItemClose = new MenuItem("Close");
+       menuItemClose.setAccelerator(KeyCombination.keyCombination("Ctrl+W"));
+       menuItemClose.setOnAction(new EventHandler<ActionEvent>() {
+    	   public void handle(ActionEvent t) {
+    		   //TODO implmentar botão
+               }
+           });
+       MenuItem menuItemSave = new MenuItem("Save");
+       menuItemSave.setAccelerator(KeyCombination.keyCombination("Ctrl+S"));
+       menuItemSave.setOnAction(new EventHandler<ActionEvent>() {
+    	   public void handle(ActionEvent t) {
+    		   //TODO implmentar botão
+               }
+           });
+       MenuItem menuItemExit = new MenuItem("Exit");
+       menuItemExit.setOnAction(new EventHandler<ActionEvent>() {
+    	   public void handle(ActionEvent t) {
+    		   //TODO implmentar botão
+               }
+           });
+       
+       MenuItem menuItemUndo= new MenuItem("Undo				");
+       menuItemUndo.setAccelerator(KeyCombination.keyCombination("Ctrl+Z"));
+       menuItemUndo.setOnAction(new EventHandler<ActionEvent>() {
+    	   public void handle(ActionEvent t) {
+    		   //TODO implmentar botão
+               }
+           });
+       MenuItem menuItemRedo = new MenuItem("Redo");
+       menuItemRedo.setAccelerator(KeyCombination.keyCombination("Ctrl+Y"));
+       menuItemRedo.setOnAction(new EventHandler<ActionEvent>() {
+    	   public void handle(ActionEvent t) {
+    		   //TODO implmentar botão
+               }
+           });
+       MenuItem menuItemCut = new MenuItem("Cut");
+       menuItemCut.setAccelerator(KeyCombination.keyCombination("Ctrl+X"));
+       menuItemCut.setOnAction(new EventHandler<ActionEvent>() {
+    	   public void handle(ActionEvent t) {
+    		   //TODO implmentar botão
+               }
+           });
+       MenuItem menuItemCopy = new MenuItem("Copy");
+       menuItemCopy.setAccelerator(KeyCombination.keyCombination("Ctrl+C"));
+       menuItemCopy.setOnAction(new EventHandler<ActionEvent>() {
+    	   public void handle(ActionEvent t) {
+    		   //TODO implmentar botão
+               }
+           });
+       MenuItem menuItemPaste = new MenuItem("Paste");
+       menuItemPaste.setAccelerator(KeyCombination.keyCombination("Ctrl+V"));
+       menuItemPaste.setOnAction(new EventHandler<ActionEvent>() {
+    	   public void handle(ActionEvent t) {
+    		   //TODO implmentar botão
+               }
+           });
+       MenuItem menuItemDelete = new MenuItem("Delete");
+       menuItemDelete.setAccelerator(KeyCombination.keyCombination("Delete"));
+       menuItemDelete.setOnAction(new EventHandler<ActionEvent>() {
+    	   public void handle(ActionEvent t) {
+    		   //TODO implmentar botão
+               }
+           });
+       MenuItem menuItemSelectAll = new MenuItem("Select All");
+       menuItemSelectAll.setAccelerator(KeyCombination.keyCombination("Ctrl+A"));
+       menuItemSelectAll.setOnAction(new EventHandler<ActionEvent>() {
+    	   public void handle(ActionEvent t) {
+    		   //TODO implmentar botão
+               }
+           });
+       
+       CheckMenuItem checkMenuItemMediaView = createMenuItem("Media View				", null);                                                       
+       CheckMenuItem checkMenuItemTemporalView = createMenuItem ("Temporal View", null);        
+       CheckMenuItem checkMenuItemSpatialView = createMenuItem ("Spatial View", null);        
+       
+       MenuItem menuItemNCL4WEB= new MenuItem("NCL4WEB				");
+       menuItemNCL4WEB.setOnAction(new EventHandler<ActionEvent>() {
+    	   public void handle(ActionEvent t) {
+    		   //TODO implmentar botão
+               }
+           });
+       MenuItem menuItemSimulation= new MenuItem("Simulation");
+       menuItemSimulation.setOnAction(new EventHandler<ActionEvent>() {
+    	   public void handle(ActionEvent t) {
+    		   //TODO implmentar botão
+               }
+           });
+       
+       MenuItem menuItemHelpContents= new MenuItem("Help Contents				");
+       menuItemHelpContents.setOnAction(new EventHandler<ActionEvent>() {
+    	   public void handle(ActionEvent t) {
+    		   //TODO implmentar botão
+               }
+           });
+       MenuItem menuItemAbout= new MenuItem("About");
+       menuItemAbout.setOnAction(new EventHandler<ActionEvent>() {
+    	   public void handle(ActionEvent t) {
+    		   //TODO implmentar botão
+               }
+           });
+       
+       menuFile.getItems().addAll(menuItemNew, menuItemOpen, new SeparatorMenuItem(), menuItemClose, new SeparatorMenuItem(), menuItemSave, new SeparatorMenuItem(), menuItemExit);
+       menuEdit.getItems().addAll(menuItemUndo, menuItemRedo, new SeparatorMenuItem(), menuItemCut, menuItemCopy, menuItemPaste, new SeparatorMenuItem(), menuItemDelete, menuItemSelectAll);
+       menuView.getItems().addAll(checkMenuItemMediaView, checkMenuItemTemporalView, checkMenuItemSpatialView);
+       menuTools.getItems().addAll(menuItemNCL4WEB, menuItemSimulation);
+       menuHelp.getItems().addAll(menuItemHelpContents, new SeparatorMenuItem(), menuItemAbout);
+       menuBar.getMenus().addAll(menuFile, menuEdit, menuView, menuTools, menuHelp);
+	   
+	   repoPropAnimTabPane = new TabPane();
+	   repoPropAnimTabPane.setId("repo-prop-anim-view-tab-pane");
+	   repoPropAnimTabPane.getStylesheets().add("gui/styles/spatialViewPane.css");
+       
+       //TODO colocar um for aqui para diversas temporalChainPane
+	   Tab mediaTab = new Tab();
+	   mediaTab.setText("Media");
+	   mediaTab.setId("media-tab");
+	   mediaTab.setContent(repository.getRepositoryPanel());
+       
+       Tab propTab = new Tab();
+       propTab.setText("Properties");
+       propTab.setId("prop-tab");
+       //TODO tela de propriedades propTab.setContent(repository.getRepositoryPanel());
+       
+       Tab animTab = new Tab();
+       animTab.setText("Animations");
+       animTab.setId("anim-tab");
+       //TODO tela de animações animTab.setContent(repository.getRepositoryPanel());
+       
+       repoPropAnimTabPane.getTabs().addAll(mediaTab, propTab, animTab);
+	   
 	   splitPaneRepoSpatial = new SplitPane();
 	   splitPaneRepoSpatial.setId("splitRepoSpatial");
 	   splitPaneRepoSpatial.setOrientation(Orientation.HORIZONTAL);
-	   splitPaneRepoSpatial.getItems().addAll(repository.getRepositoryPanel(), spatialViewPanel);
-       
+	   splitPaneRepoSpatial.setDividerPositions(0.6);
+	   splitPaneRepoSpatial.getItems().addAll(repoPropAnimTabPane, spatialViewPanel);
+	   
        splitPane = new SplitPane();
        splitPane.setId("splitPane");
        splitPane.setOrientation(Orientation.VERTICAL);
@@ -693,6 +905,7 @@ private void createDragAndDropEvent() {
 
 	   BorderPane containerBorderPane = new BorderPane();
 	   containerBorderPane.setId("containerBorderPane");
+	   containerBorderPane.setTop(menuBar);
        containerBorderPane.setCenter(splitPane);
  
        Scene scene = new Scene(containerBorderPane);
@@ -701,6 +914,19 @@ private void createDragAndDropEvent() {
        
    }
 
+
+   private static CheckMenuItem createMenuItem (String title, final Node node){
+	    CheckMenuItem cmi = new CheckMenuItem(title);
+	    cmi.setSelected(true);
+	    cmi.selectedProperty().addListener(new ChangeListener<Boolean>() {
+	        public void changed(ObservableValue ov,
+	        Boolean old_val, Boolean new_val) {
+	            node.setVisible(new_val);
+	        }
+	    });
+	    return cmi;
+   }
+   
    public static void main (String[] args) throws XMLException, IOException {
        start = new StartPlugin();
     }

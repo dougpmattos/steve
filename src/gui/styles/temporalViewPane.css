@@ -1,34 +1,64 @@
+#channel-pane{
+}
 #channel-pane-title{
-    -fx-font: 16px "Calibri";
-    -fx-background-color:
-       -fx-shadow-highlight-color, 
-       -fx-outer-border, 
-       -fx-inner-border, 
-       -fx-body-color;
-    -fx-background-insets: 0 0 -1 0, 0, 1, 2;
+    -fx-font: 14px "Sertig";
+	-fx-background-color: #0069d1;
     -fx-alignment: center;
-    -fx-padding: 10px 50px 10px 50px;
+    -fx-padding: 3px 50px 3px 50px;
 }
 #video-channel-label{
-    -fx-font: 16px "Calibri";
-    -fx-background-color:
-       -fx-inner-border, 
-       -fx-body-color;
+    -fx-font: 16px "Sertig";
+    -fx-background-color: #2ec4ff;
     -fx-alignment: center;
+    -fx-border-width: 1px 0px 0px 0px;
+    -fx-border-color: lightgray;
 }
 #audio-channel-label{
-	-fx-font: 16px "Calibri";
-    -fx-background-color: 
-       -fx-inner-border, 
-       -fx-body-color;
+	-fx-font: 16px "Sertig";
+    -fx-background-color: #2ec4ff;
     -fx-alignment: center;
+	-fx-border-width: 1px 0px 3px 0px;
+    -fx-border-color: lightgray;
 }
-#temporal-chain-pane{
-	-fx-padding: -2px;
+#tab{
+	-fx-font: 12px "Sertig";
+}
+#button-pane{
+	-fx-background-color: #dbdbdb;
+	-fx-padding: 3px 15px 3px 3px;
+}
+#zoom-button{
+	-fx-background-color:
+		-fx-shadow-highlight-color, 
+        -fx-outer-border, 
+        -fx-inner-border, 
+        -fx-body-color;
+   -fx-background-insets: 0 0 -1 0, 0, 1, 2;
+  -fx-background-radius: 3px, 3px, 2px, 1px;
+  -fx-padding: 0px 3px 0.0px 3px
+}
+#temporal-media-layout-container{
+	
+}
+.chart-content{
+	-fx-padding: -6px -5px -15px -18px;
+	-fx-font: 16px "Sertig";
+}
+.axis {
+    -fx-tick-label-fill: black;
+    -fx-font: 12px "Sertig";
+    -fx-background-color: #0069d1;
+    -fx-tick-length: 10px;
+}
+.chart-bar {
+	-fx-pref-tile-height: 50px;
+	-fx-background-color: #2ec4ff;
 	-fx-border-color: lightgray;
-	-fx-border-width: 2px;
-	-fx-font: 16px "Calibri";
+	-fx-border-width: 1px;
 }
-
- 
-
+#media-name-container{
+	-fx-background-color: lightgray;
+}
+#media-name{
+	 -fx-font: 10px "Sertig";
+}

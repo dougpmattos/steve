@@ -115,8 +115,8 @@ public class MediaListPanel extends FlowPane implements Observer {
 	        public void handle(MouseEvent mouseEvent) {
 	        	
 	        	dragImage = new ImageView(mediaIcon.getImage());
-	        	dragImage.setFitHeight(100);
-		        dragImage.setFitWidth(100);
+	        	dragImage.setFitHeight(70);
+	        	dragImage.setFitWidth(70);
 		        dragImage.setPreserveRatio(true);
 				dragImage.setOpacity(0.3);
 	        	
@@ -129,8 +129,8 @@ public class MediaListPanel extends FlowPane implements Observer {
 			public void handle(DragEvent event) {
 			
 				dragImage.setVisible(true);
-				dragImage.setFitHeight(100);
-		        dragImage.setFitWidth(100);
+				dragImage.setFitHeight(70);
+		        dragImage.setFitWidth(70);
 				dragImage.relocate(event.getSceneX() - dragImage.getBoundsInLocal().getWidth() / 2, event.getSceneY() - dragImage.getBoundsInLocal().getHeight() / 2);
 				borderPane.getChildren().add(dragImage);
 			
@@ -207,7 +207,11 @@ public class MediaListPanel extends FlowPane implements Observer {
 		repositoryMediaItemContainer.setOnMouseEntered(new EventHandler<MouseEvent>() {
 	        @Override
 	        public void handle(MouseEvent e) {
-	        	repositoryMediaItemContainer.getStylesheets().add("gui/styles/mouseEnteredMediaItem.css");
+	        	boolean itemClicked = repositoryMediaItemContainer.getStylesheets().contains("gui/styles/mouseClickedMediaItem.css");
+	        	if(!itemClicked){
+	        		repositoryMediaItemContainer.getStylesheets().add("gui/styles/mouseEnteredMediaItem.css");
+	        	}
+	        	
 	        }
 	    });
 		
