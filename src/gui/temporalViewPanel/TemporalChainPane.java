@@ -4,12 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javafx.collections.FXCollections;
-import javafx.geometry.NodeOrientation;
-import javafx.geometry.Point3D;
 import javafx.geometry.Side;
 import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.StackedBarChart;
+import javafx.scene.layout.VBox;
 import model.nclDocument.extendedAna.Media;
 import model.temporalView.TemporalMediaInfo;
 import br.uff.midiacom.ana.util.enums.NCLMediaType;
@@ -23,10 +22,11 @@ public class TemporalChainPane extends StackedBarChart<Number, String> {
 	private List<String> yAxisCategoriesList;
 	private List<TemporalMediaInfo> videoTemporalMediainfoList;
 	private List<TemporalMediaInfo> audioTemporalMediainfoList;
+	private VBox channelPane;
 	
 	private List<TemporalMediaInfo> mediaInfoList;
     
-    public TemporalChainPane(List<TemporalMediaInfo> mediaInfoList){
+    public TemporalChainPane(List<TemporalMediaInfo> mediaInfoList, VBox channelPane){
     	
     	super(xAxis, yAxis);
     	
@@ -35,6 +35,7 @@ public class TemporalChainPane extends StackedBarChart<Number, String> {
     	yAxisCategoriesList = new ArrayList<String>();
     	videoTemporalMediainfoList = new ArrayList<TemporalMediaInfo>();
     	audioTemporalMediainfoList = new ArrayList<TemporalMediaInfo>();
+    	this.channelPane = channelPane;
 
         setLegendVisible(false);
         setScaleShape(true);
@@ -96,11 +97,11 @@ public class TemporalChainPane extends StackedBarChart<Number, String> {
     	boolean mediaAdded = false;
     	double lineEnd;
     	int indexLineList = 0;
-    	
+   
     	while(!mediaAdded && indexLineList < audioLineList.size()){
     		lineEnd = audioLineList.get(indexLineList).doubleValue();
     		if(init >= lineEnd){
-    			TemporalMediaInterface temporalMediaInterface = new TemporalMediaInterface(init-lineEnd, end-lineEnd, indexLineList + "", id, media);
+    			TemporalMediaInterface temporalMediaInterface = new TemporalMediaInterface(init-lineEnd, end-lineEnd, indexLineList + "", id, media, channelPane);
     			audioLineList.set(indexLineList, end);
     			getData().addAll(temporalMediaInterface.getBeginSerie(), temporalMediaInterface.getEndSerie());
     			mediaAdded = true;
@@ -109,7 +110,7 @@ public class TemporalChainPane extends StackedBarChart<Number, String> {
     	}
     	if(!mediaAdded){
     		audioLineList.add(end);
-    		TemporalMediaInterface temporalMediaInterface = new TemporalMediaInterface(init, end, (audioLineList.size() - 1)+"", id, media);
+    		TemporalMediaInterface temporalMediaInterface = new TemporalMediaInterface(init, end, (audioLineList.size() - 1)+"", id, media, channelPane);
     		getData().addAll(temporalMediaInterface.getBeginSerie(), temporalMediaInterface.getEndSerie());
     	}    
     	
@@ -130,7 +131,7 @@ public class TemporalChainPane extends StackedBarChart<Number, String> {
     	while(!mediaAdded && indexLineList < videoLineList.size()){
     		lineEnd = videoLineList.get(indexLineList).doubleValue();
     		if(init >= lineEnd){
-    			TemporalMediaInterface temporalMediaInterface = new TemporalMediaInterface(init-lineEnd, end-lineEnd, indexLineList + audioLineList.size() + "", id, media);
+    			TemporalMediaInterface temporalMediaInterface = new TemporalMediaInterface(init-lineEnd, end-lineEnd, indexLineList + audioLineList.size() + "", id, media, channelPane);
     			videoLineList.set(indexLineList, end);
     			getData().addAll(temporalMediaInterface.getBeginSerie(), temporalMediaInterface.getEndSerie());
     			mediaAdded = true;
@@ -139,7 +140,7 @@ public class TemporalChainPane extends StackedBarChart<Number, String> {
     	}
     	if(!mediaAdded){
     		videoLineList.add(end);
-    		TemporalMediaInterface temporalMediaInterface = new TemporalMediaInterface(init, end, (videoLineList.size() + audioLineList.size() - 1)+"", id, media);
+    		TemporalMediaInterface temporalMediaInterface = new TemporalMediaInterface(init, end, (videoLineList.size() + audioLineList.size() - 1)+"", id, media, channelPane);
     		getData().addAll(temporalMediaInterface.getBeginSerie(), temporalMediaInterface.getEndSerie());
     	}    
     	

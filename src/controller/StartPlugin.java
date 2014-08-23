@@ -560,16 +560,16 @@ private void createTemporalViewPane(){
 	   temporalChaiChannelSplitPane.setDividerPositions(0);
 	   //TODO implementar zoom setando valores para scale usando o listener so scrollbar Scale scaleTransform = new Scale(5, 5, 0, 0);
 	   //temporalChaiChannelPane.getTransforms().add(scaleTransform);
-	   
-       temporalChainPane = new TemporalChainPane(temporalView.getMainMediaInfoList());
-       temporalChainPane.setHorizontalGridLinesVisible(false);
-       temporalChainPane.getStylesheets().add("gui/styles/temporalViewPane.css");
-        
+	    
        VBox channelPane = new VBox();
        channelPane.setId("channel-pane");
        channelPane.setMinWidth(35);
        channelPane.getStylesheets().add("gui/styles/temporalViewPane.css");
               
+       temporalChainPane = new TemporalChainPane(temporalView.getMainMediaInfoList(), channelPane);
+       temporalChainPane.setHorizontalGridLinesVisible(false);
+       temporalChainPane.getStylesheets().add("gui/styles/temporalViewPane.css");
+       
        final Label channelPaneTitle = new Label("Channels");
        final Label videoChannelLabel = new Label("Video");
        final Label audioChannelLabel = new Label("Audio");
@@ -748,14 +748,14 @@ private void createDragAndDropEvent() {
        Menu menuTools = new Menu("Tools");
        Menu menuHelp = new Menu("Help");
        
-       MenuItem menuItemNew = new MenuItem("New				");
+       MenuItem menuItemNew = new MenuItem("New Project				");
        menuItemNew.setAccelerator(KeyCombination.keyCombination("Ctrl+N"));
        menuItemNew.setOnAction(new EventHandler<ActionEvent>() {
     	   public void handle(ActionEvent t) {
     		   //TODO implmentar botão
                }
            });
-       MenuItem menuItemOpen = new MenuItem("Open File...");
+       MenuItem menuItemOpen = new MenuItem("Open Project...");
        menuItemOpen.setAccelerator(KeyCombination.keyCombination("Ctrl+O"));
        menuItemOpen.setOnAction(new EventHandler<ActionEvent>() {
     	   public void handle(ActionEvent t) {
@@ -769,8 +769,22 @@ private void createDragAndDropEvent() {
     		   //TODO implmentar botão
                }
            });
-       MenuItem menuItemSave = new MenuItem("Save");
+       MenuItem menuItemSave = new MenuItem("Save Project");
        menuItemSave.setAccelerator(KeyCombination.keyCombination("Ctrl+S"));
+       menuItemSave.setOnAction(new EventHandler<ActionEvent>() {
+    	   public void handle(ActionEvent t) {
+    		   //TODO implmentar botão
+               }
+           });
+       MenuItem menuItemImportNCL = new MenuItem("Import NCL Document...");
+       menuItemSave.setAccelerator(KeyCombination.keyCombination("Ctrl+I"));
+       menuItemSave.setOnAction(new EventHandler<ActionEvent>() {
+    	   public void handle(ActionEvent t) {
+    		   //TODO implmentar botão
+               }
+           });
+       MenuItem menuItemExportNCL = new MenuItem("Export to NCL Document...");
+       menuItemSave.setAccelerator(KeyCombination.keyCombination("Ctrl+E"));
        menuItemSave.setOnAction(new EventHandler<ActionEvent>() {
     	   public void handle(ActionEvent t) {
     		   //TODO implmentar botão
@@ -863,7 +877,7 @@ private void createDragAndDropEvent() {
                }
            });
        
-       menuFile.getItems().addAll(menuItemNew, menuItemOpen, new SeparatorMenuItem(), menuItemClose, new SeparatorMenuItem(), menuItemSave, new SeparatorMenuItem(), menuItemExit);
+       menuFile.getItems().addAll(menuItemNew, menuItemOpen, new SeparatorMenuItem(), menuItemClose, new SeparatorMenuItem(), menuItemSave, new SeparatorMenuItem(), menuItemImportNCL, menuItemExportNCL, new SeparatorMenuItem(), menuItemExit);
        menuEdit.getItems().addAll(menuItemUndo, menuItemRedo, new SeparatorMenuItem(), menuItemCut, menuItemCopy, menuItemPaste, new SeparatorMenuItem(), menuItemDelete, menuItemSelectAll);
        menuView.getItems().addAll(checkMenuItemMediaView, checkMenuItemTemporalView, checkMenuItemSpatialView);
        menuTools.getItems().addAll(menuItemNCL4WEB, menuItemSimulation);

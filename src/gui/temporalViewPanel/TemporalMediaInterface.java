@@ -6,9 +6,9 @@ import java.util.logging.Logger;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
+import javafx.scene.Cursor;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Label;
-import javafx.scene.effect.Glow;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
@@ -25,6 +25,7 @@ public class TemporalMediaInterface {
 	private XYChart.Data<Number, String> beginData;
 	private XYChart.Data<Number, String> endData;
 	private VBox node;
+	private BorderPane invisibleNode;
 	private double begin;
 	private double end;
 	private String line;
@@ -32,14 +33,21 @@ public class TemporalMediaInterface {
 	private Media media;
 	private HBox mediaNameConatiner;
 	private Logger temporalMediaInterfaceLogger = Logger.getLogger("TemporalMediaInterfaceLogger");
+	private VBox channelPane;
+	private double channelWidth;
+	private double dragDeltaX;
+	private double dragDeltaY;
+	private double invisibleNodeDragDeltaX;
+	private double invisibleNodeDragDeltaY;
 	
-	public TemporalMediaInterface(double begin, double end, String line, String id, Media media){
+	public TemporalMediaInterface(double begin, double end, String line, String id, Media media, VBox channelPane){
 		
 		this.id = id;
 		this.begin = begin;
 		this.end = end-begin;
 		this.line = line;
 		this.media = media;
+		this.channelPane = channelPane;
 		
 		initializeComponents();
 		
@@ -60,6 +68,13 @@ public class TemporalMediaInterface {
 		endData.setNode(node);
 		endSerie.getData().add(endData);
 		
+		channelPane.widthProperty().addListener(new ChangeListener(){
+	           @Override 
+	           public void changed(ObservableValue o,Object oldVal, Object newVal){
+	        	   channelWidth = (double) newVal;
+	           }
+	         });
+		
 		
 	}
 	
@@ -67,7 +82,7 @@ public class TemporalMediaInterface {
 		
 		beginSerie = new XYChart.Series<Number, String>();
 		beginData = new XYChart.Data<Number, String>(begin, line);
-		BorderPane invisibleNode = new BorderPane();
+		invisibleNode = new BorderPane();
 		invisibleNode.setVisible(false);
 		beginData.setNode(invisibleNode);
 		beginSerie.getData().add(beginData);
@@ -75,12 +90,13 @@ public class TemporalMediaInterface {
 	}
 	
 	private void setListenerEvents(){
-	
+
 		node.setOnMouseEntered(new EventHandler<MouseEvent>() {
 	        @Override
 	        public void handle(MouseEvent e) {
 	            node.getStylesheets().add("gui/styles/temporalMediaInterfaceEntered.css");
 	            mediaNameConatiner.getStylesheets().add("gui/styles/temporalMediaInterfaceEntered.css");
+	            node.setCursor(Cursor.HAND);
 	        }
 	    });
 	    node.setOnMouseExited(new EventHandler<MouseEvent>() {
@@ -90,30 +106,40 @@ public class TemporalMediaInterface {
 	            mediaNameConatiner.getStylesheets().remove("gui/styles/temporalMediaInterfaceEntered.css");
 	        }
 	    });
+	    node.setOnMousePressed(new EventHandler<MouseEvent>(){
+
+			@Override
+			public void handle(MouseEvent mouseEvent) {
+				dragDeltaX = node.getLayoutX() - mouseEvent.getSceneX();
+			    dragDeltaY = node.getLayoutY() - mouseEvent.getSceneY();
+			    invisibleNodeDragDeltaX = invisibleNode.getLayoutX() - mouseEvent.getSceneX();
+			    invisibleNodeDragDeltaY = invisibleNode.getLayoutY() - mouseEvent.getSceneY();
+			    node.setCursor(Cursor.MOVE);
+			}
+	    	
+	    });
+	    node.setOnMouseReleased(new EventHandler<MouseEvent>() {
+	    	  @Override public void handle(MouseEvent mouseEvent) {
+	    		  node.setCursor(Cursor.HAND);
+	    	  }
+	    	});
 	    node.setOnMouseDragged(new EventHandler<MouseEvent>() {
 	        @Override
 	        public void handle(MouseEvent mouseEvent) {
-//	        	double newXlower=xAxis.getLowerBound(), newXupper=xAxis.getUpperBound();             
-//		        double Delta=0.1;
-////		        
-//			        if(rectinitX.get() < e.getX()){    
-//			            newXlower=xAxis.getLowerBound()-Delta;
-//			            newXupper=xAxis.getUpperBound()-Delta;
-//			        }
-//			    else if(rectinitX.get() > e.getX()){    
-//			            newXlower=xAxis.getLowerBound()+Delta;
-//			            newXupper=xAxis.getUpperBound()+Delta;
-//			        }    
-//			        xAxis.setLowerBound( newXlower ); 
-//			        xAxis.setUpperBound( newXupper ); 
-//	        	 
-//
-//	        	m1.setXValue(5);
-	        	//node.relocate(mouseEvent.getSceneX(), mouseEvent.getSceneY());
-	        	//node.relocate(mouseEvent.getSceneX() - node.getBoundsInLocal().getWidth() / 2, mouseEvent.getSceneY() - node.getBoundsInLocal().getHeight() / 2);
-	        	node.setTranslateX(60);
-		
-		        }
+	        	
+	        	//node.setTranslateX(mouseEvent.getSceneX() + dragDeltaX);
+	        	invisibleNode.setLayoutX(mouseEvent.getSceneX() + invisibleNodeDragDeltaX);
+	            node.setLayoutX(mouseEvent.getSceneX() + dragDeltaX);
+	        	
+//	        	Double relocationValue = mouseEvent.getSceneX()-channelWidth;
+//	        	if(relocationValue >= 0){
+//	        		//node.relocate(relocationValue, node.getLayoutY());
+//	        		//node.setTranslateX(node.getLayoutX());
+//	        		node.setLayoutX(());
+//	        		node.setCursor(Cursor.MOVE);
+//	        	}
+	        	
+	        }
 	        
 	    });
 		
@@ -124,7 +150,7 @@ public class TemporalMediaInterface {
 		
 		node.getStylesheets().add("gui/styles/temporalViewPane.css");
 		
-		BorderPane temporalMedialayoutContainer = new BorderPane();
+		final BorderPane temporalMedialayoutContainer = new BorderPane();
 		temporalMedialayoutContainer.setId("temporal-media-layout-container");
 		temporalMedialayoutContainer.getStylesheets().add("gui/styles/temporalViewPane.css");
 		
@@ -145,20 +171,22 @@ public class TemporalMediaInterface {
 		mediaNameConatiner.getStylesheets().add("gui/styles/temporalViewPane.css");
 		mediaNameConatiner.getChildren().add(mediaName);
 		//mediaNameConatiner.setPrefHeight(5);
-
+		VBox container = new VBox();
 		node.heightProperty().addListener(new ChangeListener(){
 			@Override 
 	        public void changed(ObservableValue o,Object oldVal, Object newVal){
 				imageView.setFitHeight((double) newVal);
 	        	mediaNameConatiner.setPrefHeight((double) newVal);
+	        	//temporalMedialayoutContainer.setPrefHeight((double) newVal);
 			}
 	    });
-//		temporalMedialayoutContainer.setCenter(imageView);
-//		temporalMedialayoutContainer.setBottom(mediaNameConatiner);
-//		node.getChildren().add(temporalMedialayoutContainer);
+		temporalMedialayoutContainer.setCenter(imageView);
+		temporalMedialayoutContainer.setBottom(mediaNameConatiner);
+		node.getChildren().add(temporalMedialayoutContainer);
 		
 		node.getChildren().add(imageView);
 		node.getChildren().add(mediaNameConatiner);
+		
 		
 	}
 	
