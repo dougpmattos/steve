@@ -25,7 +25,7 @@ public class RepositoryPanel extends BorderPane {
 	    
 	    splitPane = new SplitPane();
 	    splitPane.setOrientation(Orientation.HORIZONTAL);
-	    splitPane.setDividerPositions(0.1);
+	    splitPane.setDividerPositions(0.2);
 	    splitPane.getItems().addAll(scrollPaneTree,scrollPaneList);
 	            
 	    setCenter(splitPane);

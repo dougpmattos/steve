@@ -1,5 +1,6 @@
 package gui.temporalViewPanel;
 
+import java.math.BigDecimal;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -13,10 +14,11 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
 import model.nclDocument.extendedAna.Media;
 
 public class TemporalMediaInterface {
+
+	private static final int SIZE_DIFFERENCE = 15;
 
 	private int THUMBNAIL_WIDTH = 90;
 	
@@ -24,30 +26,31 @@ public class TemporalMediaInterface {
 	private XYChart.Series<Number, String> endSerie;
 	private XYChart.Data<Number, String> beginData;
 	private XYChart.Data<Number, String> endData;
-	private VBox node;
+	private BorderPane node;
 	private BorderPane invisibleNode;
 	private double begin;
+	private BigDecimal previousMediaEnd;
 	private double end;
 	private String line;
 	private String id;
 	private Media media;
-	private HBox mediaNameConatiner;
+	private HBox mediaNameContainer;
 	private Logger temporalMediaInterfaceLogger = Logger.getLogger("TemporalMediaInterfaceLogger");
-	private VBox channelPane;
-	private double channelWidth;
+	private TemporalChainPane temporalChainPane;
 	private double dragDeltaX;
 	private double dragDeltaY;
 	private double invisibleNodeDragDeltaX;
 	private double invisibleNodeDragDeltaY;
 	
-	public TemporalMediaInterface(double begin, double end, String line, String id, Media media, VBox channelPane){
+	public TemporalMediaInterface(double begin, BigDecimal previousMediaEnd, double end, String line, String id, Media media, TemporalChainPane temporalChainPane){
 		
 		this.id = id;
 		this.begin = begin;
-		this.end = end-begin;
+		this.previousMediaEnd = previousMediaEnd;
+		this.end = end;
 		this.line = line;
 		this.media = media;
-		this.channelPane = channelPane;
+		this.temporalChainPane = temporalChainPane;
 		
 		initializeComponents();
 		
@@ -55,33 +58,29 @@ public class TemporalMediaInterface {
 		
 	}
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private void initializeComponents() {
 		
+		setBegin();
 		endSerie = new XYChart.Series<Number, String>();
 		endSerie.setName(id);
-		endData = new XYChart.Data<Number, String>(end, line);
-		setBegin();
-		node = new VBox();
-		mediaNameConatiner = new HBox();
-		mediaNameConatiner.setId("media-name-container");
+		BigDecimal bigDecimalEnd = new BigDecimal(Double.toString(end));
+		BigDecimal bigDecimalBegin = new BigDecimal(Double.toString(begin));
+		endData = new XYChart.Data<Number, String>(bigDecimalEnd.subtract(bigDecimalBegin), line);
+		node = new BorderPane();
+		mediaNameContainer = new HBox();
+		mediaNameContainer.setId("media-name-container");
 		setNodeLayout();
 		endData.setNode(node);
-		endSerie.getData().add(endData);
-		
-		channelPane.widthProperty().addListener(new ChangeListener(){
-	           @Override 
-	           public void changed(ObservableValue o,Object oldVal, Object newVal){
-	        	   channelWidth = (double) newVal;
-	           }
-	         });
-		
+		endSerie.getData().add(endData);		
 		
 	}
 	
 	private void setBegin(){
 		
 		beginSerie = new XYChart.Series<Number, String>();
-		beginData = new XYChart.Data<Number, String>(begin, line);
+		BigDecimal bigDecimalBegin = new BigDecimal(Double.toString(begin));
+		beginData = new XYChart.Data<Number, String>(bigDecimalBegin.subtract(previousMediaEnd), line);
 		invisibleNode = new BorderPane();
 		invisibleNode.setVisible(false);
 		beginData.setNode(invisibleNode);
@@ -95,42 +94,39 @@ public class TemporalMediaInterface {
 	        @Override
 	        public void handle(MouseEvent e) {
 	            node.getStylesheets().add("gui/styles/temporalMediaInterfaceEntered.css");
-	            mediaNameConatiner.getStylesheets().add("gui/styles/temporalMediaInterfaceEntered.css");
-	            node.setCursor(Cursor.HAND);
+	            mediaNameContainer.getStylesheets().add("gui/styles/temporalMediaInterfaceEntered.css");
+	            if((node.getCursor() != null && node.getCursor() != Cursor.MOVE) || node.getCursor() == null){
+	            	node.setCursor(Cursor.HAND);
+	            }
 	        }
 	    });
 	    node.setOnMouseExited(new EventHandler<MouseEvent>() {
 	        @Override
 	        public void handle(MouseEvent e) {
 	            node.getStylesheets().remove("gui/styles/temporalMediaInterfaceEntered.css");
-	            mediaNameConatiner.getStylesheets().remove("gui/styles/temporalMediaInterfaceEntered.css");
+	            mediaNameContainer.getStylesheets().remove("gui/styles/temporalMediaInterfaceEntered.css");
 	        }
 	    });
 	    node.setOnMousePressed(new EventHandler<MouseEvent>(){
 
 			@Override
 			public void handle(MouseEvent mouseEvent) {
+				node.getStylesheets().add("gui/styles/temporalMediaInterfacePressed.css");
+	            mediaNameContainer.getStylesheets().add("gui/styles/temporalMediaInterfacePressed.css");
 				dragDeltaX = node.getLayoutX() - mouseEvent.getSceneX();
 			    dragDeltaY = node.getLayoutY() - mouseEvent.getSceneY();
-			    invisibleNodeDragDeltaX = invisibleNode.getLayoutX() - mouseEvent.getSceneX();
-			    invisibleNodeDragDeltaY = invisibleNode.getLayoutY() - mouseEvent.getSceneY();
 			    node.setCursor(Cursor.MOVE);
+			    mouseEvent.consume();
 			}
 	    	
 	    });
-	    node.setOnMouseReleased(new EventHandler<MouseEvent>() {
-	    	  @Override public void handle(MouseEvent mouseEvent) {
-	    		  node.setCursor(Cursor.HAND);
-	    	  }
-	    	});
 	    node.setOnMouseDragged(new EventHandler<MouseEvent>() {
 	        @Override
 	        public void handle(MouseEvent mouseEvent) {
-	        	
-	        	//node.setTranslateX(mouseEvent.getSceneX() + dragDeltaX);
-	        	invisibleNode.setLayoutX(mouseEvent.getSceneX() + invisibleNodeDragDeltaX);
+
 	            node.setLayoutX(mouseEvent.getSceneX() + dragDeltaX);
-	        	
+	            node.setLayoutY(mouseEvent.getSceneY() + dragDeltaY);
+	            
 //	        	Double relocationValue = mouseEvent.getSceneX()-channelWidth;
 //	        	if(relocationValue >= 0){
 //	        		//node.relocate(relocationValue, node.getLayoutY());
@@ -142,6 +138,24 @@ public class TemporalMediaInterface {
 	        }
 	        
 	    });
+	    node.setOnMouseReleased(new EventHandler<MouseEvent>() {
+
+			@Override
+			public void handle(MouseEvent event) {
+	
+				node.getStylesheets().remove("gui/styles/temporalMediaInterfacePressed.css");
+				mediaNameContainer.getStylesheets().remove("gui/styles/temporalMediaInterfacePressed.css");
+	    		node.setCursor(Cursor.HAND);
+	    		
+		    	double newBegin = 5;
+		    	double newEnd = 17.17;
+	
+				beginData.setXValue(begin);
+		        endData.setXValue(end-begin);
+		        
+			}
+	    	
+	    });
 		
 	}
 
@@ -150,13 +164,9 @@ public class TemporalMediaInterface {
 		
 		node.getStylesheets().add("gui/styles/temporalViewPane.css");
 		
-		final BorderPane temporalMedialayoutContainer = new BorderPane();
-		temporalMedialayoutContainer.setId("temporal-media-layout-container");
-		temporalMedialayoutContainer.getStylesheets().add("gui/styles/temporalViewPane.css");
-		
 		media.setName(media.getSrc().toString());
 		media.setPath(media.getMediaAbsolutePath());
-		media.setImportedMediaType(media.identifyType());
+		media.setImportedMediaType(media.getRepoMediaType());
 		try {
 			media.generateMediaIcon();
 		} catch (InterruptedException e) {
@@ -166,26 +176,26 @@ public class TemporalMediaInterface {
 		
 		Label mediaName = new Label(media.getName());
 		mediaName.setId("media-name");
-		mediaName.getStylesheets().add("gui/styles/temporalViewPane.css");
+		mediaNameContainer.getChildren().add(mediaName);
 		
-		mediaNameConatiner.getStylesheets().add("gui/styles/temporalViewPane.css");
-		mediaNameConatiner.getChildren().add(mediaName);
-		//mediaNameConatiner.setPrefHeight(5);
-		VBox container = new VBox();
 		node.heightProperty().addListener(new ChangeListener(){
 			@Override 
 	        public void changed(ObservableValue o,Object oldVal, Object newVal){
-				imageView.setFitHeight((double) newVal);
-	        	mediaNameConatiner.setPrefHeight((double) newVal);
-	        	//temporalMedialayoutContainer.setPrefHeight((double) newVal);
+				Double heightValue = (double) newVal-SIZE_DIFFERENCE;
+				if(heightValue >= 0){
+					imageView.setFitHeight(heightValue);					
+				}
 			}
 	    });
-		temporalMedialayoutContainer.setCenter(imageView);
-		temporalMedialayoutContainer.setBottom(mediaNameConatiner);
-		node.getChildren().add(temporalMedialayoutContainer);
-		
-		node.getChildren().add(imageView);
-		node.getChildren().add(mediaNameConatiner);
+		node.widthProperty().addListener(new ChangeListener(){
+			@Override 
+	        public void changed(ObservableValue o,Object oldVal, Object newVal){
+				imageView.setFitWidth((double) newVal);
+			}
+	    });
+
+		node.setLeft(imageView);
+		node.setBottom(mediaNameContainer);
 		
 		
 	}
@@ -222,11 +232,11 @@ public class TemporalMediaInterface {
 		this.endData = endData;
 	}
 
-	public VBox getNode() {
+	public BorderPane getNode() {
 		return node;
 	}
 
-	public void setNode(VBox node) {
+	public void setNode(BorderPane node) {
 		this.node = node;
 	}
 

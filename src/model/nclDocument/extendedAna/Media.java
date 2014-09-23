@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javafx.scene.CacheHint;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import model.repository.VideoFrame;
@@ -37,6 +38,7 @@ public class Media extends NCLMedia<NCLElement, Area, NCLProperty, NCLLayoutDesc
 	private static final long serialVersionUID = -5591863977937952316L;
 	private static final int DIVISOR = 1000000;
 	private static int IMAGE_THUMBNAIL_WIDTH = 70;
+	private static int ICON_WIDTH = 40;
     
     private String name, path;
     private NCLMediaType type;
@@ -56,7 +58,7 @@ public class Media extends NCLMedia<NCLElement, Area, NCLProperty, NCLLayoutDesc
 	   this.mediaFile = mediaFile;
        name = mediaFile.getAbsoluteFile().getName();
        path = mediaFile.getAbsolutePath();
-       type = identifyType();
+       type = getRepoMediaType();
        try {
            icon = generateMediaIcon();
        } catch (InterruptedException ex) {
@@ -93,15 +95,24 @@ public ImageView generateMediaIcon() throws InterruptedException {
                
            case AUDIO:
                icon = new ImageView(new Image(getClass().getResourceAsStream("/gui/images/audio.png")));
+               icon.setPreserveRatio(true);
+               icon.setSmooth(true);
+               icon.setFitWidth(ICON_WIDTH);
                break; 
            
            case TEXT:
                icon = new ImageView(new Image(getClass().getResourceAsStream("/gui/images/text.png")));
+               icon.setPreserveRatio(true);
+               icon.setSmooth(true);
+               icon.setFitWidth(ICON_WIDTH);
                break;
                    
            case OTHER:
            case PROCEDURAL:
                icon = new ImageView(new Image(getClass().getResourceAsStream("/gui/images/others.png")));
+               icon.setPreserveRatio(true);
+               icon.setSmooth(true);
+               icon.setFitWidth(ICON_WIDTH);
                break;                
        }
        
@@ -109,7 +120,7 @@ public ImageView generateMediaIcon() throws InterruptedException {
                   
    }
    
-   public NCLMediaType identifyType() {
+   public NCLMediaType getRepoMediaType() {
        String ext = "";
        int pos;
        

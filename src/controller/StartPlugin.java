@@ -24,12 +24,14 @@ import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.chart.StackedBarChart;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.Tab;
@@ -57,6 +59,7 @@ import model.nclDocument.extendedAna.Area;
 import model.nclDocument.extendedAna.Doc;
 import model.nclDocument.extendedAna.Media;
 import model.presentationPlan.PresentationPlan;
+import model.temporalView.TemporalMediaInfo;
 import model.temporalView.TemporalView;
 import model.utility.htg.HtgUtil;
 import model.utility.ncl.BindUtil;
@@ -79,6 +82,7 @@ import br.uff.midiacom.ana.util.ElementList;
 import br.uff.midiacom.ana.util.enums.NCLDefaultConditionRole;
 import br.uff.midiacom.ana.util.enums.NCLEventAction;
 import br.uff.midiacom.ana.util.enums.NCLEventType;
+import br.uff.midiacom.ana.util.enums.NCLMediaType;
 import br.uff.midiacom.ana.util.exception.XMLException;
 
 /**
@@ -87,6 +91,7 @@ import br.uff.midiacom.ana.util.exception.XMLException;
  */
 public class StartPlugin extends JInternalFrame {
     
+	private static final int CHANNEL_WIDTH = 160;
 	private static final long serialVersionUID = 1177049012114416958L;
 	private static final String EDITOR_TITLE = "STVEN";
 	static StartPlugin start;
@@ -102,8 +107,9 @@ public class StartPlugin extends JInternalFrame {
     BorderPane temporalViewPane;
     TabPane temporalViewTabPane;
     TabPane repoPropAnimTabPane;
-    TemporalChainPane temporalChainPane;
-    SplitPane temporalChaiChannelSplitPane;
+    TemporalChainPane videoTemporalChain;
+    TemporalChainPane audioTemporalChain;
+    VBox temporalChainPane;
     Repository repository;
     SpatialViewPane spatialViewPanel;
     SplitPane splitPaneRepoSpatial, splitPane;
@@ -127,8 +133,8 @@ public class StartPlugin extends JInternalFrame {
    
    private void openNCLDocument() throws XMLException {
 	   nclDoc = new Doc();
-	   nclDoc.loadXML(new File("C:\\Users\\UFF\\Workspace\\STVEN\\stven\\NCL Documents\\musica\\musicAd.ncl"));
-//     nclDoc.loadXML(new File("C:\\Users\\Douglas\\Workspace\\STVEN\\NCL Documents\\apresentacao\\ex.ncl"));
+	   nclDoc.loadXML(new File("C:\\Users\\Douglas\\Workspace\\STVEN\\stven\\NCL Documents\\musica\\musicAd.ncl"));
+	   //nclDoc.loadXML(new File("C:\\Users\\Douglas\\Workspace\\STVEN\\stven\\NCL Documents\\apresentacao\\ex.ncl"));
    }
    
    
@@ -549,73 +555,133 @@ private String getAttributionValue(NCLLink link, NCLBind bind) {
    
    @SuppressWarnings({ "unchecked", "rawtypes" })
 private void createTemporalViewPane(){
-	   
-	   Tab temporalViewTab = new Tab("teste tab");
-	   
+	    
 	   temporalViewPane = new BorderPane();
-	   
-	   temporalChaiChannelSplitPane = new SplitPane();
-	   temporalChaiChannelSplitPane.setId("temporal-split-pane");
-	   temporalChaiChannelSplitPane.getStylesheets().add("gui/styles/temporalViewPane.css");
-	   temporalChaiChannelSplitPane.setDividerPositions(0);
+	   temporalViewPane.setId("temporal-view-pane");
+	  
 	   //TODO implementar zoom setando valores para scale usando o listener so scrollbar Scale scaleTransform = new Scale(5, 5, 0, 0);
 	   //temporalChaiChannelPane.getTransforms().add(scaleTransform);
 	    
-       VBox channelPane = new VBox();
-       channelPane.setId("channel-pane");
-       channelPane.setMinWidth(35);
-       channelPane.getStylesheets().add("gui/styles/temporalViewPane.css");
-              
-       temporalChainPane = new TemporalChainPane(temporalView.getMainMediaInfoList(), channelPane);
-       temporalChainPane.setHorizontalGridLinesVisible(false);
-       temporalChainPane.getStylesheets().add("gui/styles/temporalViewPane.css");
+       List<TemporalMediaInfo> audioTemporalMediainfoList = new ArrayList<TemporalMediaInfo>();
+       List<TemporalMediaInfo> videoTemporalMediainfoList = new ArrayList<TemporalMediaInfo>();
        
+       for(int mediaInfoIndex=0; mediaInfoIndex<this.temporalView.getMainMediaInfoList().size(); mediaInfoIndex++){
+    	   
+    	   TemporalMediaInfo temporalMediaInfo = this.temporalView.getMainMediaInfoList().get(mediaInfoIndex);
+    	   Media media = temporalMediaInfo.getMedia();
+    	   media.setPath(media.getMediaAbsolutePath());
+    	   NCLMediaType mediaType = media.getRepoMediaType();
+    	   if(mediaType == NCLMediaType.AUDIO){
+    		   audioTemporalMediainfoList.add(temporalMediaInfo);
+		   } else {
+			   videoTemporalMediainfoList.add(temporalMediaInfo);
+       	   }
+       	
+       }
+   
+       videoTemporalChain = new TemporalChainPane(videoTemporalMediainfoList);       
+       audioTemporalChain = new TemporalChainPane(audioTemporalMediainfoList);
+       audioTemporalChain.setXAxisTickLabelsVisible(false);
+       audioTemporalChain.setXAxisTickLength(-1);
+       
+       final StackedBarChart<Number, String> videoTemporalChainChart = videoTemporalChain.getStackedBarChart();
+       final StackedBarChart<Number, String> audioTemporalChainChart = audioTemporalChain.getStackedBarChart();
+
+       
+       if(videoTemporalChain.getLastMediaTime() > audioTemporalChain.getLastMediaTime()){
+    	   videoTemporalChain.setXAxisLength(videoTemporalChain.getLastMediaTime());
+    	   audioTemporalChain.setXAxisLength(videoTemporalChain.getLastMediaTime());
+       }else{
+    	   videoTemporalChain.setXAxisLength(audioTemporalChain.getLastMediaTime());
+    	   audioTemporalChain.setXAxisLength(audioTemporalChain.getLastMediaTime());
+       }
+
        final Label channelPaneTitle = new Label("Channels");
        final Label videoChannelLabel = new Label("Video");
        final Label audioChannelLabel = new Label("Audio");
 
        channelPaneTitle.setId("channel-pane-title");
-       channelPaneTitle.getStylesheets().add("gui/styles/temporalViewPane.css");
-
-       videoChannelLabel.setPrefHeight(temporalChainPane.getVideoLineNumber()*temporalChainPane.getLineGap());
+       channelPaneTitle.setPrefWidth(CHANNEL_WIDTH);
        videoChannelLabel.setId("video-channel-label");
-       videoChannelLabel.getStylesheets().add("gui/styles/temporalViewPane.css");
-     
-       audioChannelLabel.setPrefHeight(temporalChainPane.getAudioLineNumber()*temporalChainPane.getLineGap());
+       videoChannelLabel.setPrefWidth(CHANNEL_WIDTH);
+       VBox videoTitleChannelContainer = new VBox();
+       videoTitleChannelContainer.getChildren().add(channelPaneTitle);
+       videoTitleChannelContainer.getChildren().add(videoChannelLabel);
        audioChannelLabel.setId("audio-channel-label");
-       audioChannelLabel.getStylesheets().add("gui/styles/temporalViewPane.css");
+       audioChannelLabel.setPrefWidth(CHANNEL_WIDTH);
+       VBox audioTitleChannelContainer = new VBox();
+       audioTitleChannelContainer.getChildren().add(audioChannelLabel);
        
-       channelPane.widthProperty().addListener(new ChangeListener(){
+       
+       videoTemporalChainChart.heightProperty().addListener(new ChangeListener(){
            @Override 
            public void changed(ObservableValue o,Object oldVal, Object newVal){
-        	   channelPaneTitle.setPrefWidth((double) newVal);
-        	   videoChannelLabel.setPrefWidth((double) newVal);
-        	   audioChannelLabel.setPrefWidth((double) newVal);
+        	   videoChannelLabel.setPrefHeight((double) newVal);
            }
-         });
-       
-       channelPane.heightProperty().addListener(new ChangeListener(){
+         }); 
+       audioTemporalChainChart.heightProperty().addListener(new ChangeListener(){
            @Override 
            public void changed(ObservableValue o,Object oldVal, Object newVal){
-        	   //audioChannelLabel.setPrefHeight(temporalChainPane.getAudioLineNumber()*temporalChainPane.getLineGap());
+        	   audioChannelLabel.setPrefHeight((double) newVal);
+           }
+         }); 
+      
+       HBox audioTemporalChainChartAndChannelTitlePane = new HBox();
+       audioTemporalChainChartAndChannelTitlePane.setId("temporal-chain-audio-pane");
+       audioTemporalChainChartAndChannelTitlePane.getChildren().add(audioTitleChannelContainer);
+       audioTemporalChainChartAndChannelTitlePane.getChildren().add(audioTemporalChainChart);
+      
+       HBox videoTemporalChainChartAndChannelTitlePane = new HBox();
+       videoTemporalChainChartAndChannelTitlePane.setId("temporal-chain-video-pane");
+       videoTemporalChainChartAndChannelTitlePane.getChildren().add(videoTitleChannelContainer);
+       videoTemporalChainChartAndChannelTitlePane.getChildren().add(videoTemporalChainChart);
+       
+       videoTemporalChainChartAndChannelTitlePane.widthProperty().addListener(new ChangeListener(){
+           @Override 
+           public void changed(ObservableValue o,Object oldVal, Object newVal){
+        	   videoTemporalChainChart.setPrefWidth((double) newVal - 160);
            }
          });
+       audioTemporalChainChartAndChannelTitlePane.widthProperty().addListener(new ChangeListener(){
+           @Override 
+           public void changed(ObservableValue o,Object oldVal, Object newVal){
+        	   audioTemporalChainChart.setPrefWidth((double) newVal - 160);
+           }
+         }); 
+      
        
-       channelPane.getChildren().add(channelPaneTitle);
-       channelPane.getChildren().add(videoChannelLabel);
-       channelPane.getChildren().add(audioChannelLabel);
-
-       temporalChaiChannelSplitPane.getItems().addAll(channelPane,temporalChainPane);
+       temporalChainPane = new VBox();
+       temporalChainPane.setId("temporal-chain-pane");
+       temporalChainPane.getChildren().add(videoTemporalChainChartAndChannelTitlePane);
+       temporalChainPane.getChildren().add(audioTemporalChainChartAndChannelTitlePane);
+      
        
+       ScrollPane temporalChainScrollPane = new ScrollPane();
+       temporalChainScrollPane.setContent(temporalChainPane);
+       temporalChainScrollPane.setId("scroll-pane");
+       
+       temporalChainScrollPane.widthProperty().addListener(new ChangeListener(){
+           @Override 
+           public void changed(ObservableValue o,Object oldVal, Object newVal){
+        	   temporalChainPane.setPrefWidth((double) newVal - 20);
+           }
+         }); 
+       temporalChainScrollPane.heightProperty().addListener(new ChangeListener(){
+           @Override 
+           public void changed(ObservableValue o,Object oldVal, Object newVal){
+        	   temporalChainPane.setPrefHeight((double) newVal - 4);
+           }
+         }); 
+           
        temporalViewTabPane = new TabPane();
-       temporalViewTab.setId("temporal-view-tab-pane");
        temporalViewTabPane.getStylesheets().add("gui/styles/temporalViewPane.css");
        
        //TODO colocar um for aqui para diversas temporalChainPane
 	   Tab tab = new Tab();
        tab.setText("Temporal Chain 1");
        tab.setId("tab");
-       tab.setContent(temporalChaiChannelSplitPane);
+       tab.setContent(temporalChainScrollPane);
+       tab.setClosable(false);
        
        temporalViewTabPane.getTabs().add(tab);
       
@@ -639,12 +705,13 @@ private void createTemporalViewPane(){
    }
 
 private void createDragAndDropEvent() {
-	temporalChaiChannelSplitPane.setOnDragDone(new EventHandler<DragEvent>(){
-
-		@Override
+	
+	temporalChainPane.setOnDragDropped(new EventHandler<DragEvent>() {
+		
 		public void handle(DragEvent event) {
-			System.out.println("DONE");
-//			Dragboard dragBoard = event.getDragboard();
+			
+			System.out.println("DROPPED");
+//	        Dragboard dragBoard = event.getDragboard();
 //	        boolean success = false;
 //	        if (dragBoard.hasFiles()) {
 //	           //TODO Criar o nó NCL correspondente à mídia arrastada para a temporal View.
@@ -659,40 +726,13 @@ private void createDragAndDropEvent() {
 //	           success = true;
 //	           
 //	        }
-//	        
+//		        
 //	        event.setDropCompleted(success);
 //	        
 //	        event.consume();
-			
 		}
-		   
-	   });
-	   
-	   temporalChaiChannelSplitPane.setOnDragDropped(new EventHandler<DragEvent>() {
-		    public void handle(DragEvent event) {
-		        
-		    	System.out.println("DROPPED");
-//		        Dragboard dragBoard = event.getDragboard();
-//		        boolean success = false;
-//		        if (dragBoard.hasFiles()) {
-//		           //TODO Criar o nó NCL correspondente à mídia arrastada para a temporal View.
-//		        	
-//		        	Media media = new Media(dragBoard.getFiles().get(0));
-//		        	
-//		        	TemporalMediaInfo mediaInfo = new TemporalMediaInfo("teste",0.0,5.0, media);
-//				 	temporalView.getMainMediaInfoList().add(mediaInfo);
-//				 	temporalChainPane = new TemporalChainPane(temporalView.getMainMediaInfoList());
-//				 	sp.setContent(temporalChainPane);   
-//				 	
-//		           success = true;
-//		           
-//		        }
-//		        
-//		        event.setDropCompleted(success);
-//		        
-//		        event.consume();
-		     }
-		});
+	});
+	
 }
    
    private void createRepositoryPane(){
@@ -777,15 +817,15 @@ private void createDragAndDropEvent() {
                }
            });
        MenuItem menuItemImportNCL = new MenuItem("Import NCL Document...");
-       menuItemSave.setAccelerator(KeyCombination.keyCombination("Ctrl+I"));
-       menuItemSave.setOnAction(new EventHandler<ActionEvent>() {
+       menuItemImportNCL.setAccelerator(KeyCombination.keyCombination("Ctrl+I"));
+       menuItemImportNCL.setOnAction(new EventHandler<ActionEvent>() {
     	   public void handle(ActionEvent t) {
     		   //TODO implmentar botão
                }
            });
        MenuItem menuItemExportNCL = new MenuItem("Export to NCL Document...");
-       menuItemSave.setAccelerator(KeyCombination.keyCombination("Ctrl+E"));
-       menuItemSave.setOnAction(new EventHandler<ActionEvent>() {
+       menuItemExportNCL.setAccelerator(KeyCombination.keyCombination("Ctrl+E"));
+       menuItemExportNCL.setOnAction(new EventHandler<ActionEvent>() {
     	   public void handle(ActionEvent t) {
     		   //TODO implmentar botão
                }
@@ -888,20 +928,22 @@ private void createDragAndDropEvent() {
 	   repoPropAnimTabPane.setId("repo-prop-anim-view-tab-pane");
 	   repoPropAnimTabPane.getStylesheets().add("gui/styles/spatialViewPane.css");
        
-       //TODO colocar um for aqui para diversas temporalChainPane
 	   Tab mediaTab = new Tab();
 	   mediaTab.setText("Media");
 	   mediaTab.setId("media-tab");
 	   mediaTab.setContent(repository.getRepositoryPanel());
+	   mediaTab.setClosable(false);
        
        Tab propTab = new Tab();
        propTab.setText("Properties");
        propTab.setId("prop-tab");
+       propTab.setClosable(false);
        //TODO tela de propriedades propTab.setContent(repository.getRepositoryPanel());
        
        Tab animTab = new Tab();
        animTab.setText("Animations");
        animTab.setId("anim-tab");
+       animTab.setClosable(false);
        //TODO tela de animações animTab.setContent(repository.getRepositoryPanel());
        
        repoPropAnimTabPane.getTabs().addAll(mediaTab, propTab, animTab);

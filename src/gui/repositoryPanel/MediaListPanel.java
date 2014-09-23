@@ -7,10 +7,9 @@ import java.util.Observer;
 
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
-import javafx.geometry.Pos;
-import javafx.scene.Node;
-import javafx.scene.control.Label;
+import javafx.scene.CacheHint;
 import javafx.scene.control.SplitPane;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.DragEvent;
@@ -22,6 +21,7 @@ import javafx.scene.layout.FlowPane;
 import model.nclDocument.extendedAna.Media;
 import model.repository.ListUpdateOperation;
 import model.repository.MediaList;
+import br.uff.midiacom.ana.util.enums.NCLMediaType;
 
 /**
  *
@@ -29,7 +29,9 @@ import model.repository.MediaList;
  */
 public class MediaListPanel extends FlowPane implements Observer {
     
-	private static final int TEXT_LABEL_WITDH = 100;
+	private static final double DRAG_IMAGE_OPACITY = 0.3;
+	private static int IMAGE_THUMBNAIL_WIDTH = 70;
+	private static int ICON_WIDTH = 40;
 	private final int ADD = 1;
 	private final int REMOVE = 2;
 	private final int CLEAR = 3;
@@ -82,28 +84,15 @@ public class MediaListPanel extends FlowPane implements Observer {
 
 	private BorderPane createRepositoryMediaItem(Media media) {
 		
-		final File mediaFile = media.getMediaFile();
-		final ImageView mediaIcon = media.getMediaIcon();
-		
-		BorderPane repositoryMediaItemContainer = new BorderPane();
-		repositoryMediaItemContainer.setCenter(media.getMediaIcon());
-		repositoryMediaItemContainer.setId("repo-media-item-container");
-		
-		Label label = new Label(media.getName());
-		label.setId("label-media-item");
-		label.setPrefWidth(TEXT_LABEL_WITDH);
-		label.setAlignment(Pos.CENTER);
-		repositoryMediaItemContainer.setBottom(label);
+		RepositoryMediaItemContainer repositoryMediaItemContainer = new RepositoryMediaItemContainer(media, this);
 	    
-		createListenerEventMediaItem(repositoryMediaItemContainer);
-		createDragDropEffect(mediaFile, mediaIcon, repositoryMediaItemContainer);
+		createDragDropEffect(media, repositoryMediaItemContainer);
 		
-	    
 		return repositoryMediaItemContainer;
 	
 	}
 
-	private void createDragDropEffect(final File mediaFile, final ImageView mediaIcon, final BorderPane repositoryMediaItemContainer) {
+	private void createDragDropEffect(final Media media, final RepositoryMediaItemContainer repositoryMediaItemContainer) {
 		
 		final BorderPane borderPane = (BorderPane) getScene().getRoot();
 		final SplitPane sp = (SplitPane) borderPane.getCenter();
@@ -114,11 +103,13 @@ public class MediaListPanel extends FlowPane implements Observer {
 	        @Override
 	        public void handle(MouseEvent mouseEvent) {
 	        	
-	        	dragImage = new ImageView(mediaIcon.getImage());
-	        	dragImage.setFitHeight(70);
-	        	dragImage.setFitWidth(70);
+	        	RepositoryMediaItemContainer source = (RepositoryMediaItemContainer) mouseEvent.getSource();
+	        	Image selectedImage = source.getMedia().getMediaIcon().getImage();
+	        	dragImage = new ImageView(selectedImage);
+	        	dragImage.setFitHeight(IMAGE_THUMBNAIL_WIDTH);
+	        	dragImage.setFitWidth(IMAGE_THUMBNAIL_WIDTH);
 		        dragImage.setPreserveRatio(true);
-				dragImage.setOpacity(0.3);
+				dragImage.setOpacity(DRAG_IMAGE_OPACITY);
 	        	
 	        }
 	    });
@@ -128,9 +119,17 @@ public class MediaListPanel extends FlowPane implements Observer {
 			@Override
 			public void handle(DragEvent event) {
 			
+				RepositoryMediaItemContainer source = (RepositoryMediaItemContainer) event.getGestureSource();
+				NCLMediaType mediaType = source.getMedia().getRepoMediaType();
+				
 				dragImage.setVisible(true);
-				dragImage.setFitHeight(70);
-		        dragImage.setFitWidth(70);
+	        	if(mediaType == NCLMediaType.IMAGE || mediaType == NCLMediaType.VIDEO){
+	        		dragImage.setFitHeight(IMAGE_THUMBNAIL_WIDTH);
+		        	dragImage.setFitWidth(IMAGE_THUMBNAIL_WIDTH);
+	        	} else {
+	        		dragImage.setFitHeight(ICON_WIDTH);
+		        	dragImage.setFitWidth(ICON_WIDTH);
+	        	}
 				dragImage.relocate(event.getSceneX() - dragImage.getBoundsInLocal().getWidth() / 2, event.getSceneY() - dragImage.getBoundsInLocal().getHeight() / 2);
 				borderPane.getChildren().add(dragImage);
 			
@@ -162,24 +161,15 @@ public class MediaListPanel extends FlowPane implements Observer {
                dragEvent.consume();
 	        }  
 	    });
-		
-		temporalViewPane.setOnDragDone(new EventHandler<DragEvent>() {
-			
-			public void handle(DragEvent dragEvent) {
-
-        	   borderPane.getChildren().remove(dragImage);
-	        
-			}  
-	    });
-		
+				
 		repositoryMediaItemContainer.setOnDragDetected(new EventHandler<MouseEvent>() {
 
 			@Override
 			public void handle(MouseEvent mouseEvent) {
 			
 		        Dragboard dragBoard = repositoryMediaItemContainer.startDragAndDrop(TransferMode.COPY);
-		        
 		        ClipboardContent content = new ClipboardContent();
+		        RepositoryMediaItemContainer source = (RepositoryMediaItemContainer) mouseEvent.getSource();
 		        
 //		        //TODO Tentar passar o objeto Media
 //		        Teste teste = new Teste("Name");
@@ -187,7 +177,7 @@ public class MediaListPanel extends FlowPane implements Observer {
 //		        content.put(dataFormat, teste);
 		        
 		        ArrayList<File> fileList = new ArrayList<File>();
-		        fileList.add(mediaFile);
+		        fileList.add(source.getMedia().getMediaFile());
 		        content.putFiles(fileList);
 		        
 		        dragBoard.setContent(content);
@@ -196,49 +186,6 @@ public class MediaListPanel extends FlowPane implements Observer {
 				
 			}
        });
-		
-		
-		
-		
 	}
 
-	private void createListenerEventMediaItem( final BorderPane repositoryMediaItemContainer) {
-		
-		repositoryMediaItemContainer.setOnMouseEntered(new EventHandler<MouseEvent>() {
-	        @Override
-	        public void handle(MouseEvent e) {
-	        	boolean itemClicked = repositoryMediaItemContainer.getStylesheets().contains("gui/styles/mouseClickedMediaItem.css");
-	        	if(!itemClicked){
-	        		repositoryMediaItemContainer.getStylesheets().add("gui/styles/mouseEnteredMediaItem.css");
-	        	}
-	        	
-	        }
-	    });
-		
-		repositoryMediaItemContainer.setOnMouseExited(new EventHandler<MouseEvent>() {
-	        @Override
-	        public void handle(MouseEvent e) {
-	        	repositoryMediaItemContainer.getStylesheets().remove("gui/styles/mouseEnteredMediaItem.css");
-	        }
-	    });
-		
-		repositoryMediaItemContainer.setOnMouseClicked(new EventHandler<MouseEvent>() {
-	        @Override
-	        public void handle(MouseEvent e) {
-	        	repositoryMediaItemContainer.getStylesheets().add("gui/styles/mouseClickedMediaItem.css");
-	        	
-	        	for(Node media : getChildren()){
-	        		
-	        		BorderPane repoMediaItemContainer = (BorderPane) media;
-	        		
-	        		if(!repositoryMediaItemContainer.equals(repoMediaItemContainer)){
-	        			repoMediaItemContainer.getStylesheets().remove("gui/styles/mouseClickedMediaItem.css");
-	        		}
-	        		
-	        	}
-	        }
-	    });
-		
-	}
-	
 }

@@ -7,17 +7,17 @@
     -fx-padding: 3px 50px 3px 50px;
 }
 #video-channel-label{
-    -fx-font: 16px "Sertig";
+    -fx-font: 14px "Sertig";
     -fx-background-color: #2ec4ff;
     -fx-alignment: center;
     -fx-border-width: 1px 0px 0px 0px;
     -fx-border-color: lightgray;
 }
 #audio-channel-label{
-	-fx-font: 16px "Sertig";
+	-fx-font: 14px "Sertig";
     -fx-background-color: #2ec4ff;
     -fx-alignment: center;
-	-fx-border-width: 1px 0px 3px 0px;
+	-fx-border-width: 1px 0px 0px 0px;
     -fx-border-color: lightgray;
 }
 #tab{
@@ -41,24 +41,40 @@
 	
 }
 .chart-content{
-	-fx-padding: -6px -5px -15px -18px;
+	-fx-padding: -6px -5px 0px -9px;
 	-fx-font: 16px "Sertig";
 }
 .axis {
     -fx-tick-label-fill: black;
     -fx-font: 12px "Sertig";
     -fx-background-color: #0069d1;
-    -fx-tick-length: 10px;
 }
 .chart-bar {
-	-fx-pref-tile-height: 50px;
 	-fx-background-color: #2ec4ff;
-	-fx-border-color: lightgray;
-	-fx-border-width: 1px;
 }
 #media-name-container{
 	-fx-background-color: lightgray;
 }
 #media-name{
 	 -fx-font: 10px "Sertig";
+}
+#temporal-chain-video-pane{
+	/*-fx-border-width: 2px 2px 2px 2px;
+    -fx-border-color: yellow;*/
+}
+#temporal-chain-pane{
+	/*-fx-border-width: 2px 2px 2px 2px;
+    -fx-border-color: black;*/
+}
+#p-teste{
+	/*-fx-border-width: 2px 2px 2px 2px;
+    -fx-border-color: red;*/
+}
+#scroll-pane{
+	/*-fx-border-width: 2px 2px 2px 2px;
+    -fx-border-color: red;*/
+}
+#temporal-split-pane{
+	/*-fx-border-width: 2px 2px 2px 2px;
+    -fx-border-color: blue;*/
 }
