@@ -7,7 +7,6 @@ import java.util.Observer;
 
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
-import javafx.scene.CacheHint;
 import javafx.scene.control.SplitPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -18,9 +17,13 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
-import model.nclDocument.extendedAna.Media;
+import model.NCLSupport.extendedAna.Media;
 import model.repository.ListUpdateOperation;
 import model.repository.MediaList;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import br.uff.midiacom.ana.util.enums.NCLMediaType;
 
 /**
@@ -29,6 +32,7 @@ import br.uff.midiacom.ana.util.enums.NCLMediaType;
  */
 public class MediaListPanel extends FlowPane implements Observer {
     
+	final Logger logger = LoggerFactory.getLogger(MediaListPanel.class);
 	private static final double DRAG_IMAGE_OPACITY = 0.3;
 	private static int IMAGE_THUMBNAIL_WIDTH = 70;
 	private static int ICON_WIDTH = 40;
@@ -131,7 +135,11 @@ public class MediaListPanel extends FlowPane implements Observer {
 		        	dragImage.setFitWidth(ICON_WIDTH);
 	        	}
 				dragImage.relocate(event.getSceneX() - dragImage.getBoundsInLocal().getWidth() / 2, event.getSceneY() - dragImage.getBoundsInLocal().getHeight() / 2);
-				borderPane.getChildren().add(dragImage);
+				try{
+					borderPane.getChildren().add(dragImage);
+				}catch(IllegalArgumentException e){
+					logger.debug("Objeto imagem representando o evento Drag da mídia.");
+				}
 			
 			}
 			

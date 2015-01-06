@@ -6,7 +6,7 @@ import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import model.nclDocument.extendedAna.Media;
+import model.NCLSupport.extendedAna.Media;
 
 /**
  *

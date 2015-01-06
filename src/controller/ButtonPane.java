@@ -12,7 +12,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.HBox;
 import javafx.stage.FileChooser;
-import model.nclDocument.extendedAna.Media;
+import model.NCLSupport.extendedAna.Media;
 import model.repository.MediaList;
 import model.repository.MediaTree;
 

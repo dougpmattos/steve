@@ -2,7 +2,7 @@ package gui.repositoryPanel;
 
 import javafx.scene.control.Label;
 import javafx.scene.control.TreeCell;
-import model.nclDocument.extendedAna.Media;
+import model.NCLSupport.extendedAna.Media;
 
 public class TreeCellFactory extends TreeCell<Object> {
 	

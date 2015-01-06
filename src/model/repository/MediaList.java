@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Observable;
 
-import model.nclDocument.extendedAna.Media;
+import model.NCLSupport.extendedAna.Media;
 
 /**
  *

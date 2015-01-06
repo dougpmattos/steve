@@ -1,29 +1,23 @@
 package controller;
 	
-import java.io.IOException;
-
-import javax.swing.JOptionPane;
-import javax.swing.SwingUtilities;
-
-import br.uff.midiacom.ana.util.exception.XMLException;
+import javafx.application.Application;
+import javafx.stage.Stage;
 
 
-public class Main {
+public class Main extends Application{
 	
-	public static void main(String[] args)  {
+	public static void main(String[] args) {
+		launch();
+	}
+
+	@Override
+	public void start(Stage stage) throws Exception {
 		
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                try {
-					@SuppressWarnings("unused")
-					StartPlugin startPlugin = new StartPlugin();
-				} catch (XMLException | IOException e) {
-					JOptionPane.showMessageDialog(null, "Error opening NCL document.");
-				}
-            }
-        });
-        
-    }
+		stage.setScene(new Stve());
+		stage.setTitle("STVE-HD");
+		stage.setFullScreen(true);
+		stage.show();
+
+	}
 
 }

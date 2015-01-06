@@ -4,10 +4,10 @@ package model.temporalView;
 import java.util.ArrayList;
 import java.util.List;
 
-import model.htgConstruction.HTGVertice;
-import model.nclDocument.MediaList;
-import model.presentationPlan.PresentationPlan;
-import model.utility.htg.HtgUtil;
+import model.NCLSupport.HTG.HTGVertice;
+import model.NCLSupport.NCLDocument.MediaList;
+import model.NCLSupport.presentationPlan.PresentationPlan;
+import model.NCLSupport.utility.HtgUtil;
 import br.uff.midiacom.ana.util.enums.NCLEventAction;
 import br.uff.midiacom.ana.util.enums.NCLEventType;
 import br.uff.midiacom.ana.util.exception.XMLException;

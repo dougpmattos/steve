@@ -1,6 +1,6 @@
 package model.repository;
 
-import model.nclDocument.extendedAna.Media;
+import model.NCLSupport.extendedAna.Media;
 
 public class ListUpdateOperation {
 	

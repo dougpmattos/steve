@@ -1,7 +1,7 @@
 
 package model.temporalView;
 
-import model.nclDocument.extendedAna.Media;
+import model.NCLSupport.extendedAna.Media;
 
 /**
  *

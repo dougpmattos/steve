@@ -6,7 +6,7 @@ import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
-import model.nclDocument.extendedAna.Media;
+import model.NCLSupport.extendedAna.Media;
 
 public class RepositoryMediaItemContainer extends BorderPane{
 	
