@@ -1,7 +1,6 @@
 package model.repository;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Observable;
 
 import model.NCLSupport.extendedAna.Media;
@@ -15,14 +14,15 @@ public class MediaList extends Observable {
     private static final int ADD = 1;
     private static final int REMOVE = 2;
     private static final int CLEAR = 3;
-    
-	public static final ArrayList<Media> images = new ArrayList<Media>();
-    public static final ArrayList<Media> video = new ArrayList<Media>();
-    public static final ArrayList<Media> audio = new ArrayList<Media>();
-    public static final ArrayList<Media> text = new ArrayList<Media>();
-    public static final ArrayList<Media> others = new ArrayList<Media>();
-    public static final ArrayList<Media> allTypes = new ArrayList<Media>();
+    	
+    private static final ArrayList<Media> images = new ArrayList<Media>();
+    private static final ArrayList<Media> video = new ArrayList<Media>();
+    private static final ArrayList<Media> audio = new ArrayList<Media>();
+    private static final ArrayList<Media> text = new ArrayList<Media>();
+    private static final ArrayList<Media> others = new ArrayList<Media>();
+    private static final ArrayList<Media> allTypes = new ArrayList<Media>();
 
+    
 	public void add(Media media) {
         allTypes.add(media);
         switch(media.getImportedMediaType()){
@@ -99,6 +99,10 @@ public class MediaList extends Observable {
         ListUpdateOperation listUpdateOperation = new ListUpdateOperation(CLEAR);
         notifyObservers(listUpdateOperation);
         
+    }
+    
+    public Boolean isEmpty(){
+    	return allTypes.isEmpty();
     }
     
     public ArrayList<Media> getAllTypesList(){

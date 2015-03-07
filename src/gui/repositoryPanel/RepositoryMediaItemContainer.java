@@ -14,12 +14,12 @@ public class RepositoryMediaItemContainer extends BorderPane{
 	
 	private Label label;
 	private Media media;
-	private MediaListPanel mediaListPanel;
+	private MediaListPane mediaListPane;
 
-	public RepositoryMediaItemContainer(Media media, MediaListPanel mediaListPanel){
+	public RepositoryMediaItemContainer(Media media, MediaListPane mediaListPane){
 		
 		this.media = media;
-		this.mediaListPanel = mediaListPanel;
+		this.mediaListPane = mediaListPane;
 		
 		setCenter(media.getMediaIcon());
 		setId("repo-media-item-container");
@@ -58,13 +58,15 @@ public class RepositoryMediaItemContainer extends BorderPane{
 	        @Override
 	        public void handle(MouseEvent e) {
 	        	RepositoryMediaItemContainer source = (RepositoryMediaItemContainer) e.getSource();
+	        	source.getMedia().setSelected(true);
 	        	getStylesheets().add("gui/styles/mouseClickedMediaItem.css");
 	        	
-	        	for(Node media : mediaListPanel.getChildren()){
+	        	for(Node media : mediaListPane.getChildren()){
 	        		
 	        		RepositoryMediaItemContainer repoMediaItemContainer = (RepositoryMediaItemContainer) media;
 	        		
 	        		if(!source.equals(repoMediaItemContainer)){
+	        			repoMediaItemContainer.getMedia().setSelected(false);
 	        			repoMediaItemContainer.getStylesheets().remove("gui/styles/mouseClickedMediaItem.css");
 	        		}
 	        		

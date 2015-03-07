@@ -1,0 +1,13 @@
+#button-pane{
+    -fx-background-color: #dbdbdb;
+    -fx-padding: -5;
+}
+#add-button {
+    -fx-graphic: url("../images/add.png");
+}
+#delete-button {
+    -fx-graphic: url("../images/delete.png");
+}
+#clear-button {
+    -fx-graphic: url("../images/clear.png");
+}

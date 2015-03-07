@@ -1,0 +1,39 @@
+#spatial-view-pane{
+	-fx-background-color: black;
+}
+#button-pane{
+    -fx-background-color: #dbdbdb;
+    -fx-padding: -5;
+}
+#full-button {
+    -fx-graphic: url("../images/full.png");
+}
+#previous-frame-button {
+    -fx-graphic: url("../images/pFrame.png");
+}
+#next-frame-button {
+    -fx-graphic: url("../images/nFrame.png");
+}
+#play-button {
+    -fx-graphic: url("../images/play.png");
+}
+#stop-button {
+    -fx-graphic: url("../images/stop.png");
+}
+#previous-scene-button {
+    -fx-graphic: url("../images/pScene.png");
+}
+#next-scene-button {
+    -fx-graphic: url("../images/nScene.png");
+}
+#refresh-button {
+    -fx-graphic: url("../images/refresh.png");
+}
+#full-pane{
+	 -fx-padding: 0px 50px 0.0px 20px;
+}
+#refresh-pane{
+	 -fx-padding: 0px 20px 0.0px 50px;
+}
+#center-button-pane{
+}

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<jnlp spec="1.0" xmlns:jfx="http://javafx.com" href="stve.jnlp">
+  <information>
+    <title>stve</title>
+    <vendor>Douglas</vendor>
+    <description>Sample JavaFX 2.0 application.</description>
+    <offline-allowed/>
+  </information>
+  <resources>
+    <jfx:javafx-runtime version="8.0+" href="http://javadl.sun.com/webapps/download/GetFile/javafx-latest/windows-i586/javafx2.jnlp"/>
+  </resources>
+  <resources>
+    <j2se version="1.6+" href="http://java.sun.com/products/autodl/j2se"/>
+    <jar href="stve.jar" size="435212" download="eager" />
+    <jar href="libs/jgraph.jar" size="168046" download="eager" />
+    <jar href="libs/jgrapht-jdk1.6.jar" size="245255" download="eager" />
+    <jar href="libs/junit-4.11.jar" size="245039" download="eager" />
+    <jar href="libs/slf4j-api-1.7.5.jar" size="26084" download="eager" />
+    <jar href="libs/slf4j-simple-1.7.5.jar" size="10680" download="eager" />
+    <jar href="libs/xuggle-xuggler-5.4.jar" size="40318152" download="eager" />
+  </resources>
+  <applet-desc  width="1200" height="800" main-class="com.javafx.main.NoJavaFXFallback"  name="STVE" >
+    <param name="requiredFXVersion" value="8.0+"/>
+  </applet-desc>
+  <jfx:javafx-desc  width="1200" height="800" main-class="controller.Main"  name="STVE" />
+  <update check="background"/>
+</jnlp>

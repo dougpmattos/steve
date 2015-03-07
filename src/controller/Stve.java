@@ -1,6 +1,7 @@
 
 package controller;
 
+import gui.repositoryPanel.RepositoryPanel;
 import gui.spatialViewPanel.SpatialViewPane;
 import gui.temporalViewPanel.TemporalChainPane;
 import gui.temporalViewPanel.ZoomButton;
@@ -94,49 +95,39 @@ import br.uff.midiacom.ana.util.exception.XMLException;
 public class Stve extends Scene {
     
 	private static final int DEFAULT_AXIS_LENGTH = 10;
-	private static final int CHANNEL_WIDTH = 160;
-	private static final long serialVersionUID = 1177049012114416958L;
-	private static final String EDITOR_TITLE = "STVEN";
-    Doc nclDoc;
-    MediaList mediaList;
-    AreaList areaList;
-    LinkList linkList;
-    ContextList contextList;
-    HypermediaTemporalGraph htg;
-    PresentationPlan presentationPlan;
-    TemporalView temporalView;
-    HTGVertice inputVertice = null,outputVertice = null;
-    BorderPane temporalViewPane;
-    TabPane temporalViewTabPane;
-    TabPane repoPropAnimTabPane;
-    TemporalChainPane videoTemporalChain;
-    TemporalChainPane audioTemporalChain;
-    VBox temporalChainPane;
-    Repository repository;
-    SpatialViewPane spatialViewPanel;
-    SplitPane splitPaneRepoSpatial, splitPane;
-    MenuBar menuBar;
-    int i = 0;
-    static BorderPane containerBorderPane = new BorderPane();
+    private Doc nclDoc;
+    private MediaList mediaList;
+    private AreaList areaList;
+    private LinkList linkList;
+    private ContextList contextList;
+    private HypermediaTemporalGraph htg;
+    private PresentationPlan presentationPlan;
+    private TemporalView temporalView;
+    private HTGVertice inputVertice = null,outputVertice = null;
+    private BorderPane temporalViewPane;
+    private  TabPane temporalViewTabPane;
+    private  TabPane repoPropAnimTabPane;
+    private  TemporalChainPane videoTemporalChain;
+    private  TemporalChainPane audioTemporalChain;
+    private  VBox temporalChainPane;
+    private  RepositoryPanel repository;
+    private  SpatialViewPane spatialViewPanel;
+    private SplitPane splitPaneRepoSpatial, splitPane;
+    private MenuBar menuBar;
+    private static BorderPane containerBorderPane = new BorderPane();
     
    public Stve() throws XMLException, IOException  {
        
 	   super(containerBorderPane);
 	   containerBorderPane.setPrefSize(1200, 620);
 	   
-       openNCLDocument();
-       collectDataForHTG();
-       constructHTG();
-       generatePresentationPlan();
-       
-       createTemporalView();
        createGUI();
        
    }
    
    private void openNCLDocument() throws XMLException {
 	   nclDoc = new Doc();
-	   nclDoc.loadXML(new File("C:\\Users\\Douglas\\Workspace\\STVEN\\stven\\NCL Documents\\musica\\musicAd.ncl"));
+	   nclDoc.loadXML(new File("NCL Documents/musica/musicAd.ncl"));
 	   //nclDoc.loadXML(new File("C:\\Users\\Douglas\\Workspace\\STVEN\\stven\\NCL Documents\\apresentacao\\ex.ncl"));
    }
    
@@ -568,21 +559,7 @@ private void createTemporalViewPane(){
        List<TemporalMediaInfo> audioTemporalMediainfoList = new ArrayList<TemporalMediaInfo>();
        List<TemporalMediaInfo> videoTemporalMediainfoList = new ArrayList<TemporalMediaInfo>();
        
-       if(temporalView != null){
-    	   for(int mediaInfoIndex=0; mediaInfoIndex<this.temporalView.getMainMediaInfoList().size(); mediaInfoIndex++){
-        	   
-        	   TemporalMediaInfo temporalMediaInfo = this.temporalView.getMainMediaInfoList().get(mediaInfoIndex);
-        	   Media media = temporalMediaInfo.getMedia();
-        	   media.setPath(media.getMediaAbsolutePath());
-        	   NCLMediaType mediaType = media.getRepoMediaType();
-        	   if(mediaType == NCLMediaType.AUDIO){
-        		   audioTemporalMediainfoList.add(temporalMediaInfo);
-    		   } else {
-    			   videoTemporalMediainfoList.add(temporalMediaInfo);
-           	   }
-           	
-           }
-       }
+       
    
        videoTemporalChain = new TemporalChainPane(videoTemporalMediainfoList);       
        audioTemporalChain = new TemporalChainPane(audioTemporalMediainfoList);
@@ -604,44 +581,12 @@ private void createTemporalViewPane(){
     	   audioTemporalChain.setXAxisLength(DEFAULT_AXIS_LENGTH);
        }
 
-       final Label channelPaneTitle = new Label("Channels");
-       final Label videoChannelLabel = new Label("Video");
-       final Label audioChannelLabel = new Label("Audio");
-
-       channelPaneTitle.setId("channel-pane-title");
-       channelPaneTitle.setPrefWidth(CHANNEL_WIDTH);
-       videoChannelLabel.setId("video-channel-label");
-       videoChannelLabel.setPrefWidth(CHANNEL_WIDTH);
-       VBox videoTitleChannelContainer = new VBox();
-       videoTitleChannelContainer.getChildren().add(channelPaneTitle);
-       videoTitleChannelContainer.getChildren().add(videoChannelLabel);
-       audioChannelLabel.setId("audio-channel-label");
-       audioChannelLabel.setPrefWidth(CHANNEL_WIDTH);
-       VBox audioTitleChannelContainer = new VBox();
-       audioTitleChannelContainer.getChildren().add(audioChannelLabel);
-       
-       
-       videoTemporalChainChart.heightProperty().addListener(new ChangeListener(){
-           @Override 
-           public void changed(ObservableValue o,Object oldVal, Object newVal){
-        	   videoChannelLabel.setPrefHeight((double) newVal);
-           }
-         }); 
-       audioTemporalChainChart.heightProperty().addListener(new ChangeListener(){
-           @Override 
-           public void changed(ObservableValue o,Object oldVal, Object newVal){
-        	   audioChannelLabel.setPrefHeight((double) newVal);
-           }
-         }); 
-      
        HBox audioTemporalChainChartAndChannelTitlePane = new HBox();
        audioTemporalChainChartAndChannelTitlePane.setId("temporal-chain-audio-pane");
-       audioTemporalChainChartAndChannelTitlePane.getChildren().add(audioTitleChannelContainer);
        audioTemporalChainChartAndChannelTitlePane.getChildren().add(audioTemporalChainChart);
       
        HBox videoTemporalChainChartAndChannelTitlePane = new HBox();
        videoTemporalChainChartAndChannelTitlePane.setId("temporal-chain-video-pane");
-       videoTemporalChainChartAndChannelTitlePane.getChildren().add(videoTitleChannelContainer);
        videoTemporalChainChartAndChannelTitlePane.getChildren().add(videoTemporalChainChart);
        
        videoTemporalChainChartAndChannelTitlePane.widthProperty().addListener(new ChangeListener(){
@@ -796,7 +741,7 @@ private void createDragAndDropEvent() {
 //	        Dragboard dragBoard = event.getDragboard();
 //	        boolean success = false;
 //	        if (dragBoard.hasFiles()) {
-//	           //TODO Criar o nó NCL correspondente à mídia arrastada para a temporal View.
+//	           //TODO Criar o nï¿½ NCL correspondente ï¿½ mï¿½dia arrastada para a temporal View.
 //	        	
 //	        	Media media = new Media(dragBoard.getFiles().get(0));
 //	        	
@@ -818,7 +763,7 @@ private void createDragAndDropEvent() {
 }
    
    private void createRepositoryPane(){
-       repository = new Repository();
+       repository = new RepositoryPanel();
    }
    
    private void createSpatialViewPane() {
@@ -858,7 +803,7 @@ private void createRepoPropAnimTabPane() {
 	   Tab mediaTab = new Tab();
 	   mediaTab.setText("Media");
 	   mediaTab.setId("media-tab");
-	   mediaTab.setContent(repository.getRepositoryPanel());
+	   mediaTab.setContent(repository);
 	   mediaTab.setClosable(false);
        
        Tab propTab = new Tab();
@@ -871,7 +816,7 @@ private void createRepoPropAnimTabPane() {
        animTab.setText("Animations");
        animTab.setId("anim-tab");
        animTab.setClosable(false);
-       //TODO tela de animações animTab.setContent(repository.getRepositoryPanel());
+       //TODO tela de animcoes animTab.setContent(repository.getRepositoryPanel());
        
        repoPropAnimTabPane.getTabs().addAll(mediaTab, propTab, animTab);
 }
@@ -911,97 +856,130 @@ private void createMenuBar() {
 	menuItemNew.setAccelerator(KeyCombination.keyCombination("Ctrl+N"));
 	menuItemNew.setOnAction(new EventHandler<ActionEvent>() {
 		public void handle(ActionEvent t) {
-			   //TODO implmentar botão
+			   //TODO implmentar botï¿½o
 	           }
 	       });
     MenuItem menuItemOpen = new MenuItem("Open Project...");
     menuItemOpen.setAccelerator(KeyCombination.keyCombination("Ctrl+O"));
     menuItemOpen.setOnAction(new EventHandler<ActionEvent>() {
 	    public void handle(ActionEvent t) {
-		   //TODO implmentar botão
+		   //TODO implmentar botï¿½o
            }
         });
     MenuItem menuItemClose = new MenuItem("Close");
     menuItemClose.setAccelerator(KeyCombination.keyCombination("Ctrl+W"));
     menuItemClose.setOnAction(new EventHandler<ActionEvent>() {
 	    public void handle(ActionEvent t) {
-		    //TODO implmentar botão
+		    //TODO implmentar botï¿½o
             }
         });
     MenuItem menuItemSave = new MenuItem("Save Project");
     menuItemSave.setAccelerator(KeyCombination.keyCombination("Ctrl+S"));
     menuItemSave.setOnAction(new EventHandler<ActionEvent>() {
 	    public void handle(ActionEvent t) {
-		    //TODO implmentar botão
+		    //TODO implmentar botï¿½o
             }
         });
     MenuItem menuItemImportNCL = new MenuItem("Import NCL Document...");
     menuItemImportNCL.setAccelerator(KeyCombination.keyCombination("Ctrl+I"));
     menuItemImportNCL.setOnAction(new EventHandler<ActionEvent>() {
 	    public void handle(ActionEvent t) {
-	 	    //TODO implmentar botão
-            }
-        });
+
+	        try {
+	        	
+				openNCLDocument();
+				collectDataForHTG();
+				constructHTG();
+	        	generatePresentationPlan();
+	        	createTemporalView();
+//	        	if(temporalView != null){
+//	         	   for(int mediaInfoIndex=0; mediaInfoIndex<this.temporalView.getMainMediaInfoList().size(); mediaInfoIndex++){
+//	             	   
+//	             	   TemporalMediaInfo temporalMediaInfo = this.temporalView.getMainMediaInfoList().get(mediaInfoIndex);
+//	             	   Media media = temporalMediaInfo.getMedia();
+//	             	   media.setPath(media.getMediaAbsolutePath());
+//	             	   NCLMediaType mediaType = media.getRepoMediaType();
+//	             	   if(mediaType == NCLMediaType.AUDIO){
+//	             		   audioTemporalMediainfoList.add(temporalMediaInfo);
+//	         		   } else {
+//	         			   videoTemporalMediainfoList.add(temporalMediaInfo);
+//	                	   }
+//	                	
+//	                }
+//	            }
+	        	
+	        	createTemporalViewPane();
+	        	
+	        } catch (XMLException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+	        
+	        
+        }
+     });
     MenuItem menuItemExportNCL = new MenuItem("Export to NCL Document...");
     menuItemExportNCL.setAccelerator(KeyCombination.keyCombination("Ctrl+E"));
     menuItemExportNCL.setOnAction(new EventHandler<ActionEvent>() {
 	    public void handle(ActionEvent t) {
-		    //TODO implmentar botão
+		    //TODO implmentar botï¿½o
             }
         });
     MenuItem menuItemExit = new MenuItem("Exit");
     menuItemExit.setOnAction(new EventHandler<ActionEvent>() {
 	    public void handle(ActionEvent t) {
-		    //TODO implmentar botão
+		    //TODO implmentar botï¿½o
             }
         });
     MenuItem menuItemUndo= new MenuItem("Undo				");
     menuItemUndo.setAccelerator(KeyCombination.keyCombination("Ctrl+Z"));
     menuItemUndo.setOnAction(new EventHandler<ActionEvent>() {
 	    public void handle(ActionEvent t) {
-		    //TODO implmentar botão
+		    //TODO implmentar botï¿½o
             }
         });
     MenuItem menuItemRedo = new MenuItem("Redo");
     menuItemRedo.setAccelerator(KeyCombination.keyCombination("Ctrl+Y"));
     menuItemRedo.setOnAction(new EventHandler<ActionEvent>() {
 	    public void handle(ActionEvent t) {
-		   //TODO implmentar botão
+		   //TODO implmentar botï¿½o
             }
         });
     MenuItem menuItemCut = new MenuItem("Cut");
     menuItemCut.setAccelerator(KeyCombination.keyCombination("Ctrl+X"));
     menuItemCut.setOnAction(new EventHandler<ActionEvent>() {
 	    public void handle(ActionEvent t) {
-	 	    //TODO implmentar botão
+	 	    //TODO implmentar botï¿½o
             }
         });
     MenuItem menuItemCopy = new MenuItem("Copy");
     menuItemCopy.setAccelerator(KeyCombination.keyCombination("Ctrl+C"));
     menuItemCopy.setOnAction(new EventHandler<ActionEvent>() {
 	    public void handle(ActionEvent t) {
-	 	    //TODO implmentar botão
+	 	    //TODO implmentar botï¿½o
            }
         });
     MenuItem menuItemPaste = new MenuItem("Paste");
     menuItemPaste.setAccelerator(KeyCombination.keyCombination("Ctrl+V"));
     menuItemPaste.setOnAction(new EventHandler<ActionEvent>() {
 	    public void handle(ActionEvent t) {
-	 	   //TODO implmentar botão
+	 	   //TODO implmentar botï¿½o
             }
         });
     MenuItem menuItemDelete = new MenuItem("Delete");
     menuItemDelete.setAccelerator(KeyCombination.keyCombination("Delete"));
     menuItemDelete.setOnAction(new EventHandler<ActionEvent>() {
 	    public void handle(ActionEvent t) {
- 		   //TODO implmentar botão
+ 		   //TODO implmentar botï¿½o
             }
         });
     MenuItem menuItemSelectAll = new MenuItem("Select All");
     menuItemSelectAll.setAccelerator(KeyCombination.keyCombination("Ctrl+A"));
     menuItemSelectAll.setOnAction(new EventHandler<ActionEvent>() {
 	    public void handle(ActionEvent t) {
-		    //TODO implmentar botão
+		    //TODO implmentar botï¿½o
             }
         });
    
@@ -1012,26 +990,26 @@ private void createMenuBar() {
     MenuItem menuItemNCL4WEB= new MenuItem("NCL4WEB				");
     menuItemNCL4WEB.setOnAction(new EventHandler<ActionEvent>() {
 	    public void handle(ActionEvent t) {
-		    //TODO implmentar botão
+		    //TODO implmentar botï¿½o
             }
         });
     MenuItem menuItemSimulation= new MenuItem("Simulation");
     menuItemSimulation.setOnAction(new EventHandler<ActionEvent>() {
 	    public void handle(ActionEvent t) {
-		    //TODO implmentar botão
+		    //TODO implmentar botï¿½o
             }
         });
    
     MenuItem menuItemHelpContents= new MenuItem("Help Contents				");
     menuItemHelpContents.setOnAction(new EventHandler<ActionEvent>() {
 	    public void handle(ActionEvent t) {
-		    //TODO implmentar botão
+		    //TODO implmentar botï¿½o
             }
         });
     MenuItem menuItemAbout= new MenuItem("About");
     menuItemAbout.setOnAction(new EventHandler<ActionEvent>() {
 	    public void handle(ActionEvent t) {
-		    //TODO implmentar botão
+		    //TODO implmentar botï¿½o
             }
         });
    

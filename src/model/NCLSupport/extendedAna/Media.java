@@ -11,6 +11,7 @@ import java.util.logging.Logger;
 import javafx.scene.CacheHint;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import model.NCLSupport.utility.ExtendedAnaUtil;
 import model.NCLSupport.utility.HtgUtil;
 import br.uff.midiacom.ana.NCLElement;
 import br.uff.midiacom.ana.descriptor.NCLDescriptor;
@@ -45,6 +46,7 @@ public class Media extends NCLMedia<NCLElement, Area, NCLProperty, NCLLayoutDesc
     private NCLMediaType type;
     private ImageView icon;
     private File mediaFile;
+    private Boolean selected;
     
    public Media(String id) throws XMLException {
         super(id);
@@ -60,6 +62,7 @@ public class Media extends NCLMedia<NCLElement, Area, NCLProperty, NCLLayoutDesc
        name = mediaFile.getAbsoluteFile().getName();
        path = mediaFile.getAbsolutePath();
        type = getRepoMediaType();
+       selected = false;
        try {
            icon = generateMediaIcon();
        } catch (InterruptedException ex) {
@@ -173,17 +176,28 @@ public ImageView generateMediaIcon() throws InterruptedException {
     
     public String getMediaAbsolutePath(){
         Doc nclDoc = (Doc) getDoc();
-        String mediaAbsolutPath;
+        String mediaAbsolutPath = null;
         String mediaPath = this.getSrc().toString();
         String nclDocPath = nclDoc.getLocation();
-        if(!mediaPath.contains(":")){
-            mediaAbsolutPath = nclDocPath+"\\"+mediaPath;
-            mediaAbsolutPath.replace("\\", "\\\\");
-        }else{
-            mediaAbsolutPath = mediaPath;
-            mediaAbsolutPath.replace("/", "\\\\");
-            mediaAbsolutPath = mediaAbsolutPath.split("file:///")[1];
+        if(ExtendedAnaUtil.isWindows()) {
+        	if(!mediaPath.contains(":")){
+                mediaAbsolutPath = nclDocPath+"\\"+mediaPath;
+                mediaAbsolutPath.replace("\\", "\\\\");
+            }else{
+                mediaAbsolutPath = mediaPath;
+                mediaAbsolutPath.replace("/", "\\\\");
+                mediaAbsolutPath = mediaAbsolutPath.split("file:///")[1];
+            }
+        } else if(ExtendedAnaUtil.isMac() || ExtendedAnaUtil.isUnix()){
+        	if(!mediaPath.contains(":")){
+                mediaAbsolutPath = nclDocPath+"/"+mediaPath;
+            }else{
+                mediaAbsolutPath = mediaPath;
+                mediaAbsolutPath.replace("/", "\\\\");
+                mediaAbsolutPath = mediaAbsolutPath.split("file:///")[1];
+            }
         }
+        
         return mediaAbsolutPath;
     }
     
@@ -261,5 +275,13 @@ public ImageView generateMediaIcon() throws InterruptedException {
     public ImageView getMediaIcon(){
         return icon;
     }
+
+	public void setSelected(boolean selected) {
+		this.selected = selected;
+	}
+	
+	public Boolean getSelected(){
+		return this.selected;
+	}
     
 }

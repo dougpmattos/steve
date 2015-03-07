@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jre8"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="con" path="org.eclipse.fx.ide.jdt.core.JAVAFX_CONTAINER"/>
-	<classpathentry kind="lib" path="C:/Users/Douglas/Workspace/STVEN/stven/libraries/SLF4J/slf4j-api-1.7.5.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Douglas/Workspace/STVEN/stven/libraries/SLF4J/slf4j-simple-1.7.5.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Douglas/Workspace/STVEN/stven/libraries/Xuggle/xuggle-xuggler-5.4.jar"/>
+	<classpathentry kind="lib" path="/Users/Douglas/Workspace/stve/libraries/SLF4J/slf4j-api-1.7.5.jar"/>
+	<classpathentry kind="lib" path="/Users/Douglas/Workspace/stve/libraries/SLF4J/slf4j-simple-1.7.5.jar"/>
+	<classpathentry kind="lib" path="/Users/Douglas/Workspace/stve/libraries/Xuggle/xuggle-xuggler-5.4.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/aNa"/>
-	<classpathentry kind="lib" path="C:/Users/Douglas/Workspace/STVEN/stven/libraries/JGraph/jgraph.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Douglas/Workspace/STVEN/stven/libraries/JGraphT/jgrapht-jdk1.6.jar"/>
+	<classpathentry kind="lib" path="/Users/Douglas/Workspace/stve/libraries/JGraph/jgraph.jar"/>
+	<classpathentry kind="lib" path="/Users/Douglas/Workspace/stve/libraries/JGraphT/jgrapht-jdk1.6.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
