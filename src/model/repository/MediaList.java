@@ -80,10 +80,10 @@ public class MediaList extends Observable {
             break;
             
     	}
-    	
-    	 setChanged();
-         ListUpdateOperation listUpdateOperation = new ListUpdateOperation(media, REMOVE);
-         notifyObservers(listUpdateOperation);
+    
+    	setChanged();
+        ListUpdateOperation listUpdateOperation = new ListUpdateOperation(media, REMOVE);
+        notifyObservers(listUpdateOperation);
     	
     }
     

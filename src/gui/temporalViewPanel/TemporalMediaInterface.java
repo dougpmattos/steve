@@ -166,7 +166,7 @@ public class TemporalMediaInterface {
 		
 		media.setName(media.getSrc().toString());
 		media.setPath(media.getMediaAbsolutePath());
-		media.setImportedMediaType(media.getRepoMediaType());
+		media.setImportedMediaType(media.getImportedMediaType());
 		try {
 			media.generateMediaIcon();
 		} catch (InterruptedException e) {

@@ -1,7 +1,5 @@
 package gui.repositoryPanel;
 
-import model.repository.MediaList;
-import gui.repositoryPanel.MediaListPane;
 import javafx.geometry.Orientation;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SplitPane;
@@ -14,12 +12,11 @@ public class RepositoryPanel extends BorderPane {
 	private MediaListPane mediaListPane;
 	private MediaTreePane mediaTreePane;
     private ButtonPane buttonPane;
-    private MediaList mediaList;
 		
 	public RepositoryPanel(){
 		
-        mediaTreePane = new MediaTreePane();
-        mediaListPane = new MediaListPane();
+		mediaListPane = new MediaListPane();
+        mediaTreePane = new MediaTreePane(mediaListPane);
         buttonPane = new ButtonPane();
         
 		scrollPaneTree = new ScrollPane();

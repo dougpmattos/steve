@@ -6,7 +6,7 @@ import java.io.File;
 import java.util.Iterator;
 import java.util.List;
 
-import controller.MediaController;
+import controller.repository.MediaController;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Button;

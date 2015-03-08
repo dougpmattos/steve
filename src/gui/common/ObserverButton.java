@@ -4,7 +4,7 @@ package gui.common;
 import java.util.Observable;
 import java.util.Observer;
 
-import controller.MediaController;
+import controller.repository.MediaController;
 import model.repository.MediaList;
 import javafx.scene.control.Button;
 import javafx.scene.control.Tooltip;

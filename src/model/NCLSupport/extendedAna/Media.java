@@ -92,9 +92,9 @@ public ImageView generateMediaIcon() throws InterruptedException {
                break;
                
            case VIDEO:
-        	   icon = new ImageView();
-        	   VideoFrame videoFrame = new VideoFrame(path, icon);
-        	   //icon = new ImageView(new Image(getClass().getResourceAsStream("/gui/images/video.png")));
+        	   //icon = new ImageView();
+        	   //VideoFrame videoFrame = new VideoFrame(path, icon);
+        	   icon = new ImageView(new Image(getClass().getResourceAsStream("/gui/images/video.png")));
         	   break;
                
            case AUDIO:
@@ -123,8 +123,8 @@ public ImageView generateMediaIcon() throws InterruptedException {
        return icon;
                   
    }
-   
-   public NCLMediaType getRepoMediaType() {
+
+   private NCLMediaType getRepoMediaType() {
        String ext = "";
        int pos;
        
