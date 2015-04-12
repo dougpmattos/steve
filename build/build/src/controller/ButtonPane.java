@@ -34,7 +34,7 @@ public class ButtonPane extends HBox{
     public ButtonPane(MediaList mediaList, MediaTree mediaTree){
         
         setId("button-pane");
-        getStylesheets().add("gui/styles/buttonPane.css");
+        getStylesheets().add("gui/styles/repositoryButtonPane.css");
         setSpacing(-20);
         
         addButton = new Button();

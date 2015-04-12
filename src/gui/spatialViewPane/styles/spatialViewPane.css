@@ -1,0 +1,140 @@
+/*******************************************************************************
+ *                                                                             *
+ * Structural Panes                                                            *
+ *                                                                             *
+ ******************************************************************************/
+ 
+#spatial-view-pane{
+	-fx-background-color: #000000;
+}
+#property-button-pane{
+    -fx-background-color: #263238;
+    -fx-alignment: center;
+    -fx-spacing: 20px;
+    -fx-padding: 0 0 10px 0;
+}
+#control-button-pane{
+    -fx-background-color: #263238;
+    -fx-alignment: center;
+}
+
+/*******************************************************************************
+ *                                                                             *
+ * Button Panes                                                                *
+ *                                                                             *
+ ******************************************************************************/
+ 
+#full-pane{
+	-fx-padding: 0 0 0 20px;
+}
+#refresh-pane{
+	-fx-padding: 0 20px 0 0;
+}
+#center-button-pane{
+	-fx-alignment: center;
+	-fx-spacing: 20px;
+}
+
+/*******************************************************************************
+ *                                                                             *
+ * Buttons                                                                     *
+ *                                                                             *
+ ******************************************************************************/
+ 
+#property-button{
+ 	-fx-background-color: #607D8B;
+ 	-fx-text-fill: #FFFFFF;
+ 	-fx-background-radius: 0;
+}
+#property-button:hover {
+	-fx-background-color: #00BFA5;
+}
+#property-button:focused {
+    -fx-background-radius:  0;
+    -fx-effect: dropshadow(three-pass-box, black, 0px, 2px, 2px, 2px);
+}
+
+#animation-button{
+ 	-fx-background-color: #607D8B;
+ 	-fx-text-fill: #FFFFFF;
+ 	-fx-background-radius: 0;
+}
+#animation-button:hover {
+	-fx-background-color: #00BFA5;
+}
+#animation-button:focused {
+    -fx-background-radius:  0;
+    -fx-effect: dropshadow(three-pass-box, black, 0px, 2px, 2px, 2px);
+}
+ 
+#full-button {
+    -fx-graphic: url("../images/full.png");
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+}
+#full-button:hover {
+	-fx-background-color: #00BFA5;
+}
+
+#previous-frame-button {
+    -fx-graphic: url("../images/pFrame.png");
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+}
+#previous-frame-button:hover {
+    -fx-background-color: #00BFA5;
+}
+
+#next-frame-button {
+    -fx-graphic: url("../images/nFrame.png");
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+}
+#next-frame-button:hover {
+    -fx-background-color: #00BFA5;
+}
+
+#play-button {
+    -fx-graphic: url("../images/play.png");
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+}
+#play-button:hover {
+    -fx-background-color: #00BFA5;
+}
+
+#stop-button {
+    -fx-graphic: url("../images/stop.png");
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+}
+#stop-button:hover {
+	-fx-background-color: #00BFA5;
+}
+
+#previous-scene-button {
+    -fx-graphic: url("../images/pScene.png");
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+}
+#previous-scene-button:hover {
+	-fx-background-color: #00BFA5;
+}
+
+#next-scene-button {
+    -fx-graphic: url("../images/nScene.png");
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+}
+#next-scene-button:hover {
+	-fx-background-color: #00BFA5;
+}
+
+#refresh-button {
+    -fx-graphic: url("../images/refresh.png");
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+}
+#refresh-button:hover {
+	-fx-background-color: #00BFA5;
+}

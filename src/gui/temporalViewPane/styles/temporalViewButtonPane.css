@@ -1,0 +1,44 @@
+#button-pane{
+	-fx-background-color: #263238;
+	-fx-padding: 3px 15px 3px 3px;
+}
+
+#meets-button{
+	-fx-graphic: url("../images/meets.png");
+}
+#met_by-button{
+	-fx-graphic: url("../images/met_by.png");
+}
+#starts-button{
+	-fx-graphic: url("../images/starts.png");
+}
+#finishes-button{
+	-fx-graphic: url("../images/finishes.png");
+}
+#before-button{
+	-fx-graphic: url("../images/before.png");
+}
+#starts_delay-button{
+	-fx-graphic: url("../images/starts_delay.png");
+}
+#finishes_delay-button{
+	-fx-graphic: url("../images/finishes_delay.png");
+}
+#during-button{
+	-fx-graphic: url("../images/during.png");
+}
+#equals-button{
+	-fx-graphic: url("../images/equals.png");
+}
+
+
+#zoom-button{
+	-fx-background-color:
+		-fx-shadow-highlight-color, 
+        -fx-outer-border, 
+        -fx-inner-border, 
+        -fx-body-color;
+   -fx-background-insets: 0 0 -1 0, 0, 1, 2;
+  -fx-background-radius: 3px, 3px, 2px, 1px;
+  -fx-padding: 0px 3px 0.0px 3px
+}

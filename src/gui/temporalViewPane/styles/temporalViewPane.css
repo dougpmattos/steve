@@ -1,0 +1,18 @@
+/*******************************************************************************
+ *                                                                             *
+ * Timeline Elements                                                            *
+ *                                                                             *
+ ******************************************************************************/
+ 
+.axis {
+    -fx-tick-label-fill: black;
+    -fx-font: 12px "Sertig";
+    -fx-background-color: #0069d1;
+}
+.chart-bar {
+	-fx-background-color: #2ec4ff;
+}
+.chart-content{
+	-fx-padding: -6px -5px 0px -9px;
+	-fx-font: 16px "Sertig";
+}

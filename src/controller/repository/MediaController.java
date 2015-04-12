@@ -1,13 +1,14 @@
 package controller.repository;
 
-import gui.repositoryPanel.MessageDialog;
+import gui.common.MessageDialog;
 
 import java.io.File;
 import java.util.Iterator;
 
-import model.NCLSupport.extendedAna.Media;
+import model.common.Media;
 import model.repository.MediaList;
 
+@SuppressWarnings("rawtypes")
 public class MediaController {
 
 	private static MediaController mediaController = null;
@@ -35,7 +36,7 @@ public class MediaController {
 		media = new Media(file);
         selectedMediaName = media.getName();
         contains = false;
-        Iterator mediaListIterator = mediaList.getAllTypesList().iterator();
+		Iterator mediaListIterator = mediaList.getAllTypesList().iterator();
         while(mediaListIterator.hasNext() && contains==false) {
             String listMediaName = ((Media) mediaListIterator.next()).getName();
             if(selectedMediaName.equalsIgnoreCase(listMediaName)){

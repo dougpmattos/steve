@@ -3,7 +3,7 @@ package model.repository;
 import java.util.ArrayList;
 import java.util.Observable;
 
-import model.NCLSupport.extendedAna.Media;
+import model.common.Media;
 
 /**
  *
@@ -24,8 +24,10 @@ public class MediaList extends Observable {
 
     
 	public void add(Media media) {
+		
         allTypes.add(media);
-        switch(media.getImportedMediaType()){
+        
+        switch(media.getType()){
             case IMAGE:
                 images.add(media);
                 break;
@@ -56,8 +58,10 @@ public class MediaList extends Observable {
     }
     
     public void delete(Media media){
+    	
     	allTypes.remove(media);
-    	switch(media.getImportedMediaType()){
+    	
+    	switch(media.getType()){
         case IMAGE:
             images.remove(media);
             break;

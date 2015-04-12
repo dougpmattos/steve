@@ -1,0 +1,64 @@
+/*******************************************************************************
+ *                                                                             *
+ * TreeView and TreeCell                                                       *
+ *                                                                             *
+ ******************************************************************************/
+ 
+ .tree-view {
+	-fx-control-inner-background: #37474f;
+    -fx-padding: 0;
+}
+
+.tree-view:focused {
+    -fx-padding: 0;
+}
+
+.tree-view > .virtual-flow > .scroll-bar:vertical{
+    -fx-padding: 0;
+}
+
+.tree-view > .virtual-flow > .scroll-bar:horizontal{
+	-fx-padding: 0;
+}
+
+.tree-cell {
+    -fx-text-fill: #FFFFFF;
+}
+
+.tree-view:focused > .virtual-flow > .clipped-container > .sheet > .tree-cell:filled:selected, 
+.tree-view:focused > .virtual-flow > .clipped-container > .sheet > .tree-cell:filled:selected:hover {
+    -fx-background-color: #00BFA5;
+    -fx-text-fill: #FFFFFF;
+}
+
+
+.tree-cell:filled:selected:focused, 
+.tree-cell:filled:selected {
+    -fx-background-color: #00BFA5;
+    -fx-text-fill: #FFFFFF;
+}
+
+.tree-cell > .tree-disclosure-node > .arrow,
+.tree-table-row-cell > .tree-disclosure-node > .arrow {
+    -fx-background-color: #FFFFFF;
+}
+
+/*******************************************************************************
+ *                                                                             *
+ * ScrollPane                                                                  *
+ *                                                                             *
+ ******************************************************************************/
+ 
+.scroll-pane {
+    -fx-padding: 0;
+}
+
+/*******************************************************************************
+ *                                                                             *
+ * Media Item Label                                                           *
+ *                                                                             *
+ ******************************************************************************/
+#label-media-item{
+	-fx-pref-width: 100;
+	-fx-alignment: center;
+}

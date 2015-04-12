@@ -1,0 +1,45 @@
+/*******************************************************************************
+ *                                                                             *
+ * Button Panes                                                       		   *
+ *                                                                             *
+ ******************************************************************************/
+ 
+#button-pane{
+    -fx-background-color: #263238;
+    -fx-spacing: 20;
+}
+
+/*******************************************************************************
+ *                                                                             *
+ * Buttons                                                                     *
+ *                                                                             *
+ ******************************************************************************/
+ 
+#add-button {
+    -fx-graphic: url("../images/add.png");
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+}
+#add-button:hover{
+    -fx-background-color: #00BFA5;
+}
+
+
+#delete-button {
+    -fx-graphic: url("../images/delete.png");
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+}
+#delete-button:hover {
+   -fx-background-color: #00BFA5;
+}
+
+
+#clear-button {
+    -fx-graphic: url("../images/clear.png");
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+}
+#clear-button:hover {
+  -fx-background-color: #00BFA5;
+}
