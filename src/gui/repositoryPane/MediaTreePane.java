@@ -15,7 +15,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import model.common.Media;
 import model.repository.ListUpdateOperation;
-import controller.repository.MediaController;
+import controller.RepositoryController;
 
 /**
  *
@@ -43,12 +43,9 @@ public class MediaTreePane extends TreeView<Object> implements Observer{
 	
 	private MediaListPane mediaListPane;
 	
-	private MediaController mediaController = MediaController.getMediaController();
+	private RepositoryController mediaController = RepositoryController.getMediaController();
 	
     public MediaTreePane(MediaListPane mediaListPane){
-        
-    	getStylesheets().add("gui/repositoryPane/styles/repositoryPane.css");
-		setId("media-tree-pane");
     	
     	this.mediaListPane = mediaListPane;
     	

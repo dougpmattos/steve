@@ -10,7 +10,7 @@ import model.common.Media;
  * @author Douglas
  */
 public class MediaList extends Observable {
-    
+
     private static final int ADD = 1;
     private static final int REMOVE = 2;
     private static final int CLEAR = 3;
@@ -21,7 +21,6 @@ public class MediaList extends Observable {
     private static final ArrayList<Media> text = new ArrayList<Media>();
     private static final ArrayList<Media> others = new ArrayList<Media>();
     private static final ArrayList<Media> allTypes = new ArrayList<Media>();
-
     
 	public void add(Media media) {
 		

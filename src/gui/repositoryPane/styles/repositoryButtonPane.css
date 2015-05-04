@@ -7,6 +7,18 @@
 #button-pane{
     -fx-background-color: #263238;
     -fx-spacing: 20;
+    -fx-background-insets: 2 0 0 0;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);
+}
+#media-button-pane{
+	-fx-spacing: 20;
+	-fx-alignment: center;
+	-fx-padding: 0px 0px 0px 5px;
+}
+#view-button-pane{
+	-fx-spacing: 20;
+	-fx-alignment: center;
+	-fx-padding: 0px 5px 0px 0px;
 }
 
 /*******************************************************************************
@@ -22,6 +34,7 @@
 }
 #add-button:hover{
     -fx-background-color: #00BFA5;
+    -fx-background-radius: 0;
 }
 
 
@@ -32,6 +45,7 @@
 }
 #delete-button:hover {
    -fx-background-color: #00BFA5;
+   -fx-background-radius: 0;
 }
 
 
@@ -42,4 +56,26 @@
 }
 #clear-button:hover {
   -fx-background-color: #00BFA5;
+  -fx-background-radius: 0;
+}
+
+#grid-button {
+    -fx-graphic: url("../images/grid.png");
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+}
+
+#grid-button:hover {
+  -fx-background-color: #00BFA5;
+  -fx-background-radius: 0;
+}
+
+#list-button {
+    -fx-graphic: url("../images/list.png");
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+}
+#list-button:hover {
+  -fx-background-color: #00BFA5;
+  -fx-background-radius: 0;
 }

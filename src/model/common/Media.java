@@ -1,10 +1,12 @@
 package model.common;
 
 import java.io.File;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javafx.scene.effect.BoxBlur;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.media.MediaPlayer;
@@ -18,10 +20,12 @@ import model.utility.MediaUtil;
  * @author Douglas
  */
 
-public class Media{
+public class Media implements Serializable{
+
+	private static final long serialVersionUID = 2375510094294210628L;
 	
 	private final Double EXPLICIT_DURATION = 4.0;
-	private final int IMAGE_THUMBNAIL_WIDTH = 70;
+	private final int IMAGE_THUMBNAIL_WIDTH = 120;
 	private final int ICON_WIDTH = 40;
     
     private File mediaFile;
@@ -29,7 +33,7 @@ public class Media{
     private String path;
     private MediaType type;
     private Double duration;
-    private ImageView icon;
+    private transient ImageView icon;
     private Double begin;
     private Double end;
     private Boolean interactive;
@@ -37,7 +41,7 @@ public class Media{
     private ArrayList<TimeSegment> timeSegmentList;
 	private Boolean selected;
 	
-	public Media(File mediaFile) {
+	public Media(File mediaFile){
 
 	   this.mediaFile = mediaFile;
        name = mediaFile.getAbsoluteFile().getName();

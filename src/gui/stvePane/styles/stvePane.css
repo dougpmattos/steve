@@ -1,6 +1,7 @@
 .root{
 	-fx-background: #37474F;
 	-fx-text-fill: #FFFFFF;
+	-fx-font: 13px "Roboto";
 	-fx-focus-color: transparent;
 }
 
@@ -12,6 +13,8 @@
  
 .menu-bar {
     -fx-background-color: #263238;
+    -fx-background-insets: 0 0 4 0;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);
 }
 .menu-bar > .container > .menu-button:hover, .menu-bar > .container > .menu-button:focused, .menu-bar > .container > .menu-button:showing {
     -fx-background-color: #00BFA5;
@@ -115,13 +118,6 @@
    -fx-background-insets: 0, 0 1 0 1;
 }
 
-.split-pane > .split-pane-divider > .horizontal-grabber {
-    -fx-padding: 5 1 5 1;
-    -fx-background-color: #3747AF, -fx-box-border;
-    -fx-background-insets: 1 0 -1 0, 0;
-    -fx-shape: "M0 0 L0 0 L2 0 L2 2 L0 2 Z M0 4 L0 4 L2 4 L2 6 L0 6 Z M0 8 L0 8 L2 8 L2 10 L0 10 Z";
-}
-
 /*******************************************************************************
  *                                                                             *
  * ScrollBar                                                                   *
@@ -209,30 +205,6 @@
 
 .scroll-bar:vertical > .decrement-button > .decrement-arrow {
     -fx-background-color: transparent;
-}
-
-/*******************************************************************************
- *                                                                             *
- * TabPane                                                                     *
- *                                                                             *
- ******************************************************************************/
- 
-.tab-pane > .tab-header-area > .headers-region > .tab > .tab-container > .tab-label {
-    -fx-background-color: #37474F;    
-    -fx-text-fill: #FFFFFF;
-}
-.tab-pane > .tab-content-area {
-    -fx-background-color: #37474F;
-}
-
-.tab-pane > .tab-header-area > .headers-region > .tab:top {
-    -fx-background-color: #37474F;
-}
-
-.tab-pane > .tab-header-area > .headers-region > .tab:selected {
-    -fx-background-color: #00BFA5;
-    -fx-background-insets: 0 0 0 0;
-    -fx-background-radius: 0 0 0 0;
 }
 
 /*******************************************************************************

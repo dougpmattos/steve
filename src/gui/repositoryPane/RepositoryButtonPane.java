@@ -3,38 +3,43 @@ package gui.repositoryPane;
 import java.io.File;
 import java.util.List;
 
-import javax.annotation.Resource;
-
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.FileChooser;
-import controller.repository.MediaController;
+import controller.RepositoryController;
 
 /**
  *
  * @author Douglas
  */
-public class RepositoryButtonPane extends HBox{
+public class RepositoryButtonPane extends BorderPane{
     
-	private MediaController mediaController = MediaController.getMediaController();
+	private RepositoryController mediaListController = RepositoryController.getMediaController();
 	
     private MediaListObserverButton addButton;
     private MediaListObserverButton deleteButton;
     private MediaListObserverButton clearButton;
+    private MediaListObserverButton gridButton;
+    private MediaListObserverButton listButton;
+    private HBox mediaButtonPane;
+    private HBox viewButtonPane;
     private FileChooser fileChooser;
     private List <File> fileList;
     
-    public RepositoryButtonPane(){
+    public RepositoryButtonPane(ScrollPane scrollPaneTree, MediaListPane mediaListPane, RepositoryPane repositoryPane){
         
         setId("button-pane");
         getStylesheets().add("gui/repositoryPane/styles/repositoryButtonPane.css");
         
         createButtons();
 
-        getChildren().addAll(addButton, deleteButton, clearButton);
+        setLeft(mediaButtonPane);
+        setRight(viewButtonPane);
 
-        createButtonActions();
+        createButtonActions(scrollPaneTree, mediaListPane, repositoryPane);
         
     }
 
@@ -46,9 +51,20 @@ public class RepositoryButtonPane extends HBox{
         clearButton = new MediaListObserverButton("clear-button", "clear.repository");
         clearButton.setDisable(true);
         
+        mediaButtonPane = new HBox();
+        mediaButtonPane.setId("media-button-pane");
+        mediaButtonPane.getChildren().addAll(addButton, deleteButton, clearButton);
+        
+        gridButton = new MediaListObserverButton("grid-button", "grid.view");
+        listButton = new MediaListObserverButton("list-button", "list.view");
+        
+        viewButtonPane = new HBox();
+        viewButtonPane.setId("view-button-pane");
+        viewButtonPane.getChildren().addAll(gridButton, listButton);
+        
 	}
 
-    private void createButtonActions() {
+    private void createButtonActions(ScrollPane scrollPaneTree, MediaListPane mediaListPane, RepositoryPane repositoryPane) {
     	
         addButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override public void handle(ActionEvent e) {
@@ -58,7 +74,7 @@ public class RepositoryButtonPane extends HBox{
                 
                 if(fileList != null){
                 	for (File file : fileList) {
-                		mediaController.addMedia(file);
+                		mediaListController.addMedia(file);
                     }
                 }                      
             }
@@ -66,16 +82,30 @@ public class RepositoryButtonPane extends HBox{
         
         deleteButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override public void handle(ActionEvent e) {
-            	mediaController.deleteMedia();
+            	mediaListController.deleteMedia();
             }
         });
         
         clearButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override public void handle(ActionEvent e) {
-            	mediaController.clearMediaList();
+            	mediaListController.clearMediaList();
                 deleteButton.setDisable(true);
                 clearButton.setDisable(true);
             }
         });
+        
+        gridButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override public void handle(ActionEvent e) {
+            	repositoryPane.setCenter(mediaListPane);
+            }
+        });
+        
+        listButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override public void handle(ActionEvent e) {
+            	repositoryPane.setCenter(scrollPaneTree);
+            }
+        });
+        
+        
     }
 }

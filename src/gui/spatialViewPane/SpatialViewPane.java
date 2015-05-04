@@ -1,28 +1,30 @@
 
 package gui.spatialViewPane;
 
-import javafx.scene.layout.BorderPane;
+import javafx.geometry.Orientation;
+import javafx.scene.control.SplitPane;
 
 
 /**
  *
  * @author Douglas
  */
-public class SpatialViewPane extends BorderPane{
-	
-	PropertyButtonPane propertyButtonPane;
-	ControlButtonPane controlButtonPane;
+public class SpatialViewPane extends SplitPane{
+
+	private DisplayPane displayPane;
+	private PropertyPane propertyPane;
 	
     public SpatialViewPane() {
   
-    	setId("spatial-view-pane");
+    	setOrientation(Orientation.HORIZONTAL);
+    	setDividerPositions(0.6);
+    	
     	getStylesheets().add("gui/spatialViewPane/styles/spatialViewPane.css");
     	
-    	propertyButtonPane = new PropertyButtonPane();
-    	controlButtonPane = new ControlButtonPane();
+    	displayPane = new DisplayPane();
+    	propertyPane = new PropertyPane();
     	
-    	setTop(propertyButtonPane);
-    	setBottom(controlButtonPane);
+    	getItems().addAll(displayPane, propertyPane);
     	
     }
     

@@ -14,7 +14,7 @@ import java.util.ResourceBundle;
 	
 	public static String translate(String message){
 		
-		ResourceBundle bundle = ResourceBundle.getBundle("controller.resources.messages", Language.locale);
+		ResourceBundle bundle = ResourceBundle.getBundle("gui.common.languages.messages", Language.locale);
 		return bundle.getString(message);
 		
 	}

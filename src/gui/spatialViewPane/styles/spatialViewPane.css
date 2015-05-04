@@ -4,7 +4,7 @@
  *                                                                             *
  ******************************************************************************/
  
-#spatial-view-pane{
+#display-pane{
 	-fx-background-color: #000000;
 }
 #property-button-pane{
@@ -41,6 +41,7 @@
  *                                                                             *
  ******************************************************************************/
  
+/* Raised Button 
 #property-button{
  	-fx-background-color: #607D8B;
  	-fx-text-fill: #FFFFFF;
@@ -66,7 +67,8 @@
     -fx-background-radius:  0;
     -fx-effect: dropshadow(three-pass-box, black, 0px, 2px, 2px, 2px);
 }
- 
+*/
+
 #full-button {
     -fx-graphic: url("../images/full.png");
     -fx-background-color: transparent;
@@ -74,6 +76,7 @@
 }
 #full-button:hover {
 	-fx-background-color: #00BFA5;
+    -fx-background-radius: 0;
 }
 
 #previous-frame-button {
@@ -83,6 +86,7 @@
 }
 #previous-frame-button:hover {
     -fx-background-color: #00BFA5;
+    -fx-background-radius: 0;
 }
 
 #next-frame-button {
@@ -92,6 +96,7 @@
 }
 #next-frame-button:hover {
     -fx-background-color: #00BFA5;
+    -fx-background-radius: 0;
 }
 
 #play-button {
@@ -101,6 +106,7 @@
 }
 #play-button:hover {
     -fx-background-color: #00BFA5;
+    -fx-background-radius: 0;
 }
 
 #stop-button {
@@ -110,6 +116,7 @@
 }
 #stop-button:hover {
 	-fx-background-color: #00BFA5;
+    -fx-background-radius: 0;
 }
 
 #previous-scene-button {
@@ -119,6 +126,7 @@
 }
 #previous-scene-button:hover {
 	-fx-background-color: #00BFA5;
+    -fx-background-radius: 0;
 }
 
 #next-scene-button {
@@ -128,6 +136,7 @@
 }
 #next-scene-button:hover {
 	-fx-background-color: #00BFA5;
+    -fx-background-radius: 0;
 }
 
 #refresh-button {
@@ -137,4 +146,5 @@
 }
 #refresh-button:hover {
 	-fx-background-color: #00BFA5;
+    -fx-background-radius: 0;
 }

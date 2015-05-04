@@ -1,23 +1,13 @@
 package gui.repositoryPane;
 
-import java.io.File;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Observable;
 import java.util.Observer;
 
 import javafx.collections.ObservableList;
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.control.SplitPane;
-import javafx.scene.input.ClipboardContent;
-import javafx.scene.input.DragEvent;
-import javafx.scene.input.Dragboard;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.input.TransferMode;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 import model.common.Media;
 import model.repository.ListUpdateOperation;
@@ -25,15 +15,17 @@ import model.repository.ListUpdateOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import controller.repository.MediaController;
+import controller.RepositoryController;
 
 /**
  *
  * @author Douglas
  */
+
+@SuppressWarnings("rawtypes")
 public class MediaListPane extends ScrollPane implements Observer {
     
-	private MediaController mediaController = MediaController.getMediaController();
+	private RepositoryController mediaController = RepositoryController.getMediaController();
 	
 	final Logger logger = LoggerFactory.getLogger(MediaListPane.class);
 	private final int ADD = 1;
@@ -68,12 +60,9 @@ public class MediaListPane extends ScrollPane implements Observer {
 
 	private void setLayout() {
 		
-		getStylesheets().add("gui/repositoryPane/styles/repositoryPane.css");
-		setId("media-list-pane");
-		
 		allTypes.setPadding(new Insets(5, 0, 5, 0));
-		allTypes.setVgap(8);
-		allTypes.setHgap(15);
+		allTypes.setVgap(5);
+		allTypes.setHgap(5);
 		
 		image.setPadding(new Insets(5, 0, 5, 0));
 		image.setVgap(8);
@@ -101,7 +90,6 @@ public class MediaListPane extends ScrollPane implements Observer {
 		
 		switch(paneName){
 		case MEDIA_FILES:
-			
 			setContent(allTypes);
 			break;
 			
@@ -225,7 +213,7 @@ public class MediaListPane extends ScrollPane implements Observer {
 		    			mediaVideoFound = true;
 		    		}
 		    	}
-		    	image.getChildren().remove(repositoryVideoMedia);
+		    	video.getChildren().remove(repositoryVideoMedia);
 		        break;
 		        
 		    case AUDIO:
@@ -276,57 +264,9 @@ public class MediaListPane extends ScrollPane implements Observer {
 	private RepositoryMediaItemContainer createRepositoryMediaItem(Media media) {
 		
 		RepositoryMediaItemContainer repositoryMediaItemContainer = new RepositoryMediaItemContainer(media, this);
-	    
-		createDragDropEffect(media, repositoryMediaItemContainer);
 		
 		return repositoryMediaItemContainer;
 	
-	}
-
-	private void createDragDropEffect(final Media media, final RepositoryMediaItemContainer repositoryMediaItemContainer) {
-		
-		final BorderPane borderPane = (BorderPane) getScene().getRoot();
-		final SplitPane sp = (SplitPane) borderPane.getCenter();
-		final SplitPane spRepoSpatial  = (SplitPane) sp.getItems().get(0);
-		final BorderPane temporalViewPane  = (BorderPane) sp.getItems().get(1);
-		
-		repositoryMediaItemContainer.setOnDragDetected(new EventHandler<MouseEvent>() {
-
-			@Override
-			public void handle(MouseEvent mouseEvent) {
-			
-		        Dragboard dragBoard = repositoryMediaItemContainer.startDragAndDrop(TransferMode.COPY);
-		        ClipboardContent content = new ClipboardContent();
-		        RepositoryMediaItemContainer source = (RepositoryMediaItemContainer) mouseEvent.getSource();
-		        
-//		        //TODO Tentar passar o objeto Media
-//		        Teste teste = new Teste("Name");
-//		        DataFormat dataFormat = new DataFormat("model.repository.Teste");
-//		        content.put(dataFormat, teste);
-		        
-		        ArrayList<File> fileList = new ArrayList<File>();
-		        fileList.add(source.getMedia().getMediaFile());
-		        content.putFiles(fileList);
-		        
-		        dragBoard.setContent(content);
-		        
-		        mouseEvent.consume();
-				
-			}
-       });
-		
-		temporalViewPane.setOnDragOver(new EventHandler<DragEvent>() {
-			
-			public void handle(DragEvent dragEvent) {
-        	   
-               if (dragEvent.getGestureSource() != temporalViewPane && dragEvent.getDragboard().hasFiles()) {
-                   dragEvent.acceptTransferModes(TransferMode.COPY);
-               }
-               
-               dragEvent.consume();
-	        }  
-	    });
-				
 	}
 	
 	public ObservableList<Node> getAllTypes(){

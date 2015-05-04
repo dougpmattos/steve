@@ -6,10 +6,9 @@ import gui.common.Language;
 import java.util.Observable;
 import java.util.Observer;
 
-import controller.repository.MediaController;
-import model.repository.MediaList;
 import javafx.scene.control.Button;
 import javafx.scene.control.Tooltip;
+import controller.RepositoryController;
 
 /**
  *
@@ -17,7 +16,7 @@ import javafx.scene.control.Tooltip;
  */
 public class MediaListObserverButton extends Button implements Observer	{
 	
-	private MediaController mediaController = MediaController.getMediaController();
+	private RepositoryController mediaController = RepositoryController.getMediaController();
 	
 	private String id;
 	

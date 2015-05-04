@@ -1,44 +1,217 @@
+/*******************************************************************************
+ *                                                                             *
+ * Button Panes                                                                *
+ *                                                                             *
+ ******************************************************************************/
+ 
 #button-pane{
 	-fx-background-color: #263238;
 	-fx-padding: 3px 15px 3px 3px;
+	-fx-background-insets: 4 0 0 0;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);
+}
+#zoom-links-pane{
+	-fx-spacing: 20;
+	-fx-alignment: center;
+	-fx-padding: 0px 5px 0px 0px;
+}
+#alignment-pane{
+	-fx-spacing: 20;
+	-fx-alignment: center;
+	-fx-padding: 0px 0px 0px 5px;
 }
 
+/*******************************************************************************
+ *                                                                             *
+ * Alignment Buttons                                                           *
+ *                                                                             *
+ ******************************************************************************/
+ 
 #meets-button{
 	-fx-graphic: url("../images/meets.png");
+	-fx-background-color: transparent;
+    -fx-padding: 0;
 }
+#meets-button:hover{
+    -fx-background-color: #00BFA5;
+    -fx-background-radius: 0;
+}
+
 #met_by-button{
 	-fx-graphic: url("../images/met_by.png");
+	-fx-background-color: transparent;
+    -fx-padding: 0;
 }
+#met_by-button:hover{
+    -fx-background-color: #00BFA5;
+    -fx-background-radius: 0;
+}
+
 #starts-button{
 	-fx-graphic: url("../images/starts.png");
+	-fx-background-color: transparent;
+    -fx-padding: 0;
 }
+#starts-button:hover{
+    -fx-background-color: #00BFA5;
+    -fx-background-radius: 0;
+}
+
 #finishes-button{
 	-fx-graphic: url("../images/finishes.png");
+	-fx-background-color: transparent;
+    -fx-padding: 0;
 }
+#finishes-button:hover{
+    -fx-background-color: #00BFA5;
+    -fx-background-radius: 0;
+}
+
 #before-button{
 	-fx-graphic: url("../images/before.png");
+	-fx-background-color: transparent;
+    -fx-padding: 0;
 }
+#before-button:hover{
+    -fx-background-color: #00BFA5;
+    -fx-background-radius: 0;
+}
+
 #starts_delay-button{
 	-fx-graphic: url("../images/starts_delay.png");
+	-fx-background-color: transparent;
+    -fx-padding: 0;
 }
+#starts_delay-button:hover{
+    -fx-background-color: #00BFA5;
+    -fx-background-radius: 0;
+}
+
 #finishes_delay-button{
 	-fx-graphic: url("../images/finishes_delay.png");
+	-fx-background-color: transparent;
+    -fx-padding: 0;
 }
+#finishes_delay-button:hover{
+    -fx-background-color: #00BFA5;
+    -fx-background-radius: 0;
+}
+
 #during-button{
 	-fx-graphic: url("../images/during.png");
+	-fx-background-color: transparent;
+    -fx-padding: 0;
 }
+#during-button:hover{
+    -fx-background-color: #00BFA5;
+    -fx-background-radius: 0;
+}
+
 #equals-button{
 	-fx-graphic: url("../images/equals.png");
+	-fx-background-color: transparent;
+    -fx-padding: 0;
+}
+#equals-button:hover{
+    -fx-background-color: #00BFA5;
+    -fx-background-radius: 0;
 }
 
-
-#zoom-button{
-	-fx-background-color:
-		-fx-shadow-highlight-color, 
-        -fx-outer-border, 
-        -fx-inner-border, 
-        -fx-body-color;
-   -fx-background-insets: 0 0 -1 0, 0, 1, 2;
-  -fx-background-radius: 3px, 3px, 2px, 1px;
-  -fx-padding: 0px 3px 0.0px 3px
+#finishes-delay-finishes-button{
+	-fx-graphic: url("../images/finishes_delay_finishes.png");
+	-fx-background-color: transparent;
+    -fx-padding: 0;
 }
+#finishes-delay-finishes-button:hover{
+    -fx-background-color: #00BFA5;
+    -fx-background-radius: 0;
+}
+
+#overlaps-button{
+	-fx-graphic: url("../images/overlaps.png");
+	-fx-background-color: transparent;
+    -fx-padding: 0;
+}
+#overlaps-button:hover{
+    -fx-background-color: #00BFA5;
+    -fx-background-radius: 0;
+}
+
+/*******************************************************************************
+ *                                                                             *
+ * Zoom Button                                                               *
+ *                                                                             *
+ ******************************************************************************/
+
+#zoom-icon{
+	-fx-graphic: url("../images/zoom.png");
+}
+
+#slider-container{
+	-fx-padding: 0 0 0 10;
+	-fx-alignment: center;
+}
+.slider > .thumb {
+    -fx-background-color: #00BFA5;
+    -fx-background-insets: 2;
+    -fx-background-radius: 2em;
+}
+.slider > .track {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-background-radius: 0;
+    -fx-padding: 0.1em;
+}
+
+.progress-bar {
+    -fx-background-color:
+        -fx-box-border,
+        linear-gradient(to bottom, derive(-fx-color,30%) 5%, derive(-fx-color,-17%));
+    -fx-background-insets: 0, 1;
+    -fx-indeterminate-bar-length: 60;
+    -fx-indeterminate-bar-escape: true;
+    -fx-indeterminate-bar-flip: true;
+    -fx-indeterminate-bar-animation-time: 2;
+}
+.progress-bar > .bar {
+    -fx-background-color: #00BFA5;
+    -fx-background-insets: 0;
+    -fx-padding: 0.1em;
+}
+.progress-bar > .track {
+	-fx-background-color: #607D8B;
+    -fx-background-insets:  0;
+}
+
+/*******************************************************************************
+ *                                                                             *
+ * CheckBox                                                                    *
+ *                                                                             *
+ ******************************************************************************/
+
+.check-box > .box {
+	-fx-graphic: url("../images/finishes.png");
+    -fx-background-color: #607D8B, #263238;
+    -fx-background-insets: -0.5, 1.8;
+    -fx-background-radius: 1, 1;
+    -fx-padding: 0.25em;
+}
+.check-box > .box > .mark {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-padding: 0.35em; /* 4 -- this is half the size of the mark */
+    -fx-shape: "M0,4H2L3,6L6,0H8L4,8H2Z";
+}
+.check-box:hover > .box {
+    -fx-background-color: #00BFA5, #263238;
+    -fx-background-insets: -0.5, 2;
+    -fx-background-radius: 2, 2;
+    -fx-padding: 0.25em; /* 3 -- padding from the outside edge to the mark */
+}
+.check-box:selected > .box {
+    -fx-background-color: #00BFA5;
+}
+.check-box:selected > .box > .mark {
+    -fx-background-color: #263238;
+}
+

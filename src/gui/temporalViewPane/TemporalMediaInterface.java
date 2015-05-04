@@ -14,7 +14,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
-import model.NCLSupport.extendedAna.Media;
+import model.common.Media;
 
 public class TemporalMediaInterface {
 
@@ -163,16 +163,9 @@ public class TemporalMediaInterface {
 	private void setNodeLayout() {
 		
 		node.getStylesheets().add("gui/temporalViewPane/styles/temporalViewPane.css");
-		
-		media.setName(media.getSrc().toString());
-		media.setPath(media.getMediaAbsolutePath());
-		media.setImportedMediaType(media.getImportedMediaType());
-		try {
-			media.generateMediaIcon();
-		} catch (InterruptedException e) {
-			temporalMediaInterfaceLogger.log(Level.WARNING, "Fails to generate media icon."+e.getMessage());
-		}
-		final ImageView imageView = media.getMediaIcon();
+
+		media.generateMediaIcon();
+		final ImageView imageView = media.generateMediaIcon();
 		
 		Label mediaName = new Label(media.getName());
 		mediaName.setId("media-name");

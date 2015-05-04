@@ -1,22 +1,38 @@
 package model.temporalView;
 
 import java.util.ArrayList;
+import java.util.Observable;
 
 import model.common.Media;
+import model.repository.ListUpdateOperation;
 
-public class TemporalChain {
+@SuppressWarnings("rawtypes")
+public class TemporalChain extends Observable {
 
 	private int id;
 	private Media masterMedia;
 	private ArrayList<Media> mediaList;
 	private ArrayList<Relation> relationList;
 	
-	public TemporalChain(int id){
+	public TemporalChain(int id, Media masterMedia){
 		
 		this.id = id;
+		this.masterMedia = masterMedia;
+		mediaList = new ArrayList<Media>();
+		relationList = new ArrayList<Relation>();
 		
 	}
 
+	public void addMedia(Media media){
+		
+		
+		
+		setChanged();
+        //ListUpdateOperation listUpdateOperation = new ListUpdateOperation(media, ADD);
+        //notifyObservers(listUpdateOperation);
+        
+	}
+	
 	public Media getMasterMedia() {
 		return masterMedia;
 	}

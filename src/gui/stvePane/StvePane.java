@@ -10,10 +10,10 @@ import java.io.IOException;
 import javafx.geometry.Orientation;
 import javafx.scene.Scene;
 import javafx.scene.control.SplitPane;
-import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.text.Font;
 import br.uff.midiacom.ana.util.exception.XMLException;
+import controller.TemporalViewController;
 
 /**
  *
@@ -21,6 +21,8 @@ import br.uff.midiacom.ana.util.exception.XMLException;
  */
 public class StvePane extends Scene {
     
+	private TemporalViewController temporalViewController = TemporalViewController.getTemporalViewController();
+	
 	private static final int STVE_HEIGHT = 768;
 	private static final int STVE_WITDH = 1366;
 
@@ -35,10 +37,8 @@ public class StvePane extends Scene {
     public StvePane() throws XMLException, IOException  {
     	
     	super(containerBorderPane);
-    	containerBorderPane.setId("container-border-pane");
-    	containerBorderPane.setPrefSize(STVE_WITDH, STVE_HEIGHT);
-    	containerBorderPane.getStylesheets().add("gui/stvePane/styles/stvePane.css");
     	getStylesheets().add("gui/stvePane/styles/stvePane.css");
+    	containerBorderPane.setPrefSize(STVE_WITDH, STVE_HEIGHT);
 	   
     	stveMenuBar = new StveMenuBar();
     	repositoryPane = new RepositoryPane();
@@ -46,24 +46,23 @@ public class StvePane extends Scene {
     	temporalViewPane = new TemporalViewPane();
 	   
     	repositorySpatialViewSplitPane = new SplitPane();
-    	repositorySpatialViewSplitPane.getStylesheets().add("gui/stvePane/styles/stvePane.css");
-    	repositorySpatialViewSplitPane.setId("repo-spatial-spli-pane");
-    	repositorySpatialViewSplitPane.setId("splitRepoSpatial");
     	repositorySpatialViewSplitPane.setOrientation(Orientation.HORIZONTAL);
-    	repositorySpatialViewSplitPane.setDividerPositions(0.6);
+    	repositorySpatialViewSplitPane.setDividerPositions(0.3);
     	repositorySpatialViewSplitPane.getItems().addAll(repositoryPane, spatialViewPane);
 	   
     	containerSplitPane = new SplitPane();
-    	containerSplitPane.getStylesheets().add("gui/stvePane/styles/stvePane.css");
-    	containerSplitPane.setId("container-split-pane");
-    	containerSplitPane.setId("splitPane");
     	containerSplitPane.setOrientation(Orientation.VERTICAL);
     	containerSplitPane.getItems().addAll(repositorySpatialViewSplitPane, temporalViewPane);
 
-    	containerBorderPane.setId("containerBorderPane");
     	containerBorderPane.setTop(stveMenuBar);
     	containerBorderPane.setCenter(containerSplitPane);
+    	
+    	createNewProject();
        
    }
+    
+    public void createNewProject(){
+    	temporalViewController.createTemporalView();
+    }
    
 }

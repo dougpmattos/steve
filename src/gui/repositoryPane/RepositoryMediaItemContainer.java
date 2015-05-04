@@ -1,14 +1,19 @@
 package gui.repositoryPane;
 
 import javafx.event.EventHandler;
-import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
+import javafx.scene.input.ClipboardContent;
+import javafx.scene.input.DataFormat;
+import javafx.scene.input.Dragboard;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.input.TransferMode;
 import javafx.scene.layout.BorderPane;
 import model.common.Media;
 
 public class RepositoryMediaItemContainer extends BorderPane{
+	
+	private static final DataFormat dataFormat = new DataFormat("model.common.media");
 	
 	private Label label;
 	private Media media;
@@ -27,7 +32,31 @@ public class RepositoryMediaItemContainer extends BorderPane{
 		setBottom(label);
 		
 		createListenerEventMediaItem();
+		createDragDropEffect();
 		
+	}
+	
+	private void createDragDropEffect() {
+		
+		setOnDragDetected(new EventHandler<MouseEvent>() {
+
+			@Override
+			public void handle(MouseEvent mouseEvent) {
+			
+		        Dragboard dragBoard = startDragAndDrop(TransferMode.COPY);
+		        ClipboardContent content = new ClipboardContent();
+		        RepositoryMediaItemContainer repositoryMediaItemContainerSource = (RepositoryMediaItemContainer) mouseEvent.getSource();
+
+		        content.put(dataFormat, repositoryMediaItemContainerSource.getMedia());
+		        
+		        dragBoard.setContent(content);
+		        
+		        mouseEvent.consume();
+				
+			}
+			
+       });
+				
 	}
 
 	private void createListenerEventMediaItem() {

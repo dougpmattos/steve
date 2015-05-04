@@ -7,9 +7,11 @@
  .tree-view {
 	-fx-control-inner-background: #37474f;
     -fx-padding: 0;
+    -fx-background-insets: 0;
 }
 
 .tree-view:focused {
+    -fx-background-insets: 0;
     -fx-padding: 0;
 }
 
@@ -53,12 +55,26 @@
     -fx-padding: 0;
 }
 
+.scroll-pane:focused {
+    -fx-background-insets: 0;
+    -fx-padding: 0;
+}
+
 /*******************************************************************************
  *                                                                             *
- * Media Item Label                                                           *
+ * Media Item Label                                                            *
  *                                                                             *
  ******************************************************************************/
 #label-media-item{
-	-fx-pref-width: 100;
+	-fx-background-color: #263238;
 	-fx-alignment: center;
+ 	-fx-background-radius: 0;
+ 	-fx-pref-width: 120px;
+ 	-fx-pref-height: 35px;
+}
+
+#repo-media-item-container{
+	-fx-background-color: #263238;
+ 	-fx-background-radius: 0;
+ 	-fx-pref-width: 120px;
 }
