@@ -4,17 +4,15 @@ import java.util.ArrayList;
 import java.util.Observable;
 
 import model.common.Media;
+import model.common.Operation;
+import model.common.Operator;
 
 /**
  *
  * @author Douglas
  */
 public class MediaList extends Observable {
-
-    private static final int ADD = 1;
-    private static final int REMOVE = 2;
-    private static final int CLEAR = 3;
-    	
+ 	
     private static final ArrayList<Media> images = new ArrayList<Media>();
     private static final ArrayList<Media> video = new ArrayList<Media>();
     private static final ArrayList<Media> audio = new ArrayList<Media>();
@@ -51,8 +49,8 @@ public class MediaList extends Observable {
         }
         
         setChanged();
-        ListUpdateOperation listUpdateOperation = new ListUpdateOperation(media, ADD);
-        notifyObservers(listUpdateOperation);
+        Operation operation = new Operation(Operator.ADD, media);
+        notifyObservers(operation);
         
     }
     
@@ -85,8 +83,8 @@ public class MediaList extends Observable {
     	}
     
     	setChanged();
-        ListUpdateOperation listUpdateOperation = new ListUpdateOperation(media, REMOVE);
-        notifyObservers(listUpdateOperation);
+        Operation operation = new Operation(Operator.REMOVE, media);
+        notifyObservers(operation);
     	
     }
     
@@ -99,8 +97,8 @@ public class MediaList extends Observable {
         allTypes.clear();
         
         setChanged();
-        ListUpdateOperation listUpdateOperation = new ListUpdateOperation(CLEAR);
-        notifyObservers(listUpdateOperation);
+        Operation operation = new Operation(Operator.CLEAR);
+        notifyObservers(operation);
         
     }
     

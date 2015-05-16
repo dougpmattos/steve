@@ -14,7 +14,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import model.common.Media;
-import model.repository.ListUpdateOperation;
+import model.common.Operation;
 import controller.RepositoryController;
 
 /**
@@ -28,11 +28,7 @@ public class MediaTreePane extends TreeView<Object> implements Observer{
 	private final String AUDIO = "Audio";
 	private final String VIDEO = "Video";
 	private final String IMAGE = "Image";
-	private final String MEDIA_FILES = "Media Files";
-
-	private final int ADD = 1;
-	private final int REMOVE = 2;
-	private final int CLEAR = 3;	
+	private final String MEDIA_FILES = "Media Files";	
 	
 	private final TreeItem<Object> allTypes = new TreeItem<Object>(MEDIA_FILES);
 	private final TreeItem<Object> image = new TreeItem<Object>(IMAGE);
@@ -191,17 +187,18 @@ public class MediaTreePane extends TreeView<Object> implements Observer{
 	@Override
 	public void update(Observable observable, Object obj) {
 		
-		if (obj instanceof ListUpdateOperation) {
+		if (obj instanceof Operation) {
 			
-			ListUpdateOperation listUpdateOperation = (ListUpdateOperation) obj;
+			Operation operation = (Operation) obj;
+			Media media = (Media) operation.getOperating();
 			
-			switch(listUpdateOperation.getOperationType()){
+			switch(operation.getOperator()){
 		        case ADD:
-		        	add(listUpdateOperation.getMedia());
+		        	add(media);
 		            break;
 		            
 		        case REMOVE:
-		        	remove(listUpdateOperation.getMedia());
+		        	remove(media);
 		            break;
 				
 		        case CLEAR:

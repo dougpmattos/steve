@@ -6,12 +6,16 @@ import gui.spatialViewPane.SpatialViewPane;
 import gui.temporalViewPane.TemporalViewPane;
 
 import java.io.IOException;
+import java.util.Observable;
+import java.util.Observer;
 
 import javafx.geometry.Orientation;
 import javafx.scene.Scene;
 import javafx.scene.control.SplitPane;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.text.Font;
+import model.common.Operation;
+import model.common.Operator;
+import model.temporalView.TemporalChain;
 import br.uff.midiacom.ana.util.exception.XMLException;
 import controller.TemporalViewController;
 
@@ -19,7 +23,7 @@ import controller.TemporalViewController;
  *
  * @author Douglas
  */
-public class StvePane extends Scene {
+public class StvePane extends Scene implements Observer{
     
 	private TemporalViewController temporalViewController = TemporalViewController.getTemporalViewController();
 	
@@ -39,7 +43,7 @@ public class StvePane extends Scene {
     	super(containerBorderPane);
     	getStylesheets().add("gui/stvePane/styles/stvePane.css");
     	containerBorderPane.setPrefSize(STVE_WITDH, STVE_HEIGHT);
-	   
+    	
     	stveMenuBar = new StveMenuBar();
     	repositoryPane = new RepositoryPane();
     	spatialViewPane = new SpatialViewPane();
@@ -52,17 +56,30 @@ public class StvePane extends Scene {
 	   
     	containerSplitPane = new SplitPane();
     	containerSplitPane.setOrientation(Orientation.VERTICAL);
+    	containerSplitPane.setDividerPositions(0.4);
     	containerSplitPane.getItems().addAll(repositorySpatialViewSplitPane, temporalViewPane);
 
     	containerBorderPane.setTop(stveMenuBar);
     	containerBorderPane.setCenter(containerSplitPane);
     	
-    	createNewProject();
-       
-   }
-    
-    public void createNewProject(){
     	temporalViewController.createTemporalView();
-    }
+    	
+    	temporalViewController.getTemporalView().addObserver(this);
+    	
+    	temporalViewController.addTemporalChain(new TemporalChain());
+   }
+
+	@Override
+	public void update(Observable o, Object arg) {
+		
+		Operation operation = (Operation) arg;
+		TemporalChain temporalChain = (TemporalChain) operation.getOperating();
+		
+		if(operation.getOperator().equals(Operator.ADD)){
+			temporalViewPane.createTemporalChain(temporalChain.getId());
+		}
+		
+	}
+
    
 }

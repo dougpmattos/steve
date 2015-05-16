@@ -1,8 +1,13 @@
 package gui.temporalViewPane;
 
 import gui.common.Language;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.scene.chart.NumberAxis;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TabPane;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
@@ -11,6 +16,7 @@ public class TemporalViewButtonPane extends BorderPane {
 
 	private Button meetsButton;
 	private Button metByButton;
+	private Button metByDelayButton;
 	private Button startsButton;
 	private Button finishesButton;
 	private Button beforeButton;
@@ -19,13 +25,12 @@ public class TemporalViewButtonPane extends BorderPane {
 	private Button duringButton;
 	private Button overlapsButton;
 	private Button equalsButton;
-	private Button finishesDelayFinishesButton;
 	private ZoomButton zoomButton;
 	private HBox zoomShowLinksButtonPane;
 	private CheckBox showAnchorsLinksButton;
 	private HBox alignmentButtonPane;
 	
-	public TemporalViewButtonPane(){
+	public TemporalViewButtonPane(TabPane temporalChainTabPane){
 		
 		setId("button-pane");
 	    getStylesheets().add("gui/temporalViewPane/styles/temporalViewButtonPane.css");
@@ -35,7 +40,7 @@ public class TemporalViewButtonPane extends BorderPane {
 	    setLeft(alignmentButtonPane);
 	    setRight(zoomShowLinksButtonPane);
 	    
-	    createButtonActions();
+	    createButtonActions(temporalChainTabPane);
 		
 	}
 
@@ -46,7 +51,7 @@ public class TemporalViewButtonPane extends BorderPane {
 	    meetsButton.setTooltip(new Tooltip(Language.translate("right.alignment")));
 	    			
 	    metByButton = new Button();
-	    metByButton.setId("met_by-button");
+	    metByButton.setId("met-by-button");
 	    metByButton.setTooltip(new Tooltip(Language.translate("left.alignment")));
 	        
         startsButton = new Button();
@@ -62,13 +67,17 @@ public class TemporalViewButtonPane extends BorderPane {
         beforeButton.setTooltip(new Tooltip(Language.translate("distributes.sequentially.with.value.t")));
        
         startsDelayButton = new Button();
-        startsDelayButton.setId("starts_delay-button");
+        startsDelayButton.setId("starts-delay-button");
         startsDelayButton.setTooltip(new Tooltip(Language.translate("slave.begins.with.delay.when.master.starts")));
 	       
         finishesDelayButton = new Button();
-        finishesDelayButton.setId("finishes_delay-button");
+        finishesDelayButton.setId("finishes-delay-button");
         finishesDelayButton.setTooltip(new Tooltip(Language.translate("slave.finishes.t.after.master.end")));
        
+        metByDelayButton= new Button();
+        metByDelayButton.setId("met-by-delay-button");
+        metByDelayButton.setTooltip(new Tooltip(Language.translate("slave.finishes.t.after.master.begin")));
+        
         duringButton = new Button();
         duringButton.setId("during-button");
         duringButton.setTooltip(new Tooltip(Language.translate("media.contains.other")));
@@ -81,10 +90,6 @@ public class TemporalViewButtonPane extends BorderPane {
         equalsButton.setId("equals-button");
         equalsButton.setTooltip(new Tooltip(Language.translate("all.has.same.duration")));
         
-        finishesDelayFinishesButton = new Button();
-        finishesDelayFinishesButton.setId("finishes-delay-finishes-button");
-        finishesDelayFinishesButton.setTooltip(new Tooltip(Language.translate("slave.finishes.t.before.master.end")));
-       
         zoomButton = new ZoomButton();
         showAnchorsLinksButton = new CheckBox(Language.translate("show.anchors.and.links"));
        
@@ -97,20 +102,29 @@ public class TemporalViewButtonPane extends BorderPane {
         alignmentButtonPane = new HBox();
         alignmentButtonPane.setId("alignment-pane");
         alignmentButtonPane.getChildren().add(equalsButton);
+        alignmentButtonPane.getChildren().add(startsButton);
+        alignmentButtonPane.getChildren().add(startsDelayButton);
+        alignmentButtonPane.getChildren().add(finishesButton);
+        alignmentButtonPane.getChildren().add(finishesDelayButton);
         alignmentButtonPane.getChildren().add(meetsButton);
         alignmentButtonPane.getChildren().add(metByButton);
-        alignmentButtonPane.getChildren().add(startsButton);
-        alignmentButtonPane.getChildren().add(finishesButton);
-        alignmentButtonPane.getChildren().add(beforeButton);
+        alignmentButtonPane.getChildren().add(metByDelayButton);
         alignmentButtonPane.getChildren().add(duringButton);
         alignmentButtonPane.getChildren().add(overlapsButton);
-        alignmentButtonPane.getChildren().add(startsDelayButton);
-        alignmentButtonPane.getChildren().add(finishesDelayButton);
-        alignmentButtonPane.getChildren().add(finishesDelayFinishesButton);
+        alignmentButtonPane.getChildren().add(beforeButton);
         
 	}
 	
-	private void createButtonActions(){
+	private void createButtonActions(TabPane temporalChainTabPane){
+		
+		zoomButton.getSlider().valueProperty().addListener(new ChangeListener<Number>() {
+            public void changed(ObservableValue<? extends Number> ov, Number old_val, Number new_val) {
+            	ScrollPane teste = (ScrollPane) temporalChainTabPane.getTabs().get(0).getContent();
+            	TemporalChainPane teste2 = (TemporalChainPane) teste.getContent();
+            	((NumberAxis) teste2.getXAxis()).setUpperBound(25);
+            	//new_val.doubleValue()
+            }
+        });
 		
 	}
 	

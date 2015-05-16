@@ -4,32 +4,47 @@ import java.util.ArrayList;
 import java.util.Observable;
 
 import model.common.Media;
-import model.repository.ListUpdateOperation;
+import model.common.Operation;
+import model.common.Operator;
 
 @SuppressWarnings("rawtypes")
 public class TemporalChain extends Observable {
 
+	private static int temporalChainNumber = 0;
+	
 	private int id;
 	private Media masterMedia;
 	private ArrayList<Media> mediaList;
 	private ArrayList<Relation> relationList;
 	
-	public TemporalChain(int id, Media masterMedia){
+	public TemporalChain(Media masterMedia){
 		
-		this.id = id;
+		this.id = temporalChainNumber;
 		this.masterMedia = masterMedia;
 		mediaList = new ArrayList<Media>();
 		relationList = new ArrayList<Relation>();
+		
+		temporalChainNumber++;
+		
+	}
+	
+	public TemporalChain(){
+		
+		this.id = temporalChainNumber;
+		mediaList = new ArrayList<Media>();
+		relationList = new ArrayList<Relation>();
+		
+		temporalChainNumber++;
 		
 	}
 
 	public void addMedia(Media media){
 		
-		
+		mediaList.add(media);
 		
 		setChanged();
-        //ListUpdateOperation listUpdateOperation = new ListUpdateOperation(media, ADD);
-        //notifyObservers(listUpdateOperation);
+		Operation operation = new Operation(Operator.ADD, media);
+        notifyObservers(operation);
         
 	}
 	

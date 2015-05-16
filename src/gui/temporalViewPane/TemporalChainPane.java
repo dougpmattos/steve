@@ -1,7 +1,11 @@
 package gui.temporalViewPane;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.Observable;
+import java.util.Observer;
 
+import javafx.collections.FXCollections;
 import javafx.event.EventHandler;
 import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.NumberAxis;
@@ -12,17 +16,29 @@ import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
 import model.common.Media;
+import model.common.Operation;
+import controller.TemporalViewController;
 
 @SuppressWarnings({ "unchecked", "rawtypes" })
-public class TemporalChainPane extends StackedBarChart{
-    
-	public TemporalChainPane(){
+public class TemporalChainPane extends StackedBarChart implements Observer{
+	
+	private TemporalViewController temporalViewController = TemporalViewController.getTemporalViewController();
+	
+	public TemporalChainPane(int id){
     	
     	super(new NumberAxis(), new CategoryAxis());
     	
-    	getYAxis().setId("axis-y");
+    	NumberAxis xAxis = (NumberAxis) getXAxis();
+    	xAxis.setAutoRanging(false);
+    	xAxis.setUpperBound(50);
+
+    	CategoryAxis yAxis = (CategoryAxis) getYAxis();
+    	yAxis.setId("axis-y");
+    	yAxis.setCategories(FXCollections.<String>observableArrayList(Arrays.asList("1","2","3", "4","5")));
     	
     	createDragAndDropEvent();
+    	
+    	temporalViewController.getTemporalView().getTemporalChainList().get(id).addObserver(this);
     	
      }
 	
@@ -38,14 +54,7 @@ public class TemporalChainPane extends StackedBarChart{
 
 		        try{
 		        	
-		        	//TODO controller para manipular o modelo da visao temporal
-		        	//temporalViewController.addMedia();
-		        	
-		        	XYChart.Series<Number, String> endSerie = new XYChart.Series<Number, String>();
-		    		BigDecimal bigDecimalEnd = new BigDecimal(3);
-		    		XYChart.Data<Number, String> endData = new XYChart.Data<Number, String>(bigDecimalEnd, "1");
-		    		endSerie.getData().add(endData);
-		    		getData().addAll(endSerie);
+		        	temporalViewController.addMedia(media);
 		        	
 		        	event.setDropCompleted(true);
 		        	event.consume();
@@ -73,18 +82,38 @@ public class TemporalChainPane extends StackedBarChart{
 	        }  
 	    });
 		
-	}   
+	}
 
-//	private void addTemporalMediaInterface(TemporalMediaInfo mediaInfo, int lineListIndex, HashMap<Number, List<TemporalMediaInfo>> lineList) {
-//		
-//		double begin = mediaInfo.getStartTime();
-//    	double end = mediaInfo.getStopTime();
-//    	String previousMediaEndStringValue = Double.toString(getPreviousMediaEnd(mediaInfo, lineList.get(lineListIndex)));
-//    	BigDecimal previousMediaEnd = new BigDecimal(previousMediaEndStringValue);
-//    	
-//		TemporalMediaInterface temporalMediaInterface = new TemporalMediaInterface(begin, previousMediaEnd, end, lineListIndex + "", mediaInfo.getId(), mediaInfo.getMedia(), this);
-//		getData().addAll(temporalMediaInterface.getBeginSerie(), temporalMediaInterface.getEndSerie());
-//		
-//	}
+	@Override
+	public void update(Observable o, Object obj) {
+		
+		Operation operation = (Operation) obj;
+		Media media = (Media) operation.getOperating();
+		
+		switch(operation.getOperator()){
+			case ADD:
+	            add(media);
+	            break;
+	            
+	        case REMOVE:
+	        	//remove(temporalChainOperation.getMedia());
+	            break;
+			
+	        case CLEAR:
+	        	setData(null);
+	        	break;
+        	default:
+        		break;
+		}
+	
+	}
+	
+	public void add(Media media){
+		XYChart.Series<Number, String> timelineMedia = new XYChart.Series<Number, String>();
+		BigDecimal bigDecimalEnd = new BigDecimal(4);
+		XYChart.Data<Number, String> axisValues = new XYChart.Data<Number, String>(bigDecimalEnd, "3");
+		timelineMedia.getData().add(axisValues);
+		getData().addAll(timelineMedia);
+	}
 		
 }

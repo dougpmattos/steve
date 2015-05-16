@@ -10,7 +10,7 @@ import javafx.scene.Node;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.FlowPane;
 import model.common.Media;
-import model.repository.ListUpdateOperation;
+import model.common.Operation;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,9 +28,6 @@ public class MediaListPane extends ScrollPane implements Observer {
 	private RepositoryController mediaController = RepositoryController.getMediaController();
 	
 	final Logger logger = LoggerFactory.getLogger(MediaListPane.class);
-	private final int ADD = 1;
-	private final int REMOVE = 2;
-	private final int CLEAR = 3;
 	
 	private final String OTHERS = "Others";
 	private final String TEXT = "Text";
@@ -118,30 +115,29 @@ public class MediaListPane extends ScrollPane implements Observer {
 	
 	@Override
 	public void update(Observable observable, Object obj) {
+	
+		Operation operation = (Operation) obj;
+		Media media = (Media) operation.getOperating();
 		
-		if (obj instanceof ListUpdateOperation) {
-			
-			ListUpdateOperation listUpdateOperation = (ListUpdateOperation) obj;
-			
-			switch(listUpdateOperation.getOperationType()){
-		        case ADD:
-		            add(listUpdateOperation.getMedia());
-		            break;
-		            
-		        case REMOVE:
-		        	remove(listUpdateOperation.getMedia());
-		            break;
-				
-		        case CLEAR:
-		        	allTypes.getChildren().clear();
-		        	image.getChildren().clear();
-		        	video.getChildren().clear();
-		        	audio.getChildren().clear();
-		        	text.getChildren().clear();
-		        	others.getChildren().clear();
-		        	break;
-			}
+		switch(operation.getOperator()){
+	        case ADD:
+	            add(media);
+	            break;
 	            
+	        case REMOVE:
+	        	remove(media);
+	            break;
+			
+	        case CLEAR:
+	        	allTypes.getChildren().clear();
+	        	image.getChildren().clear();
+	        	video.getChildren().clear();
+	        	audio.getChildren().clear();
+	        	text.getChildren().clear();
+	        	others.getChildren().clear();
+	        	break;
+	        default:
+	        	break;
 		}
 		
 	}

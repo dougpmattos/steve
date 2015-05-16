@@ -70,5 +70,9 @@ public class ZoomButton extends BorderPane{
 		setCenter(sliderContainer);
 		
 	}
+	
+	public Slider getSlider(){
+		return slider;
+	}
 
 }

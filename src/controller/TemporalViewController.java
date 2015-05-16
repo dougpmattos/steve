@@ -1,10 +1,11 @@
 package controller;
 
+import model.common.Media;
 import model.temporalView.TemporalChain;
 import model.temporalView.TemporalView;
 
 public class TemporalViewController {
-
+	
 	private static TemporalViewController temporalViewController = null;
 	
 	private TemporalView temporalView;
@@ -26,8 +27,18 @@ public class TemporalViewController {
 	
 	public void addTemporalChain(TemporalChain temporalChain){
 		
-		temporalView.getTemporalChainList().add(temporalChain);
+		temporalView.addTemporalChain(temporalChain);
 		
 	}
 	
+	public void addMedia(Media media){
+		
+		temporalView.getTemporalChainList().get(0).addMedia(media);
+		
+	}
+	
+	public TemporalView getTemporalView(){
+		return temporalView;
+	}
+
 }

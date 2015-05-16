@@ -37,12 +37,12 @@
     -fx-background-radius: 0;
 }
 
-#met_by-button{
+#met-by-button{
 	-fx-graphic: url("../images/met_by.png");
 	-fx-background-color: transparent;
     -fx-padding: 0;
 }
-#met_by-button:hover{
+#met-by-button:hover{
     -fx-background-color: #00BFA5;
     -fx-background-radius: 0;
 }
@@ -77,22 +77,32 @@
     -fx-background-radius: 0;
 }
 
-#starts_delay-button{
+#starts-delay-button{
 	-fx-graphic: url("../images/starts_delay.png");
 	-fx-background-color: transparent;
     -fx-padding: 0;
 }
-#starts_delay-button:hover{
+#starts-delay-button:hover{
     -fx-background-color: #00BFA5;
     -fx-background-radius: 0;
 }
 
-#finishes_delay-button{
+#finishes-delay-button{
 	-fx-graphic: url("../images/finishes_delay.png");
 	-fx-background-color: transparent;
     -fx-padding: 0;
 }
-#finishes_delay-button:hover{
+#finishes-delay-button:hover{
+    -fx-background-color: #00BFA5;
+    -fx-background-radius: 0;
+}
+
+#met-by-delay-button{
+	-fx-graphic: url("../images/met_by_delay.png");
+	-fx-background-color: transparent;
+    -fx-padding: 0;
+}
+#met-by-delay-button:hover{
     -fx-background-color: #00BFA5;
     -fx-background-radius: 0;
 }

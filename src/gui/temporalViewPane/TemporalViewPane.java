@@ -1,5 +1,6 @@
 package gui.temporalViewPane;
 
+import controller.TemporalViewController;
 import gui.common.Language;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
@@ -7,6 +8,8 @@ import javafx.scene.control.TabPane;
 import javafx.scene.layout.BorderPane;
 
 public class TemporalViewPane extends BorderPane{
+	
+	private TemporalViewController temporalViewController = TemporalViewController.getTemporalViewController();
 	
 	private TabPane temporalChainTabPane;
 	private TemporalViewButtonPane temporalViewButtonPane;
@@ -17,34 +20,35 @@ public class TemporalViewPane extends BorderPane{
 		getStylesheets().add("gui/temporalViewPane/styles/temporalViewPane.css");
 		
 		temporalChainTabPane = new TabPane();
-		temporalViewButtonPane = new TemporalViewButtonPane();
+		temporalViewButtonPane = new TemporalViewButtonPane(temporalChainTabPane);
 	          
 	    setCenter(temporalChainTabPane);
 	    setBottom(temporalViewButtonPane);
 	    
-	    createTemporalChain();  
-	    createTemporalChain(); 
-	    createTemporalChain(); 
-		
 	}
-
-	private void createTemporalChain() {
-
-		ScrollPane mainTemporalChainScrollPane = new ScrollPane();
-		mainTemporalChainScrollPane.setId("temporal-chain-scroll-pane");
-		mainTemporalChainScrollPane.setFitToHeight(true);
-		mainTemporalChainScrollPane.setFitToWidth(true);
+	
+	public void createTemporalChain(int id) {
 		
-		TemporalChainPane temporalChainPane = new TemporalChainPane();
-		mainTemporalChainScrollPane.setContent(temporalChainPane);
+		ScrollPane temporalChainScrollPane = new ScrollPane();
+		temporalChainScrollPane.setId("temporal-chain-scroll-pane");
+		temporalChainScrollPane.setFitToHeight(true);
+		temporalChainScrollPane.setFitToWidth(true);
+		
+		TemporalChainPane temporalChainPane = new TemporalChainPane(id);
+		temporalChainScrollPane.setContent(temporalChainPane);
 
 		Tab mainTemporalChainTab = new Tab();
-		mainTemporalChainTab.setText(Language.translate("main.temporal.chain"));
+		
+		if(id == 0){
+			mainTemporalChainTab.setText(Language.translate("main.temporal.chain"));
+		}else {
+			mainTemporalChainTab.setText(id + Language.translate("temporal.chain"));
+		}
 		mainTemporalChainTab.setClosable(false); 
-		mainTemporalChainTab.setContent(mainTemporalChainScrollPane);
+		mainTemporalChainTab.setContent(temporalChainScrollPane);
 
 		temporalChainTabPane.getTabs().add(mainTemporalChainTab);
-
+		
 	}
 
 }
