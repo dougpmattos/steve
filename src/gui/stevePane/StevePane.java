@@ -1,53 +1,80 @@
 
-package gui.stvePane;
+package gui.stevePane;
 
+import gui.common.Language;
 import gui.repositoryPane.RepositoryPane;
 import gui.spatialViewPane.SpatialViewPane;
 import gui.temporalViewPane.TemporalViewPane;
 
 import java.io.IOException;
+import java.util.Locale;
 import java.util.Observable;
 import java.util.Observer;
 
 import javafx.geometry.Orientation;
 import javafx.scene.Scene;
 import javafx.scene.control.SplitPane;
+import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
+import javafx.stage.Stage;
+import model.common.Media;
 import model.common.Operation;
-import model.common.Operator;
+import model.repository.RepositoryOperator;
+import model.repository.RepositoryMediaList;
 import model.temporalView.TemporalChain;
+import model.temporalView.TemporalView;
+
+import org.w3c.dom.stylesheets.MediaList;
+
 import br.uff.midiacom.ana.util.exception.XMLException;
-import controller.TemporalViewController;
+import controller.Controller;
 
 /**
  *
  * @author Douglas
  */
-public class StvePane extends Scene implements Observer{
-    
-	private TemporalViewController temporalViewController = TemporalViewController.getTemporalViewController();
+public class StevePane extends Scene{
 	
 	private static final int STVE_HEIGHT = 768;
 	private static final int STVE_WITDH = 1366;
+	private static final String SEPARATOR = "   -   ";
 
-    private StveMenuBar stveMenuBar;
+	private RepositoryMediaList repositoryMediaList;
+	private TemporalView temporalView;
+	
+	private Controller controller;
+	
+    private SteveMenuBar stveMenuBar;
     private RepositoryPane repositoryPane;
     private SpatialViewPane spatialViewPane;
     private TemporalViewPane temporalViewPane;
     private SplitPane repositorySpatialViewSplitPane;
     private SplitPane containerSplitPane;
+    private Locale defaultLocale;
+    
     private static BorderPane containerBorderPane = new BorderPane();
     
-    public StvePane() throws XMLException, IOException  {
+    public StevePane(Controller controller, RepositoryMediaList repositoryMediaList, TemporalView temporalView) throws XMLException, IOException  {
     	
     	super(containerBorderPane);
-    	getStylesheets().add("gui/stvePane/styles/stvePane.css");
+    	getStylesheets().add("gui/stevePane/styles/stevePane.css");
     	containerBorderPane.setPrefSize(STVE_WITDH, STVE_HEIGHT);
     	
-    	stveMenuBar = new StveMenuBar();
-    	repositoryPane = new RepositoryPane();
+    	this.controller = controller;
+    	this.repositoryMediaList = repositoryMediaList;
+		this.temporalView = temporalView;
+
+   }
+
+	public void createView(Stage stage) {
+		
+		defaultLocale = new Locale("en","US");
+		Language.setLocale(defaultLocale);
+		
+		stveMenuBar = new SteveMenuBar();
+    	repositoryPane = new RepositoryPane(controller, repositoryMediaList);
     	spatialViewPane = new SpatialViewPane();
-    	temporalViewPane = new TemporalViewPane();
+    	temporalViewPane = new TemporalViewPane(controller, temporalView);
 	   
     	repositorySpatialViewSplitPane = new SplitPane();
     	repositorySpatialViewSplitPane.setOrientation(Orientation.HORIZONTAL);
@@ -61,25 +88,12 @@ public class StvePane extends Scene implements Observer{
 
     	containerBorderPane.setTop(stveMenuBar);
     	containerBorderPane.setCenter(containerSplitPane);
-    	
-    	temporalViewController.createTemporalView();
-    	
-    	temporalViewController.getTemporalView().addObserver(this);
-    	
-    	temporalViewController.addTemporalChain(new TemporalChain());
-   }
-
-	@Override
-	public void update(Observable o, Object arg) {
 		
-		Operation operation = (Operation) arg;
-		TemporalChain temporalChain = (TemporalChain) operation.getOperating();
-		
-		if(operation.getOperator().equals(Operator.ADD)){
-			temporalViewPane.createTemporalChain(temporalChain.getId());
-		}
+		stage.setScene(this);
+		stage.setTitle(Language.translate("untitled.project") + SEPARATOR + Language.translate("steve"));
+		stage.getIcons().add(new Image(getClass().getResourceAsStream("/gui/stevePane/images/logo.png")));
+		stage.show();
 		
 	}
 
-   
 }

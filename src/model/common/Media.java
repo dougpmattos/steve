@@ -23,7 +23,7 @@ public class Media implements Serializable{
 
 	private static final long serialVersionUID = 2375510094294210628L;
 	
-	private final Double EXPLICIT_DURATION = 4.0;
+	private final Double EXPLICIT_DURATION = 5.0;
 	private final int IMAGE_THUMBNAIL_WIDTH = 120;
 	private final int ICON_WIDTH = 40;
     
@@ -38,7 +38,6 @@ public class Media implements Serializable{
     private Boolean interactive;
     private PresentationProperty presentationProperty;
     private ArrayList<TimeSegment> timeSegmentList;
-	private Boolean selected;
 	
 	public Media(File mediaFile){
 
@@ -57,7 +56,6 @@ public class Media implements Serializable{
        interactive = false;
        presentationProperty = new PresentationProperty();
        timeSegmentList = new ArrayList<TimeSegment>();
-       selected = false;
        
    }
 	
@@ -175,14 +173,6 @@ public class Media implements Serializable{
    public ImageView getIcon() {
 	   return icon;
    }
-
-   public void setSelected(boolean selected) {
-	   this.selected = selected;
-   }
-
-   public Boolean getSelected(){
-	   return this.selected;
-   }
    
    public Double getBegin() {
 	   return begin;
@@ -214,6 +204,11 @@ public class Media implements Serializable{
 
 	public ArrayList<TimeSegment> getTimeSegmentList() {
 		return timeSegmentList;
-	} 
+	}
+	 
+	@Override
+    public String toString(){
+    	return name;
+    }
 
 }

@@ -1,26 +1,47 @@
 package model.repository;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Observable;
 
 import model.common.Media;
 import model.common.Operation;
-import model.common.Operator;
 
 /**
  *
  * @author Douglas
  */
-public class MediaList extends Observable {
+public class RepositoryMediaList extends Observable {
  	
-    private static final ArrayList<Media> images = new ArrayList<Media>();
-    private static final ArrayList<Media> video = new ArrayList<Media>();
-    private static final ArrayList<Media> audio = new ArrayList<Media>();
-    private static final ArrayList<Media> text = new ArrayList<Media>();
-    private static final ArrayList<Media> others = new ArrayList<Media>();
-    private static final ArrayList<Media> allTypes = new ArrayList<Media>();
+    private ArrayList<Media> images;
+    private ArrayList<Media> video;
+    private ArrayList<Media> audio;
+    private ArrayList<Media> text;
+    private ArrayList<Media> others;
+    private ArrayList<Media> allTypes;
     
-	public void add(Media media) {
+    public void initialize(){
+    	
+    	images = new ArrayList<Media>();
+        video = new ArrayList<Media>();
+        audio = new ArrayList<Media>();
+        text = new ArrayList<Media>();
+        others = new ArrayList<Media>();
+        allTypes = new ArrayList<Media>();
+    	
+    }
+    
+	public Boolean add(Media media) {
+		
+		String selectedMediaName = media.getName();
+        Boolean contains = false;
+		Iterator<Media> mediaListIterator = getAllTypesList().iterator();
+        while(mediaListIterator.hasNext() && contains==false) {
+            String listMediaName = ((Media) mediaListIterator.next()).getName();
+            if(selectedMediaName.equalsIgnoreCase(listMediaName)){
+                return false;
+            }
+        }
 		
         allTypes.add(media);
         
@@ -49,8 +70,10 @@ public class MediaList extends Observable {
         }
         
         setChanged();
-        Operation operation = new Operation(Operator.ADD, media);
+        Operation<RepositoryOperator> operation = new Operation<RepositoryOperator>(RepositoryOperator.ADD_REPOSITORY_MEDIA, media);
         notifyObservers(operation);
+        
+        return true;
         
     }
     
@@ -83,7 +106,7 @@ public class MediaList extends Observable {
     	}
     
     	setChanged();
-        Operation operation = new Operation(Operator.REMOVE, media);
+        Operation<RepositoryOperator> operation = new Operation<RepositoryOperator>(RepositoryOperator.REMOVE_REPOSITORY_MEDIA, media);
         notifyObservers(operation);
     	
     }
@@ -97,7 +120,7 @@ public class MediaList extends Observable {
         allTypes.clear();
         
         setChanged();
-        Operation operation = new Operation(Operator.CLEAR);
+        Operation<RepositoryOperator> operation = new Operation<RepositoryOperator>(RepositoryOperator.CLEAR_REPOSITORY_MEDIA_LIST);
         notifyObservers(operation);
         
     }

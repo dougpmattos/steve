@@ -1,8 +1,6 @@
 package gui.repositoryPane;
 
 import java.util.Iterator;
-import java.util.Observable;
-import java.util.Observer;
 
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
@@ -10,12 +8,9 @@ import javafx.scene.Node;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.FlowPane;
 import model.common.Media;
-import model.common.Operation;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import controller.RepositoryController;
 
 /**
  *
@@ -23,9 +18,7 @@ import controller.RepositoryController;
  */
 
 @SuppressWarnings("rawtypes")
-public class MediaListPane extends ScrollPane implements Observer {
-    
-	private RepositoryController mediaController = RepositoryController.getMediaController();
+public class MediaListPane extends ScrollPane {
 	
 	final Logger logger = LoggerFactory.getLogger(MediaListPane.class);
 	
@@ -50,8 +43,6 @@ public class MediaListPane extends ScrollPane implements Observer {
 	    setFitToWidth(true);
 	    
 		setContent(allTypes);
-		
-	    mediaController.getMediaList().addObserver(this);
 		
 	}
 
@@ -109,35 +100,6 @@ public class MediaListPane extends ScrollPane implements Observer {
         case OTHERS:
         	setContent(others);
             break;
-		}
-		
-	}
-	
-	@Override
-	public void update(Observable observable, Object obj) {
-	
-		Operation operation = (Operation) obj;
-		Media media = (Media) operation.getOperating();
-		
-		switch(operation.getOperator()){
-	        case ADD:
-	            add(media);
-	            break;
-	            
-	        case REMOVE:
-	        	remove(media);
-	            break;
-			
-	        case CLEAR:
-	        	allTypes.getChildren().clear();
-	        	image.getChildren().clear();
-	        	video.getChildren().clear();
-	        	audio.getChildren().clear();
-	        	text.getChildren().clear();
-	        	others.getChildren().clear();
-	        	break;
-	        default:
-	        	break;
 		}
 		
 	}
@@ -269,24 +231,72 @@ public class MediaListPane extends ScrollPane implements Observer {
 		return allTypes.getChildren();
 	}
 	
-	public ObservableList<Node> getImagePane(){
+	public ObservableList<Node> getImages(){
 		return image.getChildren();
 	}
 	
-	public ObservableList<Node> getVideoPane(){
+	public ObservableList<Node> getVideos(){
 		return video.getChildren();
 	}
 	
-	public ObservableList<Node> getAudioPane(){
+	public ObservableList<Node> getAudios(){
 		return audio.getChildren();
 	}
 	
-	public ObservableList<Node> getTextPane(){
+	public ObservableList<Node> getTexts(){
 		return text.getChildren();
 	}
 	
-	public ObservableList<Node> getOthersPane(){
+	public ObservableList<Node> getOthers(){
 		return others.getChildren();
+	}
+
+	public Media getSelectedMedia() {
+		
+		for(Node node : getAllTypes()){
+			RepositoryMediaItemContainer repositoryMediaItemContainer = (RepositoryMediaItemContainer) node;
+			if(repositoryMediaItemContainer.getSelected()){
+				return repositoryMediaItemContainer.getMedia();
+			}
+		}
+		
+		for(Node node : getImages()){
+			RepositoryMediaItemContainer repositoryMediaItemContainer = (RepositoryMediaItemContainer) node;
+			if(repositoryMediaItemContainer.getSelected()){
+				return repositoryMediaItemContainer.getMedia();
+			}
+		}
+		
+		for(Node node : getVideos()){
+			RepositoryMediaItemContainer repositoryMediaItemContainer = (RepositoryMediaItemContainer) node;
+			if(repositoryMediaItemContainer.getSelected()){
+				return repositoryMediaItemContainer.getMedia();
+			}
+		}
+		
+		for(Node node : getAudios()){
+			RepositoryMediaItemContainer repositoryMediaItemContainer = (RepositoryMediaItemContainer) node;
+			if(repositoryMediaItemContainer.getSelected()){
+				return repositoryMediaItemContainer.getMedia();
+			}
+		}
+		
+		for(Node node : getTexts()){
+			RepositoryMediaItemContainer repositoryMediaItemContainer = (RepositoryMediaItemContainer) node;
+			if(repositoryMediaItemContainer.getSelected()){
+				return repositoryMediaItemContainer.getMedia();
+			}
+		}
+		
+		for(Node node : getOthers()){
+			RepositoryMediaItemContainer repositoryMediaItemContainer = (RepositoryMediaItemContainer) node;
+			if(repositoryMediaItemContainer.getSelected()){
+				return repositoryMediaItemContainer.getMedia();
+			}
+		}
+		
+		return null;
+		
 	}
 
 }

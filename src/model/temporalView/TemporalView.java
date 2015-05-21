@@ -4,15 +4,18 @@ import java.util.ArrayList;
 import java.util.Observable;
 
 import model.common.Operation;
-import model.common.Operator;
 
 public class TemporalView extends Observable{
 	
 	private ArrayList<TemporalChain> temporalChainList;
 	
-	public TemporalView(){
+	public void initialize(){
 		
 		temporalChainList = new ArrayList<TemporalChain>();
+		
+		TemporalChain temporalChain = new TemporalChain();
+		temporalChain.initialize();
+		addTemporalChain(temporalChain);
 		
 	}
 
@@ -21,7 +24,7 @@ public class TemporalView extends Observable{
 		temporalChainList.add(temporalChain);
 		
 		setChanged();
-		Operation operation = new Operation(Operator.ADD, temporalChain);
+		Operation<TemporalViewOperator> operation = new Operation<TemporalViewOperator>(TemporalViewOperator.ADD_TEMPORAL_CHAIN, temporalChain);
 	    notifyObservers(operation);
 		
 	}
@@ -31,7 +34,7 @@ public class TemporalView extends Observable{
 		temporalChainList.remove(temporalChain);
 		
 		setChanged();
-		Operation operation = new Operation(Operator.REMOVE, temporalChain);
+		Operation<TemporalViewOperator> operation = new Operation<TemporalViewOperator>(TemporalViewOperator.REMOVE_TEMPORAL_CHAIN, temporalChain);
 	    notifyObservers(operation);
 	    
 	}

@@ -1,35 +1,41 @@
 package gui.repositoryPane;
     
+import gui.common.Language;
+import gui.common.MessageDialog;
+
 import java.io.File;
 import java.util.List;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.FileChooser;
-import controller.RepositoryController;
+import model.common.Media;
+import controller.Controller;
 
 /**
  *
  * @author Douglas
  */
 public class RepositoryButtonPane extends BorderPane{
-    
-	private RepositoryController mediaListController = RepositoryController.getMediaController();
 	
-    private MediaListObserverButton addButton;
-    private MediaListObserverButton deleteButton;
-    private MediaListObserverButton clearButton;
-    private MediaListObserverButton gridButton;
-    private MediaListObserverButton listButton;
+	private Controller controller;
+	
+    private Button addButton;
+    private Button deleteButton;
+    private Button clearButton;
+    private Button gridButton;
+    private Button listButton;
     private HBox mediaButtonPane;
     private HBox viewButtonPane;
     private FileChooser fileChooser;
     private List <File> fileList;
     
-    public RepositoryButtonPane(ScrollPane scrollPaneTree, MediaListPane mediaListPane, RepositoryPane repositoryPane){
+    public RepositoryButtonPane(Controller controller, ScrollPane scrollPaneTree, MediaTreePane mediaTreePane, MediaListPane mediaListPane, RepositoryPane repositoryPane){
         
         setId("button-pane");
         getStylesheets().add("gui/repositoryPane/styles/repositoryButtonPane.css");
@@ -39,24 +45,39 @@ public class RepositoryButtonPane extends BorderPane{
         setLeft(mediaButtonPane);
         setRight(viewButtonPane);
 
-        createButtonActions(scrollPaneTree, mediaListPane, repositoryPane);
+        createButtonActions(scrollPaneTree, mediaTreePane, mediaListPane, repositoryPane);
+        
+        this.controller = controller;
         
     }
 
 	private void createButtons() {
 		
-		addButton = new MediaListObserverButton("add-button", "add.media");
-        deleteButton = new MediaListObserverButton("delete-button", "delete.media");
+		addButton = new Button();
+		addButton.setId("add-button");
+		addButton.setTooltip(new Tooltip(Language.translate("add.media")));
+	    
+        deleteButton = new Button();
+        deleteButton.setId("delete-button");
+        deleteButton.setTooltip(new Tooltip(Language.translate("delete.media")));
         deleteButton.setDisable(true);
-        clearButton = new MediaListObserverButton("clear-button", "clear.repository");
+   
+        clearButton = new Button();
+        clearButton.setId("clear-button");
+        clearButton.setTooltip(new Tooltip(Language.translate("clear.repository")));
         clearButton.setDisable(true);
         
         mediaButtonPane = new HBox();
         mediaButtonPane.setId("media-button-pane");
         mediaButtonPane.getChildren().addAll(addButton, deleteButton, clearButton);
         
-        gridButton = new MediaListObserverButton("grid-button", "grid.view");
-        listButton = new MediaListObserverButton("list-button", "list.view");
+        gridButton = new Button();
+        gridButton.setId("grid-button");
+        gridButton.setTooltip(new Tooltip(Language.translate("grid.view")));
+		
+        listButton = new Button();
+        listButton.setId("list-button");
+        listButton.setTooltip(new Tooltip(Language.translate("list.view")));
         
         viewButtonPane = new HBox();
         viewButtonPane.setId("view-button-pane");
@@ -64,7 +85,7 @@ public class RepositoryButtonPane extends BorderPane{
         
 	}
 
-    private void createButtonActions(ScrollPane scrollPaneTree, MediaListPane mediaListPane, RepositoryPane repositoryPane) {
+    private void createButtonActions(ScrollPane scrollPaneTree, MediaTreePane mediaTreePane, MediaListPane mediaListPane, RepositoryPane repositoryPane) {
     	
         addButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override public void handle(ActionEvent e) {
@@ -74,7 +95,9 @@ public class RepositoryButtonPane extends BorderPane{
                 
                 if(fileList != null){
                 	for (File file : fileList) {
-                		mediaListController.addMedia(file);
+                		if(!controller.addRepositoryMedia(new Media(file))){
+                			new MessageDialog("Media's already added.", MessageDialog.ICON_INFO).showAndWait();
+                		}
                     }
                 }                      
             }
@@ -82,15 +105,22 @@ public class RepositoryButtonPane extends BorderPane{
         
         deleteButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override public void handle(ActionEvent e) {
-            	mediaListController.deleteMedia();
+            	if(mediaListPane.getSelectedMedia() != null){
+            		controller.deleteRepositoryMedia(mediaListPane.getSelectedMedia());
+            	} else if(mediaTreePane.getSelectedMedia() != null){
+            		controller.deleteRepositoryMedia(mediaTreePane.getSelectedMedia());
+            	} else{
+            		new MessageDialog("Please, select a media to delete.", MessageDialog.ICON_INFO).showAndWait();
+            	}
+            	
+            	
+            	
             }
         });
         
         clearButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override public void handle(ActionEvent e) {
-            	mediaListController.clearMediaList();
-                deleteButton.setDisable(true);
-                clearButton.setDisable(true);
+            	controller.clearRepositoryMediaList();
             }
         });
         
@@ -106,6 +136,14 @@ public class RepositoryButtonPane extends BorderPane{
             }
         });
         
-        
     }
+    
+    public Button getDeleteButton(){
+    	return deleteButton;
+    }
+    
+    public Button getClearButton(){
+    	return clearButton;
+    }
+    
 }

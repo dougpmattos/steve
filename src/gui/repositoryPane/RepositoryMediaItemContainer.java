@@ -18,6 +18,7 @@ public class RepositoryMediaItemContainer extends BorderPane{
 	private Label label;
 	private Media media;
 	private MediaListPane mediaListPane;
+	private Boolean selected;
 
 	public RepositoryMediaItemContainer(Media media, MediaListPane mediaListPane){
 		
@@ -27,6 +28,7 @@ public class RepositoryMediaItemContainer extends BorderPane{
 		this.mediaListPane = mediaListPane;
 		label = new Label(media.getName());
 		label.setId("label-media-item");
+		selected = false;
 
 		setCenter(media.generateMediaIcon());
 		setBottom(label);
@@ -65,7 +67,8 @@ public class RepositoryMediaItemContainer extends BorderPane{
 	        @Override
 	        public void handle(MouseEvent e) {
 	        	RepositoryMediaItemContainer source = (RepositoryMediaItemContainer) e.getSource();
-	        	source.getMedia().setSelected(true);
+	        	source.setSelected(true);
+	        	
 	        	getStylesheets().add("gui/repositoryPane/styles/mouseClickedRepositoryMedia.css");
 	        	
 	        	for(Node media : mediaListPane.getAllTypes()){
@@ -73,61 +76,11 @@ public class RepositoryMediaItemContainer extends BorderPane{
 	        		RepositoryMediaItemContainer repoMediaItemContainer = (RepositoryMediaItemContainer) media;
 	        		
 	        		if(!source.getMedia().equals(repoMediaItemContainer.getMedia())){
-	        			repoMediaItemContainer.getMedia().setSelected(false);
+	        			repoMediaItemContainer.setSelected(false);
 	        			repoMediaItemContainer.getStylesheets().remove("gui/repositoryPane/styles/mouseClickedRepositoryMedia.css");
 	        		}
 	        		
 	        	}
-	        	
-	        	for(Node media : mediaListPane.getImagePane()){
-	        		
-	        		RepositoryMediaItemContainer repoMediaItemContainer = (RepositoryMediaItemContainer) media;
-	        		
-	        		if(!source.getMedia().equals(repoMediaItemContainer.getMedia())){
-	        			repoMediaItemContainer.getStylesheets().remove("gui/repositoryPane/styles/mouseClickedRepositoryMedia.css");
-	        		}
-	        		
-	        	}
-	        	
-	        	for(Node media : mediaListPane.getVideoPane()){
-	        		
-	        		RepositoryMediaItemContainer repoMediaItemContainer = (RepositoryMediaItemContainer) media;
-	        		
-	        		if(!source.getMedia().equals(repoMediaItemContainer.getMedia())){
-	        			repoMediaItemContainer.getStylesheets().remove("gui/repositoryPane/styles/mouseClickedRepositoryMedia.css");
-	        		}
-	        		
-	        	}
-
-				for(Node media : mediaListPane.getAudioPane()){
-					
-					RepositoryMediaItemContainer repoMediaItemContainer = (RepositoryMediaItemContainer) media;
-					
-					if(!source.getMedia().equals(repoMediaItemContainer.getMedia())){
-	        			repoMediaItemContainer.getStylesheets().remove("gui/repositoryPane/styles/mouseClickedRepositoryMedia.css");
-	        		}
-					
-				}
-
-				for(Node media : mediaListPane.getTextPane()){
-					
-					RepositoryMediaItemContainer repoMediaItemContainer = (RepositoryMediaItemContainer) media;
-					
-					if(!source.getMedia().equals(repoMediaItemContainer.getMedia())){
-	        			repoMediaItemContainer.getStylesheets().remove("gui/repositoryPane/styles/mouseClickedRepositoryMedia.css");
-	        		}
-					
-				}
-				
-				for(Node media : mediaListPane.getOthersPane()){
-					
-					RepositoryMediaItemContainer repoMediaItemContainer = (RepositoryMediaItemContainer) media;
-					
-					if(!source.getMedia().equals(repoMediaItemContainer.getMedia())){
-	        			repoMediaItemContainer.getStylesheets().remove("gui/repositoryPane/styles/mouseClickedRepositoryMedia.css");
-	        		}
-					
-				}
 	        	
 	        }
 	    });
@@ -141,6 +94,14 @@ public class RepositoryMediaItemContainer extends BorderPane{
 
 	public void setMedia(Media media) {
 		this.media = media;
+	}
+	
+	public void setSelected(boolean selected) {
+		this.selected = selected;
+	}
+
+	public Boolean getSelected(){
+		return this.selected;
 	}
 
 }

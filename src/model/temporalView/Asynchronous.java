@@ -6,15 +6,15 @@ public class Asynchronous<T> extends Relation<T> {
 
 	private TemporalChain newTemporalChain;
 	
-	public Asynchronous(int id, T masterMedia, ArrayList<T> slaveMediaList) {
+	public Asynchronous(T masterMedia) {
 		
-		super(id, masterMedia, slaveMediaList);
+		super(masterMedia);
 		
 	}
 	
 	public Asynchronous(int id) {
 		
-		super(id);
+		super();
 		
 	}
 

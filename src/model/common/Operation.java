@@ -1,22 +1,28 @@
 package model.common;
 
-
-public class Operation {
+public class Operation<E> {
 	
 	Object operating;
-	Operator operator;
+	E operator;
+	Object arg;
 	
-	public Operation(Operator operator, Object operating){
+	public Operation(E operator, Object operating){
 		
 		this.operating = operating;
 		this.operator = operator;
 		
 	}
 	
-	public Operation(Operator operator){
+	public Operation(E operator, Object operating, Object arg){
 		
+		this.operating = operating;
 		this.operator = operator;
+		this.arg = arg;
 		
+	}
+	
+	public Operation(E operator){
+		this.operator = operator;
 	}
 
 	public Object getOperating() {
@@ -27,12 +33,20 @@ public class Operation {
 		this.operating = operating;
 	}
 
-	public Operator getOperator() {
+	public E getOperator() {
 		return operator;
 	}
 
-	public void setOperator(Operator operator) {
+	public void setOperator(E operator) {
 		this.operator = operator;
+	}
+	
+	public Object getArg() {
+		return arg;
+	}
+
+	public void setArg(Object arg) {
+		this.arg = arg;
 	}
 
 }

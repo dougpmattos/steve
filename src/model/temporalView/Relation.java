@@ -4,21 +4,30 @@ import java.util.ArrayList;
 
 public abstract class Relation<E> {
 
+	private static int relationNumber = 0;
+	
 	private int id;
 	private E masterMedia;
 	private ArrayList<E> slaveMediaList;
+	private Boolean explicit;
 	
-	public Relation(int id){
+	public Relation(){
 		
-		this.id = id;
+		this.id = relationNumber;
+		explicit = false; 
+		
+		relationNumber++;
 		
 	}
 
-	public Relation(int id, E masterMedia, ArrayList<E> slaveMediaList){
+	public Relation(E masterMedia){
 		
-		this.id = id;
+		this.id = relationNumber;
 		this.masterMedia = masterMedia;
-		this.slaveMediaList = slaveMediaList;
+		this.slaveMediaList = new ArrayList<E>();
+		explicit = false;
+		
+		relationNumber++;
 		
 	}
 
@@ -41,7 +50,21 @@ public abstract class Relation<E> {
 	public int getId() {
 		return id;
 	}
+
+	public Boolean getExplicit() {
+		return explicit;
+	}
+
+	public void setExplicit(Boolean explicit) {
+		this.explicit = explicit;
+	}
 	
+	public void addSlave(E slave){
+		slaveMediaList.add(slave);
+	}
 	
+	public void removeSlave(E slave){
+		slaveMediaList.remove(slave);
+	}
 	
 }

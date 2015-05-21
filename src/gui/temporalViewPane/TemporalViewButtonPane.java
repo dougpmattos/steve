@@ -11,6 +11,7 @@ import javafx.scene.control.TabPane;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import controller.Controller;
 
 public class TemporalViewButtonPane extends BorderPane {
 
@@ -30,7 +31,7 @@ public class TemporalViewButtonPane extends BorderPane {
 	private CheckBox showAnchorsLinksButton;
 	private HBox alignmentButtonPane;
 	
-	public TemporalViewButtonPane(TabPane temporalChainTabPane){
+	public TemporalViewButtonPane(Controller controller, TabPane temporalChainTabPane){
 		
 		setId("button-pane");
 	    getStylesheets().add("gui/temporalViewPane/styles/temporalViewButtonPane.css");

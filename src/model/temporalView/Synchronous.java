@@ -1,21 +1,16 @@
 package model.temporalView;
 
-import java.util.ArrayList;
 
 public class Synchronous<T> extends Relation<T>{
 
 	private RelationType type;
 	private Double delay;
 
-	public Synchronous(int id, T masterMedia, ArrayList<T> slaveMediaList) {
+	public Synchronous(T masterMedia, RelationType type) {
 		
-		super(id, masterMedia, slaveMediaList);
+		super(masterMedia);
 		
-	}
-	
-	public Synchronous(int id) {
-		
-		super(id);
+		this.type = type;
 		
 	}
 	

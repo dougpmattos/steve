@@ -5,7 +5,6 @@ import java.util.Observable;
 
 import model.common.Media;
 import model.common.Operation;
-import model.common.Operator;
 
 @SuppressWarnings("rawtypes")
 public class TemporalChain extends Observable {
@@ -17,7 +16,7 @@ public class TemporalChain extends Observable {
 	private ArrayList<Media> mediaList;
 	private ArrayList<Relation> relationList;
 	
-	public TemporalChain(Media masterMedia){
+	public void initialize(Media masterMedia) {
 		
 		this.id = temporalChainNumber;
 		this.masterMedia = masterMedia;
@@ -28,7 +27,7 @@ public class TemporalChain extends Observable {
 		
 	}
 	
-	public TemporalChain(){
+	public void initialize() {
 		
 		this.id = temporalChainNumber;
 		mediaList = new ArrayList<Media>();
@@ -43,7 +42,27 @@ public class TemporalChain extends Observable {
 		mediaList.add(media);
 		
 		setChanged();
-		Operation operation = new Operation(Operator.ADD, media);
+		Operation<TemporalViewOperator> operation = new Operation<TemporalViewOperator>(TemporalViewOperator.ADD_TEMPORAL_CHAIN_MEDIA, media, getId());
+        notifyObservers(operation);
+        
+	}
+	
+	public void addSynchronousRelation(Synchronous<Media> synchronousRelation){
+		
+		relationList.add(synchronousRelation);
+		
+		setChanged();
+		Operation<TemporalViewOperator> operation = new Operation<TemporalViewOperator>(TemporalViewOperator.ADD_SYNC_RELATION, synchronousRelation, getId());
+        notifyObservers(operation);
+        
+	}
+	
+	public void setMasterMedia(Media masterMedia){
+		
+		this.masterMedia = masterMedia;
+		
+		setChanged();
+		Operation<TemporalViewOperator> operation = new Operation<TemporalViewOperator>(TemporalViewOperator.SET_MASTER_MEDIA, masterMedia, getId());
         notifyObservers(operation);
         
 	}
@@ -52,24 +71,12 @@ public class TemporalChain extends Observable {
 		return masterMedia;
 	}
 
-	public void setMasterMedia(Media masterMedia) {
-		this.masterMedia = masterMedia;
-	}
-
 	public ArrayList<Media> getMediaList() {
 		return mediaList;
 	}
 
-	public void setMediaList(ArrayList<Media> mediaList) {
-		this.mediaList = mediaList;
-	}
-
 	public ArrayList<Relation> getRelationList() {
 		return relationList;
-	}
-
-	public void setRelationList(ArrayList<Relation> relationList) {
-		this.relationList = relationList;
 	}
 
 	public int getId() {

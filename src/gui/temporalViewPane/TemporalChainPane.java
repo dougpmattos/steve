@@ -1,6 +1,5 @@
 package gui.temporalViewPane;
 
-import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Observable;
 import java.util.Observer;
@@ -17,16 +16,25 @@ import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
 import model.common.Media;
 import model.common.Operation;
-import controller.TemporalViewController;
+import model.temporalView.TemporalChain;
+import model.temporalView.TemporalView;
+import model.temporalView.TemporalViewOperator;
+import controller.Controller;
 
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public class TemporalChainPane extends StackedBarChart implements Observer{
+
+	private Controller controller;
 	
-	private TemporalViewController temporalViewController = TemporalViewController.getTemporalViewController();
+	private TemporalView temporalViewModel;
+	private TemporalChain temporalChainModel;
 	
-	public TemporalChainPane(int id){
+	public TemporalChainPane(Controller controller, TemporalView temporalViewModel, TemporalChain temporalChainModel){
     	
     	super(new NumberAxis(), new CategoryAxis());
+    	
+    	this.temporalViewModel = temporalViewModel;
+    	this.temporalChainModel = temporalChainModel;
     	
     	NumberAxis xAxis = (NumberAxis) getXAxis();
     	xAxis.setAutoRanging(false);
@@ -38,7 +46,9 @@ public class TemporalChainPane extends StackedBarChart implements Observer{
     	
     	createDragAndDropEvent();
     	
-    	temporalViewController.getTemporalView().getTemporalChainList().get(id).addObserver(this);
+    	temporalChainModel.addObserver(this);
+    	
+    	this.controller = controller;
     	
      }
 	
@@ -50,11 +60,33 @@ public class TemporalChainPane extends StackedBarChart implements Observer{
 				
 				Dragboard dragBoard = event.getDragboard();
 		        Object[] contentTypes = dragBoard.getContentTypes().toArray();
-		        Media media = (Media) dragBoard.getContent((DataFormat) contentTypes[0]);
+		        Media droppedMedia = (Media) dragBoard.getContent((DataFormat) contentTypes[0]);
 
 		        try{
+		      
+		        	if(temporalChainModel.getMasterMedia() == null){
+		        		
+		        		controller.setMasterMedia(droppedMedia, temporalChainModel);
+		        		
+		        	}else {
+		        		
+//		        		temporalViewController.addMediaTemporalChain(droppedMedia, temporalChainModelId);
+//			        	Synchronous<Media> syncRelation = new Synchronous<Media>(temporalChain.getMasterMedia(), RelationType.BEFORE);
+//			        	
+//			        	Double delay = 0.0;
+//			        	for(int i=0; i < temporalChain.getMediaList().size(); i++){
+//			        		Media media = temporalChain.getMediaList().get(i);
+//			        		delay =+ media.getDuration();
+//			        	}
+//			        	
+//			        	syncRelation.setDelay(delay);
+//			        	syncRelation.addSlave(droppedMedia);
+//			        	temporalViewController.addSynchronousRelationTemporalChain(syncRelation, temporalChainModelId);
+			        	
+		        	}
 		        	
-		        	temporalViewController.addMedia(media);
+		        	
+		        	
 		        	
 		        	event.setDropCompleted(true);
 		        	event.consume();
@@ -84,36 +116,43 @@ public class TemporalChainPane extends StackedBarChart implements Observer{
 		
 	}
 
+	public TemporalView getTemporalViewModel(){
+		return temporalViewModel;
+	}
+	
+	public TemporalChain getTemporalChainModel(){
+		return temporalChainModel;
+	}
+	
 	@Override
 	public void update(Observable o, Object obj) {
 		
-		Operation operation = (Operation) obj;
+		Operation<TemporalViewOperator> operation = (Operation<TemporalViewOperator>) obj;
 		Media media = (Media) operation.getOperating();
 		
 		switch(operation.getOperator()){
-			case ADD:
-	            add(media);
-	            break;
+		
+			case SET_MASTER_MEDIA:
+				
+	            setMasterMedia(media);
 	            
-	        case REMOVE:
-	        	//remove(temporalChainOperation.getMedia());
 	            break;
-			
-	        case CLEAR:
-	        	setData(null);
-	        	break;
+
         	default:
+        		
         		break;
+        		
 		}
 	
 	}
 	
-	public void add(Media media){
-		XYChart.Series<Number, String> timelineMedia = new XYChart.Series<Number, String>();
-		BigDecimal bigDecimalEnd = new BigDecimal(4);
-		XYChart.Data<Number, String> axisValues = new XYChart.Data<Number, String>(bigDecimalEnd, "3");
-		timelineMedia.getData().add(axisValues);
-		getData().addAll(timelineMedia);
-	}
+	private void setMasterMedia(Media masterMedia){
 		
+		XYChart.Series<Number, String> uniqueSerie = new XYChart.Series<Number, String>();
+		XYChart.Data<Number, String> axisValues = new XYChart.Data<Number, String>(masterMedia.getDuration(), "3");
+		uniqueSerie.getData().add(axisValues);
+		getData().addAll(uniqueSerie);
+		
+	}
+	
 }

@@ -1,27 +1,18 @@
 package gui.repositoryPane;
 
-import java.util.Observable;
-import java.util.Observer;
-
 import javafx.collections.ObservableList;
-import javafx.event.EventHandler;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseEvent;
 import model.common.Media;
-import model.common.Operation;
-import controller.RepositoryController;
 
 /**
  *
  * @author Douglas
  */
-public class MediaTreePane extends TreeView<Object> implements Observer{
+public class MediaTreePane extends TreeView<Object>{
     
 	private final String OTHERS = "Others";
 	private final String TEXT = "Text";
@@ -37,13 +28,7 @@ public class MediaTreePane extends TreeView<Object> implements Observer{
 	private final TreeItem<Object> text = new TreeItem<Object>(TEXT);
 	private final TreeItem<Object> others = new TreeItem<Object>(OTHERS);
 	
-	private MediaListPane mediaListPane;
-	
-	private RepositoryController mediaController = RepositoryController.getMediaController();
-	
-    public MediaTreePane(MediaListPane mediaListPane){
-    	
-    	this.mediaListPane = mediaListPane;
+    public MediaTreePane(){
     	
     	ImageView rootIcon = new ImageView(new Image(getClass().getResourceAsStream("/gui/repositoryPane/images/rootNode.png")));
     	ImageView imageIcon = new ImageView(new Image(getClass().getResourceAsStream("/gui/repositoryPane/images/imageNode.png")));
@@ -74,8 +59,6 @@ public class MediaTreePane extends TreeView<Object> implements Observer{
         allTypes.getChildren().add(others);
        
         setRoot(allTypes);
-        createEventListners();
-        mediaController.getMediaList().addObserver(this);
         
     }
     
@@ -87,32 +70,32 @@ public class MediaTreePane extends TreeView<Object> implements Observer{
         switch(media.getType()){
             case IMAGE:
             	importedMediaIcon.setImage(new Image(getClass().getResourceAsStream("/gui/repositoryPane/images/imageTreeItem.png")));
-            	importedMediaTreeItem = new TreeItem<Object>(media.getName(), importedMediaIcon);
+            	importedMediaTreeItem = new TreeItem<Object>(media, importedMediaIcon);
                 image.getChildren().add(importedMediaTreeItem);
                 break;
                 
             case VIDEO:
             	importedMediaIcon.setImage(new Image(getClass().getResourceAsStream("/gui/repositoryPane/images/videoTreeItem.png")));
-            	importedMediaTreeItem = new TreeItem<Object>(media.getName(), importedMediaIcon);
+            	importedMediaTreeItem = new TreeItem<Object>(media, importedMediaIcon);
                 video.getChildren().add(importedMediaTreeItem);
                 break;
                 
             case AUDIO:
             	importedMediaIcon.setImage(new Image(getClass().getResourceAsStream("/gui/repositoryPane/images/audioTreeItem.png")));
-            	importedMediaTreeItem = new TreeItem<Object>(media.getName(), importedMediaIcon);
+            	importedMediaTreeItem = new TreeItem<Object>(media, importedMediaIcon);
                 audio.getChildren().add(importedMediaTreeItem);
                 break;
                 
             case TEXT:
             	importedMediaIcon.setImage(new Image(getClass().getResourceAsStream("/gui/repositoryPane/images/textTreeItem.png")));
-            	importedMediaTreeItem = new TreeItem<Object>(media.getName(), importedMediaIcon);
+            	importedMediaTreeItem = new TreeItem<Object>(media, importedMediaIcon);
                 text.getChildren().add(importedMediaTreeItem);
                 break;
                 
             case OTHER:
             case PROCEDURAL:
             	importedMediaIcon.setImage(new Image(getClass().getResourceAsStream("/gui/repositoryPane/images/othersTreeItem.png")));
-            	importedMediaTreeItem = new TreeItem<Object>(media.getName(), importedMediaIcon);
+            	importedMediaTreeItem = new TreeItem<Object>(media, importedMediaIcon);
                 others.getChildren().add(importedMediaTreeItem);
                 break;
                 
@@ -184,117 +167,8 @@ public class MediaTreePane extends TreeView<Object> implements Observer{
         others.getChildren().clear();
 	}
 
-	@Override
-	public void update(Observable observable, Object obj) {
-		
-		if (obj instanceof Operation) {
-			
-			Operation operation = (Operation) obj;
-			Media media = (Media) operation.getOperating();
-			
-			switch(operation.getOperator()){
-		        case ADD:
-		        	add(media);
-		            break;
-		            
-		        case REMOVE:
-		        	remove(media);
-		            break;
-				
-		        case CLEAR:
-		        	clear();
-		        	break;
-			}
-	            
-		}
-		
-	}
-	
-	public void createEventListners(){
-		
-		setOnKeyReleased(new EventHandler<KeyEvent>(){
-
-			@Override
-			public void handle(KeyEvent keyEvent) {
-				
-				if (keyEvent.getCode() == KeyCode.UP || keyEvent.getCode() == KeyCode.DOWN) {
-					updateMediaListPane();
-				}
-				
-			}
-			
-		});
-		
-		setOnMouseClicked(new EventHandler<MouseEvent>(){
-
-			@Override
-			public void handle(MouseEvent mouseEvent) {
-				updateMediaListPane();	 
-			}
-			
-		});
-		
-	}
-	
-	private void updateMediaListPane() {
-		TreeItem<Object> selectedTreeItem = getSelectionModel().getSelectedItem();
-		String selectedItem = selectedTreeItem.getValue().toString();
-		
-		if(selectedItem == MEDIA_FILES){
-			mediaListPane.setSelectPaneToFront(MEDIA_FILES);
-		}else {
-		
-			String selectedItemParent = selectedTreeItem.getParent().getValue().toString();
-			
-			if(selectedItemParent == MEDIA_FILES){
-				
-				switch(selectedItem){
-				case IMAGE:
-					mediaListPane.setSelectPaneToFront(IMAGE);
-	                break;
-	                
-	            case VIDEO:
-	            	mediaListPane.setSelectPaneToFront(VIDEO);
-	                break;
-	                
-	            case AUDIO:
-	            	mediaListPane.setSelectPaneToFront(AUDIO);
-	                break;
-	                
-	            case TEXT:
-	            	mediaListPane.setSelectPaneToFront(TEXT);
-	                break;
-	                
-	            case OTHERS:
-	            	mediaListPane.setSelectPaneToFront(OTHERS);
-	                break;
-				}
-				
-			}else {
-				
-				switch(selectedItemParent){
-				case IMAGE:
-					mediaListPane.setSelectPaneToFront(IMAGE);
-					break;
-                
-				case VIDEO:
-	            	mediaListPane.setSelectPaneToFront(VIDEO);
-	                break;
-                
-				case AUDIO:
-	            	mediaListPane.setSelectPaneToFront(AUDIO);
-	                break;
-                
-				case TEXT:
-	            	mediaListPane.setSelectPaneToFront(TEXT);
-	                break;
-                
-				case OTHERS:
-	            	mediaListPane.setSelectPaneToFront(OTHERS);
-	                break;
-				}
-			}
-		}
+	public Media getSelectedMedia() {
+		return (Media) getSelectionModel().getSelectedItem().getValue();
 	}
 	
     

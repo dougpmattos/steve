@@ -1,6 +1,12 @@
-package gui.stvePane;
+package gui.stevePane;
 
 import gui.common.Language;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.ArrayList;
+
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.CheckMenuItem;
@@ -9,9 +15,24 @@ import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.input.KeyCombination;
+import javafx.stage.FileChooser;
 
-public class StveMenuBar extends MenuBar{
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import br.uff.midiacom.ana.NCLBody;
+import br.uff.midiacom.ana.NCLDoc;
+import br.uff.midiacom.ana.NCLHead;
+import br.uff.midiacom.ana.connector.NCLConnectorBase;
+import br.uff.midiacom.ana.descriptor.NCLDescriptorBase;
+import br.uff.midiacom.ana.region.NCLRegionBase;
+import br.uff.midiacom.ana.util.exception.XMLException;
+
+@SuppressWarnings({"rawtypes","unchecked"})
+public class SteveMenuBar extends MenuBar{
+
+	final Logger logger = LoggerFactory.getLogger(SteveMenuBar.class);
+	
 	private Menu menuFile;
 	private Menu menuEdit;
 	private Menu menuView;
@@ -41,7 +62,7 @@ public class StveMenuBar extends MenuBar{
 	private  CheckMenuItem checkMenuItemTemporalView;       
 	private  CheckMenuItem checkMenuItemSpatialView;      
 	
-	public StveMenuBar(){
+	public SteveMenuBar(){
 		
 		createMenu();
 		
@@ -653,8 +674,82 @@ public class StveMenuBar extends MenuBar{
 		
 		menuItemExportNCL.setOnAction(new EventHandler<ActionEvent>() {
 		    public void handle(ActionEvent t) {
-			   //TODO
+			   
+		    	NCLDoc nclDoc = new NCLDoc(); 
+				createNCLHead(nclDoc);
+		        createNCLBody(nclDoc);
+		    	
+		    	saveNCLDoc(nclDoc);
+		    	
 		    }
+			
+			private void createNCLHead(NCLDoc nclDoc){
+				
+				try {
+					
+		            NCLHead nclHead = new NCLHead();
+		            nclDoc.setHead(nclHead);
+
+		            NCLRegionBase regBase = new NCLRegionBase();
+		            ArrayList<NCLRegionBase> nclRegBaseList = new ArrayList<NCLRegionBase>();
+		            nclRegBaseList.add(regBase);
+
+		            NCLDescriptorBase nclDescBase = new NCLDescriptorBase();
+		            
+		            NCLConnectorBase nclConBase = new NCLConnectorBase();
+
+		            nclHead.addRegionBase(nclRegBaseList.get(0));
+		            nclHead.setDescriptorBase(nclDescBase);
+		            nclHead.setConnectorBase(nclConBase);
+
+		        } catch (XMLException ex) {
+		        	logger.error(ex.getMessage());
+		        }
+				
+			}
+			
+			private void createNCLBody(NCLDoc nclDoc){
+				
+				try {
+					
+		            NCLBody nclBody = new NCLBody();
+		            nclDoc.setBody(nclBody);
+
+		        } catch (XMLException ex) {
+		        	logger.error(ex.getMessage());
+		        }
+				
+			}
+			
+			private void saveNCLDoc(NCLDoc nclDoc){
+				
+				String nclCode = nclDoc.parse(0);
+				
+		        if(nclCode != null){
+		        	
+		        	FileChooser fileChooser = new FileChooser();
+		            fileChooser.setTitle(Language.translate("export.ncl.document"));
+		            File file = fileChooser.showSaveDialog(null);
+		            
+					try {
+						
+						if(file != null){
+						
+							File auxFile = new File(file.getAbsolutePath() + ".ncl");
+							FileWriter fileWriter = new FileWriter(auxFile);
+							fileWriter.write(nclCode);
+		                    fileWriter.close();
+		                    
+						}
+	                    
+					} catch (IOException e) {
+						logger.error(e.getMessage());
+					}
+                    
+		        }
+
+			}
+			
 		});
 		
 		menuItemExit.setOnAction(new EventHandler<ActionEvent>() {
