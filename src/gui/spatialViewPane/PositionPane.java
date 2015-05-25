@@ -37,7 +37,7 @@ public class PositionPane extends GridPane {
 		
 		Text title = new Text(Language.translate("position"));
 		title.setId("position-title");
-		title.setFill(Color.RED);
+		
 		Label leftLabel = new Label(Language.translate("left"));
 		Label rightLabel = new Label(Language.translate("right"));
 		Label topLabel = new Label(Language.translate("top"));

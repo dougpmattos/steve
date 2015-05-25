@@ -3,15 +3,12 @@ package gui.spatialViewPane;
 import gui.common.Language;
 import gui.common.SliderButton;
 import javafx.collections.FXCollections;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import model.common.Media;
 import model.common.MediaType;
@@ -34,26 +31,24 @@ public class StylePane extends GridPane {
 	
 	public StylePane(Controller controller, Media media){
 		
+		setId("style-grid-pane");
+		
 		this.controller = controller;
 		this.media = media;
 		
 		Text title = new Text(Language.translate("style"));
-		title.setFont(Font.font("Tahoma", javafx.scene.text.FontWeight.NORMAL, 20));
+		title.setId("style-title");
+		
 		Label transparencyLabel = new Label(Language.translate("transparency"));
 		
-		transparency = new SliderButton();
+		transparency = new SliderButton(0.0, 100.0, 0.0, 200.0, null, true);
+		transparency.setSliderValue(0.0);
 		
 		add(title, 0, 0);
-		add(transparencyLabel, 0, 1);
-		add(transparency, 0, 2);
+		add(transparencyLabel, 0, 3);
+		add(transparency, 0, 4);
 		
 		createFieldsTextMedia(media);
-		
-		setAlignment(Pos.CENTER);
-		setHgap(5);
-		setVgap(5);
-		setStyle("-fx-background-color: #263238");
-		setPadding(new Insets(10, 10, 10, 10));
 		
 	}
 

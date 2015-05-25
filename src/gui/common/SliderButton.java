@@ -1,78 +1,82 @@
 package gui.common;
 
+import java.text.DecimalFormat;
+
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.event.EventHandler;
-import javafx.geometry.Bounds;
-import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
-import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.Slider;
-import javafx.scene.input.MouseButton;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.BorderPane;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 
-public class SliderButton extends BorderPane{
-
-	private static final int SLIDER_WIDTH = 200;
-	private static final int DEFAULT = 100;
-	private static final int MAX = 200;
-	private static final int MIN = 0;
+public class SliderButton extends HBox{
 
 	private Label icon;
 	private Slider slider;
 	private ProgressBar progressBar;
 	private StackPane sliderStackPane;
-	private HBox sliderContainer;
+	private Double max;
+	private Boolean hasEditableNumericValue;
+	private TextField editableNumericValue;
 	
-	public SliderButton(){
+	public SliderButton(Double min, Double max, Double def, Double sliderWitdh, Label icon, Boolean hasEditableNumericValue){
+
+		setId("slider-button-container");
 		
-		setId("zoom-button");
-		
-		icon = new Label();
-		icon.setId("zoom-icon");
+		this.icon = icon;
+		this.max = max;
+		this.hasEditableNumericValue = hasEditableNumericValue;
 		
 		slider = new Slider();
-		slider.setMin(MIN);
-		slider.setMax(MAX);
-		slider.setValue(DEFAULT);
-		slider.setMinWidth(SLIDER_WIDTH);
-        slider.setMaxWidth(SLIDER_WIDTH);
-		slider.setShowTickLabels(false);
-		slider.setShowTickMarks(false);
-		slider.setMajorTickUnit(25);
-		slider.setBlockIncrement(25);
+		slider.setMin(min);
+		slider.setMax(max);
+		slider.setValue(def);
+		slider.setMinWidth(sliderWitdh);
+        slider.setMaxWidth(sliderWitdh);
 		
-		progressBar = new ProgressBar(0);
-		progressBar.setProgress(0.5);
-        progressBar.setMinWidth(SLIDER_WIDTH);
-        progressBar.setMaxWidth(SLIDER_WIDTH);
+		progressBar = new ProgressBar();
+        progressBar.setMaxWidth(sliderWitdh);
 
-        slider.valueProperty().addListener(new ChangeListener<Number>() {
-            public void changed(ObservableValue<? extends Number> ov, Number old_val, Number new_val) {
-                progressBar.setProgress(new_val.doubleValue() / MAX);
-            }
-        });
- 
         sliderStackPane = new StackPane();
         sliderStackPane.getChildren().addAll(progressBar, slider);
-
-        sliderContainer = new HBox();
-        sliderContainer.setId("slider-container");
-        sliderContainer.setSpacing(5);
-        sliderContainer.setAlignment(Pos.CENTER);
-        sliderContainer.getChildren().addAll(sliderStackPane);
-
-		setLeft(icon);
-		setCenter(sliderContainer);
+        
+        if(icon != null){
+        	
+        	HBox iconSliderContainer = new HBox();
+        	iconSliderContainer.setSpacing(5);
+        	iconSliderContainer.getChildren().add(icon);
+        	iconSliderContainer.getChildren().add(sliderStackPane);
+        	getChildren().add(iconSliderContainer);
+        	
+        } else{
+        	
+        	getChildren().add(sliderStackPane);
+        	
+        	if(hasEditableNumericValue){
+    			editableNumericValue = new TextField();
+    			editableNumericValue.setId("editable-numeric-value");
+    			getChildren().add(editableNumericValue);
+    		}
+        	
+        }
+        
+        slider.valueProperty().addListener(new ChangeListener<Number>() {
+            public void changed(ObservableValue<? extends Number> ov, Number old_val, Number new_val) {
+                progressBar.setProgress(new_val.doubleValue() / max);
+                DecimalFormat fmt = new DecimalFormat("0.00");   //limita o número de casas decimais      
+                String formatedValue = fmt.format(new_val.doubleValue());
+                editableNumericValue.setText(formatedValue + " %");
+            }
+        });
+        
 		
 	}
 	
 	public void setSliderValue(Double value){
 		slider.setValue(value);
+		progressBar.setProgress(value / max);
 	}
 	
 	public Double getSliderValue(){

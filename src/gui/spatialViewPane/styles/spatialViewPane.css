@@ -223,6 +223,14 @@
 	-fx-padding: 4;
 }
 
+#property-container{
+	-fx-spacing: 6;
+}
+
+#label-container{
+	-fx-alignment: center;
+}
+
 #position-grid-pane{
 	-fx-background-color: #263238;
 	-fx-padding: 25px;
@@ -237,12 +245,60 @@
 	-fx-font-size: 20;
 }
 
-#property-container{
-	-fx-spacing: 6;
+#size-grid-pane{
+	-fx-background-color: #263238;
+	-fx-padding: 25px;
+	-fx-background-insets: 2;
+	-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.4), 20, 0, -5px, -5px);
+	-fx-alignment: top-center;
+	-fx-hgap: 20;
+	-fx-vgap: 10;
+}
+#size-title{
+	-fx-fill: #B0BEC5;
+	-fx-font-size: 20;
 }
 
-#label-container{
-	-fx-alignment: center;
+#crop-grid-pane{
+	-fx-background-color: #263238;
+	-fx-padding: 25px;
+	-fx-background-insets: 2;
+	-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.4), 20, 0, -5px, -5px);
+	-fx-alignment: top-center;
+	-fx-hgap: 20;
+	-fx-vgap: 10;
+}
+#crop-title{
+	-fx-fill: #B0BEC5;
+	-fx-font-size: 20;
+}
+
+#style-grid-pane{
+	-fx-background-color: #263238;
+	-fx-padding: 25px;
+	-fx-background-insets: 2;
+	-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.4), 20, 0, -5px, -5px);
+	-fx-alignment: top-left;
+	-fx-hgap: 20;
+	-fx-vgap: 10;
+}
+#style-title{
+	-fx-fill: #B0BEC5;
+	-fx-font-size: 20;
+}
+
+#level-grid-pane{
+	-fx-background-color: #263238;
+	-fx-padding: 25px;
+	-fx-background-insets: 2;
+	-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.4), 20, 0, -5px, -5px);
+	-fx-alignment: top-center;
+	-fx-hgap: 20;
+	-fx-vgap: 10;
+}
+#level-title{
+	-fx-fill: #B0BEC5;
+	-fx-font-size: 20;
 }
 
 /*******************************************************************************

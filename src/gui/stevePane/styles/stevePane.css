@@ -222,11 +222,26 @@
  * Slider Button                                                               *
  *                                                                             *
  ******************************************************************************/
-
-#slider-container{
-	-fx-padding: 0 0 0 10;
-	-fx-alignment: center;
+#slider-button-container{
+	-fx-padding: 0;
+	-fx-spacing: 20;
 }
+
+#editable-numeric-value{
+	-fx-background-color: #607D8B;
+    -fx-background-insets: 14 80 9 1;
+    -fx-background-radius: 0;
+    -fx-padding: 0 0 9 0;
+    -fx-text-fill: #FFFFFF;
+}
+
+#editable-numeric-value:focused {
+    -fx-background-color: #00BFA5;
+    -fx-background-insets: 14 80 9 1;
+    -fx-background-radius: 0;
+    -fx-padding: 0 0 9 0;
+}
+
 .slider > .thumb {
     -fx-background-color: #00BFA5;
     -fx-background-insets: 2;
@@ -236,18 +251,11 @@
     -fx-background-color: transparent;
     -fx-background-insets: 0;
     -fx-background-radius: 0;
-    -fx-padding: 0.1em;
+    -fx-padding: 1em;
 }
 
 .progress-bar {
-    -fx-background-color:
-        -fx-box-border,
-        linear-gradient(to bottom, derive(-fx-color,30%) 5%, derive(-fx-color,-17%));
-    -fx-background-insets: 0, 1;
-    -fx-indeterminate-bar-length: 60;
-    -fx-indeterminate-bar-escape: true;
-    -fx-indeterminate-bar-flip: true;
-    -fx-indeterminate-bar-animation-time: 2;
+    -fx-background-color: transparent;
 }
 .progress-bar > .bar {
     -fx-background-color: #00BFA5;

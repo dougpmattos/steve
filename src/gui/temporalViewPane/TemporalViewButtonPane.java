@@ -7,6 +7,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.Tooltip;
@@ -92,7 +93,10 @@ public class TemporalViewButtonPane extends BorderPane {
         equalsButton.setId("equals-button");
         equalsButton.setTooltip(new Tooltip(Language.translate("all.has.same.duration")));
         
-        zoomButton = new SliderButton();
+        Label icon = new Label();
+		icon.setId("zoom-icon");
+        zoomButton = new SliderButton(0.0, 200.0, 100.0, 200.0, icon, false);
+        zoomButton.setSliderValue(100.0);
         showAnchorsLinksButton = new CheckBox(Language.translate("show.anchors.and.links"));
        
         zoomShowLinksButtonPane = new HBox();
