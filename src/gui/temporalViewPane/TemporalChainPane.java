@@ -28,13 +28,15 @@ public class TemporalChainPane extends StackedBarChart implements Observer{
 	
 	private TemporalView temporalViewModel;
 	private TemporalChain temporalChainModel;
+	private TemporalViewPane temporalViewPane;
 	
-	public TemporalChainPane(Controller controller, TemporalView temporalViewModel, TemporalChain temporalChainModel){
+	public TemporalChainPane(Controller controller, TemporalView temporalViewModel, TemporalChain temporalChainModel, TemporalViewPane temporalViewPane){
     	
     	super(new NumberAxis(), new CategoryAxis());
     	
     	this.temporalViewModel = temporalViewModel;
     	this.temporalChainModel = temporalChainModel;
+    	this.temporalViewPane = temporalViewPane;
     	
     	NumberAxis xAxis = (NumberAxis) getXAxis();
     	xAxis.setAutoRanging(false);
@@ -65,6 +67,9 @@ public class TemporalChainPane extends StackedBarChart implements Observer{
 		        try{
 		      
 		        	if(temporalChainModel.getMasterMedia() == null){
+		        		
+		        		droppedMedia.setBegin(0.0);
+		        		droppedMedia.setEnd(droppedMedia.getDuration());
 		        		
 		        		controller.setMasterMedia(droppedMedia, temporalChainModel);
 		        		
@@ -148,11 +153,15 @@ public class TemporalChainPane extends StackedBarChart implements Observer{
 	
 	private void setMasterMedia(Media masterMedia){
 		
-		XYChart.Series<Number, String> uniqueSerie = new XYChart.Series<Number, String>();
-		XYChart.Data<Number, String> axisValues = new XYChart.Data<Number, String>(masterMedia.getDuration(), "3");
-		uniqueSerie.getData().add(axisValues);
-		getData().addAll(uniqueSerie);
+		TemporalMediaNode temporalMediaNode = new TemporalMediaNode(controller, masterMedia, "3", temporalViewPane); 
 		
+		getData().addAll(temporalMediaNode.getBeginSerie(), temporalMediaNode.getEndSerie());
+		
+//		XYChart.Data<Number, String> axisValues = new XYChart.Data<Number, String>(masterMedia.getDuration(), "3");
+//		XYChart.Series<Number, String> uniqueSerie = new XYChart.Series<Number, String>();
+//		uniqueSerie.getData().add(axisValues);
+//		getData().addAll(uniqueSerie);
+
 	}
 	
 }

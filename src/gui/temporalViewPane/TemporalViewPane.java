@@ -2,6 +2,7 @@ package gui.temporalViewPane;
 
 import gui.common.Language;
 
+import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -9,6 +10,7 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.BorderPane;
+import model.common.Media;
 import model.common.Operation;
 import model.temporalView.TemporalChain;
 import model.temporalView.TemporalView;
@@ -16,19 +18,23 @@ import model.temporalView.TemporalViewOperator;
 import controller.Controller;
 
 @SuppressWarnings("unchecked")
-public class TemporalViewPane extends BorderPane implements Observer{
-	
+public class TemporalViewPane extends BorderPane implements Observer, gui.common.Observable{
+
 	private Controller controller;
 	
 	private TemporalView temporalViewModel;
 	
 	private TabPane temporalChainTabPane;
 	private TemporalViewButtonPane temporalViewButtonPane;
+	private ArrayList<gui.common.Observer> observers;
+	private Media selectedMedia;
 	
 	public TemporalViewPane(Controller controller, TemporalView temporalViewModel){
 		
 		setId("temporal-view-pane");
 		getStylesheets().add("gui/temporalViewPane/styles/temporalViewPane.css");
+		
+		observers = new ArrayList<gui.common.Observer>();
 		
 		this.temporalViewModel = temporalViewModel;
 		
@@ -51,7 +57,7 @@ public class TemporalViewPane extends BorderPane implements Observer{
 		temporalChainScrollPane.setFitToHeight(true);
 		temporalChainScrollPane.setFitToWidth(true);
 		
-		TemporalChainPane temporalChainPane = new TemporalChainPane(controller, temporalViewModel, temporalChainModel);
+		TemporalChainPane temporalChainPane = new TemporalChainPane(controller, temporalViewModel, temporalChainModel, this);
 		temporalChainScrollPane.setContent(temporalChainPane);
 
 		Tab mainTemporalChainTab = new Tab();
@@ -92,6 +98,40 @@ public class TemporalViewPane extends BorderPane implements Observer{
 			
 		}
 		
+	}
+
+	@Override
+	public void addObserver(gui.common.Observer o) {
+		observers.add(o);
+	}
+
+	@Override
+	public void deleteObserver(gui.common.Observer o) {
+		
+		int i = observers.indexOf(o);
+		if(i >= 0){
+			observers.remove(o);
+		}
+		
+	}
+
+	@Override
+	public void notifyObservers() {
+
+		for(int i = 0; i < observers.size(); i++){
+			gui.common.Observer observer = (gui.common.Observer) observers.get(i);
+			observer.update(this, selectedMedia);
+		}
+		
+	}
+	
+	public void  setSelectedMedia(Media selectedMedia){
+		this.selectedMedia = selectedMedia;
+		notifyObservers();
+	}
+	
+	public Media getSelectedMedia(){
+		return selectedMedia;
 	}
 
 }

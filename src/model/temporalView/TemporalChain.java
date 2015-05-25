@@ -10,6 +10,7 @@ import model.common.Operation;
 public class TemporalChain extends Observable {
 
 	private static int temporalChainNumber = 0;
+	private static int temporalViewMediaNumber = 0;
 	
 	private int id;
 	private Media masterMedia;
@@ -45,6 +46,8 @@ public class TemporalChain extends Observable {
 		Operation<TemporalViewOperator> operation = new Operation<TemporalViewOperator>(TemporalViewOperator.ADD_TEMPORAL_CHAIN_MEDIA, media, getId());
         notifyObservers(operation);
         
+        temporalViewMediaNumber++;
+        
 	}
 	
 	public void addSynchronousRelation(Synchronous<Media> synchronousRelation){
@@ -65,6 +68,8 @@ public class TemporalChain extends Observable {
 		Operation<TemporalViewOperator> operation = new Operation<TemporalViewOperator>(TemporalViewOperator.SET_MASTER_MEDIA, masterMedia, getId());
         notifyObservers(operation);
         
+        temporalViewMediaNumber++;
+        
 	}
 	
 	public Media getMasterMedia() {
@@ -81,6 +86,10 @@ public class TemporalChain extends Observable {
 
 	public int getId() {
 		return id;
+	}
+	
+	public static int getTemporalViewMediaNumber(){
+		return temporalViewMediaNumber;
 	}
 	
 }

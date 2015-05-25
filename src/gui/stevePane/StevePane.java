@@ -8,8 +8,6 @@ import gui.temporalViewPane.TemporalViewPane;
 
 import java.io.IOException;
 import java.util.Locale;
-import java.util.Observable;
-import java.util.Observer;
 
 import javafx.geometry.Orientation;
 import javafx.scene.Scene;
@@ -17,15 +15,8 @@ import javafx.scene.control.SplitPane;
 import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
-import model.common.Media;
-import model.common.Operation;
-import model.repository.RepositoryOperator;
 import model.repository.RepositoryMediaList;
-import model.temporalView.TemporalChain;
 import model.temporalView.TemporalView;
-
-import org.w3c.dom.stylesheets.MediaList;
-
 import br.uff.midiacom.ana.util.exception.XMLException;
 import controller.Controller;
 
@@ -73,8 +64,8 @@ public class StevePane extends Scene{
 		
 		stveMenuBar = new SteveMenuBar();
     	repositoryPane = new RepositoryPane(controller, repositoryMediaList);
-    	spatialViewPane = new SpatialViewPane();
     	temporalViewPane = new TemporalViewPane(controller, temporalView);
+    	spatialViewPane = new SpatialViewPane(controller, temporalView, temporalViewPane);
 	   
     	repositorySpatialViewSplitPane = new SplitPane();
     	repositorySpatialViewSplitPane.setOrientation(Orientation.HORIZONTAL);
@@ -83,7 +74,7 @@ public class StevePane extends Scene{
 	   
     	containerSplitPane = new SplitPane();
     	containerSplitPane.setOrientation(Orientation.VERTICAL);
-    	containerSplitPane.setDividerPositions(0.4);
+    	containerSplitPane.setDividerPositions(0.44);
     	containerSplitPane.getItems().addAll(repositorySpatialViewSplitPane, temporalViewPane);
 
     	containerBorderPane.setTop(stveMenuBar);

@@ -1,6 +1,7 @@
 package gui.temporalViewPane;
 
 import gui.common.Language;
+import gui.common.SliderButton;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.chart.NumberAxis;
@@ -26,7 +27,7 @@ public class TemporalViewButtonPane extends BorderPane {
 	private Button duringButton;
 	private Button overlapsButton;
 	private Button equalsButton;
-	private ZoomButton zoomButton;
+	private SliderButton zoomButton;
 	private HBox zoomShowLinksButtonPane;
 	private CheckBox showAnchorsLinksButton;
 	private HBox alignmentButtonPane;
@@ -91,7 +92,7 @@ public class TemporalViewButtonPane extends BorderPane {
         equalsButton.setId("equals-button");
         equalsButton.setTooltip(new Tooltip(Language.translate("all.has.same.duration")));
         
-        zoomButton = new ZoomButton();
+        zoomButton = new SliderButton();
         showAnchorsLinksButton = new CheckBox(Language.translate("show.anchors.and.links"));
        
         zoomShowLinksButtonPane = new HBox();

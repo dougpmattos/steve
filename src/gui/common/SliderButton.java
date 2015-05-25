@@ -1,4 +1,4 @@
-package gui.temporalViewPane;
+package gui.common;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -15,7 +15,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 
-public class ZoomButton extends BorderPane{
+public class SliderButton extends BorderPane{
 
 	private static final int SLIDER_WIDTH = 200;
 	private static final int DEFAULT = 100;
@@ -28,7 +28,7 @@ public class ZoomButton extends BorderPane{
 	private StackPane sliderStackPane;
 	private HBox sliderContainer;
 	
-	public ZoomButton(){
+	public SliderButton(){
 		
 		setId("zoom-button");
 		
@@ -69,6 +69,14 @@ public class ZoomButton extends BorderPane{
 		setLeft(icon);
 		setCenter(sliderContainer);
 		
+	}
+	
+	public void setSliderValue(Double value){
+		slider.setValue(value);
+	}
+	
+	public Double getSliderValue(){
+		return slider.getValue();
 	}
 	
 	public Slider getSlider(){

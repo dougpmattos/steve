@@ -10,7 +10,11 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.media.MediaPlayer;
 import javafx.util.Duration;
+import model.spatialView.AudioProperty;
+import model.spatialView.ImageProperty;
 import model.spatialView.PresentationProperty;
+import model.spatialView.TextProperty;
+import model.spatialView.VideoProperty;
 import model.temporalView.TimeSegment;
 import model.utility.MediaUtil;
 
@@ -38,7 +42,7 @@ public class Media implements Serializable{
     private Boolean interactive;
     private PresentationProperty presentationProperty;
     private ArrayList<TimeSegment> timeSegmentList;
-	
+    
 	public Media(File mediaFile){
 
 	   this.mediaFile = mediaFile;
@@ -54,10 +58,38 @@ public class Media implements Serializable{
        
        icon = generateMediaIcon();
        interactive = false;
-       presentationProperty = new PresentationProperty();
+       
+       createPresentationProperty();
+       
        timeSegmentList = new ArrayList<TimeSegment>();
        
    }
+	
+	public void createPresentationProperty(){
+		
+		switch(type) {
+		
+			case IMAGE:
+				presentationProperty = new ImageProperty();
+				break;
+               
+			case VIDEO:
+				presentationProperty = new VideoProperty();
+				break;
+               
+			case AUDIO:
+				presentationProperty = new AudioProperty();
+				break; 
+           
+			case TEXT:
+				presentationProperty = new TextProperty();
+				break;
+                   
+			default:
+				break;                
+       } 
+		
+	}
 	
 	public ImageView generateMediaIcon() {
 		
