@@ -28,12 +28,9 @@ public class PropertyPane extends ScrollPane implements Observer{
 		this.media = media;
 		
 		setId("property-pane");
-		//setFitToHeight(true);
-	    setFitToWidth(true);
-	    setPadding(new Insets(6, 6, 6, 6));
 		
 	    container = new VBox();
-	    container.setSpacing(6);
+	    container.setId("property-container");
 	    
 	    if(media.getType().equals(MediaType.AUDIO)){
 	    	

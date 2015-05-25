@@ -44,7 +44,7 @@ public class InfoPane extends ScrollPane{
 		interactive  =new CheckBox(Language.translate("interactive"));
 		
 		gridPaneContainer = new GridPane();
-		gridPaneContainer.setId("info-pane-grid-pane");
+		gridPaneContainer.setId("info-grid-pane");
 		gridPaneContainer.add(nameLabel, 0, 0);
 		gridPaneContainer.add(typeLabel, 1, 0);
 		gridPaneContainer.add(startTimeLabel, 0, 3);

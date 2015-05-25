@@ -166,29 +166,29 @@
 
 .scroll-bar:horizontal > .track {
     -fx-background-color: transparent;
+    -fx-background-insets:  10;
 }
 .scroll-bar:horizontal > .track-background {
     -fx-background-color: transparent;
+    -fx-background-insets:  10;
 }
 
 .scroll-bar:vertical > .track {
     -fx-background-color: transparent;
+    -fx-background-insets:  10;
 }
 
 .scroll-bar:vertical > .track-background {
     -fx-background-color: transparent;
+    -fx-background-insets:  10;
 }
 
 .scroll-bar > .increment-button {
-    -fx-background-color: transparent;
-    -fx-background-insets:  0;
-    -fx-padding: 0.25em; /* 3 */
+   -fx-shape:  " ";  
 }
 
 .scroll-bar > .decrement-button {
-    -fx-background-color: transparent;
-    -fx-background-insets:  0;
-    -fx-padding: 0.25em; /* 3 */
+	-fx-shape:  " ";  
 }
 
 .scroll-bar:horizontal > .increment-button > .increment-arrow {

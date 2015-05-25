@@ -18,11 +18,11 @@ public abstract class PresentationProperty implements Serializable{
 	
 	public PresentationProperty(){
 		
-		left = "0";
-		right = "0";
-		top = "0";
-		bottom = "0";
-		rotation = "0";
+		left = "0px";
+		right = "0px";
+		top = "0px";
+		bottom = "0px";
+		rotation = "0px";
 		orderZ = TemporalChain.getTemporalViewMediaNumber();
 		transparency = 0.0;
 		
