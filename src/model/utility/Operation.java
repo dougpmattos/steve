@@ -1,4 +1,4 @@
-package model.common;
+package model.utility;
 
 public class Operation<E> {
 	

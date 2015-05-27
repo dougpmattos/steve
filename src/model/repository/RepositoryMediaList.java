@@ -1,33 +1,30 @@
 package model.repository;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Observable;
 
 import model.common.Media;
-import model.common.Operation;
+import model.repository.enums.RepositoryOperator;
+import model.utility.Operation;
 
 /**
  *
  * @author Douglas
  */
-public class RepositoryMediaList extends Observable {
- 	
-    private ArrayList<Media> images;
-    private ArrayList<Media> video;
-    private ArrayList<Media> audio;
-    private ArrayList<Media> text;
-    private ArrayList<Media> others;
-    private ArrayList<Media> allTypes;
+public class RepositoryMediaList extends Observable implements Serializable{
+
+	private static final long serialVersionUID = 5842489767967822129L;
+	
+	private ArrayList<Media> images = new ArrayList<Media>();
+    private ArrayList<Media> video = new ArrayList<Media>();
+    private ArrayList<Media> audio = new ArrayList<Media>();
+    private ArrayList<Media> text = new ArrayList<Media>();
+    private ArrayList<Media> others = new ArrayList<Media>();
+    private ArrayList<Media> allTypes = new ArrayList<Media>();
     
-    public void initialize(){
-    	
-    	images = new ArrayList<Media>();
-        video = new ArrayList<Media>();
-        audio = new ArrayList<Media>();
-        text = new ArrayList<Media>();
-        others = new ArrayList<Media>();
-        allTypes = new ArrayList<Media>();
+    public RepositoryMediaList(){
     	
     }
     

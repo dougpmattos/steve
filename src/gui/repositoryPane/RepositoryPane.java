@@ -1,14 +1,18 @@
 package gui.repositoryPane;
 
+import gui.common.Language;
+
 import java.util.Observable;
 import java.util.Observer;
 
+import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import model.common.Media;
-import model.common.Operation;
 import model.repository.RepositoryMediaList;
-import model.repository.RepositoryOperator;
+import model.repository.enums.RepositoryOperator;
+import model.utility.Operation;
 import controller.Controller;
 
 @SuppressWarnings("unchecked")
@@ -18,6 +22,7 @@ public class RepositoryPane extends BorderPane implements Observer {
 	private MediaListPane mediaListPane;
 	private MediaTreePane mediaTreePane;
     private RepositoryButtonPane buttonPane;
+    private HBox labelContainer;
 		
 	public RepositoryPane(Controller controller, RepositoryMediaList repositoryMediaList){
 
@@ -33,7 +38,12 @@ public class RepositoryPane extends BorderPane implements Observer {
 	    
 	    buttonPane = new RepositoryButtonPane(controller, scrollPaneTree, mediaTreePane, mediaListPane, this);
 	            
-	    setCenter(mediaListPane);
+	    labelContainer = new HBox();
+		labelContainer.setId("media-repo-label-container");
+		Label label = new Label(Language.translate("media.repository.is.empty"));
+		labelContainer.getChildren().add(label);
+		
+	    setCenter(labelContainer);
 	    setBottom(buttonPane);
 	    
 	    repositoryMediaList.addObserver(this);
@@ -58,12 +68,22 @@ public class RepositoryPane extends BorderPane implements Observer {
 		        	buttonPane.getDeleteButton().setDisable(false);
 		        	buttonPane.getClearButton().setDisable(false);
 		        	
+		        	if(!getChildren().contains(mediaListPane)){
+		        		getChildren().remove(labelContainer);
+			        	setCenter(mediaListPane);
+		        	}
+		        	
 		            break;
 		            
 		        case REMOVE_REPOSITORY_MEDIA:
 		        	
 		        	mediaListPane.remove(media);
 		        	mediaTreePane.remove(media);
+		        	
+		        	if(mediaListPane.getAllTypes().isEmpty()){
+		        		getChildren().remove(mediaListPane);
+			        	setCenter(labelContainer);
+		        	}
 		        	
 		            break;
 				
@@ -79,6 +99,9 @@ public class RepositoryPane extends BorderPane implements Observer {
 		        	
 		        	buttonPane.getDeleteButton().setDisable(true);
 		        	buttonPane.getClearButton().setDisable(true);
+		        	
+		        	getChildren().remove(mediaListPane);
+		        	setCenter(labelContainer);
 		        	
 		        	break;
 		        	

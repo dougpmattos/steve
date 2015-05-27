@@ -56,27 +56,84 @@ public class SliderButton extends HBox{
         	
         	if(hasEditableNumericValue){
     			editableNumericValue = new TextField();
+    			editableNumericValue.setPrefWidth(70);
     			editableNumericValue.setId("editable-numeric-value");
     			getChildren().add(editableNumericValue);
     		}
         	
         }
         
-        slider.valueProperty().addListener(new ChangeListener<Number>() {
-            public void changed(ObservableValue<? extends Number> ov, Number old_val, Number new_val) {
-                progressBar.setProgress(new_val.doubleValue() / max);
-                DecimalFormat fmt = new DecimalFormat("0.00");   //limita o número de casas decimais      
-                String formatedValue = fmt.format(new_val.doubleValue());
-                editableNumericValue.setText(formatedValue + " %");
-            }
-        });
-        
+        createListeners(max);
+		
+	}
+
+	private void createListeners(Double max) {
+		
+		if(max == 100.0){
+			
+			slider.valueProperty().addListener(new ChangeListener<Number>() {
+	            public void changed(ObservableValue<? extends Number> ov, Number old_val, Number new_val) {
+	                progressBar.setProgress(new_val.doubleValue() / max);
+	                DecimalFormat fmt = new DecimalFormat("0.00");    
+	                String formatedValue = fmt.format(new_val.doubleValue());
+	                editableNumericValue.setText(formatedValue + " %");
+	            }
+	        });
+	        
+	        if(editableNumericValue != null){
+	        	
+	        	editableNumericValue.textProperty().addListener(new ChangeListener<String>() {
+
+					@Override
+					public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+						
+						String percentageValue = newValue;
+						String value = "";
+						if(percentageValue != null && percentageValue.indexOf("%") != -1){
+							value = percentageValue.substring(0, percentageValue.indexOf("%"));
+						} else{
+							value = percentageValue;
+						}
+						value = value.replace(",", ".");
+
+						slider.setValue(Double.parseDouble(value));
+						progressBar.setProgress(Double.parseDouble(value) / max);
+					
+					}
+	               
+	            });
+	        
+	        }
+			
+		} else{
+			
+			slider.valueProperty().addListener(new ChangeListener<Number>() {
+	            public void changed(ObservableValue<? extends Number> ov, Number old_val, Number new_val) {
+	            	//TODO
+	            }
+	        });
+			
+		}
 		
 	}
 	
 	public void setSliderValue(Double value){
+		
 		slider.setValue(value);
 		progressBar.setProgress(value / max);
+		
+		if(editableNumericValue != null && value == 0.0){
+			
+			if(max == 100.0){
+				editableNumericValue.setText("0,00%");
+			} else{
+				editableNumericValue.setText("0,0");
+			}
+			
+		} else if(editableNumericValue != null && value == 50.0){
+			editableNumericValue.setText("50,00%");
+		}
+		
 	}
 	
 	public Double getSliderValue(){
@@ -85,6 +142,10 @@ public class SliderButton extends HBox{
 	
 	public Slider getSlider(){
 		return slider;
+	}
+	
+	public TextField getEditableNumericValue(){
+		return editableNumericValue;
 	}
 
 }

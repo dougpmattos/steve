@@ -15,10 +15,10 @@ import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
 import model.common.Media;
-import model.common.Operation;
 import model.temporalView.TemporalChain;
 import model.temporalView.TemporalView;
-import model.temporalView.TemporalViewOperator;
+import model.temporalView.enums.TemporalViewOperator;
+import model.utility.Operation;
 import controller.Controller;
 
 @SuppressWarnings({ "unchecked", "rawtypes" })
@@ -153,14 +153,9 @@ public class TemporalChainPane extends StackedBarChart implements Observer{
 	
 	private void setMasterMedia(Media masterMedia){
 		
-		TemporalMediaNode temporalMediaNode = new TemporalMediaNode(controller, masterMedia, "3", temporalViewPane); 
+		TemporalMediaNode temporalMediaNode = new TemporalMediaNode(controller, temporalViewPane, masterMedia, "3"); 
 		
 		getData().addAll(temporalMediaNode.getBeginSerie(), temporalMediaNode.getEndSerie());
-		
-//		XYChart.Data<Number, String> axisValues = new XYChart.Data<Number, String>(masterMedia.getDuration(), "3");
-//		XYChart.Series<Number, String> uniqueSerie = new XYChart.Series<Number, String>();
-//		uniqueSerie.getData().add(axisValues);
-//		getData().addAll(uniqueSerie);
 
 	}
 	

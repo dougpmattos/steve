@@ -25,9 +25,9 @@ public class Controller {
 
 		stevePane = new StevePane(this, repositoryMediaList, temporalView);
 		stevePane.createView(stage);
-		
-		repositoryMediaList.initialize();
-		temporalView.initialize();
+
+		TemporalChain temporalChain = new TemporalChain();
+		this.temporalView.addTemporalChain(temporalChain);
 		
 	}
 	

@@ -2,18 +2,17 @@ package gui.spatialViewPane;
 
 import gui.common.Language;
 import javafx.collections.FXCollections;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
+import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.GridPane;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import model.common.Media;
-import model.spatialView.AspectRatio;
-import model.spatialView.Size;
+import model.spatialView.SizeProperty;
+import model.spatialView.enums.AspectRatio;
+import model.spatialView.enums.Size;
 import controller.Controller;
 
 public class SizePane extends GridPane {
@@ -26,6 +25,7 @@ public class SizePane extends GridPane {
 	private ChoiceBox<AspectRatio> aspectRatio;
 	private ChoiceBox<Size> widthUnit;
 	private ChoiceBox<Size> heightUnit;
+	private Button sizeButton;
 	
 	public SizePane(Controller controller, Media media){
 		
@@ -36,6 +36,10 @@ public class SizePane extends GridPane {
 		
 		Text title = new Text(Language.translate("size"));
 		title.setId("size-title");
+		
+		sizeButton = new Button();
+		sizeButton.setId("size-button");
+		sizeButton.setTooltip(new Tooltip(Language.translate("edit.size.graphically")));
 		
 		Label widthLabel = new Label(Language.translate("width"));
 		Label heightLabel = new Label(Language.translate("height"));
@@ -48,6 +52,7 @@ public class SizePane extends GridPane {
 		aspectRatio = new ChoiceBox<AspectRatio>(FXCollections.observableArrayList(AspectRatio.SLICE, AspectRatio.FILL, AspectRatio.NONE));
 		
 		add(title, 0, 0);
+		add(sizeButton, 3, 0);
 		add(widthLabel, 0, 3);
 		add(width, 0, 4);
 		add(widthUnit, 1, 4);
@@ -56,6 +61,8 @@ public class SizePane extends GridPane {
 		add(heightUnit, 3, 4);
 		add(aspectRatioLabel, 0, 6);
 		add(aspectRatio, 0, 7);
+		
+		loadJavaBean();
 		
 	}
 	
@@ -99,4 +106,14 @@ public class SizePane extends GridPane {
 		return aspectRatio.getValue();
 	}
 	
-}
+	private void loadJavaBean(){
+		
+		SizeProperty sizeProperty = media.getPresentationProperty().getSizeProperty();
+
+		setWidthValue(sizeProperty.getWidth());
+		setHeightValue(sizeProperty.getHeight());
+		setAspectRatioValue(sizeProperty.getAspectRatio());
+		
+	}
+	
+}	

@@ -1,20 +1,13 @@
 package model.temporalView;
 
-import java.util.ArrayList;
 
 public class Asynchronous<T> extends Relation<T> {
 
+	private static final long serialVersionUID = 5310555901053772316L;
+	
 	private TemporalChain newTemporalChain;
 	
-	public Asynchronous(T masterMedia) {
-		
-		super(masterMedia);
-		
-	}
-	
-	public Asynchronous(int id) {
-		
-		super();
+	public Asynchronous() {
 		
 	}
 

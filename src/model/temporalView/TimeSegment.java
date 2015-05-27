@@ -1,77 +1,60 @@
 package model.temporalView;
 
+import java.io.Serializable;
+
 import model.common.Media;
-import model.spatialView.AudioProperty;
-import model.spatialView.ImageProperty;
 import model.spatialView.PresentationProperty;
-import model.spatialView.TextProperty;
-import model.spatialView.VideoProperty;
 
-public class TimeSegment {
+public class TimeSegment implements Serializable {
 
+	private static final long serialVersionUID = 4226201547356335315L;
+	
 	private String name;
 	private Double begin;
 	private Double end;
 	private Media parentMedia;
 	private PresentationProperty presentationProperty;
-
-	public TimeSegment(String name, Double begin, Double end, Media parentMedia){
-		
-		this.name = name;
-		this.begin = begin;
-		this.end = end;
-		this.parentMedia = parentMedia;
-		
-		createPresentationProperty();
+	
+	public TimeSegment(){
 		
 	}
 	
-	public void createPresentationProperty(){
-
-		switch(parentMedia.getType()) {
-		
-			case IMAGE:
-				presentationProperty = new ImageProperty();
-				break;
-               
-			case VIDEO:
-				presentationProperty = new VideoProperty();
-				break;
-               
-			case AUDIO:
-				presentationProperty = new AudioProperty();
-				break; 
-           
-			case TEXT:
-				presentationProperty = new TextProperty();
-				break;
-                   
-			default:
-				break;                
-       } 
-		
+	public void setBegin(Double begin) {
+		this.begin = begin;
+	}
+	
+	public Double getBegin() {
+		return begin;
+	}
+	
+	public void setEnd(Double end) {
+		this.end = end;
 	}
 	
 	public Double getEnd() {
 		return end;
 	}
 
-	public void setEnd(Double end) {
-		this.end = end;
+	public void setName(String name){
+		this.name = name;
 	}
 
 	public String getName() {
 		return name;
 	}
 
-	public Double getBegin() {
-		return begin;
+	public void setParentMedia(Media parentMedia) {
+		this.parentMedia = parentMedia;
 	}
-
+	
 	public Media getParentMedia() {
 		return parentMedia;
 	}
 
+	public void setPresentationProperty(PresentationProperty presentationProperty) {
+		this.presentationProperty = presentationProperty;
+	}
+	
 	public PresentationProperty getPresentationProperty() {
 		return presentationProperty;
 	}

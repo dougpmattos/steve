@@ -1,4 +1,4 @@
-package model.temporalView;
+package model.temporalView.enums;
 
 public enum TemporalViewOperator {
 	

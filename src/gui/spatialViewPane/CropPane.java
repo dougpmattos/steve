@@ -2,13 +2,16 @@ package gui.spatialViewPane;
 
 import gui.common.Language;
 import javafx.collections.FXCollections;
+import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.GridPane;
 import javafx.scene.text.Text;
 import model.common.Media;
-import model.spatialView.Size;
+import model.spatialView.CropProperty;
+import model.spatialView.enums.Size;
 import controller.Controller;
 
 public class CropPane extends GridPane {
@@ -24,6 +27,7 @@ public class CropPane extends GridPane {
 	private ChoiceBox<Size> rightUnit;
 	private ChoiceBox<Size> topUnit;
 	private ChoiceBox<Size> bottomUnit;
+	private Button cropButton;
 	
 	public CropPane(Controller controller, Media media){
 		
@@ -34,6 +38,10 @@ public class CropPane extends GridPane {
 		
 		Text title = new Text(Language.translate("crop"));
 		title.setId("crop-title");
+		
+		cropButton = new Button();
+		cropButton.setId("crop-button");
+		cropButton.setTooltip(new Tooltip(Language.translate("crop.graphically")));
 		
 		Label leftLabel = new Label(Language.translate("left"));
 		Label rightLabel = new Label(Language.translate("right"));
@@ -50,6 +58,7 @@ public class CropPane extends GridPane {
 		bottomUnit = new ChoiceBox<Size>(FXCollections.observableArrayList(Size.PX, Size.PERCENTAGE));
 		
 		add(title, 0, 0);
+		add(cropButton, 3, 0);
 		add(leftLabel, 0, 3);
 		add(left, 0, 4);
 		add(leftUnit, 1, 4);
@@ -62,6 +71,8 @@ public class CropPane extends GridPane {
 		add(bottomLabel, 2, 6);
 		add(bottom, 2, 7);
 		add(bottomUnit, 3, 7);
+		
+		loadJavaBean();
 		
 	}
 	
@@ -127,6 +138,17 @@ public class CropPane extends GridPane {
 	
 	public String getBottomValue(){
 		return bottom.getText() + bottomUnit.getValue().toString();
+	}
+	
+	private void loadJavaBean(){
+		
+		CropProperty cropProperty = media.getPresentationProperty().getCropProperty();
+		
+		setLeftValue(cropProperty.getLeft());
+		setRightValue(cropProperty.getRight());
+		setTopValue(cropProperty.getTop());
+		setBottomValue(cropProperty.getBottom());
+		
 	}
 	
 }

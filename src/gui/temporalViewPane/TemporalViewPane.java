@@ -11,10 +11,10 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.BorderPane;
 import model.common.Media;
-import model.common.Operation;
 import model.temporalView.TemporalChain;
 import model.temporalView.TemporalView;
-import model.temporalView.TemporalViewOperator;
+import model.temporalView.enums.TemporalViewOperator;
+import model.utility.Operation;
 import controller.Controller;
 
 @SuppressWarnings("unchecked")

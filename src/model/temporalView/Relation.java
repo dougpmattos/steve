@@ -1,70 +1,56 @@
 package model.temporalView;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public abstract class Relation<E> {
+public abstract class Relation<E> implements Serializable{
+
+	private static final long serialVersionUID = 3044752885230388480L;
 
 	private static int relationNumber = 0;
 	
 	private int id;
 	private E masterMedia;
-	private ArrayList<E> slaveMediaList;
-	private Boolean explicit;
+	private ArrayList<E> slaveMediaList = new ArrayList<E>();
+	private Boolean explicit = false;
 	
 	public Relation(){
 		
-		this.id = relationNumber;
-		explicit = false; 
-		
+		this.id = relationNumber; 
 		relationNumber++;
 		
-	}
-
-	public Relation(E masterMedia){
-		
-		this.id = relationNumber;
-		this.masterMedia = masterMedia;
-		this.slaveMediaList = new ArrayList<E>();
-		explicit = false;
-		
-		relationNumber++;
-		
-	}
-
-	public E getMasterMedia() {
-		return masterMedia;
-	}
-
-	public void setMasterMedia(E masterMedia) {
-		this.masterMedia = masterMedia;
-	}
-
-	public ArrayList<E> getSlaveMediaList() {
-		return slaveMediaList;
-	}
-
-	public void setSlaveMediaList(ArrayList<E> slaveMediaList) {
-		this.slaveMediaList = slaveMediaList;
 	}
 
 	public int getId() {
 		return id;
 	}
-
-	public Boolean getExplicit() {
-		return explicit;
+	
+	public void setMasterMedia(E masterMedia) {
+		this.masterMedia = masterMedia;
+	}
+	
+	public E getMasterMedia() {
+		return masterMedia;
+	}
+	
+	public void addSlaveMedia(E slaveMedia) {
+		slaveMediaList.add(slaveMedia);
+	}
+	
+	public void removeSlaveMedia(E slaveMedia) {
+		slaveMediaList.remove(slaveMedia);
 	}
 
-	public void setExplicit(Boolean explicit) {
+	public ArrayList<E> getSlaveMediaList() {
+		return slaveMediaList;
+	}
+	
+	public void setExplicit(Boolean explicit){
 		this.explicit = explicit;
 	}
 	
-	public void addSlave(E slave){
-		slaveMediaList.add(slave);
-	}
-	
-	public void removeSlave(E slave){
-		slaveMediaList.remove(slave);
+	public Boolean isExplicit(){
+		return explicit;
 	}
 	
 }

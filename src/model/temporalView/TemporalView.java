@@ -1,21 +1,19 @@
 package model.temporalView;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Observable;
 
-import model.common.Operation;
+import model.temporalView.enums.TemporalViewOperator;
+import model.utility.Operation;
 
-public class TemporalView extends Observable{
+public class TemporalView extends Observable implements Serializable{
+
+	private static final long serialVersionUID = 1818548173102220176L;
 	
-	private ArrayList<TemporalChain> temporalChainList;
+	private ArrayList<TemporalChain> temporalChainList = new ArrayList<TemporalChain>();
 	
-	public void initialize(){
-		
-		temporalChainList = new ArrayList<TemporalChain>();
-		
-		TemporalChain temporalChain = new TemporalChain();
-		temporalChain.initialize();
-		addTemporalChain(temporalChain);
+	public TemporalView(){
 		
 	}
 

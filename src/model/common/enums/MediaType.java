@@ -1,4 +1,4 @@
-package model.common;
+package model.common.enums;
 
 import gui.common.Language;
 
@@ -72,5 +72,34 @@ public enum MediaType {
         
         return OTHER;
     }
+    
+    @Override
+	public String toString(){
+		
+		switch(this) {
+		
+			case TEXT:
+				return "Text";
+	               
+			case IMAGE:
+				return "Image";
+				
+			case AUDIO:
+				return "Audio";
+				
+			case VIDEO:
+				return "Video";
+				
+			case PROCEDURAL:
+				return "Procedural";
+				
+			case OTHER:
+				return "Other";
+				
+		}
+		
+		return null; 
+
+	}
 	
 }

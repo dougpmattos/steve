@@ -20,7 +20,6 @@ import controller.Controller;
  */
 public class SpatialViewPane extends SplitPane implements gui.common.Observer{
 
-
 	private Controller controller;
 	
 	private TemporalView temporalViewModel;

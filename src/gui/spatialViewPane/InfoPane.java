@@ -6,7 +6,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.VBox;
 import model.common.Media;
 import controller.Controller;
 
@@ -59,6 +58,8 @@ public class InfoPane extends ScrollPane{
 		
 		setContent(gridPaneContainer);
 		
+		loadJavaBean();
+		
 	}
 	
 	public void setNameValue(String value){
@@ -101,12 +102,23 @@ public class InfoPane extends ScrollPane{
 		return duration.getText();
 	}
 	
-	public void setInteractiveValue(String value){
-		this.interactive.setText(value);
+	public void setInteractiveValue(Boolean value){
+		this.interactive.setSelected(value);
 	}
 	
 	public Boolean getInteractiveValue(){
 		return interactive.isSelected();
+	}
+	
+	private void loadJavaBean(){
+		
+		setNameValue(media.getName());
+		setTypeValue(media.getType().toString());
+		setStartTimeValue(Double.toString(media.getBegin()));
+		setEndTimeValue(Double.toString(media.getEnd()));
+		setDurationValue(Double.toString(media.getDuration()));
+		setInteractiveValue(media.getInteractive());
+		
 	}
 	
 }

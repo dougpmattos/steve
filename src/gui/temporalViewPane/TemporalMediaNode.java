@@ -29,7 +29,7 @@ public class TemporalMediaNode {
 	private XYChart.Series<Number, String> endSerie;
 	private XYChart.Data<Number, String> endData;
 	
-	public TemporalMediaNode(Controller controller, Media media, String temporalChainLine, TemporalViewPane temporalViewPane){
+	public TemporalMediaNode(Controller controller, TemporalViewPane temporalViewPane, Media media, String temporalChainLine){
 		
 		this.controller = controller;
 		this.media = media;

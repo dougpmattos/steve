@@ -1,4 +1,4 @@
-package model.spatialView;
+package model.spatialView.enums;
 
 public enum Size {
 

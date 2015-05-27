@@ -1,23 +1,18 @@
 package model.spatialView;
 
-public class AudioProperty extends PresentationProperty {
+import java.io.Serializable;
+
+public class LevelProperty implements Serializable {
 
 	private static final long serialVersionUID = 7579424707735451518L;
 	
-	private Double volume;
-	private Double balance;
-	private Double treble;
-	private Double bass;
+	private Double volume = 50.0;
+	private Double balance = 0.0;
+	private Double treble = 0.0;
+	private Double bass = 0.0;
 	
-	public AudioProperty(){
-		
-		super();
-		
-		volume = 50.0;
-		balance = 0.0;
-		treble = 0.0;
-		bass = 0.0;
-		
+	public LevelProperty(){
+
 	}
 	
 	public void setVolume(Double volume){

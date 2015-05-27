@@ -1,26 +1,24 @@
 package model.spatialView;
 
-import javafx.scene.paint.Color;
+import java.io.Serializable;
 
-public class TextProperty extends PresentationProperty{
+import javafx.scene.paint.Color;
+import model.spatialView.enums.FontFamily;
+import model.spatialView.enums.FontStyle;
+import model.spatialView.enums.FontWeight;
+import model.utility.RGBColor;
+
+public class TextStyleProperty extends StyleProperty implements Serializable{
 
 	private static final long serialVersionUID = 6367190485869850465L;
 	
-	private FontFamily fontFamily;
-	private Double fontSize;
-	private FontStyle fontStyle;
-	private FontWeight fontWeight;
-	private String fontColor;
+	private FontFamily fontFamily = FontFamily.TIMES_NEW_ROMAN;
+	private Double fontSize = 12.0;
+	private FontStyle fontStyle = FontStyle.NORMAL;
+	private FontWeight fontWeight = FontWeight.NORMAL;
+	private RGBColor fontColor = new RGBColor(Color.WHITE.getRed(), Color.WHITE.getGreen(), Color.WHITE.getBlue());
 	
-	public TextProperty(){
-		
-		super();
-		
-		fontFamily = FontFamily.TIMES_NEW_ROMAN;
-		fontSize = 12.0;
-		fontStyle = FontStyle.NORMAL;
-		fontWeight = FontWeight.NORMAL;
-		fontColor = Color.WHITE.toString();
+	public TextStyleProperty(){
 		
 	}
 	
@@ -56,11 +54,11 @@ public class TextProperty extends PresentationProperty{
 		return fontWeight;
 	} 
 	
-	public void setFontColor(String fontColor){
+	public void setFontColor(RGBColor fontColor){
 		this.fontColor = fontColor;
 	}
 	
-	public String getFontColor(){
+	public RGBColor getFontColor(){
 		return fontColor;
 	}
 	

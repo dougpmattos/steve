@@ -95,7 +95,9 @@ public class RepositoryButtonPane extends BorderPane{
                 
                 if(fileList != null){
                 	for (File file : fileList) {
-                		if(!controller.addRepositoryMedia(new Media(file))){
+                		Media media = new Media();
+                		media.setFile(file);
+                		if(!controller.addRepositoryMedia(media)){
                 			new MessageDialog("Media's already added.", MessageDialog.ICON_INFO).showAndWait();
                 		}
                     }

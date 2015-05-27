@@ -10,11 +10,8 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.media.MediaPlayer;
 import javafx.util.Duration;
-import model.spatialView.AudioProperty;
-import model.spatialView.ImageProperty;
+import model.common.enums.MediaType;
 import model.spatialView.PresentationProperty;
-import model.spatialView.TextProperty;
-import model.spatialView.VideoProperty;
 import model.temporalView.TimeSegment;
 import model.utility.MediaUtil;
 
@@ -24,10 +21,9 @@ import model.utility.MediaUtil;
  */
 
 public class Media implements Serializable{
-
+	
 	private static final long serialVersionUID = 2375510094294210628L;
 	
-	private final Double EXPLICIT_DURATION = 5.0;
 	private final int IMAGE_THUMBNAIL_WIDTH = 120;
 	private final int ICON_WIDTH = 40;
     
@@ -35,67 +31,60 @@ public class Media implements Serializable{
     private String name;
     private String path;
     private MediaType type;
-    private Double duration;
+    private Double duration = 5.0;
     private transient ImageView icon;
     private Double begin;
     private Double end;
-    private Boolean interactive;
-    private PresentationProperty presentationProperty;
-    private ArrayList<TimeSegment> timeSegmentList;
+    private Boolean interactive = false;
+    private PresentationProperty presentationProperty = new PresentationProperty();
+    private ArrayList<TimeSegment> timeSegmentList = new ArrayList<TimeSegment>();
     
-	public Media(File mediaFile){
-
-	   this.mediaFile = mediaFile;
-       name = mediaFile.getAbsoluteFile().getName();
-       path = mediaFile.getAbsolutePath();
-       type = getMediaType();
+	public Media(){
        
-       if((type == MediaType.AUDIO)||(type == MediaType.VIDEO)){
-    	   setImplicitDuration();
-       } else{
-    	   duration = EXPLICIT_DURATION;
-       }
-       
-       icon = generateMediaIcon();
-       interactive = false;
-       
-       createPresentationProperty();
-       
-       timeSegmentList = new ArrayList<TimeSegment>();
-       
-   }
-	
-	public void createPresentationProperty(){
-		
-		switch(type) {
-		
-			case IMAGE:
-				presentationProperty = new ImageProperty();
-				break;
-               
-			case VIDEO:
-				presentationProperty = new VideoProperty();
-				break;
-               
-			case AUDIO:
-				presentationProperty = new AudioProperty();
-				break; 
-           
-			case TEXT:
-				presentationProperty = new TextProperty();
-				break;
-                   
-			default:
-				break;                
-       } 
-		
 	}
 	
-	public ImageView generateMediaIcon() {
+	public void setFile(File mediaFile){
 		
-		switch(type) {
-		
-			case IMAGE:
+		this.mediaFile = mediaFile;
+		this.name = mediaFile.getAbsoluteFile().getName();
+	    this.path = mediaFile.getAbsolutePath();
+	    this.type = getMediaType();
+	    
+	    if((type == MediaType.AUDIO)||(type == MediaType.VIDEO)){
+	    	   setImplicitDuration();
+	    }
+	    
+	}
+	
+	public String getName() {
+		   return name;
+	}
+	
+	public File getFile(){
+		return mediaFile;
+	}
+	
+	public String getPath() {
+		return path;
+	}
+	
+	public MediaType getType() {
+		return type;
+	} 
+	
+	public void setDuration(Double duration) {
+		this.duration = duration;
+	}
+   
+   public Double getDuration() {
+	   return duration;
+   }
+   
+   public ImageView generateMediaIcon() {
+	   
+	   switch(type) {
+	   
+	   		case IMAGE:
            	   File imageFile = new File(path);
                icon = new ImageView(new Image(imageFile.toURI().toString()));
                icon.setPreserveRatio(true);
@@ -134,6 +123,46 @@ public class Media implements Serializable{
        
        return icon;
                   
+   }
+   
+   public void setBegin(Double begin) {
+	   this.begin = begin;
+   }
+	   
+   public Double getBegin() {
+	   return begin;
+   }
+
+   public void setEnd(Double end) {
+	   this.end = end;
+   }
+   
+   public Double getEnd() {
+	   return end;
+   }
+   
+   public void setInteractive(Boolean interactive) {
+	   this.interactive = interactive;
+   }
+   
+   public Boolean getInteractive() {
+	   return interactive;
+   }
+   
+   public PresentationProperty getPresentationProperty() {
+	   return presentationProperty;
+   }
+   
+   public void addTimeSegment(TimeSegment timeSegment){
+	   timeSegmentList.add(timeSegment);
+	}
+	
+   public void removeTimeSegment(TimeSegment timeSegment){
+	   timeSegmentList.remove(timeSegment);
+   }
+   
+   public ArrayList<TimeSegment> getTimeSegmentList() {
+		return timeSegmentList;
    }
    
    private MediaType getMediaType() {
@@ -177,70 +206,10 @@ public class Media implements Serializable{
 	    });
     
    }
-   
-   public Double getDuration() {
-	return duration;
-   }
-   
-   public void setDuration(Double duration) {
-		this.duration = duration;
-   }
-	
-   public String getName() {
+
+   @Override
+   public String toString(){
 	   return name;
    }
-
-   public MediaType getType() {
-	   return type;
-   }
-   
-   public String getPath() {
-	   return path;
-   }
-	
-   public File getMediaFile() {
-	   return mediaFile;
-   }
-	
-   public ImageView getIcon() {
-	   return icon;
-   }
-   
-   public Double getBegin() {
-	   return begin;
-	}
-
-   public void setBegin(Double begin) {
-	   this.begin = begin;
-   }
-
-   public Double getEnd() {
-	   return end;
-   }
-
-   public void setEnd(Double end) {
-	   this.end = end;
-   }
-
-   public Boolean getInteractive() {
-	   return interactive;
-   }
-
-   public void setInteractive(Boolean interactive) {
-	   this.interactive = interactive;
-   }
-
-   public PresentationProperty getPresentationProperty() {
-	   return presentationProperty;
-   }
-
-	public ArrayList<TimeSegment> getTimeSegmentList() {
-		return timeSegmentList;
-	}
-	 
-	@Override
-    public String toString(){
-    	return name;
-    }
 
 }

@@ -1,21 +1,19 @@
 package model.spatialView;
 
-public class VideoProperty extends PresentationProperty {
+import java.io.Serializable;
 
-	private static final long serialVersionUID = -6052072653126955619L;
+import model.spatialView.enums.AspectRatio;
+
+public class SizeProperty implements Serializable{
+
+	private static final long serialVersionUID = 2285635562719779375L;
 	
-	private String width;
-	private String height;
-	private AspectRatio aspectRatio;
+	private String width = "100%";
+	private String height = "100%";
+	private AspectRatio aspectRatio = AspectRatio.SLICE;
 	
-	public VideoProperty(){
-		
-		super();
-		
-		width = "100%";
-		height = "100%";
-		aspectRatio = AspectRatio.SLICE;
-		
+	public SizeProperty(){
+
 	}
 	
 	public void setWidth(String width){

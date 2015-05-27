@@ -7,7 +7,7 @@ import javafx.geometry.Insets;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.VBox;
 import model.common.Media;
-import model.common.MediaType;
+import model.common.enums.MediaType;
 import controller.Controller;
 
 public class PropertyPane extends ScrollPane implements Observer{

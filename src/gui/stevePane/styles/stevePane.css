@@ -1,8 +1,10 @@
 .root{
 	-fx-background: #37474F;
-	-fx-text-fill: #FFFFFF;
+	-fx-text-fill: #B0BEC5;
 	-fx-font: 13px "Roboto";
 	-fx-focus-color: transparent;
+	-fx-text-base-color: #B0BEC5;
+
 }
 
 /*******************************************************************************
@@ -229,7 +231,7 @@
 
 #editable-numeric-value{
 	-fx-background-color: #607D8B;
-    -fx-background-insets: 14 80 9 1;
+    -fx-background-insets: 14 1 9 1;
     -fx-background-radius: 0;
     -fx-padding: 0 0 9 0;
     -fx-text-fill: #FFFFFF;
@@ -237,7 +239,7 @@
 
 #editable-numeric-value:focused {
     -fx-background-color: #00BFA5;
-    -fx-background-insets: 14 80 9 1;
+    -fx-background-insets: 14 1 9 1;
     -fx-background-radius: 0;
     -fx-padding: 0 0 9 0;
 }
@@ -272,6 +274,10 @@
  * CheckBox                                                                    *
  *                                                                             *
  ******************************************************************************/
+
+.check-box {
+    -fx-text-fill: #B0BEC5;
+}
 
 .check-box > .box {
     -fx-background-color: #607D8B, #263238;

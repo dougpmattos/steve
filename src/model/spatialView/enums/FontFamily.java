@@ -1,20 +1,20 @@
-package model.spatialView;
+package model.spatialView.enums;
 
 public enum FontFamily {
 
 	TIMES_NEW_ROMAN;
 	
-	public String getDescription(){
+	@Override
+	public String toString(){
 		
 		switch(this) {
 		
 			case TIMES_NEW_ROMAN:
 				return "Times New Roman";
 	               
-			default:
-				return "Times New Roman";
-				
-		} 
+		}
+		
+		return null; 
 
 	}
 	
