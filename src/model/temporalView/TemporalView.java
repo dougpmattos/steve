@@ -37,8 +37,35 @@ public class TemporalView extends Observable implements Serializable{
 	    
 	}
 	
+	public void clearTemporalChainList(){
+		
+		temporalChainList.clear();
+		
+		setChanged();
+		Operation<TemporalViewOperator> operation = new Operation<TemporalViewOperator>(TemporalViewOperator.CLEAR_TEMPORAL_CHAIN_LIST);
+	    notifyObservers(operation);
+		
+	}
+	
 	public ArrayList<TemporalChain> getTemporalChainList() {
 		return temporalChainList;
+		
+	}
+
+	public void openExistingTemporalView(TemporalView existingTemporalView) {
+		
+		clearTemporalChainList();
+		
+		for(TemporalChain existingTemporalChain : existingTemporalView.getTemporalChainList()){
+			
+			TemporalChain temporalChain = new TemporalChain();
+			temporalChain.setId(existingTemporalChain.getId());
+			addTemporalChain(temporalChain);
+			if(existingTemporalChain.getMasterMedia() != null){
+				temporalChain.setMasterMedia(existingTemporalChain.getMasterMedia());
+			}
+			
+		}
 		
 	}
 	

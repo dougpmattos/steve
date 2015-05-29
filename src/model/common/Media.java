@@ -1,5 +1,8 @@
 package model.common;
 
+import gui.common.MessageDialog;
+import gui.spatialViewPane.InfoPane;
+
 import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -11,6 +14,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.media.MediaPlayer;
 import javafx.util.Duration;
 import model.common.enums.MediaType;
+import model.common.enums.MimeType;
 import model.spatialView.PresentationProperty;
 import model.temporalView.TimeSegment;
 import model.utility.MediaUtil;
@@ -30,7 +34,8 @@ public class Media implements Serializable{
     private File mediaFile;
     private String name;
     private String path;
-    private MediaType type;
+    private MediaType mediaType;
+    private MimeType mimeType;
     private Double duration = 5.0;
     private transient ImageView icon;
     private Double begin;
@@ -48,9 +53,10 @@ public class Media implements Serializable{
 		this.mediaFile = mediaFile;
 		this.name = mediaFile.getAbsoluteFile().getName();
 	    this.path = mediaFile.getAbsolutePath();
-	    this.type = getMediaType();
+	    this.mediaType = getMediaType(mediaFile);
+	    this.mimeType = getMimeType(mediaFile);
 	    
-	    if((type == MediaType.AUDIO)||(type == MediaType.VIDEO)){
+	    if((mediaType == MediaType.AUDIO)||(mediaType == MediaType.VIDEO)){
 	    	   setImplicitDuration();
 	    }
 	    
@@ -67,9 +73,11 @@ public class Media implements Serializable{
 	public String getPath() {
 		return path;
 	}
-	
-	public MediaType getType() {
-		return type;
+	public MimeType getMimeType() {
+		return mimeType;
+	}
+	public MediaType getMediaType() {
+		return mediaType;
 	} 
 	
 	public void setDuration(Double duration) {
@@ -82,7 +90,7 @@ public class Media implements Serializable{
    
    public ImageView generateMediaIcon() {
 	   
-	   switch(type) {
+	   switch(mediaType) {
 	   
 	   		case IMAGE:
            	   File imageFile = new File(path);
@@ -165,15 +173,58 @@ public class Media implements Serializable{
 		return timeSegmentList;
    }
    
-   private MediaType getMediaType() {
+   private MimeType getMimeType(File mediaFile) {
 	   
        String ext = "";
        int pos;
        
-       if(path != null){
+       if(mediaFile.getAbsolutePath() != null){
     	   
-    	   pos = path.indexOf('.');
-           ext = path.substring(pos);
+    	   pos = mediaFile.getAbsolutePath().indexOf('.');
+           ext = mediaFile.getAbsolutePath().substring(pos);
+           ext = ext.toLowerCase();
+           ext = ext.substring(ext.indexOf('.') + 1, ext.length());
+       }
+       
+       try {
+    	   
+    	  String subType = getSubType(ext);
+    	   
+          return MimeType.getEnumType(getMediaType().toString().toLowerCase() + "/" + subType);
+           
+       } catch (Exception ex) {
+    	   
+           Logger.getLogger(Media.class.getName()).log(Level.SEVERE, null, ex);
+           new MessageDialog(ex.getMessage(), MessageDialog.ICON_INFO).showAndWait();
+           return null;
+           
+       }
+       
+   }
+   
+   private String getSubType(String ext){
+	   
+	   ArrayList<String> imageExt = new ArrayList<String>();
+	   imageExt.add("jpg");
+	   imageExt.add("jpeg");
+	   
+	   if(imageExt.contains(ext)){
+		   return "jpeg";
+	   } else{
+		  return ext; 
+	   }
+	   
+   }
+   
+   private MediaType getMediaType(File mediaFile) {
+	   
+       String ext = "";
+       int pos;
+       
+       if(mediaFile.getAbsolutePath() != null){
+    	   
+    	   pos = mediaFile.getAbsolutePath().indexOf('.');
+           ext = mediaFile.getAbsolutePath().substring(pos);
            ext = ext.toLowerCase();
        }
        
@@ -210,6 +261,15 @@ public class Media implements Serializable{
    @Override
    public String toString(){
 	   return name;
+   }
+
+   public void populateInfoPropertyJavaBean(InfoPane infoPane) {
+	   
+		setBegin(Double.parseDouble(infoPane.getStartTimeValue()));
+		setEnd(Double.parseDouble(infoPane.getEndTimeValue()));
+		setDuration(Double.parseDouble(infoPane.getDurationValue()));
+		setInteractive(infoPane.getInteractiveValue());
+		
    }
 
 }

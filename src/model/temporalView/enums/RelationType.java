@@ -2,12 +2,14 @@ package model.temporalView.enums;
 
 public enum RelationType {
 	
-	MEETS, 
-	MET_BY, 
-	STARTS, 
-	FINISHES, 
-	BEFORE,
-	STARTS_DELAY, 
+	STARTS,
+	STARTS_DELAY,
+	FINISHES,
 	FINISHES_DELAY,
-
+	MEETS, 
+	MEETS_DELAY,
+	MET_BY, 
+	MET_BY_DELAY,
+	BEFORE,
+	
 }

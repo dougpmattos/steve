@@ -82,10 +82,10 @@ public class PositionPane extends GridPane {
 		add(zOrderLabel, 2, 9);
 		add(zOrder, 2, 10);
 		
-		loadJavaBean();
+		populatePositionPane();
 		
 	}
-	
+
 	public void setLeftValue(String value){
 		
 		if(value.contains(Size.PX.toString())){
@@ -166,7 +166,7 @@ public class PositionPane extends GridPane {
 		return zOrder.getText();
 	}
 	
-	private void loadJavaBean(){
+	private void populatePositionPane(){
 		
 		PositionProperty positionProperty = media.getPresentationProperty().getPositionProperty();
 		
@@ -176,6 +176,12 @@ public class PositionPane extends GridPane {
 		setBottomValue(positionProperty.getBottom());
 		setRotationValue(positionProperty.getRotation());
 		setZOrderValue(String.valueOf(positionProperty.getOrderZ()));
+		
+	}
+	
+	public void populatePositionPropertyJavaBean(){
+		
+		controller.populatePositionPropertyJavaBean(this, media);
 		
 	}
 	

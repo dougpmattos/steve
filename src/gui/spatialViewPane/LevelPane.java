@@ -9,6 +9,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
 import model.common.Media;
+import model.spatialView.LevelProperty;
 import controller.Controller;
 
 public class LevelPane extends GridPane {
@@ -60,8 +61,10 @@ public class LevelPane extends GridPane {
 		add(bassLabel, 1, 6);
 		add(bass, 1, 7);
 		
+		populateLevelPane();
+		
 	}
-	
+
 	public void setVolume(Double value){
 		volume.setSliderValue(value);
 	}
@@ -92,6 +95,23 @@ public class LevelPane extends GridPane {
 	
 	public Double getBass(){
 		return bass.getSliderValue();
+	}
+
+	private void populateLevelPane() {
+		
+		LevelProperty levelProperty = media.getPresentationProperty().getLevelProperty();
+
+		setVolume(levelProperty.getVolume());
+		setBalance(levelProperty.getBalance());
+		setTreble(levelProperty.getTreble());
+		setBass(levelProperty.getBass());
+		
+	}
+	
+	public void populateLevelPropertyJavaBean() {
+		
+		controller.populateLevelPropertyJavaBean(this, media);
+		
 	}
 	
 }

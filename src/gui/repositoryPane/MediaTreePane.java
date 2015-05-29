@@ -67,7 +67,7 @@ public class MediaTreePane extends TreeView<Object>{
 		ImageView importedMediaIcon = new ImageView(); 
     	TreeItem<Object> importedMediaTreeItem;
 		
-        switch(media.getType()){
+        switch(media.getMediaType()){
             case IMAGE:
             	importedMediaIcon.setImage(new Image(getClass().getResourceAsStream("/gui/repositoryPane/images/imageTreeItem.png")));
             	importedMediaTreeItem = new TreeItem<Object>(media, importedMediaIcon);
@@ -104,7 +104,7 @@ public class MediaTreePane extends TreeView<Object>{
 	
 	public void remove(Object media) {
 		Media selectedMedia = (Media) media;
-        switch(selectedMedia.getType()){
+        switch(selectedMedia.getMediaType()){
             case IMAGE:
             	ObservableList<TreeItem<Object>> imageList = image.getChildren();
             	for(TreeItem<Object> mediaTreeItem : imageList){

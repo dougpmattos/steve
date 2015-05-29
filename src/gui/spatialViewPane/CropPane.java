@@ -72,7 +72,7 @@ public class CropPane extends GridPane {
 		add(bottom, 2, 7);
 		add(bottomUnit, 3, 7);
 		
-		loadJavaBean();
+		populateCropPane();
 		
 	}
 	
@@ -140,7 +140,7 @@ public class CropPane extends GridPane {
 		return bottom.getText() + bottomUnit.getValue().toString();
 	}
 	
-	private void loadJavaBean(){
+	private void populateCropPane(){
 		
 		CropProperty cropProperty = media.getPresentationProperty().getCropProperty();
 		
@@ -148,6 +148,12 @@ public class CropPane extends GridPane {
 		setRightValue(cropProperty.getRight());
 		setTopValue(cropProperty.getTop());
 		setBottomValue(cropProperty.getBottom());
+		
+	}
+
+	public void populateCropPropertyJavaBean() {
+		
+		controller.populateCropPropertyJavaBean(this, media);
 		
 	}
 	

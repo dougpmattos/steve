@@ -42,7 +42,7 @@ public class RepositoryMediaList extends Observable implements Serializable{
 		
         allTypes.add(media);
         
-        switch(media.getType()){
+        switch(media.getMediaType()){
             case IMAGE:
                 images.add(media);
                 break;
@@ -78,7 +78,7 @@ public class RepositoryMediaList extends Observable implements Serializable{
     	
     	allTypes.remove(media);
     	
-    	switch(media.getType()){
+    	switch(media.getMediaType()){
         case IMAGE:
             images.remove(media);
             break;
@@ -149,5 +149,15 @@ public class RepositoryMediaList extends Observable implements Serializable{
     public ArrayList<Media> getOthersList(){
         return others;
     }
+
+	public void openExistingRepositoryMediaList(RepositoryMediaList existingRepositoryMediaList) {
+		
+		clear();
+		
+		for(Media existentMedia : existingRepositoryMediaList.getAllTypesList()){
+			add(existentMedia);
+		}
+		
+	}
     
 }

@@ -62,7 +62,7 @@ public class SizePane extends GridPane {
 		add(aspectRatioLabel, 0, 6);
 		add(aspectRatio, 0, 7);
 		
-		loadJavaBean();
+		populateSizePane();
 		
 	}
 	
@@ -106,7 +106,7 @@ public class SizePane extends GridPane {
 		return aspectRatio.getValue();
 	}
 	
-	private void loadJavaBean(){
+	private void populateSizePane(){
 		
 		SizeProperty sizeProperty = media.getPresentationProperty().getSizeProperty();
 
@@ -116,4 +116,9 @@ public class SizePane extends GridPane {
 		
 	}
 	
+	public void populateSizePropertyJavaBean(){
+		
+		controller.populateSizePropertyJavaBean(this, media);
+		
+	}
 }	

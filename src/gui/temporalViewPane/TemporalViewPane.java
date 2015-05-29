@@ -65,12 +65,18 @@ public class TemporalViewPane extends BorderPane implements Observer, gui.common
 		if(temporalChainModel.getId() == 0){
 			mainTemporalChainTab.setText(Language.translate("main.temporal.chain"));
 		}else {
-			mainTemporalChainTab.setText(temporalChainModel.getId() + Language.translate("temporal.chain"));
+			mainTemporalChainTab.setText(temporalChainModel.getId() + "  " + Language.translate("temporal.chain"));
 		}
 		mainTemporalChainTab.setClosable(false); 
 		mainTemporalChainTab.setContent(temporalChainScrollPane);
 
 		temporalChainTabPane.getTabs().add(mainTemporalChainTab);
+		
+	}
+	
+	private void clearTemporalChainTabPane() {
+		
+		temporalChainTabPane.getTabs().clear();
 		
 	}
 	
@@ -89,6 +95,12 @@ public class TemporalViewPane extends BorderPane implements Observer, gui.common
 		        	addTemporalChainPane(temporalChain);
 		        	
 		            break;
+		            
+		        case CLEAR_TEMPORAL_CHAIN_LIST:
+		        	
+		        	clearTemporalChainTabPane();
+		        	
+		        	break;
 		        	
 		        default:
 		        	

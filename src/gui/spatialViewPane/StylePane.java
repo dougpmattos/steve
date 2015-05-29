@@ -58,13 +58,13 @@ public class StylePane extends GridPane {
 		
 		createFieldsTextMedia(media);
 		
-		loadJavaBean();
+		populateStylePane();
 		
 	}
 
 	private void createFieldsTextMedia(Media media) {
 		
-		if(media.getType().equals(MediaType.TEXT)){
+		if(media.getMediaType().equals(MediaType.TEXT)){
 			
 			Label fontFamilyLabel = new Label(Language.translate("font.family"));
 			Label fontSizeLabel = new Label(Language.translate("font.size"));
@@ -141,9 +141,9 @@ public class StylePane extends GridPane {
 		return fontColor.getValue();
 	}
 	
-	private void loadJavaBean(){
+	private void populateStylePane(){
 		
-		if(media.getType().equals(MediaType.TEXT)){
+		if(media.getMediaType().equals(MediaType.TEXT)){
 			
 			TextStyleProperty textStyleProperty = media.getPresentationProperty().getTextStyleProperty();
 			
@@ -158,6 +158,20 @@ public class StylePane extends GridPane {
 			
 			StyleProperty styleProperty = media.getPresentationProperty().getStyleProperty();
 			setTransparency(styleProperty.getTransparency());
+			
+		}
+		
+	}
+
+	public void populateStylePropertyJavaBean() {
+		
+		if(media.getMediaType().equals(MediaType.TEXT)){
+			
+			controller.populateTextStylePropertyJavaBean(this, media);
+			
+		} else{
+			
+			controller.populateStylePropertyJavaBean(this, media);
 			
 		}
 		

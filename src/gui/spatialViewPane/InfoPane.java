@@ -1,10 +1,12 @@
 package gui.spatialViewPane;
 
 import gui.common.Language;
+import javafx.event.EventHandler;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import model.common.Media;
 import controller.Controller;
@@ -58,7 +60,24 @@ public class InfoPane extends ScrollPane{
 		
 		setContent(gridPaneContainer);
 		
-		loadJavaBean();
+		populateInfoPane();
+		
+		createListeners();
+		
+	}
+	
+	private void createListeners() {
+		
+		setOnMouseExited(new EventHandler<MouseEvent>() {
+
+			@Override
+			public void handle(MouseEvent event) {
+				
+				populateInfoPropertyJavaBean();
+				
+			}
+			
+		});
 		
 	}
 	
@@ -110,14 +129,20 @@ public class InfoPane extends ScrollPane{
 		return interactive.isSelected();
 	}
 	
-	private void loadJavaBean(){
+	private void populateInfoPane(){
 		
 		setNameValue(media.getName());
-		setTypeValue(media.getType().toString());
+		setTypeValue(media.getMediaType().toString());
 		setStartTimeValue(Double.toString(media.getBegin()));
 		setEndTimeValue(Double.toString(media.getEnd()));
 		setDurationValue(Double.toString(media.getDuration()));
 		setInteractiveValue(media.getInteractive());
+		
+	}
+	
+	public void populateInfoPropertyJavaBean(){
+		
+		controller.populateInfoPropertyJavaBean(this, media);
 		
 	}
 	

@@ -3,8 +3,9 @@ package gui.spatialViewPane;
 import java.util.Observable;
 import java.util.Observer;
 
-import javafx.geometry.Insets;
+import javafx.event.EventHandler;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 import model.common.Media;
 import model.common.enums.MediaType;
@@ -32,7 +33,7 @@ public class PropertyPane extends ScrollPane implements Observer{
 	    container = new VBox();
 	    container.setId("property-container");
 	    
-	    if(media.getType().equals(MediaType.AUDIO)){
+	    if(media.getMediaType().equals(MediaType.AUDIO)){
 	    	
 	    	levelPane = new LevelPane(controller, media);
 	    	
@@ -54,6 +55,40 @@ public class PropertyPane extends ScrollPane implements Observer{
 	    
 	    setContent(container);
 	    
+	    createListeners();
+		
+	}
+	
+	private void createListeners() {
+		
+		setOnMouseExited(new EventHandler<MouseEvent>() {
+
+			@Override
+			public void handle(MouseEvent event) {
+				
+				populatePresentationPropertyJavaBean();
+				
+			}
+
+			private void populatePresentationPropertyJavaBean() {
+				
+				if(media.getMediaType().equals(MediaType.AUDIO)){
+			    	
+			    	levelPane.populateLevelPropertyJavaBean();
+			    	
+			    }else {
+			    	
+			    	positionPane.populatePositionPropertyJavaBean();
+				    sizePane.populateSizePropertyJavaBean();
+				    cropPane.populateCropPropertyJavaBean();
+				    stylePane.populateStylePropertyJavaBean();
+				    
+			    }
+				
+			}
+			
+		});
+		
 	}
 	
 	@Override
@@ -61,5 +96,27 @@ public class PropertyPane extends ScrollPane implements Observer{
 	
 		
 	}
+
+	public PositionPane getPositionPane() {
+		return positionPane;
+	}
+
+	public SizePane getSizePane() {
+		return sizePane;
+	}
+
+	public CropPane getCropPane() {
+		return cropPane;
+	}
+
+	public StylePane getStylePane() {
+		return stylePane;
+	}
+
+	public LevelPane getLevelPane() {
+		return levelPane;
+	}
+	
+	
 
 }

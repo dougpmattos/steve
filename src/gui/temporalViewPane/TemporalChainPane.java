@@ -9,7 +9,6 @@ import javafx.event.EventHandler;
 import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.StackedBarChart;
-import javafx.scene.chart.XYChart;
 import javafx.scene.input.DataFormat;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
@@ -119,14 +118,6 @@ public class TemporalChainPane extends StackedBarChart implements Observer{
 	        }  
 	    });
 		
-	}
-
-	public TemporalView getTemporalViewModel(){
-		return temporalViewModel;
-	}
-	
-	public TemporalChain getTemporalChainModel(){
-		return temporalChainModel;
 	}
 	
 	@Override

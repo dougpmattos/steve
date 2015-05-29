@@ -28,6 +28,10 @@ public class TemporalChain extends Observable implements Serializable {
 		
 	}
 
+	public void setId(int id) {
+		this.id = id;
+	}
+	
 	public int getId() {
 		return id;
 	}
@@ -35,6 +39,7 @@ public class TemporalChain extends Observable implements Serializable {
 	public void setMasterMedia(Media masterMedia){
 		
 		this.masterMedia = masterMedia;
+		mediaList.add(masterMedia);
 		
 		setChanged();
 		Operation<TemporalViewOperator> operation = new Operation<TemporalViewOperator>(TemporalViewOperator.SET_MASTER_MEDIA, masterMedia, getId());

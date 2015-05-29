@@ -62,7 +62,7 @@ public class StevePane extends Scene{
 		defaultLocale = new Locale("en","US");
 		Language.setLocale(defaultLocale);
 		
-		stveMenuBar = new SteveMenuBar();
+		stveMenuBar = new SteveMenuBar(controller, temporalView, repositoryMediaList);
     	repositoryPane = new RepositoryPane(controller, repositoryMediaList);
     	temporalViewPane = new TemporalViewPane(controller, temporalView);
     	spatialViewPane = new SpatialViewPane(controller, temporalView, temporalViewPane);
