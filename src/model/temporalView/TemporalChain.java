@@ -39,13 +39,10 @@ public class TemporalChain extends Observable implements Serializable {
 	public void setMasterMedia(Media masterMedia){
 		
 		this.masterMedia = masterMedia;
-		mediaList.add(masterMedia);
 		
 		setChanged();
-		Operation<TemporalViewOperator> operation = new Operation<TemporalViewOperator>(TemporalViewOperator.SET_MASTER_MEDIA, masterMedia, getId());
+		Operation<TemporalViewOperator> operation = new Operation<TemporalViewOperator>(TemporalViewOperator.SET_MASTER_MEDIA, masterMedia, this);
         notifyObservers(operation);
-        
-        temporalViewMediaNumber++;
         
 	}
 	
@@ -54,11 +51,11 @@ public class TemporalChain extends Observable implements Serializable {
 	}
 	
 	public void addMedia(Media media){
-		
+
 		mediaList.add(media);
 		
 		setChanged();
-		Operation<TemporalViewOperator> operation = new Operation<TemporalViewOperator>(TemporalViewOperator.ADD_TEMPORAL_CHAIN_MEDIA, media, getId());
+		Operation<TemporalViewOperator> operation = new Operation<TemporalViewOperator>(TemporalViewOperator.ADD_TEMPORAL_CHAIN_MEDIA, media, this);
         notifyObservers(operation);
         
         temporalViewMediaNumber++;

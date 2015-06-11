@@ -8,13 +8,15 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import model.common.Media;
 import model.spatialView.PositionProperty;
 import model.spatialView.enums.Size;
 import controller.Controller;
 
-public class PositionPane extends GridPane {
+public class PositionPane extends VBox {
 
 	private Controller controller;
 	private Media media;
@@ -31,9 +33,12 @@ public class PositionPane extends GridPane {
 	private ChoiceBox<Size> bottomUnit;
 	private Button positionButton;
 	
+	private HBox titleButtonHBox;
+	private GridPane positionPropertyGridPane;
+	
 	public PositionPane(Controller controller, Media media){
 		
-		setId("position-grid-pane");
+		setId("position-vbox");
 		
 		this.controller = controller;
 		this.media = media;
@@ -63,24 +68,32 @@ public class PositionPane extends GridPane {
 		rotation = new TextField();
 		zOrder = new TextField();
 		
-		add(title, 0, 0);
-		add(positionButton, 3, 0);
-		add(leftLabel, 0, 3);
-		add(left, 0, 4);
-		add(leftUnit, 1, 4);
-		add(rightLabel, 2, 3);
-		add(right, 2, 4);
-		add(rightUnit, 3, 4);
-		add(topLabel, 0, 6);
-		add(top, 0, 7);
-		add(topUnit, 1, 7);
-		add(bottomLabel, 2, 6);
-		add(bottom, 2, 7);
-		add(bottomUnit, 3, 7);
-		add(rotationLabel, 0, 9);
-		add(rotation, 0, 10);
-		add(zOrderLabel, 2, 9);
-		add(zOrder, 2, 10);
+		titleButtonHBox = new HBox();
+		titleButtonHBox.setId("title-button-hbox");
+		titleButtonHBox.getChildren().add(title);
+		titleButtonHBox.getChildren().add(positionButton);
+		
+		positionPropertyGridPane = new GridPane();
+		positionPropertyGridPane.setId("position-property-grid-pane");
+		positionPropertyGridPane.add(leftLabel, 0, 0);
+		positionPropertyGridPane.add(left, 1, 0);
+		positionPropertyGridPane.add(leftUnit, 2, 0);
+		positionPropertyGridPane.add(rightLabel, 7, 0);
+		positionPropertyGridPane.add(right, 8, 0);
+		positionPropertyGridPane.add(rightUnit, 9, 0);
+		positionPropertyGridPane.add(topLabel, 0, 2);
+		positionPropertyGridPane.add(top, 1, 2);
+		positionPropertyGridPane.add(topUnit, 2, 2);
+		positionPropertyGridPane.add(bottomLabel, 7, 2);
+		positionPropertyGridPane.add(bottom, 8, 2);
+		positionPropertyGridPane.add(bottomUnit, 9, 2);
+		positionPropertyGridPane.add(rotationLabel, 0, 4);
+		positionPropertyGridPane.add(rotation, 1, 4);
+		positionPropertyGridPane.add(zOrderLabel, 7, 4);
+		positionPropertyGridPane.add(zOrder, 8, 4);
+		
+		getChildren().add(titleButtonHBox);
+		getChildren().add(positionPropertyGridPane);
 		
 		populatePositionPane();
 		

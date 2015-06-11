@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
+import javafx.scene.Cursor;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
@@ -13,6 +14,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import model.common.Media;
+import model.temporalView.TemporalChain;
 import controller.Controller;
 
 @SuppressWarnings({ "unchecked", "rawtypes" })
@@ -22,18 +24,23 @@ public class TemporalMediaNode {
 	
 	private Controller controller;
 	private Media media;
-	private String temporalChainLine;
+	private TemporalChainMediaLine temporalChainMediaLine;
 	private TemporalViewPane temporalViewPane;
+	private TemporalChain temporalChainModel;
 	private XYChart.Series<Number, String> beginSerie;
 	private XYChart.Data<Number, String> beginData;
 	private XYChart.Series<Number, String> endSerie;
 	private XYChart.Data<Number, String> endData;
 	
-	public TemporalMediaNode(Controller controller, TemporalViewPane temporalViewPane, Media media, String temporalChainLine){
+	private double dragDeltaX;
+	private double dragDeltaY;
+	
+	public TemporalMediaNode(Controller controller, Media media, TemporalChain temporalChainModel, TemporalViewPane temporalViewPane, TemporalChainMediaLine temporalChainMediaLine){
 		
 		this.controller = controller;
 		this.media = media;
-		this.temporalChainLine = temporalChainLine;
+		this.temporalChainModel = temporalChainModel;
+		this.temporalChainMediaLine = temporalChainMediaLine;
 		this.temporalViewPane = temporalViewPane;
 		
 		createBeginSerieData();
@@ -45,9 +52,7 @@ public class TemporalMediaNode {
 		
 		endSerie = new XYChart.Series<Number, String>();
 		endSerie.setName(media.getName());
-		BigDecimal bigDecimalEnd = new BigDecimal(Double.toString(media.getEnd()));
-		BigDecimal bigDecimalBegin = new BigDecimal(Double.toString(media.getBegin()));
-		endData = new XYChart.Data<Number, String>(bigDecimalEnd.subtract(bigDecimalBegin), temporalChainLine);
+		endData = new XYChart.Data<Number, String>(media.getDuration(), temporalChainMediaLine.getId());
 		endData.setNode(createNode());
 		endSerie.getData().add(endData);
 		
@@ -56,7 +61,15 @@ public class TemporalMediaNode {
 	private void createBeginSerieData() {
 		
 		beginSerie = new XYChart.Series<Number, String>();
-		beginData = new XYChart.Data<Number, String>(0.0, temporalChainLine);
+		BigDecimal bigDecimalBegin = new BigDecimal(Double.toString(media.getBegin()));
+		Media previousMedia = temporalChainMediaLine.getPreviousMedia(media);
+		
+		if(previousMedia != null){
+			beginData = new XYChart.Data<Number, String>(bigDecimalBegin.subtract(new BigDecimal(previousMedia.getEnd())), temporalChainMediaLine.getId());
+		} else{
+			beginData = new XYChart.Data<Number, String>(bigDecimalBegin, temporalChainMediaLine.getId());
+		}
+		
 		BorderPane invisibleNode = new BorderPane();
 		invisibleNode.setVisible(false);
 		beginData.setNode(invisibleNode);
@@ -112,9 +125,9 @@ public class TemporalMediaNode {
 				
 				//node.getStylesheets().add("gui/temporalViewPane/styles/temporalMediaInterfacePressed.css");
 //	            mediaNameContainer.getStylesheets().add("gui/temporalViewPane/styles/temporalMediaInterfacePressed.css");
-//				dragDeltaX = node.getLayoutX() - mouseEvent.getSceneX();
-//			    dragDeltaY = node.getLayoutY() - mouseEvent.getSceneY();
-//			    node.setCursor(Cursor.MOVE);
+				dragDeltaX = node.getLayoutX() - mouseEvent.getSceneX();
+			    dragDeltaY = node.getLayoutY() - mouseEvent.getSceneY();
+			    node.setCursor(Cursor.MOVE);
 				
 				if(temporalViewPane.getSelectedMedia() == null || !temporalViewPane.getSelectedMedia().equals(media)){
 					temporalViewPane.setSelectedMedia(media);
@@ -129,16 +142,15 @@ public class TemporalMediaNode {
 	        @Override
 	        public void handle(MouseEvent mouseEvent) {
 
-//	            node.setLayoutX(mouseEvent.getSceneX() + dragDeltaX);
-//	            node.setLayoutY(mouseEvent.getSceneY() + dragDeltaY);
+	            node.setLayoutX(mouseEvent.getSceneX() + dragDeltaX);
+	            node.setLayoutY(mouseEvent.getSceneY() + dragDeltaY);
 	            
-//	        	Double relocationValue = mouseEvent.getSceneX()-channelWidth;
-//	        	if(relocationValue >= 0){
-//	        		//node.relocate(relocationValue, node.getLayoutY());
-//	        		//node.setTranslateX(node.getLayoutX());
-//	        		node.setLayoutX(());
-//	        		node.setCursor(Cursor.MOVE);
-//	        	}
+	        	Double relocationValue = mouseEvent.getSceneX();
+	        	if(relocationValue >= 0){
+	        		node.relocate(relocationValue, node.getLayoutY());
+	        		node.setTranslateX(node.getLayoutX());
+	        		node.setCursor(Cursor.MOVE);
+	        	}
 	        	
 	        }
 	        

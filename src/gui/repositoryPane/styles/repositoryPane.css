@@ -62,12 +62,13 @@
  ******************************************************************************/
  
 .scroll-pane {
-    -fx-padding: 0;
+	-fx-background-insets: 0;
+    -fx-padding: 0 0 5 5;
 }
 
 .scroll-pane:focused {
     -fx-background-insets: 0;
-    -fx-padding: 0;
+    -fx-padding: 0 0 5 5;
 }
 
 /*******************************************************************************

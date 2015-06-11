@@ -235,18 +235,19 @@
  ******************************************************************************/
 
 .text-field {
-    -fx-background-color: #607D8B;
+   /*  -fx-background-color: #607D8B;
     -fx-background-insets: 22 1 1 1;
     -fx-background-radius: 0;
     -fx-padding: 0 0 9 0;
-    -fx-text-fill: #FFFFFF;
+    -fx-text-fill: #FFFFFF;*/
+    -fx-max-width: 60;
 }
 
 .text-field:focused {
-    -fx-background-color: #00BFA5;
+   /* -fx-background-color: #00BFA5;
     -fx-background-insets: 21 1 1 1;
     -fx-background-radius: 0;
-    -fx-padding: 0 0 9 0;
+    -fx-padding: 0 0 9 0;*/
 }
 
 /*******************************************************************************
@@ -266,20 +267,20 @@
  ******************************************************************************/
 
 .choice-box {
-    -fx-background-color: #607D8B;
+   /*  -fx-background-color: #607D8B;
     -fx-background-insets: 32 1 11 1;
     -fx-background-radius: 0;
-    -fx-padding: 10;
+    -fx-padding: 10;*/
 }
 
 .choice-box:focused {
-    -fx-color:  red;
+   /* -fx-color:  red;
     -fx-background-color: #00BFA5;
     -fx-background-insets: 31 1 11 1;
     -fx-background-radius: 0;
-    -fx-padding: 10;
+    -fx-padding: 10;*/
 }
-
+/*
 .choice-box > .label {
     -fx-padding: 0 0 9 0;
     -fx-text-fill: #FFFFFF;
@@ -295,7 +296,7 @@
     -fx-background-insets: 1;
     -fx-padding: 4 5.5 4 5.5;
     -fx-shape: "M 0 0 h 7 l -3.5 4 z";
-}
+}/*
 
 /*******************************************************************************
  *                                                                             *
@@ -420,18 +421,25 @@
 	-fx-alignment: center;
 }
 
-#position-grid-pane{
+#position-vbox{
 	-fx-background-color: #263238;
 	-fx-padding: 25px;
 	-fx-background-insets: 2;
 	-fx-effect: dropshadow( three-pass-box , rgba(0,0,0,0.6) , 8, 0.0 , 0 , 0 );
 	-fx-alignment: top-center;
-	-fx-hgap: 20;
+	-fx-vgap: 20;
+}
+#position-property-grid-pane{
+	-fx-background-color: #263238;
+	-fx-padding: 25px;
+	-fx-background-insets: 2;
+	-fx-alignment: top-center;
+	-fx-hgap: 10;
 	-fx-vgap: 10;
 }
 #position-title{
 	-fx-fill: #B0BEC5;
-	-fx-font-size: 20;
+	-fx-font-size: 16;
 }
 
 #size-grid-pane{

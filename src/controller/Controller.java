@@ -64,6 +64,10 @@ public class Controller {
 	public void setMasterMedia(Media masterMedia, TemporalChain temporalChainModel) {
 		temporalChainModel.setMasterMedia(masterMedia);
 	}
+	
+	public void addMediaTemporalChain(Media droppedMedia, TemporalChain temporalChainModel) {
+		temporalChainModel.addMedia(droppedMedia);
+	}
 
 	public void populatePositionPropertyJavaBean(PositionPane positionPane, Media media) {
 		media.getPresentationProperty().populatePositionPropertyJavaBean(positionPane);
