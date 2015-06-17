@@ -9,7 +9,9 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import model.common.Media;
@@ -21,7 +23,7 @@ import model.spatialView.enums.FontStyle;
 import model.spatialView.enums.FontWeight;
 import controller.Controller;
 
-public class StylePane extends GridPane {
+public class StylePane extends VBox {
 
 	private Controller controller;
 	private Media media;
@@ -34,9 +36,12 @@ public class StylePane extends GridPane {
 	private ColorPicker fontColor;
 	private ImageView styleIcon;
 	
+	private BorderPane titleImageBorderPane;
+	private GridPane stylePropertyGridPane;
+	
 	public StylePane(Controller controller, Media media){
 		
-		setId("style-grid-pane");
+		setId("style-vbox");
 		
 		this.controller = controller;
 		this.media = media;
@@ -47,16 +52,25 @@ public class StylePane extends GridPane {
 		styleIcon = new ImageView(new Image(getClass().getResourceAsStream("/gui/spatialViewPane/images/style.png")));
 		
 		Label transparencyLabel = new Label(Language.translate("transparency"));
+		transparencyLabel.setId("spatial-view-label");
 		
 		transparency = new SliderButton(0.0, 100.0, 0.0, 200.0, null, true);
 		transparency.setSliderValue(0.0);
 		
-		add(title, 0, 0);
-		add(styleIcon, 3, 0);
-		add(transparencyLabel, 0, 3);
-		add(transparency, 0, 4, 2, 1);
+		titleImageBorderPane = new BorderPane();
+		titleImageBorderPane.setId("title-button-hbox");
+		titleImageBorderPane.setLeft(title);
+		titleImageBorderPane.setRight(styleIcon);
 		
+		stylePropertyGridPane = new GridPane();
+		stylePropertyGridPane.setId("style-property-grid-pane");
+		stylePropertyGridPane.add(transparencyLabel, 0, 3);
+		stylePropertyGridPane.add(transparency, 1, 3, 2, 1);
+	
 		createFieldsTextMedia(media);
+		
+		getChildren().add(titleImageBorderPane);
+		getChildren().add(stylePropertyGridPane);
 		
 		populateStylePane();
 		
@@ -78,16 +92,16 @@ public class StylePane extends GridPane {
 			fontWeight = new ChoiceBox<FontWeight>(FXCollections.observableArrayList(FontWeight.NORMAL, FontWeight.BOLD));
 			fontColor = new ColorPicker(Color.WHITE);
 			
-			add(fontFamilyLabel, 0, 6);
-			add(fontFamily, 0, 7);
-			add(fontSizeLabel, 1, 6);
-			add(fontSize, 1, 7);
-			add(fontStyleLabel, 0, 9);
-			add(fontStyle, 0, 10);
-			add(fontWeightLabel, 1, 9);
-			add(fontWeight, 1, 10);
-			add(fontColorLabel, 0, 12);
-			add(fontColor, 0, 13);
+			stylePropertyGridPane.add(fontFamilyLabel, 0, 6);
+			stylePropertyGridPane.add(fontFamily, 0, 7);
+			stylePropertyGridPane.add(fontSizeLabel, 1, 6);
+			stylePropertyGridPane.add(fontSize, 1, 7);
+			stylePropertyGridPane.add(fontStyleLabel, 0, 9);
+			stylePropertyGridPane.add(fontStyle, 0, 10);
+			stylePropertyGridPane.add(fontWeightLabel, 1, 9);
+			stylePropertyGridPane.add(fontWeight, 1, 10);
+			stylePropertyGridPane.add(fontColorLabel, 0, 12);
+			stylePropertyGridPane.add(fontColor, 0, 13);
 			
 		}
 		

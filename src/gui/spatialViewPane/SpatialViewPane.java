@@ -34,7 +34,7 @@ public class SpatialViewPane extends SplitPane implements gui.common.Observer{
     public SpatialViewPane(Controller controller, TemporalView temporalViewModel, TemporalViewPane temporalViewPane) {
   
     	setOrientation(Orientation.HORIZONTAL);
-    	setDividerPositions(0.6);
+    	setDividerPositions(0.5);
     	
     	getStylesheets().add("gui/spatialViewPane/styles/spatialViewPane.css");
     	
@@ -47,7 +47,7 @@ public class SpatialViewPane extends SplitPane implements gui.common.Observer{
 		Label label = new Label(Language.translate("no.selected.media"));
 		labelContainer.getChildren().add(label);
     	
-    	getItems().addAll(displayPane, labelContainer);
+    	getItems().addAll(labelContainer, displayPane);
     	
     	temporalViewPane.addObserver(this);
     	
@@ -85,7 +85,7 @@ public class SpatialViewPane extends SplitPane implements gui.common.Observer{
     	propertyInfoTabPane.getTabs().add(infoTab);
     	
     	getItems().clear();
-    	getItems().addAll(displayPane, propertyInfoTabPane);
+    	getItems().addAll(propertyInfoTabPane, displayPane);
     	
 	}
     

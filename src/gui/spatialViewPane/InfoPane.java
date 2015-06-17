@@ -7,7 +7,9 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.VBox;
 import model.common.Media;
 import controller.Controller;
 
@@ -22,7 +24,8 @@ public class InfoPane extends ScrollPane{
 	private TextField endTime;
 	private TextField duration;
 	private CheckBox interactive;
-	private GridPane gridPaneContainer;
+
+	private GridPane infoPropertyGridPane;
 	
 	public InfoPane(Controller controller, Media media){
 		
@@ -30,12 +33,17 @@ public class InfoPane extends ScrollPane{
 		this.media = media;
 	
 		setId("info-pane");
-
+		
 		Label nameLabel = new Label(Language.translate("name"));
 		Label typeLabel = new Label(Language.translate("type"));
 		Label startTimeLabel = new Label(Language.translate("start.time"));
 		Label endTimeLabel = new Label(Language.translate("end.time"));
 		Label durationLabel = new Label(Language.translate("duration"));
+		nameLabel.setId("spatial-view-label");
+		typeLabel.setId("spatial-view-label");
+		startTimeLabel.setId("spatial-view-label");
+		endTimeLabel.setId("spatial-view-label");
+		durationLabel.setId("spatial-view-label");
 		
 		name = new TextField();
 		type = new TextField();
@@ -44,21 +52,21 @@ public class InfoPane extends ScrollPane{
 		duration = new TextField();
 		interactive  =new CheckBox(Language.translate("interactive"));
 		
-		gridPaneContainer = new GridPane();
-		gridPaneContainer.setId("info-grid-pane");
-		gridPaneContainer.add(nameLabel, 0, 0);
-		gridPaneContainer.add(typeLabel, 1, 0);
-		gridPaneContainer.add(startTimeLabel, 0, 3);
-		gridPaneContainer.add(endTimeLabel, 1, 3);
-		gridPaneContainer.add(durationLabel, 0, 6);
-		gridPaneContainer.add(name, 0, 1);
-		gridPaneContainer.add(type, 1, 1);
-		gridPaneContainer.add(startTime, 0, 4);
-		gridPaneContainer.add(endTime, 1, 4);
-		gridPaneContainer.add(duration, 0, 7);
-		gridPaneContainer.add(interactive, 0, 9);
+		infoPropertyGridPane = new GridPane();
+		infoPropertyGridPane.setId("info-property-grid-pane");
+		infoPropertyGridPane.add(nameLabel, 0, 0);
+		infoPropertyGridPane.add(typeLabel, 1, 0);
+		infoPropertyGridPane.add(startTimeLabel, 0, 3);
+		infoPropertyGridPane.add(endTimeLabel, 1, 3);
+		infoPropertyGridPane.add(durationLabel, 0, 6);
+		infoPropertyGridPane.add(name, 0, 1);
+		infoPropertyGridPane.add(type, 1, 1);
+		infoPropertyGridPane.add(startTime, 0, 4);
+		infoPropertyGridPane.add(endTime, 1, 4);
+		infoPropertyGridPane.add(duration, 0, 7);
+		infoPropertyGridPane.add(interactive, 0, 9);
 		
-		setContent(gridPaneContainer);
+		setContent(infoPropertyGridPane);
 		
 		populateInfoPane();
 		

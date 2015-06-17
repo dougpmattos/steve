@@ -142,8 +142,8 @@ public class TemporalMediaNode {
 	        @Override
 	        public void handle(MouseEvent mouseEvent) {
 
-	            node.setLayoutX(mouseEvent.getSceneX() + dragDeltaX);
-	            node.setLayoutY(mouseEvent.getSceneY() + dragDeltaY);
+	            node.setLayoutX(mouseEvent.getSceneX() - dragDeltaX);
+	            node.setLayoutY(mouseEvent.getSceneY() - dragDeltaY);
 	            
 	        	Double relocationValue = mouseEvent.getSceneX();
 	        	if(relocationValue >= 0){

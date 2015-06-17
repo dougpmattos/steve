@@ -7,6 +7,7 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -33,7 +34,7 @@ public class PositionPane extends VBox {
 	private ChoiceBox<Size> bottomUnit;
 	private Button positionButton;
 	
-	private HBox titleButtonHBox;
+	private BorderPane titleButtonBorderPane;
 	private GridPane positionPropertyGridPane;
 	
 	public PositionPane(Controller controller, Media media){
@@ -56,6 +57,12 @@ public class PositionPane extends VBox {
 		Label bottomLabel = new Label(Language.translate("bottom"));
 		Label rotationLabel = new Label(Language.translate("rotation"));
 		Label zOrderLabel = new Label(Language.translate("z.order"));
+		leftLabel.setId("spatial-view-label");
+		rightLabel.setId("spatial-view-label");
+		topLabel.setId("spatial-view-label");
+		bottomLabel.setId("spatial-view-label");
+		rotationLabel.setId("spatial-view-label");
+		zOrderLabel.setId("spatial-view-label");
 
 		left = new TextField();
 		leftUnit = new ChoiceBox<Size>(FXCollections.observableArrayList(Size.PX, Size.PERCENTAGE));
@@ -68,10 +75,10 @@ public class PositionPane extends VBox {
 		rotation = new TextField();
 		zOrder = new TextField();
 		
-		titleButtonHBox = new HBox();
-		titleButtonHBox.setId("title-button-hbox");
-		titleButtonHBox.getChildren().add(title);
-		titleButtonHBox.getChildren().add(positionButton);
+		titleButtonBorderPane = new BorderPane();
+		titleButtonBorderPane.setId("title-button-hbox");
+		titleButtonBorderPane.setLeft(title);
+		titleButtonBorderPane.setRight(positionButton);
 		
 		positionPropertyGridPane = new GridPane();
 		positionPropertyGridPane.setId("position-property-grid-pane");
@@ -92,7 +99,7 @@ public class PositionPane extends VBox {
 		positionPropertyGridPane.add(zOrderLabel, 7, 4);
 		positionPropertyGridPane.add(zOrder, 8, 4);
 		
-		getChildren().add(titleButtonHBox);
+		getChildren().add(titleButtonBorderPane);
 		getChildren().add(positionPropertyGridPane);
 		
 		populatePositionPane();

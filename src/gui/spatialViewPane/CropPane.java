@@ -7,14 +7,16 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import model.common.Media;
 import model.spatialView.CropProperty;
 import model.spatialView.enums.Size;
 import controller.Controller;
 
-public class CropPane extends GridPane {
+public class CropPane extends VBox {
 
 	private Controller controller;
 	private Media media;
@@ -29,9 +31,12 @@ public class CropPane extends GridPane {
 	private ChoiceBox<Size> bottomUnit;
 	private Button cropButton;
 	
+	private BorderPane titleButtonBorderPane;
+	private GridPane cropPropertyGridPane;
+	
 	public CropPane(Controller controller, Media media){
 		
-		setId("crop-grid-pane");
+		setId("crop-vbox");
 		
 		this.controller = controller;
 		this.media = media;
@@ -47,7 +52,11 @@ public class CropPane extends GridPane {
 		Label rightLabel = new Label(Language.translate("right"));
 		Label topLabel = new Label(Language.translate("top"));
 		Label bottomLabel = new Label(Language.translate("bottom"));
-
+		leftLabel.setId("spatial-view-label");
+		rightLabel.setId("spatial-view-label");
+		topLabel.setId("spatial-view-label");
+		bottomLabel.setId("spatial-view-label");
+		
 		left = new TextField();
 		leftUnit = new ChoiceBox<Size>(FXCollections.observableArrayList(Size.PX, Size.PERCENTAGE));
 		right = new TextField();
@@ -57,20 +66,28 @@ public class CropPane extends GridPane {
 		bottom = new TextField();
 		bottomUnit = new ChoiceBox<Size>(FXCollections.observableArrayList(Size.PX, Size.PERCENTAGE));
 		
-		add(title, 0, 0);
-		add(cropButton, 3, 0);
-		add(leftLabel, 0, 3);
-		add(left, 0, 4);
-		add(leftUnit, 1, 4);
-		add(rightLabel, 2, 3);
-		add(right, 2, 4);
-		add(rightUnit, 3, 4);
-		add(topLabel, 0, 6);
-		add(top, 0, 7);
-		add(topUnit, 1, 7);
-		add(bottomLabel, 2, 6);
-		add(bottom, 2, 7);
-		add(bottomUnit, 3, 7);
+		titleButtonBorderPane = new BorderPane();
+		titleButtonBorderPane.setId("title-button-hbox");
+		titleButtonBorderPane.setLeft(title);
+		titleButtonBorderPane.setRight(cropButton);
+		
+		cropPropertyGridPane = new GridPane();
+		cropPropertyGridPane.setId("crop-property-grid-pane");
+		cropPropertyGridPane.add(leftLabel, 0, 0);
+		cropPropertyGridPane.add(left, 1, 0);
+		cropPropertyGridPane.add(leftUnit, 2, 0);
+		cropPropertyGridPane.add(rightLabel, 7, 0);
+		cropPropertyGridPane.add(right, 8, 0);
+		cropPropertyGridPane.add(rightUnit, 9, 0);
+		cropPropertyGridPane.add(topLabel, 0, 2);
+		cropPropertyGridPane.add(top, 1, 2);
+		cropPropertyGridPane.add(topUnit, 2, 2);
+		cropPropertyGridPane.add(bottomLabel, 7, 2);
+		cropPropertyGridPane.add(bottom, 8, 2);
+		cropPropertyGridPane.add(bottomUnit, 9, 2);
+		
+		getChildren().add(titleButtonBorderPane);
+		getChildren().add(cropPropertyGridPane);
 		
 		populateCropPane();
 		
