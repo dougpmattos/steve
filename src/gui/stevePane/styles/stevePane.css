@@ -231,9 +231,9 @@
 
 #editable-numeric-value{
     -fx-background-color: #607D8B;
-    -fx-background-insets: 22 1 1 1;
+    -fx-background-insets: 18 0 16 0;
     -fx-background-radius: 0;
-    -fx-padding: 0 0 5 0;
+    -fx-padding: 0 0 20 0;
     -fx-text-fill: #FFFFFF;
     -fx-max-width: 40;
     -fx-min-width: 55;
@@ -242,9 +242,9 @@
 
 #editable-numeric-value:focused {
     -fx-background-color: #00BFA5;
-    -fx-background-insets: 21 1 1 1;
+    -fx-background-insets: 18 0 16 0;
     -fx-background-radius: 0;
-    -fx-padding: 0 0 5 0;
+    -fx-padding: 0 0 20 0;
 }
 
 .slider > .thumb {
