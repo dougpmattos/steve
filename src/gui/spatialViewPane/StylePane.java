@@ -64,8 +64,8 @@ public class StylePane extends VBox {
 		
 		stylePropertyGridPane = new GridPane();
 		stylePropertyGridPane.setId("style-property-grid-pane");
-		stylePropertyGridPane.add(transparencyLabel, 0, 3);
-		stylePropertyGridPane.add(transparency, 1, 3, 2, 1);
+		stylePropertyGridPane.add(transparencyLabel, 0, 0);
+		stylePropertyGridPane.add(transparency, 1, 0, 2, 1);
 	
 		createFieldsTextMedia(media);
 		
@@ -85,23 +85,32 @@ public class StylePane extends VBox {
 			Label fontStyleLabel = new Label(Language.translate("font.style"));
 			Label fontWeightLabel = new Label(Language.translate("font.weight"));
 			Label fontColorLabel = new Label(Language.translate("font.color"));
+			fontFamilyLabel.setId("spatial-view-label");
+			fontSizeLabel.setId("spatial-view-label");
+			fontStyleLabel.setId("spatial-view-label");
+			fontWeightLabel.setId("spatial-view-label");
+			fontColorLabel.setId("spatial-view-label");
 			
 			fontFamily = new ChoiceBox<FontFamily>(FXCollections.observableArrayList(FontFamily.TIMES_NEW_ROMAN));
 			fontSize = new TextField();
 			fontStyle = new ChoiceBox<FontStyle>(FXCollections.observableArrayList(FontStyle.NORMAL, FontStyle.ITALIC));
 			fontWeight = new ChoiceBox<FontWeight>(FXCollections.observableArrayList(FontWeight.NORMAL, FontWeight.BOLD));
 			fontColor = new ColorPicker(Color.WHITE);
+			fontFamily.setId("font-style-field");
+			fontSize.setId("font-style-field");
+			fontStyle.setId("font-style-field");
+			fontWeight.setId("font-style-field");
 			
-			stylePropertyGridPane.add(fontFamilyLabel, 0, 6);
-			stylePropertyGridPane.add(fontFamily, 0, 7);
-			stylePropertyGridPane.add(fontSizeLabel, 1, 6);
-			stylePropertyGridPane.add(fontSize, 1, 7);
-			stylePropertyGridPane.add(fontStyleLabel, 0, 9);
-			stylePropertyGridPane.add(fontStyle, 0, 10);
-			stylePropertyGridPane.add(fontWeightLabel, 1, 9);
-			stylePropertyGridPane.add(fontWeight, 1, 10);
-			stylePropertyGridPane.add(fontColorLabel, 0, 12);
-			stylePropertyGridPane.add(fontColor, 0, 13);
+			stylePropertyGridPane.add(fontFamilyLabel, 0, 2);
+			stylePropertyGridPane.add(fontFamily, 1, 2);
+			stylePropertyGridPane.add(fontSizeLabel, 2, 2);
+			stylePropertyGridPane.add(fontSize, 3, 2);
+			stylePropertyGridPane.add(fontStyleLabel, 0, 4);
+			stylePropertyGridPane.add(fontStyle, 1, 4);
+			stylePropertyGridPane.add(fontWeightLabel, 2, 4);
+			stylePropertyGridPane.add(fontWeight, 3, 4);
+			stylePropertyGridPane.add(fontColorLabel, 0, 6);
+			stylePropertyGridPane.add(fontColor, 1, 6, 1, 2);
 			
 		}
 		

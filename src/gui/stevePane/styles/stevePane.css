@@ -142,7 +142,7 @@
 }
 
 .scroll-bar:vertical:focused {
-    -fx-background-color: transparen;
+    -fx-background-color: transparent;
     -fx-background-insets: 0;
 }
 

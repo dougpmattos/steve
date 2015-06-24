@@ -10,6 +10,7 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.shape.Line;
 import model.common.Media;
 import model.temporalView.TemporalChain;
 import model.temporalView.TemporalView;
@@ -58,7 +59,12 @@ public class TemporalViewPane extends BorderPane implements Observer, gui.common
 		temporalChainScrollPane.setFitToWidth(true);
 		
 		TemporalChainPane temporalChainPane = new TemporalChainPane(controller, temporalViewModel, temporalChainModel, this);
-		temporalChainScrollPane.setContent(temporalChainPane);
+		Line temporalChainLine = new Line();
+		temporalChainLine.setStartX(0);
+		temporalChainLine.setEndX(temporalChainPane.getHeight());
+		temporalChainLine.setRotate(90);
+		
+		temporalChainScrollPane.setContent(temporalChainLine);
 
 		Tab mainTemporalChainTab = new Tab();
 		

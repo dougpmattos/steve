@@ -85,13 +85,13 @@ public class TemporalChainPane extends StackedBarChart implements Observer{
 		        		
 		        	} else{
 		        		
-		        		System.out.println(event.getX());
+		        		System.out.println(event.getX() + "-------" + event.getSceneX() + "-----" + event.getScreenX());
 		        		System.out.println(event.getY());
-//		        		BigDecimal bigDecimalXposition = new BigDecimal(Double.toString(event.getX()));
-//		        		BigDecimal convertedPosition = bigDecimalXposition.divide(new BigDecimal(Double.toString(144.0))).multiply(new BigDecimal(Double.toString(2.0)));
-		        		Double xPosition = event.getX();
-		        		Double convertedPosition = MediaUtil.approximateDouble((xPosition/144)*2);
-		        		Double droppedTime = convertedPosition;
+		        		BigDecimal bigDecimalPxPosition = new BigDecimal(Double.toString(event.getX() - 8));
+		        		BigDecimal convertedPosition = bigDecimalPxPosition.multiply(new BigDecimal(Double.toString(5.0)).divide(new BigDecimal(Double.toString(134.0))));
+		        		//Double pxPosition = event.getX() - 8;
+		        		//Double convertedPosition = MediaUtil.approximateDouble(pxPosition*(5/134));
+		        		Double droppedTime = convertedPosition.doubleValue();
 			        	
 			        	droppedMedia.setBegin(droppedTime);
 			        	droppedMedia.setEnd(droppedTime + droppedMedia.getDuration());

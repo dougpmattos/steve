@@ -510,7 +510,7 @@
 }
 
 
-#info-pane{
+#info-pane-vbox{
 	-fx-background-color: #263238;
 	-fx-padding: 15 15 20 15;
 	-fx-background-insets: 2;
@@ -527,10 +527,32 @@
 	-fx-hgap: 10;
 	-fx-vgap: 10;
 }
+#info-pane{
+	-fx-fit-to-height: true;
+	-fx-fit-to-width: true;
+	-fx-padding: 4;
+}
 
 #title-icon-container{
 	-fx-spacing: 300;
 }
 #spatial-view-label{
 	-fx-min-width: 50;
+}
+#right-spatial-view-label{
+	-fx-min-width: 40;
+}
+#info-pane-field{
+    -fx-max-width: 100;
+    -fx-alignment: top-left;
+}
+#text-style-field{
+    -fx-max-width: 100;
+    -fx-alignment: top-left;
+}
+#font-style-field{
+	-fx-max-width: 100;
+}
+#right-font-style-field{
+	-fx-max-width: 60;
 }

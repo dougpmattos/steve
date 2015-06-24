@@ -125,8 +125,8 @@ public class TemporalMediaNode {
 				
 				//node.getStylesheets().add("gui/temporalViewPane/styles/temporalMediaInterfacePressed.css");
 //	            mediaNameContainer.getStylesheets().add("gui/temporalViewPane/styles/temporalMediaInterfacePressed.css");
-				dragDeltaX = node.getLayoutX() - mouseEvent.getSceneX();
-			    dragDeltaY = node.getLayoutY() - mouseEvent.getSceneY();
+				dragDeltaX = mouseEvent.getSceneX() - node.getLayoutX();
+			    dragDeltaY = mouseEvent.getSceneY() - node.getLayoutY();
 			    node.setCursor(Cursor.MOVE);
 				
 				if(temporalViewPane.getSelectedMedia() == null || !temporalViewPane.getSelectedMedia().equals(media)){
@@ -142,8 +142,8 @@ public class TemporalMediaNode {
 	        @Override
 	        public void handle(MouseEvent mouseEvent) {
 
-	            node.setLayoutX(mouseEvent.getSceneX() - dragDeltaX);
-	            node.setLayoutY(mouseEvent.getSceneY() - dragDeltaY);
+	            node.setLayoutX(mouseEvent.getSceneX() + dragDeltaX);
+	            node.setLayoutY(mouseEvent.getSceneY() + dragDeltaY);
 	            
 	        	Double relocationValue = mouseEvent.getSceneX();
 	        	if(relocationValue >= 0){
