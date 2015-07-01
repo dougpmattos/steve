@@ -1,15 +1,14 @@
 package controller;
 
-import gui.spatialViewPane.CropPane;
-import gui.spatialViewPane.InfoPane;
-import gui.spatialViewPane.LevelPane;
-import gui.spatialViewPane.PositionPane;
-import gui.spatialViewPane.SizePane;
-import gui.spatialViewPane.StylePane;
-import gui.stevePane.StevePane;
-
 import java.io.IOException;
 
+import view.spatialViewPane.CropPane;
+import view.spatialViewPane.InfoPane;
+import view.spatialViewPane.LevelPane;
+import view.spatialViewPane.PositionPane;
+import view.spatialViewPane.SizePane;
+import view.spatialViewPane.StylePane;
+import view.stevePane.StevePane;
 import javafx.stage.Stage;
 import model.common.Media;
 import model.repository.RepositoryMediaList;

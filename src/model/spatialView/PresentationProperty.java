@@ -1,13 +1,12 @@
 package model.spatialView;
 
-import gui.spatialViewPane.CropPane;
-import gui.spatialViewPane.LevelPane;
-import gui.spatialViewPane.PositionPane;
-import gui.spatialViewPane.SizePane;
-import gui.spatialViewPane.StylePane;
-
 import java.io.Serializable;
 
+import view.spatialViewPane.CropPane;
+import view.spatialViewPane.LevelPane;
+import view.spatialViewPane.PositionPane;
+import view.spatialViewPane.SizePane;
+import view.spatialViewPane.StylePane;
 import model.utility.RGBColor;
 
 public class PresentationProperty implements Serializable{

@@ -1,14 +1,13 @@
 package model.common;
 
-import gui.common.MessageDialog;
-import gui.spatialViewPane.InfoPane;
-
 import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import view.common.MessageDialog;
+import view.spatialViewPane.InfoPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.media.MediaPlayer;
@@ -103,18 +102,18 @@ public class Media implements Serializable{
 			case VIDEO:
 				//icon = new ImageView();
 				//VideoFrame videoFrame = new VideoFrame(path, icon);
-				icon = new ImageView(new Image(getClass().getResourceAsStream("/gui/repositoryPane/images/video.png")));
+				icon = new ImageView(new Image(getClass().getResourceAsStream("/view/repositoryPane/images/video.png")));
 				break;
                
 			case AUDIO:
-				icon = new ImageView(new Image(getClass().getResourceAsStream("/gui/repositoryPane/images/audio.png")));
+				icon = new ImageView(new Image(getClass().getResourceAsStream("/view/repositoryPane/images/audio.png")));
 				icon.setPreserveRatio(true);
 				icon.setSmooth(true);
 				icon.setFitWidth(ICON_WIDTH);
 				break; 
            
 			case TEXT:
-				icon = new ImageView(new Image(getClass().getResourceAsStream("/gui/repositoryPane/images/text.png")));
+				icon = new ImageView(new Image(getClass().getResourceAsStream("/view/repositoryPane/images/text.png")));
 				icon.setPreserveRatio(true);
 				icon.setSmooth(true);
 				icon.setFitWidth(ICON_WIDTH);
@@ -122,7 +121,7 @@ public class Media implements Serializable{
                    
 			case OTHER:
 			case PROCEDURAL:
-				icon = new ImageView(new Image(getClass().getResourceAsStream("/gui/repositoryPane/images/others.png")));
+				icon = new ImageView(new Image(getClass().getResourceAsStream("/view/repositoryPane/images/others.png")));
 				icon.setPreserveRatio(true);
 				icon.setSmooth(true);
 				icon.setFitWidth(ICON_WIDTH);

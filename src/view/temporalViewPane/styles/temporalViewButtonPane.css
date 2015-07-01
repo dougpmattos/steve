@@ -1,0 +1,162 @@
+/*******************************************************************************
+ *                                                                             *
+ * Button Panes                                                                *
+ *                                                                             *
+ ******************************************************************************/
+ 
+#button-pane{
+	-fx-background-color: #263238;
+	-fx-padding: 3px 15px 3px 3px;
+	-fx-background-insets: 4 0 0 0;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);
+}
+#zoom-links-pane{
+	-fx-spacing: 20;
+	-fx-alignment: center;
+	-fx-padding: 0px 5px 0px 0px;
+}
+#alignment-pane{
+	-fx-spacing: 20;
+	-fx-alignment: center;
+	-fx-padding: 0px 0px 0px 5px;
+}
+
+/*******************************************************************************
+ *                                                                             *
+ * Alignment Buttons                                                           *
+ *                                                                             *
+ ******************************************************************************/
+ 
+#meets-button{
+	-fx-graphic: url("../images/meets.png");
+	-fx-background-color: transparent;
+    -fx-padding: 0;
+}
+#meets-button:hover{
+    -fx-background-color: #00BFA5;
+    -fx-background-radius: 0;
+}
+
+#meets-delay-button{
+	-fx-graphic: url("../images/meets_delay.png");
+	-fx-background-color: transparent;
+    -fx-padding: 0;
+}
+#meets-delay-button:hover{
+    -fx-background-color: #00BFA5;
+    -fx-background-radius: 0;
+}
+
+#met-by-button{
+	-fx-graphic: url("../images/met_by.png");
+	-fx-background-color: transparent;
+    -fx-padding: 0;
+}
+#met-by-button:hover{
+    -fx-background-color: #00BFA5;
+    -fx-background-radius: 0;
+}
+
+#starts-button{
+	-fx-graphic: url("../images/starts.png");
+	-fx-background-color: transparent;
+    -fx-padding: 0;
+}
+#starts-button:hover{
+    -fx-background-color: #00BFA5;
+    -fx-background-radius: 0;
+}
+
+#finishes-button{
+	-fx-graphic: url("../images/finishes.png");
+	-fx-background-color: transparent;
+    -fx-padding: 0;
+}
+#finishes-button:hover{
+    -fx-background-color: #00BFA5;
+    -fx-background-radius: 0;
+}
+
+#before-button{
+	-fx-graphic: url("../images/before.png");
+	-fx-background-color: transparent;
+    -fx-padding: 0;
+}
+#before-button:hover{
+    -fx-background-color: #00BFA5;
+    -fx-background-radius: 0;
+}
+
+#starts-delay-button{
+	-fx-graphic: url("../images/starts_delay.png");
+	-fx-background-color: transparent;
+    -fx-padding: 0;
+}
+#starts-delay-button:hover{
+    -fx-background-color: #00BFA5;
+    -fx-background-radius: 0;
+}
+
+#finishes-delay-button{
+	-fx-graphic: url("../images/finishes_delay.png");
+	-fx-background-color: transparent;
+    -fx-padding: 0;
+}
+#finishes-delay-button:hover{
+    -fx-background-color: #00BFA5;
+    -fx-background-radius: 0;
+}
+
+#met-by-delay-button{
+	-fx-graphic: url("../images/met_by_delay.png");
+	-fx-background-color: transparent;
+    -fx-padding: 0;
+}
+#met-by-delay-button:hover{
+    -fx-background-color: #00BFA5;
+    -fx-background-radius: 0;
+}
+
+#during-button{
+	-fx-graphic: url("../images/during.png");
+	-fx-background-color: transparent;
+    -fx-padding: 0;
+}
+#during-button:hover{
+    -fx-background-color: #00BFA5;
+    -fx-background-radius: 0;
+}
+
+#equals-button{
+	-fx-graphic: url("../images/equals.png");
+	-fx-background-color: transparent;
+    -fx-padding: 0;
+}
+#equals-button:hover{
+    -fx-background-color: #00BFA5;
+    -fx-background-radius: 0;
+}
+
+#finishes-delay-finishes-button{
+	-fx-graphic: url("../images/finishes_delay_finishes.png");
+	-fx-background-color: transparent;
+    -fx-padding: 0;
+}
+#finishes-delay-finishes-button:hover{
+    -fx-background-color: #00BFA5;
+    -fx-background-radius: 0;
+}
+
+#overlaps-button{
+	-fx-graphic: url("../images/overlaps.png");
+	-fx-background-color: transparent;
+    -fx-padding: 0;
+}
+#overlaps-button:hover{
+    -fx-background-color: #00BFA5;
+    -fx-background-radius: 0;
+}
+
+#zoom-icon{
+	-fx-graphic: url("../images/zoom.png");
+}

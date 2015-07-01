@@ -1,6 +1,6 @@
 package model.common.enums;
 
-import gui.common.Language;
+import view.common.Language;
 
 public enum MediaType {
 	
