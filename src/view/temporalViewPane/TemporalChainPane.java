@@ -28,7 +28,7 @@ import controller.Controller;
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public class TemporalChainPane extends StackedBarChart implements Observer{
 
-	private static final String BORDER_DIFF = "0.1";
+	private static final String BORDER_DIFF = "0.2";
 
 	private Controller controller;
 	
@@ -158,15 +158,15 @@ public class TemporalChainPane extends StackedBarChart implements Observer{
 
     	boolean mediaAdded = false;
     	AllenRelation allenRelation;
-    	int lineListIndex = 0;
+    	int temporalChainMediaLineIndex = 0;
     	
-    	while(!mediaAdded && lineListIndex < temporalChainMediaLineList.size()){
+    	while(!mediaAdded && temporalChainMediaLineIndex < temporalChainMediaLineList.size()){
     		
     		boolean isPossibleAdd = true;
-    		TemporalChainMediaLine temporalChainMediaLine = temporalChainMediaLineList.get(lineListIndex);
-    		int temporalChainMediaLineIndex = 0;
-    		while(isPossibleAdd && temporalChainMediaLineIndex < temporalChainMediaLine.size()){
-    			Media currentMedia = temporalChainMediaLine.get(temporalChainMediaLineIndex);
+    		TemporalChainMediaLine temporalChainMediaLine = temporalChainMediaLineList.get(temporalChainMediaLineIndex);
+    		int index = 0;
+    		while(isPossibleAdd && index < temporalChainMediaLine.size()){
+    			Media currentMedia = temporalChainMediaLine.get(index);
     			allenRelation = identifyAllenRelation(media, currentMedia);
     			
     			if( (!allenRelation.equals(AllenRelation.MEETS)) &&  (!allenRelation.equals(AllenRelation.MET_BY))
@@ -176,13 +176,14 @@ public class TemporalChainPane extends StackedBarChart implements Observer{
     				
     			}
     			
-    			temporalChainMediaLineIndex++;
+    			index++;
     		}
     		
     		if(isPossibleAdd){
     			
     			temporalChainMediaLine.add(media);
-    			temporalChainMediaLineList.put(lineListIndex, temporalChainMediaLine);
+    			//esta aumentado o numero e nao substituinod a lista
+    			temporalChainMediaLineList.put(temporalChainMediaLineIndex, temporalChainMediaLine);
     			
     			TemporalMediaNode temporalMediaNode = new TemporalMediaNode(controller, media, temporalChainModel, temporalViewPane, temporalChainMediaLine); 
     			getData().addAll(temporalMediaNode.getBeginSerie(), temporalMediaNode.getEndSerie());
@@ -191,7 +192,7 @@ public class TemporalChainPane extends StackedBarChart implements Observer{
     			
     		}
     		
-    		lineListIndex++;
+    		temporalChainMediaLineIndex++;
     	}
     	
     	if(!mediaAdded){
