@@ -39,6 +39,7 @@ public class SteveMenuBar extends MenuBar{
 	private  MenuItem menuItemSave;
 	private  MenuItem menuItemImportNCL;
 	private  MenuItem menuItemExportNCL;
+	private  MenuItem menuItemExportHTML5;
 	private  MenuItem menuItemExit;
 	private  MenuItem menuItemUndo;
 	private  MenuItem menuItemRedo;
@@ -47,7 +48,6 @@ public class SteveMenuBar extends MenuBar{
 	private  MenuItem menuItemPaste; 
 	private  MenuItem menuItemDelete; 
 	private  MenuItem menuItemSelectAll;
-	private  MenuItem menuItemNCL4WEB;
 	private  MenuItem menuItemSimulation;
 	private  MenuItem menuItemHelpContents;
 	private  MenuItem menuItemAbout;
@@ -55,6 +55,7 @@ public class SteveMenuBar extends MenuBar{
 	private  CheckMenuItem checkMenuItemMediaView;  
 	private  CheckMenuItem checkMenuItemTemporalView;       
 	private  CheckMenuItem checkMenuItemSpatialView; 
+	private CheckMenuItem checkMenuItemShowRelations;
 	
 	public SteveMenuBar(Controller controller, TemporalView temporalView, RepositoryMediaList repositoryMediaList){
 		
@@ -77,11 +78,11 @@ public class SteveMenuBar extends MenuBar{
 		createHelpMenuItemActions();
 		
 		menuFile.getItems().addAll(menuItemNew, menuItemOpen, new SeparatorMenuItem(), menuItemClose, new SeparatorMenuItem(), 
-								   menuItemSave, new SeparatorMenuItem(), menuItemImportNCL, menuItemExportNCL, new SeparatorMenuItem(), menuItemExit);
+								   menuItemSave, new SeparatorMenuItem(), menuItemImportNCL, menuItemExportNCL, new SeparatorMenuItem(), menuItemExportHTML5, new SeparatorMenuItem(), menuItemExit);
 		menuEdit.getItems().addAll(menuItemUndo, menuItemRedo, new SeparatorMenuItem(), menuItemCut, menuItemCopy, menuItemPaste, new SeparatorMenuItem(), 
 								   menuItemDelete, menuItemSelectAll);
-		menuView.getItems().addAll(checkMenuItemMediaView, checkMenuItemTemporalView, checkMenuItemSpatialView);
-		menuTools.getItems().addAll(menuItemNCL4WEB, menuItemSimulation);
+		menuView.getItems().addAll(checkMenuItemMediaView, checkMenuItemTemporalView, checkMenuItemSpatialView, checkMenuItemShowRelations);
+		menuTools.getItems().addAll(menuItemSimulation);
 		menuHelp.getItems().addAll(menuItemHelpContents, new SeparatorMenuItem(), menuItemAbout);
 		    
 		getMenus().addAll(menuFile, menuEdit, menuView, menuTools, menuHelp);
@@ -106,12 +107,6 @@ public class SteveMenuBar extends MenuBar{
 	}
 	
 	private void createToolMenuItemActions(){
-		
-		menuItemNCL4WEB.setOnAction(new EventHandler<ActionEvent>() {
-		    public void handle(ActionEvent t) {
-			   //TODO
-		    }
-		});
 		
 		menuItemSimulation.setOnAction(new EventHandler<ActionEvent>() {
 		    public void handle(ActionEvent t) {
@@ -139,7 +134,13 @@ public class SteveMenuBar extends MenuBar{
 		    public void handle(ActionEvent t) {
 			   //TODO
 		    }
-		});     
+		});
+		
+		checkMenuItemShowRelations.setOnAction(new EventHandler<ActionEvent>() {
+		    public void handle(ActionEvent t) {
+			   //TODO
+		    }
+		});   
 		
 	}
 	
@@ -205,6 +206,12 @@ public class SteveMenuBar extends MenuBar{
 		
 		menuItemExportNCL.setOnAction(new NCLExportEventHandler(temporalView));
 		
+		menuItemExportHTML5.setOnAction(new EventHandler<ActionEvent>() {
+		    public void handle(ActionEvent t) {
+			   //TODO
+		    }
+		});
+		
 		menuItemExit.setOnAction(new EventHandler<ActionEvent>() {
 		    public void handle(ActionEvent t) {
 			   //TODO
@@ -221,8 +228,7 @@ public class SteveMenuBar extends MenuBar{
 	}
 
 	private void createToolMenuItems() {
-		
-		menuItemNCL4WEB= new MenuItem (Language.translate("ncl4web"));
+
 		menuItemSimulation= new MenuItem (Language.translate("simulation"));
 		
 	}
@@ -237,6 +243,9 @@ public class SteveMenuBar extends MenuBar{
 		
 		checkMenuItemSpatialView = new CheckMenuItem (Language.translate("spatial.view"), null);
 		checkMenuItemSpatialView.setSelected(true);
+		
+		checkMenuItemShowRelations = new CheckMenuItem (Language.translate("show.relations"), null);
+		checkMenuItemShowRelations.setSelected(true);
 		
 	}
 
@@ -284,6 +293,9 @@ public class SteveMenuBar extends MenuBar{
 		
 		menuItemExportNCL = new MenuItem (Language.translate("export.ncl.document"));
 		menuItemExportNCL.setAccelerator(KeyCombination.keyCombination("Ctrl+E"));
+		
+		menuItemExportHTML5 = new MenuItem (Language.translate("export.html5.document"));
+		menuItemExportHTML5.setAccelerator(KeyCombination.keyCombination("Ctrl+H"));
 		
 		menuItemExit = new MenuItem (Language.translate("exit"));
 		menuItemExit.setAccelerator(KeyCombination.keyCombination("Ctrl+Q"));

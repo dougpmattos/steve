@@ -146,4 +146,16 @@
 #temporal-chain-scroll-pane {
     -fx-border-color: #263238;
     -fx-border-width: 10 0 0 0;
+    -fx-fit-to-height: true;
+    -fx-fit-to-width: false;
+}
+
+#time-axis{
+	-fx-background-color: blue;
+	-fx-min-height: 40;
+}
+
+#media-line-container{
+	-fx-background-color: green;
+	
 }

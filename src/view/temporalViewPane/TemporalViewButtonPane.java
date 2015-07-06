@@ -102,7 +102,7 @@ public class TemporalViewButtonPane extends BorderPane {
 		icon.setId("zoom-icon");
         zoomButton = new SliderButton(0.0, 200.0, 100.0, 200.0, icon, false);
         zoomButton.setSliderValue(100.0);
-        showAnchorsLinksButton = new CheckBox(Language.translate("show.anchors.and.links"));
+        showAnchorsLinksButton = new CheckBox(Language.translate("show.relations"));
        
         zoomShowLinksButtonPane = new HBox();
         zoomShowLinksButtonPane.setId("zoom-links-pane");

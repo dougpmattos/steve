@@ -47,12 +47,12 @@ public class TemporalChainPane extends StackedBarChart implements Observer{
     	this.temporalViewPane = temporalViewPane;
     	
     	NumberAxis xAxis = (NumberAxis) getXAxis();
-    	xAxis.setAutoRanging(false);
-    	xAxis.setUpperBound(50);
+    	xAxis.setAutoRanging(true);
+    	xAxis.setUpperBound(1000);
 
     	CategoryAxis yAxis = (CategoryAxis) getYAxis();
     	yAxis.setId("axis-y");
-    	yAxisCategoryList.addAll(FXCollections.<String>observableArrayList("0", "1", "2", "3", "4"));
+    	yAxisCategoryList.addAll(FXCollections.<String>observableArrayList("4", "3", "2", "1", "0"));
     	yAxis.setCategories(FXCollections.<String>observableArrayList(yAxisCategoryList));
     	
     	createDragAndDropEvent();

@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
 
-import view.common.Language;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
@@ -15,6 +14,7 @@ import model.temporalView.TemporalChain;
 import model.temporalView.TemporalView;
 import model.temporalView.enums.TemporalViewOperator;
 import model.utility.Operation;
+import view.common.Language;
 import controller.Controller;
 
 @SuppressWarnings("unchecked")
@@ -54,14 +54,17 @@ public class TemporalViewPane extends BorderPane implements Observer, view.commo
 		
 		ScrollPane temporalChainScrollPane = new ScrollPane();
 		temporalChainScrollPane.setId("temporal-chain-scroll-pane");
-		temporalChainScrollPane.setFitToHeight(true);
-		temporalChainScrollPane.setFitToWidth(true);
 		
-		TemporalChainPane temporalChainPane = new TemporalChainPane(controller, temporalViewModel, temporalChainModel, this);
-		Line temporalChainLine = new Line();
-		temporalChainLine.setStartX(0);
-		temporalChainLine.setEndX(temporalChainPane.getHeight());
-		temporalChainLine.setRotate(90);
+		//TemporalChainPane temporalChainPane = new TemporalChainPane(controller, temporalViewModel, temporalChainModel, this);
+		
+		TemporalChainPaneTest temporalChainPane = new TemporalChainPaneTest(controller, temporalViewModel, temporalChainModel, this);
+		
+		
+		//TODO line
+//		Line temporalChainLine = new Line();
+//		temporalChainLine.setStartX(0);
+//		temporalChainLine.setEndX(temporalChainPane.getHeight());
+//		temporalChainLine.setRotate(90);
 		
 		temporalChainScrollPane.setContent(temporalChainPane);
 
