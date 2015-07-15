@@ -1,5 +1,7 @@
 package view.repositoryPane;
 
+import java.util.ArrayList;
+
 import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
@@ -11,7 +13,7 @@ import javafx.scene.input.TransferMode;
 import javafx.scene.layout.BorderPane;
 import model.common.Media;
 
-public class RepositoryMediaItemContainer extends BorderPane{
+public class RepositoryMediaItemContainer extends BorderPane implements view.common.Observable {
 	
 	private static final DataFormat dataFormat = new DataFormat("model.common.media");
 	
@@ -19,10 +21,13 @@ public class RepositoryMediaItemContainer extends BorderPane{
 	private Media media;
 	private MediaListPane mediaListPane;
 	private Boolean selected;
+	private ArrayList<view.common.Observer> observers;
 
 	public RepositoryMediaItemContainer(Media media, MediaListPane mediaListPane){
 		
 		setId("repo-media-item-container");
+		
+		observers = new ArrayList<view.common.Observer>();
 		
 		this.media = media;
 		this.mediaListPane = mediaListPane;
@@ -69,7 +74,9 @@ public class RepositoryMediaItemContainer extends BorderPane{
 	        	RepositoryMediaItemContainer source = (RepositoryMediaItemContainer) e.getSource();
 	        	source.setSelected(true);
 	        	
-	        	getStylesheets().add("view/repositoryPane/styles/mouseClickedRepositoryMedia.css");
+	        	if(getStylesheets().isEmpty()){
+	        		getStylesheets().add("view/repositoryPane/styles/mouseClickedRepositoryMedia.css");
+	        	}
 	        	
 	        	for(Node media : mediaListPane.getAllTypes()){
 	        		
@@ -87,7 +94,6 @@ public class RepositoryMediaItemContainer extends BorderPane{
 		
 	}
 	
-	
 	public Media getMedia() {
 		return media;
 	}
@@ -98,10 +104,38 @@ public class RepositoryMediaItemContainer extends BorderPane{
 	
 	public void setSelected(boolean selected) {
 		this.selected = selected;
+		if(selected){
+			notifyObservers();
+		}
 	}
 
 	public Boolean getSelected(){
 		return this.selected;
+	}
+	
+	@Override
+	public void addObserver(view.common.Observer o) {
+		observers.add(o);
+	}
+
+	@Override
+	public void deleteObserver(view.common.Observer o) {
+		
+		int i = observers.indexOf(o);
+		if(i >= 0){
+			observers.remove(o);
+		}
+		
+	}
+	
+	@Override
+	public void notifyObservers() {
+
+		for(int i = 0; i < observers.size(); i++){
+			view.common.Observer observer = (view.common.Observer) observers.get(i);
+			observer.update(this, getMedia());
+		}
+		
 	}
 
 }

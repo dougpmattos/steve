@@ -6,8 +6,6 @@ import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import view.common.MessageDialog;
-import view.spatialViewPane.InfoPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.media.MediaPlayer;
@@ -17,6 +15,8 @@ import model.common.enums.MimeType;
 import model.spatialView.PresentationProperty;
 import model.temporalView.TimeSegment;
 import model.utility.MediaUtil;
+import view.common.MessageDialog;
+import view.spatialViewPane.TemporalMediaInfoPane;
 
 /**
  *
@@ -100,9 +100,10 @@ public class Media implements Serializable{
                break;
                
 			case VIDEO:
-				//icon = new ImageView();
-				//VideoFrame videoFrame = new VideoFrame(path, icon);
 				icon = new ImageView(new Image(getClass().getResourceAsStream("/view/repositoryPane/images/video.png")));
+				icon.setPreserveRatio(true);
+	            icon.setSmooth(true);
+	            icon.setFitWidth(ICON_WIDTH);
 				break;
                
 			case AUDIO:
@@ -262,7 +263,7 @@ public class Media implements Serializable{
 	   return name;
    }
 
-   public void populateInfoPropertyJavaBean(InfoPane infoPane) {
+   public void populateTemporalInfoPropertyJavaBean(TemporalMediaInfoPane infoPane) {
 	   
 		setBegin(Double.parseDouble(infoPane.getStartTimeValue()));
 		setEnd(Double.parseDouble(infoPane.getEndTimeValue()));

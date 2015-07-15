@@ -30,7 +30,8 @@ public class TemporalViewButtonPane extends BorderPane {
 	private Button overlapsButton;
 	private Button equalsButton;
 	private SliderButton zoomButton;
-	private HBox zoomShowLinksButtonPane;
+	private HBox otherButtonPane;
+	private Button synchronizeButton;
 	private CheckBox showAnchorsLinksButton;
 	private HBox alignmentButtonPane;
 	
@@ -42,7 +43,7 @@ public class TemporalViewButtonPane extends BorderPane {
 	    createButtons();
 	    
 	    setLeft(alignmentButtonPane);
-	    setRight(zoomShowLinksButtonPane);
+	    setRight(otherButtonPane);
 	    
 	    createButtonActions(temporalChainTabPane);
 		
@@ -98,17 +99,20 @@ public class TemporalViewButtonPane extends BorderPane {
         beforeButton.setId("before-button");
         beforeButton.setTooltip(new Tooltip(Language.translate("before")));
 
+        synchronizeButton = new Button(Language.translate("synchronize"));
+        synchronizeButton.setId("synchronize-button");
+        
         Label icon = new Label();
 		icon.setId("zoom-icon");
-        zoomButton = new SliderButton(0.0, 200.0, 100.0, 200.0, icon, false);
-        zoomButton.setSliderValue(100.0);
+        zoomButton = new SliderButton(0.0, 100.0, 50.0, 150.0, icon, false);
         showAnchorsLinksButton = new CheckBox(Language.translate("show.relations"));
        
-        zoomShowLinksButtonPane = new HBox();
-        zoomShowLinksButtonPane.setId("zoom-links-pane");
-        zoomShowLinksButtonPane.setFillHeight(false);
-        zoomShowLinksButtonPane.getChildren().add(zoomButton);
-        zoomShowLinksButtonPane.getChildren().add(showAnchorsLinksButton);
+        otherButtonPane = new HBox();
+        otherButtonPane.setId("other-button-pane");
+        otherButtonPane.setFillHeight(false);
+        otherButtonPane.getChildren().add(synchronizeButton);
+        otherButtonPane.getChildren().add(zoomButton);
+        otherButtonPane.getChildren().add(showAnchorsLinksButton);
 	       
         alignmentButtonPane = new HBox();
         alignmentButtonPane.setId("alignment-pane");
@@ -131,10 +135,10 @@ public class TemporalViewButtonPane extends BorderPane {
 		
 		zoomButton.getSlider().valueProperty().addListener(new ChangeListener<Number>() {
             public void changed(ObservableValue<? extends Number> ov, Number old_val, Number new_val) {
-            	ScrollPane teste = (ScrollPane) temporalChainTabPane.getTabs().get(0).getContent();
-            	TemporalChainPane teste2 = (TemporalChainPane) teste.getContent();
-            	((NumberAxis) teste2.getXAxis()).setUpperBound(25);
-            	//new_val.doubleValue()
+//            	ScrollPane teste = (ScrollPane) temporalChainTabPane.getTabs().get(0).getContent();
+//            	TemporalChainPane teste2 = (TemporalChainPane) teste.getContent();
+//            	((NumberAxis) teste2.getXAxis()).setUpperBound(25);
+//            	//new_val.doubleValue()
             }
         });
 		

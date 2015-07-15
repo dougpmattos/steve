@@ -40,34 +40,6 @@
  * Buttons                                                                     *
  *                                                                             *
  ******************************************************************************/
- 
-/* Raised Button 
-#property-button{
- 	-fx-background-color: #607D8B;
- 	-fx-text-fill: #FFFFFF;
- 	-fx-background-radius: 0;
-}
-#property-button:hover {
-	-fx-background-color: #00BFA5;
-}
-#property-button:focused {
-    -fx-background-radius:  0;
-    -fx-effect: dropshadow(three-pass-box, black, 0px, 2px, 2px, 2px);
-}
-
-#animation-button{
- 	-fx-background-color: #607D8B;
- 	-fx-text-fill: #FFFFFF;
- 	-fx-background-radius: 0;
-}
-#animation-button:hover {
-	-fx-background-color: #00BFA5;
-}
-#animation-button:focused {
-    -fx-background-radius:  0;
-    -fx-effect: dropshadow(three-pass-box, black, 0px, 2px, 2px, 2px);
-}
-*/
 
 #full-button {
     -fx-graphic: url("../images/full.png");
@@ -527,7 +499,13 @@
 	-fx-hgap: 10;
 	-fx-vgap: 10;
 }
-#info-pane{
+#temporal-info-pane{
+	-fx-fit-to-height: true;
+	-fx-fit-to-width: true;
+	-fx-padding: 4;
+}
+
+#repository-info-pane{
 	-fx-fit-to-height: true;
 	-fx-fit-to-width: true;
 	-fx-padding: 4;

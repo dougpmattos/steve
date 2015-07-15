@@ -33,8 +33,10 @@ public class TemporalChainMediaLine extends ArrayList<Media> {
 			Media currentMedia = get(i);
 			if(i == 0 && currentMedia == media){
 				previousMedia = null;
+				break;
 			}else if(currentMedia == media){
 				previousMedia = get(i-1);
+				break;
 			}
 			
 		}

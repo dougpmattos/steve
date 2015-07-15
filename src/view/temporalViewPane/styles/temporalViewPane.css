@@ -37,7 +37,7 @@
 }
 .chart{
 	-fx-legend-visible: false;
-	-fx-category-gap: 3;
+	-fx-category-gap: 8;
 	-fx-padding: -11 0 -11 -5;
 	-fx-background-color: #263238;
 }
@@ -147,15 +147,27 @@
     -fx-border-color: #263238;
     -fx-border-width: 10 0 0 0;
     -fx-fit-to-height: true;
-    -fx-fit-to-width: false;
-}
-
-#time-axis{
-	-fx-background-color: blue;
-	-fx-min-height: 40;
+    -fx-fit-to-width: true;
 }
 
 #media-line-container{
 	-fx-background-color: green;
 	
+}
+
+#media-name{
+	-fx-background-color: #607D8B;
+	-fx-background-radius: 0 8 0 0;
+	-fx-pref-height: 30;
+	-fx-min-width: 0;
+	-fx-padding: 0 0 0 10;
+}
+
+#temporal-media-container{
+	-fx-background-color: #263238;
+	-fx-background-radius: 8;
+}
+
+#temporal-media-container:pressed{
+	-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);
 }

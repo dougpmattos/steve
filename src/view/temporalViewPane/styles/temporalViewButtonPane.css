@@ -10,7 +10,7 @@
 	-fx-background-insets: 4 0 0 0;
     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);
 }
-#zoom-links-pane{
+#other-button-pane{
 	-fx-spacing: 20;
 	-fx-alignment: center;
 	-fx-padding: 0px 5px 0px 0px;
@@ -155,6 +155,22 @@
 #overlaps-button:hover{
     -fx-background-color: #00BFA5;
     -fx-background-radius: 0;
+}
+
+/*******************************************************************************
+ *                                                                             *
+ * Other Buttons                                                           *
+ *                                                                             *
+ ******************************************************************************/
+
+#synchronize-button{
+ 	-fx-background-color: #607D8B;
+ 	-fx-text-fill: #FFFFFF;
+ 	-fx-background-radius: 0;
+ 	-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);
+}
+#synchronize-button:hover {
+	-fx-background-color: #00BFA5;
 }
 
 #zoom-icon{

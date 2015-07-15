@@ -3,7 +3,7 @@ package controller;
 import java.io.IOException;
 
 import view.spatialViewPane.CropPane;
-import view.spatialViewPane.InfoPane;
+import view.spatialViewPane.TemporalMediaInfoPane;
 import view.spatialViewPane.LevelPane;
 import view.spatialViewPane.PositionPane;
 import view.spatialViewPane.SizePane;
@@ -92,8 +92,8 @@ public class Controller {
 		media.getPresentationProperty().populateLevelPropertyJavaBean(levelPane);
 	}
 
-	public void populateInfoPropertyJavaBean(InfoPane infoPane, Media media) {
-		media.populateInfoPropertyJavaBean(infoPane);
+	public void populateTemporalInfoPropertyJavaBean(TemporalMediaInfoPane infoPane, Media media) {
+		media.populateTemporalInfoPropertyJavaBean(infoPane);
 	}
 	
 }

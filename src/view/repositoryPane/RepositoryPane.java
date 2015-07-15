@@ -113,5 +113,9 @@ public class RepositoryPane extends BorderPane implements Observer {
 		}
 		
 	}
+	
+	public MediaListPane getMediaListPane(){
+		return mediaListPane;
+	}
 
 }

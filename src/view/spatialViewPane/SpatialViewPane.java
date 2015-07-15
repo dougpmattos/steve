@@ -1,8 +1,6 @@
 
 package view.spatialViewPane;
 
-import view.common.Language;
-import view.temporalViewPane.TemporalViewPane;
 import javafx.geometry.Orientation;
 import javafx.scene.control.Label;
 import javafx.scene.control.SplitPane;
@@ -11,6 +9,9 @@ import javafx.scene.control.TabPane;
 import javafx.scene.layout.HBox;
 import model.common.Media;
 import model.temporalView.TemporalView;
+import view.common.Language;
+import view.repositoryPane.RepositoryPane;
+import view.temporalViewPane.TemporalViewPane;
 import controller.Controller;
 
 
@@ -18,7 +19,7 @@ import controller.Controller;
  *
  * @author Douglas
  */
-public class SpatialViewPane extends SplitPane implements view.common.Observer{
+public class SpatialViewPane extends SplitPane implements view.common.Observer {
 
 	private Controller controller;
 	
@@ -26,12 +27,14 @@ public class SpatialViewPane extends SplitPane implements view.common.Observer{
 	
 	private DisplayPane displayPane;
 	private PropertyPane propertyPane;
-	private InfoPane infoPane;
+	private TemporalMediaInfoPane temporalMediaInfoPane;
+	private RepositoryMediaInfoPane repositoryMediaInfoPane;
 	private Tab propertyTab;
 	private Tab infoTab;
 	private TabPane propertyInfoTabPane;
+	private Media selectedMedia;
 	
-    public SpatialViewPane(Controller controller, TemporalView temporalViewModel, TemporalViewPane temporalViewPane) {
+    public SpatialViewPane(Controller controller, TemporalView temporalViewModel, TemporalViewPane temporalViewPane, RepositoryPane repositoryPane) {
   
     	setOrientation(Orientation.HORIZONTAL);
     	setDividerPositions(0.5);
@@ -50,6 +53,7 @@ public class SpatialViewPane extends SplitPane implements view.common.Observer{
     	getItems().addAll(labelContainer, displayPane);
     	
     	temporalViewPane.addObserver(this);
+    	repositoryPane.getMediaListPane().addObserver(this);
     	
     	this.controller = controller;
     	
@@ -59,8 +63,15 @@ public class SpatialViewPane extends SplitPane implements view.common.Observer{
 	public void update(view.common.Observable o, Object obj) {
 		
     	if(obj instanceof Media){
+    		
     		Media selectedMedia = (Media) obj;
-    		createPropertyInfoTabPane(controller, selectedMedia);
+    		
+    		if(selectedMedia.getBegin() != null){
+    			createPropertyInfoTabPane(controller, selectedMedia);
+    		}else{
+    			createMediaInfoTabPane(controller, selectedMedia);
+    		}
+    		
     	}
 		
 	}
@@ -68,7 +79,7 @@ public class SpatialViewPane extends SplitPane implements view.common.Observer{
 	private void createPropertyInfoTabPane(Controller controller, Media media) {
 		
 		propertyPane = new PropertyPane(controller, media);
-    	infoPane = new InfoPane(controller, media);
+    	temporalMediaInfoPane = new TemporalMediaInfoPane(controller, media);
     	
     	propertyTab = new Tab();
     	propertyTab.setText(Language.translate("PROPERTIES"));
@@ -77,11 +88,28 @@ public class SpatialViewPane extends SplitPane implements view.common.Observer{
     	infoTab = new Tab();
     	infoTab.setText(Language.translate("INFO"));
     	infoTab.setClosable(false); 
-    	infoTab.setContent(infoPane);
+    	infoTab.setContent(temporalMediaInfoPane);
 
     	propertyInfoTabPane = new TabPane();
     	
     	propertyInfoTabPane.getTabs().add(propertyTab);
+    	propertyInfoTabPane.getTabs().add(infoTab);
+    	
+    	getItems().clear();
+    	getItems().addAll(propertyInfoTabPane, displayPane);
+    	
+	}
+	
+	private void createMediaInfoTabPane(Controller controller, Media media) {
+		
+		repositoryMediaInfoPane = new RepositoryMediaInfoPane(controller, media);
+    	
+    	infoTab = new Tab();
+    	infoTab.setText(Language.translate("INFO"));
+    	infoTab.setClosable(false); 
+    	infoTab.setContent(repositoryMediaInfoPane);
+
+    	propertyInfoTabPane = new TabPane();
     	propertyInfoTabPane.getTabs().add(infoTab);
     	
     	getItems().clear();

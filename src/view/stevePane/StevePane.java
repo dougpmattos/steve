@@ -64,7 +64,7 @@ public class StevePane extends Scene{
 		stveMenuBar = new SteveMenuBar(controller, temporalView, repositoryMediaList);
     	repositoryPane = new RepositoryPane(controller, repositoryMediaList);
     	temporalViewPane = new TemporalViewPane(controller, temporalView);
-    	spatialViewPane = new SpatialViewPane(controller, temporalView, temporalViewPane);
+    	spatialViewPane = new SpatialViewPane(controller, temporalView, temporalViewPane, repositoryPane);
 	   
     	repositorySpatialViewSplitPane = new SplitPane();
     	repositorySpatialViewSplitPane.setOrientation(Orientation.HORIZONTAL);

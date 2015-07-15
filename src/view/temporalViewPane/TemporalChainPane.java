@@ -7,9 +7,10 @@ import java.util.HashMap;
 import java.util.Observable;
 import java.util.Observer;
 
-import view.temporalViewPane.enums.AllenRelation;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
+import javafx.scene.Node;
 import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.StackedBarChart;
@@ -21,8 +22,8 @@ import model.common.Media;
 import model.temporalView.TemporalChain;
 import model.temporalView.TemporalView;
 import model.temporalView.enums.TemporalViewOperator;
-import model.utility.MediaUtil;
 import model.utility.Operation;
+import view.temporalViewPane.enums.AllenRelation;
 import controller.Controller;
 
 @SuppressWarnings({ "unchecked", "rawtypes" })
@@ -42,13 +43,15 @@ public class TemporalChainPane extends StackedBarChart implements Observer{
     	
     	super(new NumberAxis(), new CategoryAxis());
     	
+    	setId(String.valueOf(temporalChainModel.getId()));
+    	
     	this.temporalViewModel = temporalViewModel;
     	this.temporalChainModel = temporalChainModel;
     	this.temporalViewPane = temporalViewPane;
     	
     	NumberAxis xAxis = (NumberAxis) getXAxis();
-    	xAxis.setAutoRanging(true);
-    	xAxis.setUpperBound(1000);
+    	xAxis.setAutoRanging(false);
+    	xAxis.setUpperBound(50);
 
     	CategoryAxis yAxis = (CategoryAxis) getYAxis();
     	yAxis.setId("axis-y");
@@ -182,7 +185,7 @@ public class TemporalChainPane extends StackedBarChart implements Observer{
     		if(isPossibleAdd){
     			
     			temporalChainMediaLine.add(media);
-    			//esta aumentado o numero e nao substituinod a lista
+    			//TODO esta aumentando o numero e nao substituinod a lista
     			temporalChainMediaLineList.put(temporalChainMediaLineIndex, temporalChainMediaLine);
     			
     			TemporalMediaNode temporalMediaNode = new TemporalMediaNode(controller, media, temporalChainModel, temporalViewPane, temporalChainMediaLine); 
@@ -252,5 +255,9 @@ public class TemporalChainPane extends StackedBarChart implements Observer{
 	private String getYAxisCategory(){
 		return yAxisCategoryList.get(yAxisCategoryList.size() - 1);
 	}
+
+	public ObservableList<Node> getChildList() {
+        return getChildren();
+    }
 	
 }

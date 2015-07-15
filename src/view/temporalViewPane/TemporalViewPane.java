@@ -4,11 +4,12 @@ import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
 
+import javafx.scene.Node;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.shape.Line;
+import javafx.scene.layout.Pane;
 import model.common.Media;
 import model.temporalView.TemporalChain;
 import model.temporalView.TemporalView;
@@ -55,9 +56,16 @@ public class TemporalViewPane extends BorderPane implements Observer, view.commo
 		ScrollPane temporalChainScrollPane = new ScrollPane();
 		temporalChainScrollPane.setId("temporal-chain-scroll-pane");
 		
-		//TemporalChainPane temporalChainPane = new TemporalChainPane(controller, temporalViewModel, temporalChainModel, this);
+		TemporalChainPane temporalChainPane = new TemporalChainPane(controller, temporalViewModel, temporalChainModel, this);
 		
-		TemporalChainPaneTest temporalChainPane = new TemporalChainPaneTest(controller, temporalViewModel, temporalChainModel, this);
+//		Node node = temporalChainPane.lookup(".chart-content");
+//		// parent = (Pane) node.getParent();
+//		temporalChainPane.getChildList().remove(node);
+//		ScrollPane scroll = new ScrollPane();
+//		scroll.setContent(node);
+//		temporalChainPane.getChildList().add(scroll);
+		
+		//TemporalChainPaneTest temporalChainPane = new TemporalChainPaneTest(controller, temporalViewModel, temporalChainModel, this);
 		
 		
 		//TODO line
@@ -66,7 +74,7 @@ public class TemporalViewPane extends BorderPane implements Observer, view.commo
 //		temporalChainLine.setEndX(temporalChainPane.getHeight());
 //		temporalChainLine.setRotate(90);
 		
-		temporalChainScrollPane.setContent(temporalChainPane);
+		//temporalChainScrollPane.setContent(temporalChainPane);
 
 		Tab mainTemporalChainTab = new Tab();
 		
@@ -76,7 +84,7 @@ public class TemporalViewPane extends BorderPane implements Observer, view.commo
 			mainTemporalChainTab.setText(temporalChainModel.getId() + "  " + Language.translate("temporal.chain"));
 		}
 		mainTemporalChainTab.setClosable(false); 
-		mainTemporalChainTab.setContent(temporalChainScrollPane);
+		mainTemporalChainTab.setContent(temporalChainPane);
 
 		temporalChainTabPane.getTabs().add(mainTemporalChainTab);
 		

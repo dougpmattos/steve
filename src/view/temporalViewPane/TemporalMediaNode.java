@@ -12,7 +12,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
+import javafx.scene.shape.Rectangle;
 import model.common.Media;
 import model.temporalView.TemporalChain;
 import controller.Controller;
@@ -65,7 +65,7 @@ public class TemporalMediaNode {
 		Media previousMedia = temporalChainMediaLine.getPreviousMedia(media);
 		
 		if(previousMedia != null){
-			beginData = new XYChart.Data<Number, String>(bigDecimalBegin.subtract(new BigDecimal(previousMedia.getEnd())), temporalChainMediaLine.getId());
+			beginData = new XYChart.Data<Number, String>(bigDecimalBegin.subtract(new BigDecimal(previousMedia.getEnd().toString())), temporalChainMediaLine.getId());
 		} else{
 			beginData = new XYChart.Data<Number, String>(bigDecimalBegin, temporalChainMediaLine.getId());
 		}
@@ -79,52 +79,56 @@ public class TemporalMediaNode {
 	
 	private HBox createNode() {
 		
-		HBox node = new HBox();
-		node.setStyle("-fx-background-color: #263238;");
-		
-		VBox mediaNameContainer = new VBox();
-		mediaNameContainer.setId("media-name-container");
+		HBox container = new HBox();
+		container.setId("temporal-media-container");
+	
 		Label mediaName = new Label(media.getName());
 		mediaName.setId("media-name");
-		mediaNameContainer.getChildren().add(mediaName);
 
+		Rectangle mediaImageClip = new Rectangle();
+		mediaImageClip.setId("media-image");
+		mediaImageClip.setArcHeight(16);
+		mediaImageClip.setArcWidth(16);
 		ImageView imageView = media.generateMediaIcon();
+		imageView.setClip(mediaImageClip);
 		
-		node.heightProperty().addListener(new ChangeListener(){
+		container.heightProperty().addListener(new ChangeListener(){
 			@Override 
 	        public void changed(ObservableValue o,Object oldVal, Object newVal){
 				Double heightValue = (double) newVal-SIZE_DIFFERENCE;
 				if(heightValue >= 0){
-					imageView.setFitHeight(heightValue);					
+					imageView.setFitHeight((double) newVal);
+					mediaImageClip.setHeight((double) newVal);
 				}
 			}
 	    });
-		node.widthProperty().addListener(new ChangeListener(){
+		container.widthProperty().addListener(new ChangeListener(){
 			@Override 
 	        public void changed(ObservableValue o,Object oldVal, Object newVal){
 				imageView.setFitWidth((double) newVal);
-				
+				mediaName.setPrefWidth((double) newVal);
+				mediaImageClip.setWidth((double) newVal);
 			}
 	    });
 		
-		node.getChildren().add(imageView);
-		node.getChildren().add(mediaNameContainer);
+		container.getChildren().add(imageView);
+		container.getChildren().add(mediaName);
 		
-		setListenerEvents(node);
+		setListenerEvents(container);
 		
-		return node;
+		return container;
 		
 	}
 	
 	private void setListenerEvents(HBox node){
 		
-		node.setOnMousePressed(new EventHandler<MouseEvent>(){
+		node.setOnMouseClicked(new EventHandler<MouseEvent>(){
 
 			@Override
 			public void handle(MouseEvent mouseEvent) {
-				
-				//node.getStylesheets().add("view/temporalViewPane/styles/temporalMediaInterfacePressed.css");
-//	            mediaNameContainer.getStylesheets().add("view/temporalViewPane/styles/temporalMediaInterfacePressed.css");
+			
+				((Label) node.getChildren().get(1)).getStylesheets().add("view/temporalViewPane/styles/mouseFocusedTemporalMediaNode.css");
+
 				dragDeltaX = mouseEvent.getSceneX() - node.getLayoutX();
 			    dragDeltaY = mouseEvent.getSceneY() - node.getLayoutY();
 			    node.setCursor(Cursor.MOVE);
@@ -138,6 +142,28 @@ public class TemporalMediaNode {
 			}
 	    	
 	    });
+		
+		node.setOnMousePressed(new EventHandler<MouseEvent>(){
+
+			@Override
+			public void handle(MouseEvent mouseEvent) {
+			
+				((Label) node.getChildren().get(1)).getStylesheets().add("view/temporalViewPane/styles/mouseFocusedTemporalMediaNode.css");
+
+				dragDeltaX = mouseEvent.getSceneX() - node.getLayoutX();
+			    dragDeltaY = mouseEvent.getSceneY() - node.getLayoutY();
+			    node.setCursor(Cursor.MOVE);
+				
+				if(temporalViewPane.getSelectedMedia() == null || !temporalViewPane.getSelectedMedia().equals(media)){
+					temporalViewPane.setSelectedMedia(media);
+				}
+			    
+			    mouseEvent.consume();
+			    
+			}
+	    	
+	    });
+		
 	    node.setOnMouseDragged(new EventHandler<MouseEvent>() {
 	        @Override
 	        public void handle(MouseEvent mouseEvent) {
@@ -160,7 +186,7 @@ public class TemporalMediaNode {
 			@Override
 			public void handle(MouseEvent event) {
 	
-//				node.getStylesheets().remove("view/temporalViewPane/styles/temporalMediaInterfacePressed.css");
+				node.getStylesheets().remove("view/temporalViewPane/styles/mouseFocusedTemporalMediaNode.css");
 //				mediaNameContainer.getStylesheets().remove("view/temporalViewPane/styles/temporalMediaInterfacePressed.css");
 //	    		node.setCursor(Cursor.HAND);
 //	    		

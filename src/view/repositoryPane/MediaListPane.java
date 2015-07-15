@@ -1,5 +1,6 @@
 package view.repositoryPane;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 
 import javafx.collections.ObservableList;
@@ -12,13 +13,16 @@ import model.common.Media;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import view.common.Observable;
+import view.common.Observer;
+
 /**
  *
  * @author Douglas
  */
 
 @SuppressWarnings("rawtypes")
-public class MediaListPane extends ScrollPane {
+public class MediaListPane extends ScrollPane implements view.common.Observer, view.common.Observable {
 	
 	final Logger logger = LoggerFactory.getLogger(MediaListPane.class);
 	
@@ -36,8 +40,12 @@ public class MediaListPane extends ScrollPane {
 	private final FlowPane text = new FlowPane();
 	private final FlowPane others = new FlowPane();
 	
+	private ArrayList<view.common.Observer> observers;
+	
 	public MediaListPane(){
 
+		observers = new ArrayList<view.common.Observer>();
+		
 		setLayout();
 		setFitToHeight(true);
 	    setFitToWidth(true);
@@ -223,6 +231,8 @@ public class MediaListPane extends ScrollPane {
 		
 		RepositoryMediaItemContainer repositoryMediaItemContainer = new RepositoryMediaItemContainer(media, this);
 		
+		repositoryMediaItemContainer.addObserver(this);
+		
 		return repositoryMediaItemContainer;
 	
 	}
@@ -297,6 +307,38 @@ public class MediaListPane extends ScrollPane {
 		
 		return null;
 		
+	}
+
+	@Override
+	public void addObserver(view.common.Observer o) {
+		observers.add(o);
+	}
+
+	@Override
+	public void deleteObserver(view.common.Observer o) {
+		
+		int i = observers.indexOf(o);
+		if(i >= 0){
+			observers.remove(o);
+		}
+		
+	}
+	
+	@Override
+	public void notifyObservers() {
+
+		for(int i = 0; i < observers.size(); i++){
+			view.common.Observer observer = (view.common.Observer) observers.get(i);
+			observer.update(this, getSelectedMedia());
+		}
+		
+	}
+
+	@Override
+	public void update(Observable o, Object obj) {
+		
+		notifyObservers();
+
 	}
 
 }

@@ -13,7 +13,7 @@ import javafx.scene.layout.VBox;
 import model.common.Media;
 import controller.Controller;
 
-public class InfoPane extends ScrollPane{
+public class TemporalMediaInfoPane extends ScrollPane{
 
 	private Controller controller;
 	private Media media;
@@ -27,12 +27,12 @@ public class InfoPane extends ScrollPane{
 
 	private GridPane infoPropertyGridPane;
 	
-	public InfoPane(Controller controller, Media media){
+	public TemporalMediaInfoPane(Controller controller, Media media){
 		
 		this.controller = controller;
 		this.media = media;
 	
-		setId("info-pane");
+		setId("temporal-info-pane");
 		
 		Label nameLabel = new Label(Language.translate("name"));
 		Label typeLabel = new Label(Language.translate("type"));
@@ -159,7 +159,7 @@ public class InfoPane extends ScrollPane{
 	
 	public void populateInfoPropertyJavaBean(){
 		
-		controller.populateInfoPropertyJavaBean(this, media);
+		controller.populateTemporalInfoPropertyJavaBean(this, media);
 		
 	}
 	

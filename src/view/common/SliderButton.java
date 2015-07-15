@@ -32,13 +32,14 @@ public class SliderButton extends HBox{
 		slider = new Slider();
 		slider.setMin(min);
 		slider.setMax(max);
-		slider.setValue(def);
 		slider.setMinWidth(sliderWitdh);
         slider.setMaxWidth(sliderWitdh);
 		
 		progressBar = new ProgressBar();
         progressBar.setMaxWidth(sliderWitdh);
 
+        setSliderValue(def);
+        
         sliderStackPane = new StackPane();
         sliderStackPane.getChildren().addAll(progressBar, slider);
         
@@ -69,7 +70,7 @@ public class SliderButton extends HBox{
 
 	private void createListeners(Double max) {
 		
-		if(max == 100.0){
+		if(max == 100.0 && editableNumericValue != null){
 			
 			slider.valueProperty().addListener(new ChangeListener<Number>() {
 	            public void changed(ObservableValue<? extends Number> ov, Number old_val, Number new_val) {
@@ -109,7 +110,7 @@ public class SliderButton extends HBox{
 			
 			slider.valueProperty().addListener(new ChangeListener<Number>() {
 	            public void changed(ObservableValue<? extends Number> ov, Number old_val, Number new_val) {
-	            	//TODO
+	            	progressBar.setProgress(new_val.doubleValue() / max);
 	            }
 	        });
 			
