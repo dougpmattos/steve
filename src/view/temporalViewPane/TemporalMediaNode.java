@@ -127,11 +127,31 @@ public class TemporalMediaNode {
 			@Override
 			public void handle(MouseEvent mouseEvent) {
 			
-				((Label) node.getChildren().get(1)).getStylesheets().add("view/temporalViewPane/styles/mouseFocusedTemporalMediaNode.css");
+				Label source = (Label) node.getChildren().get(1);
 
-				dragDeltaX = mouseEvent.getSceneX() - node.getLayoutX();
-			    dragDeltaY = mouseEvent.getSceneY() - node.getLayoutY();
-			    node.setCursor(Cursor.MOVE);
+				if(source.getStylesheets().isEmpty()){
+					source.getStylesheets().add("view/repositoryPane/styles/mouseFocusedTemporalMediaNode.css");
+	        	}
+				
+//				for(Tab temporalTab : temporalViewPane.getTemporalChainTabPane().getTabs()){
+//					
+//					for(temporalTab.get){
+//						
+//					}
+//					
+//				}
+//				for(Node media : ){
+//	        		RepositoryMediaItemContainer repoMediaItemContainer = (RepositoryMediaItemContainer) media;
+//	        		
+//	        		if(!source.  .equals(repoMediaItemContainer.getMedia())){
+//	        			repoMediaItemContainer.setSelected(false);
+//	        			repoMediaItemContainer.getStylesheets().remove("view/repositoryPane/styles/mouseClickedRepositoryMedia.css");
+//	        		}
+//	        		
+//	        	}
+//				dragDeltaX = mouseEvent.getSceneX() - node.getLayoutX();
+//			    dragDeltaY = mouseEvent.getSceneY() - node.getLayoutY();
+//			    node.setCursor(Cursor.MOVE);
 				
 				if(temporalViewPane.getSelectedMedia() == null || !temporalViewPane.getSelectedMedia().equals(media)){
 					temporalViewPane.setSelectedMedia(media);

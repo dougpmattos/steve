@@ -260,4 +260,8 @@ public class TemporalChainPane extends StackedBarChart implements Observer{
         return getChildren();
     }
 	
+	public HashMap<Integer,TemporalChainMediaLine> getTemporalChainMediaLineList(){
+		return temporalChainMediaLineList;
+	}
+	
 }

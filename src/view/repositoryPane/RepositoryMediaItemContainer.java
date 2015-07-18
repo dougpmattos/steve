@@ -104,9 +104,7 @@ public class RepositoryMediaItemContainer extends BorderPane implements view.com
 	
 	public void setSelected(boolean selected) {
 		this.selected = selected;
-		if(selected){
-			notifyObservers();
-		}
+		notifyObservers();
 	}
 
 	public Boolean getSelected(){

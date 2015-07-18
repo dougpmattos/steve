@@ -161,5 +161,9 @@ public class TemporalViewPane extends BorderPane implements Observer, view.commo
 	public Media getSelectedMedia(){
 		return selectedMedia;
 	}
+	
+	public TabPane getTemporalChainTabPane (){
+		return temporalChainTabPane;
+	}
 
 }
