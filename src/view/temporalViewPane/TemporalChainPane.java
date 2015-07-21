@@ -3,7 +3,6 @@ package view.temporalViewPane;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -23,6 +22,7 @@ import model.temporalView.TemporalChain;
 import model.temporalView.TemporalView;
 import model.temporalView.enums.TemporalViewOperator;
 import model.utility.Operation;
+import view.repositoryPane.RepositoryPane;
 import view.temporalViewPane.enums.AllenRelation;
 import controller.Controller;
 
@@ -36,10 +36,11 @@ public class TemporalChainPane extends StackedBarChart implements Observer{
 	private TemporalView temporalViewModel;
 	private TemporalChain temporalChainModel;
 	private TemporalViewPane temporalViewPane;
+	private RepositoryPane repositoryPane;
 	private ArrayList<String> yAxisCategoryList = new ArrayList<String>();
-	private HashMap<Integer,TemporalChainMediaLine> temporalChainMediaLineList = new HashMap<Integer,TemporalChainMediaLine>();
+	private ArrayList<TemporalMediaNodeList> temporalMediaNodeListList = new ArrayList<TemporalMediaNodeList>();
 	
-	public TemporalChainPane(Controller controller, TemporalView temporalViewModel, TemporalChain temporalChainModel, TemporalViewPane temporalViewPane){
+	public TemporalChainPane(Controller controller, TemporalView temporalViewModel, TemporalChain temporalChainModel, TemporalViewPane temporalViewPane, RepositoryPane repositoryPane){
     	
     	super(new NumberAxis(), new CategoryAxis());
     	
@@ -48,6 +49,7 @@ public class TemporalChainPane extends StackedBarChart implements Observer{
     	this.temporalViewModel = temporalViewModel;
     	this.temporalChainModel = temporalChainModel;
     	this.temporalViewPane = temporalViewPane;
+    	this.repositoryPane = repositoryPane;
     	
     	NumberAxis xAxis = (NumberAxis) getXAxis();
     	xAxis.setAutoRanging(false);
@@ -161,15 +163,15 @@ public class TemporalChainPane extends StackedBarChart implements Observer{
 
     	boolean mediaAdded = false;
     	AllenRelation allenRelation;
-    	int temporalChainMediaLineIndex = 0;
+    	int temporalMediaNodeListListIndex = 0;
     	
-    	while(!mediaAdded && temporalChainMediaLineIndex < temporalChainMediaLineList.size()){
+    	while(!mediaAdded && temporalMediaNodeListListIndex < temporalMediaNodeListList.size()){
     		
     		boolean isPossibleAdd = true;
-    		TemporalChainMediaLine temporalChainMediaLine = temporalChainMediaLineList.get(temporalChainMediaLineIndex);
+    		TemporalMediaNodeList temporalMediaNodeList = temporalMediaNodeListList.get(temporalMediaNodeListListIndex);
     		int index = 0;
-    		while(isPossibleAdd && index < temporalChainMediaLine.size()){
-    			Media currentMedia = temporalChainMediaLine.get(index);
+    		while(isPossibleAdd && index < temporalMediaNodeList.size()){
+    			Media currentMedia = temporalMediaNodeList.get(index).getMedia();
     			allenRelation = identifyAllenRelation(media, currentMedia);
     			
     			if( (!allenRelation.equals(AllenRelation.MEETS)) &&  (!allenRelation.equals(AllenRelation.MET_BY))
@@ -184,33 +186,36 @@ public class TemporalChainPane extends StackedBarChart implements Observer{
     		
     		if(isPossibleAdd){
     			
-    			temporalChainMediaLine.add(media);
-    			//TODO esta aumentando o numero e nao substituinod a lista
-    			temporalChainMediaLineList.put(temporalChainMediaLineIndex, temporalChainMediaLine);
+    			TemporalMediaNode temporalMediaNode = new TemporalMediaNode(controller, media, temporalChainModel, temporalViewPane, repositoryPane, temporalMediaNodeList); 
     			
-    			TemporalMediaNode temporalMediaNode = new TemporalMediaNode(controller, media, temporalChainModel, temporalViewPane, temporalChainMediaLine); 
+    			temporalMediaNodeList.add(temporalMediaNode);
+//    			//TODO esta aumentando o numero e nao substituinod a lista
+//    			temporalMediaNodeListList.(temporalMediaNodeListListIndex, temporalMediaNodeList);
+    			
     			getData().addAll(temporalMediaNode.getBeginSerie(), temporalMediaNode.getEndSerie());
     			
     			mediaAdded = true;
     			
     		}
     		
-    		temporalChainMediaLineIndex++;
+    		temporalMediaNodeListListIndex++;
     	}
     	
     	if(!mediaAdded){
     		
-    		int newLineIndex = temporalChainMediaLineList.size();
-    		TemporalChainMediaLine temporalChainMediaLine = new TemporalChainMediaLine(String.valueOf(newLineIndex));
-    		temporalChainMediaLine.add(media);
-    		temporalChainMediaLineList.put(newLineIndex, temporalChainMediaLine);
+    		int newLineIndex = temporalMediaNodeListList.size();
+    		TemporalMediaNodeList temporalMediaNodeList = new TemporalMediaNodeList(String.valueOf(newLineIndex));
+    		
+    		TemporalMediaNode temporalMediaNode = new TemporalMediaNode(controller, media, temporalChainModel, temporalViewPane, repositoryPane, temporalMediaNodeList); 
+    		
+    		temporalMediaNodeList.add(temporalMediaNode);
+    		temporalMediaNodeListList.add(newLineIndex, temporalMediaNodeList);
     		
     		//TODO somente quando ultrapassar 5 linhas
 //    		yAxisCategoryList.add(Integer.toString(newLineIndex));
 //    		CategoryAxis yAxis = (CategoryAxis) getYAxis();
 //    		yAxis.setCategories(FXCollections.<String>observableArrayList(yAxisCategoryList));
     		
-    		TemporalMediaNode temporalMediaNode = new TemporalMediaNode(controller, media, temporalChainModel, temporalViewPane, temporalChainMediaLine); 
     		getData().addAll(temporalMediaNode.getBeginSerie(), temporalMediaNode.getEndSerie());
     		
     	}
@@ -260,8 +265,8 @@ public class TemporalChainPane extends StackedBarChart implements Observer{
         return getChildren();
     }
 	
-	public HashMap<Integer,TemporalChainMediaLine> getTemporalChainMediaLineList(){
-		return temporalChainMediaLineList;
+	public ArrayList<TemporalMediaNodeList> getTemporalChainMediaListList(){
+		return temporalMediaNodeListList;
 	}
 	
 }

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
+import javafx.scene.control.Tab;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.DataFormat;
 import javafx.scene.input.Dragboard;
@@ -12,6 +13,10 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.BorderPane;
 import model.common.Media;
+import view.temporalViewPane.TemporalChainPane;
+import view.temporalViewPane.TemporalMediaNode;
+import view.temporalViewPane.TemporalMediaNodeList;
+import view.temporalViewPane.TemporalViewPane;
 
 public class RepositoryMediaItemContainer extends BorderPane implements view.common.Observable {
 	
@@ -19,18 +24,20 @@ public class RepositoryMediaItemContainer extends BorderPane implements view.com
 	
 	private Label label;
 	private Media media;
-	private MediaListPane mediaListPane;
+	private RepositoryMediaItemContainerListPane repositoryMediaItemContainerListPane;
+	private TemporalViewPane temporalViewPane;
 	private Boolean selected;
 	private ArrayList<view.common.Observer> observers;
 
-	public RepositoryMediaItemContainer(Media media, MediaListPane mediaListPane){
+	public RepositoryMediaItemContainer(Media media, RepositoryMediaItemContainerListPane repositoryMediaItemContainerList, TemporalViewPane temporalViewPane){
 		
 		setId("repo-media-item-container");
 		
 		observers = new ArrayList<view.common.Observer>();
 		
 		this.media = media;
-		this.mediaListPane = mediaListPane;
+		this.repositoryMediaItemContainerListPane = repositoryMediaItemContainerList;
+		this.temporalViewPane = temporalViewPane;
 		label = new Label(media.getName());
 		label.setId("label-media-item");
 		selected = false;
@@ -67,24 +74,38 @@ public class RepositoryMediaItemContainer extends BorderPane implements view.com
 	}
 
 	private void createListenerEventMediaItem() {
-			
-		setOnMouseClicked(new EventHandler<MouseEvent>() {
+					
+		setOnMousePressed(new EventHandler<MouseEvent>() {
 	        @Override
 	        public void handle(MouseEvent e) {
+	        	
+	        	for(Tab temporalTab : temporalViewPane.getTemporalChainTabPane().getTabs()){
+	        		
+	        		TemporalChainPane temporalChainPane = (TemporalChainPane) temporalTab.getContent();
+					for(TemporalMediaNodeList temporalMediaNodeList : temporalChainPane.getTemporalChainMediaListList()){
+						for(TemporalMediaNode temporalMediaNode : temporalMediaNodeList){
+							if(temporalMediaNode.getMedia() != media){
+								Label labelMediaNode = (Label) temporalMediaNode.getContainerNode().getChildren().get(1);
+								labelMediaNode.getStylesheets().remove("view/temporalViewPane/styles/mousePressedTemporalMediaNode.css");
+							}
+						}	
+					}	
+				 }
+	        	
 	        	RepositoryMediaItemContainer source = (RepositoryMediaItemContainer) e.getSource();
 	        	source.setSelected(true);
 	        	
 	        	if(getStylesheets().isEmpty()){
-	        		getStylesheets().add("view/repositoryPane/styles/mouseClickedRepositoryMedia.css");
+	        		getStylesheets().add("view/repositoryPane/styles/mousePressedRepositoryMedia.css");
 	        	}
 	        	
-	        	for(Node media : mediaListPane.getAllTypes()){
+	        	for(Node repositoryMediaItemContainer : repositoryMediaItemContainerListPane.getAllTypes()){
 	        		
-	        		RepositoryMediaItemContainer repoMediaItemContainer = (RepositoryMediaItemContainer) media;
+	        		RepositoryMediaItemContainer repoMediaItemContainer = (RepositoryMediaItemContainer) repositoryMediaItemContainer;
 	        		
 	        		if(!source.getMedia().equals(repoMediaItemContainer.getMedia())){
 	        			repoMediaItemContainer.setSelected(false);
-	        			repoMediaItemContainer.getStylesheets().remove("view/repositoryPane/styles/mouseClickedRepositoryMedia.css");
+	        			repoMediaItemContainer.getStylesheets().remove("view/repositoryPane/styles/mousePressedRepositoryMedia.css");
 	        		}
 	        		
 	        	}

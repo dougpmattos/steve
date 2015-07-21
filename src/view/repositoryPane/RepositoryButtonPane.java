@@ -34,7 +34,7 @@ public class RepositoryButtonPane extends BorderPane{
     private FileChooser fileChooser;
     private List <File> fileList;
     
-    public RepositoryButtonPane(Controller controller, ScrollPane scrollPaneTree, MediaTreePane mediaTreePane, MediaListPane mediaListPane, RepositoryPane repositoryPane){
+    public RepositoryButtonPane(Controller controller, ScrollPane scrollPaneTree, MediaTreePane mediaTreePane, RepositoryMediaItemContainerListPane mediaListPane, RepositoryPane repositoryPane){
         
         setId("button-pane");
         getStylesheets().add("view/repositoryPane/styles/repositoryButtonPane.css");
@@ -84,7 +84,7 @@ public class RepositoryButtonPane extends BorderPane{
         
 	}
 
-    private void createButtonActions(ScrollPane scrollPaneTree, MediaTreePane mediaTreePane, MediaListPane mediaListPane, RepositoryPane repositoryPane) {
+    private void createButtonActions(ScrollPane scrollPaneTree, MediaTreePane mediaTreePane, RepositoryMediaItemContainerListPane mediaListPane, RepositoryPane repositoryPane) {
     	
         addButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override public void handle(ActionEvent e) {

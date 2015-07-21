@@ -14,7 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import view.common.Observable;
-import view.common.Observer;
+import view.temporalViewPane.TemporalViewPane;
 
 /**
  *
@@ -22,9 +22,9 @@ import view.common.Observer;
  */
 
 @SuppressWarnings("rawtypes")
-public class MediaListPane extends ScrollPane implements view.common.Observer, view.common.Observable {
+public class RepositoryMediaItemContainerListPane extends ScrollPane implements view.common.Observer, view.common.Observable {
 	
-	final Logger logger = LoggerFactory.getLogger(MediaListPane.class);
+	final Logger logger = LoggerFactory.getLogger(RepositoryMediaItemContainerListPane.class);
 	
 	private final String OTHERS = "Others";
 	private final String TEXT = "Text";
@@ -40,10 +40,12 @@ public class MediaListPane extends ScrollPane implements view.common.Observer, v
 	private final FlowPane text = new FlowPane();
 	private final FlowPane others = new FlowPane();
 	
+	private TemporalViewPane temporalViewPane;
+	
 	private ArrayList<view.common.Observer> observers;
 	
-	public MediaListPane(){
-
+	public RepositoryMediaItemContainerListPane(){
+		
 		observers = new ArrayList<view.common.Observer>();
 		
 		setLayout();
@@ -229,7 +231,7 @@ public class MediaListPane extends ScrollPane implements view.common.Observer, v
 
 	private RepositoryMediaItemContainer createRepositoryMediaItem(Media media) {
 		
-		RepositoryMediaItemContainer repositoryMediaItemContainer = new RepositoryMediaItemContainer(media, this);
+		RepositoryMediaItemContainer repositoryMediaItemContainer = new RepositoryMediaItemContainer(media, this, temporalViewPane);
 		
 		repositoryMediaItemContainer.addObserver(this);
 		
@@ -339,6 +341,10 @@ public class MediaListPane extends ScrollPane implements view.common.Observer, v
 		
 		notifyObservers();
 
+	}
+	
+	public void setTemporalViewPane(TemporalViewPane temporalViewPane){
+		this.temporalViewPane = temporalViewPane;
 	}
 
 }

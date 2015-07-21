@@ -1,18 +1,16 @@
 package view.temporalViewPane;
 
-import view.common.Language;
-import view.common.SliderButton;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.scene.chart.NumberAxis;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import view.common.Language;
+import view.common.SliderButton;
 import controller.Controller;
 
 public class TemporalViewButtonPane extends BorderPane {
@@ -101,6 +99,7 @@ public class TemporalViewButtonPane extends BorderPane {
 
         synchronizeButton = new Button(Language.translate("synchronize"));
         synchronizeButton.setId("synchronize-button");
+        synchronizeButton.setTooltip(new Tooltip(Language.translate("synchronize-button")));
         
         Label icon = new Label();
 		icon.setId("zoom-icon");

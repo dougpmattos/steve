@@ -3,7 +3,6 @@ package view.repositoryPane;
 import java.util.Observable;
 import java.util.Observer;
 
-import view.common.Language;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.BorderPane;
@@ -12,15 +11,18 @@ import model.common.Media;
 import model.repository.RepositoryMediaList;
 import model.repository.enums.RepositoryOperator;
 import model.utility.Operation;
+import view.common.Language;
+import view.temporalViewPane.TemporalViewPane;
 import controller.Controller;
 
 @SuppressWarnings("unchecked")
 public class RepositoryPane extends BorderPane implements Observer {
 	
 	private ScrollPane scrollPaneTree;
-	private MediaListPane mediaListPane;
+	private RepositoryMediaItemContainerListPane repositoryMediaItemContainerListPane;
 	private MediaTreePane mediaTreePane;
     private RepositoryButtonPane buttonPane;
+    private TemporalViewPane temporalViewPane;
     private HBox labelContainer;
 		
 	public RepositoryPane(Controller controller, RepositoryMediaList repositoryMediaList){
@@ -28,14 +30,14 @@ public class RepositoryPane extends BorderPane implements Observer {
 		getStylesheets().add("view/repositoryPane/styles/repositoryPane.css");
 		
 		mediaTreePane = new MediaTreePane();
-		mediaListPane = new MediaListPane();
+		repositoryMediaItemContainerListPane = new RepositoryMediaItemContainerListPane();
         
 		scrollPaneTree = new ScrollPane();
 	    scrollPaneTree.setContent(mediaTreePane);
 	    scrollPaneTree.setFitToHeight(true);
 	    scrollPaneTree.setFitToWidth(true);
 	    
-	    buttonPane = new RepositoryButtonPane(controller, scrollPaneTree, mediaTreePane, mediaListPane, this);
+	    buttonPane = new RepositoryButtonPane(controller, scrollPaneTree, mediaTreePane, repositoryMediaItemContainerListPane, this);
 	            
 	    labelContainer = new HBox();
 		labelContainer.setId("media-repo-label-container");
@@ -61,26 +63,26 @@ public class RepositoryPane extends BorderPane implements Observer {
 			
 		        case ADD_REPOSITORY_MEDIA:
 		        	
-		        	mediaListPane.add(media);
+		        	repositoryMediaItemContainerListPane.add(media);
 		        	mediaTreePane.add(media);
 		        	
 		        	buttonPane.getDeleteButton().setDisable(false);
 		        	buttonPane.getClearButton().setDisable(false);
 		        	
-		        	if(!getChildren().contains(mediaListPane)){
+		        	if(!getChildren().contains(repositoryMediaItemContainerListPane)){
 		        		getChildren().remove(labelContainer);
-			        	setCenter(mediaListPane);
+			        	setCenter(repositoryMediaItemContainerListPane);
 		        	}
 		        	
 		            break;
 		            
 		        case REMOVE_REPOSITORY_MEDIA:
 		        	
-		        	mediaListPane.remove(media);
+		        	repositoryMediaItemContainerListPane.remove(media);
 		        	mediaTreePane.remove(media);
 		        	
-		        	if(mediaListPane.getAllTypes().isEmpty()){
-		        		getChildren().remove(mediaListPane);
+		        	if(repositoryMediaItemContainerListPane.getAllTypes().isEmpty()){
+		        		getChildren().remove(repositoryMediaItemContainerListPane);
 			        	setCenter(labelContainer);
 		        	}
 		        	
@@ -88,18 +90,18 @@ public class RepositoryPane extends BorderPane implements Observer {
 				
 		        case CLEAR_REPOSITORY_MEDIA_LIST:
 		        	
-		        	mediaListPane.getAllTypes().clear();
-		        	mediaListPane.getImages().clear();
-		        	mediaListPane.getVideos().clear();
-		        	mediaListPane.getAudios().clear();
-		        	mediaListPane.getTexts().clear();
-		        	mediaListPane.getOthers().clear();
+		        	repositoryMediaItemContainerListPane.getAllTypes().clear();
+		        	repositoryMediaItemContainerListPane.getImages().clear();
+		        	repositoryMediaItemContainerListPane.getVideos().clear();
+		        	repositoryMediaItemContainerListPane.getAudios().clear();
+		        	repositoryMediaItemContainerListPane.getTexts().clear();
+		        	repositoryMediaItemContainerListPane.getOthers().clear();
 		        	mediaTreePane.clear();
 		        	
 		        	buttonPane.getDeleteButton().setDisable(true);
 		        	buttonPane.getClearButton().setDisable(true);
 		        	
-		        	getChildren().remove(mediaListPane);
+		        	getChildren().remove(repositoryMediaItemContainerListPane);
 		        	setCenter(labelContainer);
 		        	
 		        	break;
@@ -114,8 +116,15 @@ public class RepositoryPane extends BorderPane implements Observer {
 		
 	}
 	
-	public MediaListPane getMediaListPane(){
-		return mediaListPane;
+	public RepositoryMediaItemContainerListPane getRepositoryMediaItemContainerListPane(){
+		return repositoryMediaItemContainerListPane;
+	}
+
+	public void setTemporalViewPane(TemporalViewPane temporalViewPane) {
+		
+		this.temporalViewPane = temporalViewPane;
+		repositoryMediaItemContainerListPane.setTemporalViewPane(temporalViewPane);
+		
 	}
 
 }

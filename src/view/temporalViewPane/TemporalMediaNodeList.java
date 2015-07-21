@@ -2,15 +2,13 @@ package view.temporalViewPane;
 
 import java.util.ArrayList;
 
-import model.common.Media;
-
-public class TemporalChainMediaLine extends ArrayList<Media> {
+public class TemporalMediaNodeList extends ArrayList<TemporalMediaNode> {
 	
 	private static final long serialVersionUID = 5161615912335172004L;
 	
 	private String id;
 
-	public TemporalChainMediaLine(String id){
+	public TemporalMediaNodeList(String id){
 		
 		this.id = id;
 		
@@ -24,13 +22,13 @@ public class TemporalChainMediaLine extends ArrayList<Media> {
 		this.id = id;
 	}
 	
-	public Media getPreviousMedia(Media media){
+	public TemporalMediaNode getPreviousMedia(TemporalMediaNode media){
 		
-		Media previousMedia = null;
+		TemporalMediaNode previousMedia = null;
 		
 		for(int i = 0; i< size(); i++){
 			
-			Media currentMedia = get(i);
+			TemporalMediaNode currentMedia = get(i);
 			if(i == 0 && currentMedia == media){
 				previousMedia = null;
 				break;

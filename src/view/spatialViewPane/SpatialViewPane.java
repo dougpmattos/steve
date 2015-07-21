@@ -53,7 +53,7 @@ public class SpatialViewPane extends SplitPane implements view.common.Observer {
     	getItems().addAll(labelContainer, displayPane);
     	
     	temporalViewPane.addObserver(this);
-    	repositoryPane.getMediaListPane().addObserver(this);
+    	repositoryPane.getRepositoryMediaItemContainerListPane().addObserver(this);
     	
     	this.controller = controller;
     	

@@ -4,18 +4,17 @@ import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
 
-import javafx.scene.Node;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.Pane;
 import model.common.Media;
 import model.temporalView.TemporalChain;
 import model.temporalView.TemporalView;
 import model.temporalView.enums.TemporalViewOperator;
 import model.utility.Operation;
 import view.common.Language;
+import view.repositoryPane.RepositoryPane;
 import controller.Controller;
 
 @SuppressWarnings("unchecked")
@@ -27,10 +26,11 @@ public class TemporalViewPane extends BorderPane implements Observer, view.commo
 	
 	private TabPane temporalChainTabPane;
 	private TemporalViewButtonPane temporalViewButtonPane;
+	private RepositoryPane repositoryPane;
 	private ArrayList<view.common.Observer> observers;
 	private Media selectedMedia;
 	
-	public TemporalViewPane(Controller controller, TemporalView temporalViewModel){
+	public TemporalViewPane(Controller controller, TemporalView temporalViewModel, RepositoryPane repositoryPane){
 		
 		setId("temporal-view-pane");
 		getStylesheets().add("view/temporalViewPane/styles/temporalViewPane.css");
@@ -38,10 +38,11 @@ public class TemporalViewPane extends BorderPane implements Observer, view.commo
 		observers = new ArrayList<view.common.Observer>();
 		
 		this.temporalViewModel = temporalViewModel;
+		this.repositoryPane = repositoryPane;
 		
 		temporalChainTabPane = new TabPane();
 		temporalViewButtonPane = new TemporalViewButtonPane(controller, temporalChainTabPane);
-	          
+      		
 	    setCenter(temporalChainTabPane);
 	    setBottom(temporalViewButtonPane);
 	    
@@ -56,7 +57,7 @@ public class TemporalViewPane extends BorderPane implements Observer, view.commo
 		ScrollPane temporalChainScrollPane = new ScrollPane();
 		temporalChainScrollPane.setId("temporal-chain-scroll-pane");
 		
-		TemporalChainPane temporalChainPane = new TemporalChainPane(controller, temporalViewModel, temporalChainModel, this);
+		TemporalChainPane temporalChainPane = new TemporalChainPane(controller, temporalViewModel, temporalChainModel, this, repositoryPane);
 		
 //		Node node = temporalChainPane.lookup(".chart-content");
 //		// parent = (Pane) node.getParent();
