@@ -16,7 +16,10 @@ import javafx.scene.chart.StackedBarChart;
 import javafx.scene.input.DataFormat;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
+import javafx.scene.layout.StackPane;
+import javafx.scene.shape.Line;
 import model.common.Media;
 import model.temporalView.TemporalChain;
 import model.temporalView.TemporalView;
@@ -27,12 +30,13 @@ import view.temporalViewPane.enums.AllenRelation;
 import controller.Controller;
 
 @SuppressWarnings({ "unchecked", "rawtypes" })
-public class TemporalChainPane extends StackedBarChart implements Observer{
+public class TemporalChainPane extends StackPane implements Observer{
 
 	private static final String BORDER_DIFF = "0.2";
 
 	private Controller controller;
 	
+	private StackedBarChart<NumberAxis, CategoryAxis> stackedBarChart;
 	private TemporalView temporalViewModel;
 	private TemporalChain temporalChainModel;
 	private TemporalViewPane temporalViewPane;
@@ -61,6 +65,7 @@ public class TemporalChainPane extends StackedBarChart implements Observer{
     	yAxis.setCategories(FXCollections.<String>observableArrayList(yAxisCategoryList));
     	
     	createDragAndDropEvent();
+    	createMouseEvent();
     	
     	temporalChainModel.addObserver(this);
     	
@@ -131,6 +136,21 @@ public class TemporalChainPane extends StackedBarChart implements Observer{
                }
                
                dragEvent.consume();
+	        }  
+	    });
+		
+	}
+	
+	public void createMouseEvent(){
+		
+		setOnMouseMoved(new EventHandler<MouseEvent>() {
+			
+			public void handle(MouseEvent mouseEvent) {
+				
+				Line line = new Line(0, 0, 100, 200);
+				
+				System.out.println(mouseEvent.getX());
+				
 	        }  
 	    });
 		
