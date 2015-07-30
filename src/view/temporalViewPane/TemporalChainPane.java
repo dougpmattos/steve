@@ -36,7 +36,7 @@ public class TemporalChainPane extends StackPane implements Observer{
 
 	private Controller controller;
 	
-	private StackedBarChart<NumberAxis, CategoryAxis> stackedBarChart;
+	private StackedBarChart<Number, String> stackedBarChart;
 	private TemporalView temporalViewModel;
 	private TemporalChain temporalChainModel;
 	private TemporalViewPane temporalViewPane;
@@ -46,24 +46,26 @@ public class TemporalChainPane extends StackPane implements Observer{
 	
 	public TemporalChainPane(Controller controller, TemporalView temporalViewModel, TemporalChain temporalChainModel, TemporalViewPane temporalViewPane, RepositoryPane repositoryPane){
     	
-    	super(new NumberAxis(), new CategoryAxis());
+		NumberAxis xAxis = new NumberAxis();
+    	xAxis.setAutoRanging(false);
+    	xAxis.setUpperBound(50);
+
+    	CategoryAxis yAxis = new CategoryAxis();
+    	yAxis.setId("axis-y");
+    	yAxisCategoryList.addAll(FXCollections.<String>observableArrayList("4", "3", "2", "1", "0"));
+    	yAxis.setCategories(FXCollections.<String>observableArrayList(yAxisCategoryList));
     	
+		stackedBarChart = new StackedBarChart<Number, String>(xAxis, yAxis);
+    	
+		getChildren().add(stackedBarChart);
+		
     	setId(String.valueOf(temporalChainModel.getId()));
     	
     	this.temporalViewModel = temporalViewModel;
     	this.temporalChainModel = temporalChainModel;
     	this.temporalViewPane = temporalViewPane;
     	this.repositoryPane = repositoryPane;
-    	
-    	NumberAxis xAxis = (NumberAxis) getXAxis();
-    	xAxis.setAutoRanging(false);
-    	xAxis.setUpperBound(50);
 
-    	CategoryAxis yAxis = (CategoryAxis) getYAxis();
-    	yAxis.setId("axis-y");
-    	yAxisCategoryList.addAll(FXCollections.<String>observableArrayList("4", "3", "2", "1", "0"));
-    	yAxis.setCategories(FXCollections.<String>observableArrayList(yAxisCategoryList));
-    	
     	createDragAndDropEvent();
     	createMouseEvent();
     	
@@ -98,7 +100,7 @@ public class TemporalChainPane extends StackPane implements Observer{
 		        	} else{
 		        	
 		        		BigDecimal bigDecimalPxPosition = new BigDecimal(Double.toString(event.getX()));
-		        		BigDecimal convertedPosition = bigDecimalPxPosition.multiply(new BigDecimal(Double.toString(((NumberAxis) getXAxis()).getUpperBound())).divide(new BigDecimal(Double.toString(getWidth())), 20, RoundingMode.HALF_UP));
+		        		BigDecimal convertedPosition = bigDecimalPxPosition.multiply(new BigDecimal(Double.toString(((NumberAxis) stackedBarChart.getXAxis()).getUpperBound())).divide(new BigDecimal(Double.toString(getWidth())), 20, RoundingMode.HALF_UP));
 		        		Double droppedTime = convertedPosition.subtract(new BigDecimal(BORDER_DIFF)).doubleValue();
 		        		
 		        		if(droppedTime < 0){
@@ -147,9 +149,13 @@ public class TemporalChainPane extends StackPane implements Observer{
 			
 			public void handle(MouseEvent mouseEvent) {
 				
-				Line line = new Line(0, 0, 100, 200);
+				Line line = new Line(0, 0, 0, 400);
+				line.setId("indicative-line");
+				getChildren().add(line);
 				
-				System.out.println(mouseEvent.getX());
+				line.setTranslateX(mouseEvent.getX());
+				
+				//System.out.println();
 				
 	        }  
 	    });
@@ -212,7 +218,7 @@ public class TemporalChainPane extends StackPane implements Observer{
 //    			//TODO esta aumentando o numero e nao substituinod a lista
 //    			temporalMediaNodeListList.(temporalMediaNodeListListIndex, temporalMediaNodeList);
     			
-    			getData().addAll(temporalMediaNode.getBeginSerie(), temporalMediaNode.getEndSerie());
+    			stackedBarChart.getData().addAll(temporalMediaNode.getBeginSerie(), temporalMediaNode.getEndSerie());
     			
     			mediaAdded = true;
     			
@@ -236,7 +242,7 @@ public class TemporalChainPane extends StackPane implements Observer{
 //    		CategoryAxis yAxis = (CategoryAxis) getYAxis();
 //    		yAxis.setCategories(FXCollections.<String>observableArrayList(yAxisCategoryList));
     		
-    		getData().addAll(temporalMediaNode.getBeginSerie(), temporalMediaNode.getEndSerie());
+    		stackedBarChart.getData().addAll(temporalMediaNode.getBeginSerie(), temporalMediaNode.getEndSerie());
     		
     	}
 
