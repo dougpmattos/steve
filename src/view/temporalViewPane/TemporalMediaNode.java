@@ -1,6 +1,7 @@
 package view.temporalViewPane;
 
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -103,8 +104,10 @@ public class TemporalMediaNode {
 		containerNode.heightProperty().addListener(new ChangeListener(){
 			@Override 
 	        public void changed(ObservableValue o,Object oldVal, Object newVal){
-				Double heightValue = (double) newVal-SIZE_DIFFERENCE;
-				if(heightValue >= 0){
+				Double heightValue = (double) newVal;
+				Double difference = (double) newVal - (double) oldVal;
+				DecimalFormat df = new DecimalFormat("#.#");
+				if(heightValue >= 0 && Double.parseDouble((df.format(difference).replace(",", "."))) != 0.2){
 					imageView.setFitHeight((double) newVal);
 					mediaImageClip.setHeight((double) newVal);
 				}

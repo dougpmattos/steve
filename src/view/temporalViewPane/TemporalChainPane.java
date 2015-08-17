@@ -6,9 +6,12 @@ import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.NumberAxis;
@@ -19,7 +22,13 @@ import javafx.scene.input.Dragboard;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.StackPane;
+import javafx.scene.shape.ClosePath;
 import javafx.scene.shape.Line;
+import javafx.scene.shape.LineTo;
+import javafx.scene.shape.MoveTo;
+import javafx.scene.shape.Path;
+import javafx.scene.shape.PathElement;
+import javafx.scene.shape.VLineTo;
 import model.common.Media;
 import model.temporalView.TemporalChain;
 import model.temporalView.TemporalView;
@@ -43,6 +52,8 @@ public class TemporalChainPane extends StackPane implements Observer{
 	private RepositoryPane repositoryPane;
 	private ArrayList<String> yAxisCategoryList = new ArrayList<String>();
 	private ArrayList<TemporalMediaNodeList> temporalMediaNodeListList = new ArrayList<TemporalMediaNodeList>();
+	private Line indicativeLine;
+	private Path playLine;
 	
 	public TemporalChainPane(Controller controller, TemporalView temporalViewModel, TemporalChain temporalChainModel, TemporalViewPane temporalViewPane, RepositoryPane repositoryPane){
     	
@@ -60,12 +71,32 @@ public class TemporalChainPane extends StackPane implements Observer{
 		getChildren().add(stackedBarChart);
 		
     	setId(String.valueOf(temporalChainModel.getId()));
+    	setAlignment(Pos.CENTER_LEFT);
     	
     	this.temporalViewModel = temporalViewModel;
     	this.temporalChainModel = temporalChainModel;
     	this.temporalViewPane = temporalViewPane;
     	this.repositoryPane = repositoryPane;
 
+    	indicativeLine = new Line();
+    	indicativeLine.setId("indicative-line");
+    	
+    	playLine = new Path();
+    	playLine.getElements().addAll(new MoveTo(0, 4), new LineTo(15, 4), new LineTo(7.5, 40), new ClosePath(), new MoveTo(7.5, 40), new VLineTo(38));
+    	playLine.setId("play-line");
+    	getChildren().add(playLine);
+    	heightProperty().addListener(new ChangeListener(){
+			@Override 
+	        public void changed(ObservableValue o,Object oldVal, Object newVal){
+				Double heightValue = (double) newVal;
+				PathElement pathElement = playLine.getElements().get(5);
+				if(pathElement instanceof VLineTo){
+					((VLineTo) pathElement).setY(heightValue);
+					System.out.println("stack pane mudou" + getHeight());
+				}
+			}
+	    });
+    	
     	createDragAndDropEvent();
     	createMouseEvent();
     	
@@ -127,9 +158,32 @@ public class TemporalChainPane extends StackPane implements Observer{
 			}
 		});
 		
+		setOnDragEntered(new EventHandler<DragEvent>() {
+			
+				public void handle(DragEvent dragEvent) {
+					
+					if(temporalChainModel.getMasterMedia() != null){
+						getChildren().add(indicativeLine);
+						indicativeLine.setEndY(stackedBarChart.getHeight());
+					}
+					
+		        }  
+				
+		});
+		
+		setOnDragExited(new EventHandler<DragEvent>() {
+			
+			public void handle(DragEvent dragEvent) {
+				getChildren().remove(indicativeLine);
+	        }  
+			
+		});
+		
 		setOnDragOver(new EventHandler<DragEvent>() {
 			
 			public void handle(DragEvent dragEvent) {
+
+				indicativeLine.setTranslateX(dragEvent.getX());
 				
 				Object[] contentTypes = dragEvent.getDragboard().getContentTypes().toArray();
 				
@@ -145,18 +199,32 @@ public class TemporalChainPane extends StackPane implements Observer{
 	
 	public void createMouseEvent(){
 		
+		setOnMouseEntered(new EventHandler<MouseEvent>() {
+			
+			public void handle(MouseEvent mouseEvent) {
+				//getChildren().add(indicativeLine);
+				indicativeLine.setEndY(stackedBarChart.getHeight());
+			}
+		});
+		
+		setOnMouseExited(new EventHandler<MouseEvent>() {
+			
+			public void handle(MouseEvent mouseEvent) {
+				getChildren().remove(indicativeLine);
+			}
+	    });
+		
 		setOnMouseMoved(new EventHandler<MouseEvent>() {
 			
 			public void handle(MouseEvent mouseEvent) {
-				
-				Line line = new Line(0, 0, 0, 400);
-				line.setId("indicative-line");
-				getChildren().add(line);
-				
-				line.setTranslateX(mouseEvent.getX());
-				
-				//System.out.println();
-				
+				indicativeLine.setTranslateX(mouseEvent.getX());
+	        }  
+	    });
+		
+		setOnMouseClicked(new EventHandler<MouseEvent>() {
+			
+			public void handle(MouseEvent mouseEvent) {
+				playLine.setTranslateX(mouseEvent.getX());
 	        }  
 	    });
 		

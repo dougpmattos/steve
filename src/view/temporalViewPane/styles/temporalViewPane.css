@@ -172,5 +172,10 @@
 	-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);
 }
 #indicative-line{
-	-fx-stroke: red;
+	-fx-stroke: #00BFA5;
+}
+#play-line{
+	-fx-stroke: #64FFDA;
+	-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);
+	-fx-fill: #64FFDA;
 }
