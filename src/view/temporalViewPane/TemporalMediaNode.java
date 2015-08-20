@@ -12,6 +12,7 @@ import javafx.scene.chart.XYChart;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.DragEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
@@ -104,13 +105,8 @@ public class TemporalMediaNode {
 		containerNode.heightProperty().addListener(new ChangeListener(){
 			@Override 
 	        public void changed(ObservableValue o,Object oldVal, Object newVal){
-				Double heightValue = (double) newVal;
-				Double difference = (double) newVal - (double) oldVal;
-				DecimalFormat df = new DecimalFormat("#.#");
-				if(heightValue >= 0 && Double.parseDouble((df.format(difference).replace(",", "."))) != 0.2){
 					imageView.setFitHeight((double) newVal);
 					mediaImageClip.setHeight((double) newVal);
-				}
 			}
 	    });
 		containerNode.widthProperty().addListener(new ChangeListener(){
@@ -181,16 +177,21 @@ public class TemporalMediaNode {
 	    node.setOnMouseDragged(new EventHandler<MouseEvent>() {
 	        @Override
 	        public void handle(MouseEvent mouseEvent) {
+	        	
+	        	System.out.println("getx: " + mouseEvent.getSceneX());
+//				System.out.println("scenex: " + mouseEvent.getSceneX());
+//				System.out.println("screenx: " + mouseEvent.getScreenX());
 
-	            node.setLayoutX(mouseEvent.getSceneX() + dragDeltaX);
-	            node.setLayoutY(mouseEvent.getSceneY() + dragDeltaY);
-	            
-	        	Double relocationValue = mouseEvent.getSceneX();
-	        	if(relocationValue >= 0){
-	        		node.relocate(relocationValue, node.getLayoutY());
-	        		node.setTranslateX(node.getLayoutX());
-	        		node.setCursor(Cursor.MOVE);
-	        	}
+	        	node.setTranslateX(mouseEvent.getSceneX() - node.getLayoutX());
+//	            node.setLayoutX(mouseEvent.getSceneX() + dragDeltaX);
+//	            node.setLayoutY(mouseEvent.getSceneY() + dragDeltaY);
+//	            
+//	        	Double relocationValue = mouseEvent.getSceneX();
+//	        	if(relocationValue >= 0){
+//	        		node.relocate(relocationValue, node.getLayoutY());
+//	        		node.setTranslateX(node.getLayoutX());
+//	        		node.setCursor(Cursor.MOVE);
+//	        	}
 	        	
 	        }
 	        

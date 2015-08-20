@@ -41,7 +41,7 @@ import controller.Controller;
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public class TemporalChainPane extends StackPane implements Observer{
 
-	private static final String BORDER_DIFF = "0.2";
+	private static final String BORDER_DIFF = "0.1";
 
 	private Controller controller;
 	
@@ -52,7 +52,7 @@ public class TemporalChainPane extends StackPane implements Observer{
 	private RepositoryPane repositoryPane;
 	private ArrayList<String> yAxisCategoryList = new ArrayList<String>();
 	private ArrayList<TemporalMediaNodeList> temporalMediaNodeListList = new ArrayList<TemporalMediaNodeList>();
-	private Line indicativeLine;
+	private Path indicativeLine;
 	private Path playLine;
 	
 	public TemporalChainPane(Controller controller, TemporalView temporalViewModel, TemporalChain temporalChainModel, TemporalViewPane temporalViewPane, RepositoryPane repositoryPane){
@@ -71,28 +71,27 @@ public class TemporalChainPane extends StackPane implements Observer{
 		getChildren().add(stackedBarChart);
 		
     	setId(String.valueOf(temporalChainModel.getId()));
-    	setAlignment(Pos.CENTER_LEFT);
+    	setAlignment(Pos.BOTTOM_LEFT);
     	
     	this.temporalViewModel = temporalViewModel;
     	this.temporalChainModel = temporalChainModel;
     	this.temporalViewPane = temporalViewPane;
     	this.repositoryPane = repositoryPane;
 
-    	indicativeLine = new Line();
+    	indicativeLine = new Path();
+    	indicativeLine.getElements().addAll(new MoveTo(), new VLineTo());
     	indicativeLine.setId("indicative-line");
     	
     	playLine = new Path();
-    	playLine.getElements().addAll(new MoveTo(0, 4), new LineTo(15, 4), new LineTo(7.5, 40), new ClosePath(), new MoveTo(7.5, 40), new VLineTo(38));
+    	playLine.getElements().addAll(new MoveTo(0, 10), new LineTo(15, 10), new LineTo(7.5, 23), new ClosePath(), new MoveTo(7.5, 23), new VLineTo());
     	playLine.setId("play-line");
     	getChildren().add(playLine);
-    	heightProperty().addListener(new ChangeListener(){
+    	stackedBarChart.heightProperty().addListener(new ChangeListener(){
 			@Override 
 	        public void changed(ObservableValue o,Object oldVal, Object newVal){
-				Double heightValue = (double) newVal;
 				PathElement pathElement = playLine.getElements().get(5);
 				if(pathElement instanceof VLineTo){
-					((VLineTo) pathElement).setY(heightValue);
-					System.out.println("stack pane mudou" + getHeight());
+					((VLineTo) pathElement).setY(stackedBarChart.getHeight());
 				}
 			}
 	    });
@@ -163,8 +162,13 @@ public class TemporalChainPane extends StackPane implements Observer{
 				public void handle(DragEvent dragEvent) {
 					
 					if(temporalChainModel.getMasterMedia() != null){
+						
+						PathElement pathElement = indicativeLine.getElements().get(1);
+						if(pathElement instanceof VLineTo){
+							((VLineTo) pathElement).setY(stackedBarChart.getHeight());
+						}
 						getChildren().add(indicativeLine);
-						indicativeLine.setEndY(stackedBarChart.getHeight());
+				
 					}
 					
 		        }  
@@ -202,8 +206,13 @@ public class TemporalChainPane extends StackPane implements Observer{
 		setOnMouseEntered(new EventHandler<MouseEvent>() {
 			
 			public void handle(MouseEvent mouseEvent) {
-				//getChildren().add(indicativeLine);
-				indicativeLine.setEndY(stackedBarChart.getHeight());
+				
+				PathElement pathElement = indicativeLine.getElements().get(1);
+				if(pathElement instanceof VLineTo){
+					((VLineTo) pathElement).setY(stackedBarChart.getHeight());
+				}
+				getChildren().add(indicativeLine);
+				
 			}
 		});
 		
@@ -221,10 +230,17 @@ public class TemporalChainPane extends StackPane implements Observer{
 	        }  
 	    });
 		
+		setOnMouseDragged(new EventHandler<MouseEvent>() {
+			
+			public void handle(MouseEvent mouseEvent) {
+				indicativeLine.setTranslateX(mouseEvent.getX());
+	        }  
+	    });
+		
 		setOnMouseClicked(new EventHandler<MouseEvent>() {
 			
 			public void handle(MouseEvent mouseEvent) {
-				playLine.setTranslateX(mouseEvent.getX());
+				playLine.setTranslateX(mouseEvent.getX() - 7.5);
 	        }  
 	    });
 		
