@@ -163,10 +163,6 @@ public class TemporalMediaNode {
 						
 					}	
 				}
-
-//				dragDeltaX = mouseEvent.getSceneX() - node.getLayoutX();
-//			    dragDeltaY = mouseEvent.getSceneY() - node.getLayoutY();
-//			    node.setCursor(Cursor.MOVE);
 			
 			    mouseEvent.consume();
 			    
@@ -177,22 +173,7 @@ public class TemporalMediaNode {
 	    node.setOnMouseDragged(new EventHandler<MouseEvent>() {
 	        @Override
 	        public void handle(MouseEvent mouseEvent) {
-	        	
-	        	System.out.println("getx: " + mouseEvent.getSceneX());
-//				System.out.println("scenex: " + mouseEvent.getSceneX());
-//				System.out.println("screenx: " + mouseEvent.getScreenX());
-
 	        	node.setTranslateX(mouseEvent.getSceneX() - node.getLayoutX());
-//	            node.setLayoutX(mouseEvent.getSceneX() + dragDeltaX);
-//	            node.setLayoutY(mouseEvent.getSceneY() + dragDeltaY);
-//	            
-//	        	Double relocationValue = mouseEvent.getSceneX();
-//	        	if(relocationValue >= 0){
-//	        		node.relocate(relocationValue, node.getLayoutY());
-//	        		node.setTranslateX(node.getLayoutX());
-//	        		node.setCursor(Cursor.MOVE);
-//	        	}
-	        	
 	        }
 	        
 	    });
@@ -200,14 +181,6 @@ public class TemporalMediaNode {
 
 			@Override
 			public void handle(MouseEvent event) {
-	
-//	    		node.setCursor(Cursor.HAND);
-//	    		
-//		    	double newBegin = 5;
-//		    	double newEnd = 17.17;
-//	
-//				beginData.setXValue(begin);
-//		        endData.setXValue(end-begin);
 		        
 			}
 	    	

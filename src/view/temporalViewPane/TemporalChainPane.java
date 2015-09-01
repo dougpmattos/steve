@@ -33,6 +33,7 @@ import model.common.Media;
 import model.temporalView.TemporalChain;
 import model.temporalView.TemporalView;
 import model.temporalView.enums.TemporalViewOperator;
+import model.utility.MediaUtil;
 import model.utility.Operation;
 import view.repositoryPane.RepositoryPane;
 import view.temporalViewPane.enums.AllenRelation;
@@ -41,7 +42,11 @@ import controller.Controller;
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public class TemporalChainPane extends StackPane implements Observer{
 
-	private static final String BORDER_DIFF = "0.1";
+	private static final int DIFF_INDICATIVE_LINE_AND_TEMPORAL_NODE = 7;
+
+	private static final double ARROW_DIFF = 7.5;
+
+	private static final double BORDER_DIFF = 0.26;
 
 	private Controller controller;
 	
@@ -129,15 +134,9 @@ public class TemporalChainPane extends StackPane implements Observer{
 		        		
 		        	} else{
 		        	
-		        		BigDecimal bigDecimalPxPosition = new BigDecimal(Double.toString(event.getX()));
-		        		BigDecimal convertedPosition = bigDecimalPxPosition.multiply(new BigDecimal(Double.toString(((NumberAxis) stackedBarChart.getXAxis()).getUpperBound())).divide(new BigDecimal(Double.toString(getWidth())), 20, RoundingMode.HALF_UP));
-		        		Double droppedTime = convertedPosition.subtract(new BigDecimal(BORDER_DIFF)).doubleValue();
+		        		Double droppedTime = stackedBarChart.getXAxis().getValueForDisplay(event.getX()).doubleValue();
+		        		droppedTime = MediaUtil.approximateDouble(droppedTime - BORDER_DIFF);
 		        		
-		        		if(droppedTime < 0){
-		        			droppedTime = 0.0;
-		        		}
-		        		
-		        		System.out.println(droppedTime);
 			        	droppedMedia.setBegin(droppedTime);
 			        	droppedMedia.setEnd(droppedTime + droppedMedia.getDuration());
 			        	
@@ -233,14 +232,14 @@ public class TemporalChainPane extends StackPane implements Observer{
 		setOnMouseDragged(new EventHandler<MouseEvent>() {
 			
 			public void handle(MouseEvent mouseEvent) {
-				indicativeLine.setTranslateX(mouseEvent.getX());
+				indicativeLine.setTranslateX(mouseEvent.getX() + DIFF_INDICATIVE_LINE_AND_TEMPORAL_NODE);
 	        }  
 	    });
 		
 		setOnMouseClicked(new EventHandler<MouseEvent>() {
 			
 			public void handle(MouseEvent mouseEvent) {
-				playLine.setTranslateX(mouseEvent.getX() - 7.5);
+				playLine.setTranslateX(mouseEvent.getX() - ARROW_DIFF);
 	        }  
 	    });
 		
