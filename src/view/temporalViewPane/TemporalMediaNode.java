@@ -30,7 +30,7 @@ public class TemporalMediaNode {
 	
 	private Controller controller;
 	private Media media;
-	private TemporalMediaNodeList temporalChainMediaLine;
+	private TemporalMediaNodeList temporalMediaNodeList;
 	private TemporalViewPane temporalViewPane;
 	private RepositoryPane repositoryPane;
 	private TemporalChain temporalChainModel;
@@ -43,12 +43,12 @@ public class TemporalMediaNode {
 	private double dragDeltaX;
 	private double dragDeltaY;
 	
-	public TemporalMediaNode(Controller controller, Media media, TemporalChain temporalChainModel, TemporalViewPane temporalViewPane, RepositoryPane repositoryPane, TemporalMediaNodeList temporalChainMediaLine){
+	public TemporalMediaNode(Controller controller, Media media, TemporalChain temporalChainModel, TemporalViewPane temporalViewPane, RepositoryPane repositoryPane, TemporalMediaNodeList temporalMediaNodeList){
 		
 		this.controller = controller;
 		this.media = media;
 		this.temporalChainModel = temporalChainModel;
-		this.temporalChainMediaLine = temporalChainMediaLine;
+		this.temporalMediaNodeList = temporalMediaNodeList;
 		this.temporalViewPane = temporalViewPane;
 		this.repositoryPane = repositoryPane;
 		
@@ -61,7 +61,7 @@ public class TemporalMediaNode {
 		
 		endSerie = new XYChart.Series<Number, String>();
 		endSerie.setName(media.getName());
-		endData = new XYChart.Data<Number, String>(media.getDuration(), temporalChainMediaLine.getId());
+		endData = new XYChart.Data<Number, String>(media.getDuration(), temporalMediaNodeList.getId());
 		endData.setNode(createNode());
 		endSerie.getData().add(endData);
 		
@@ -72,12 +72,12 @@ public class TemporalMediaNode {
 		beginSerie = new XYChart.Series<Number, String>();
 		BigDecimal bigDecimalBegin = new BigDecimal(Double.toString(media.getBegin()));
 	
-		Media previousMedia = temporalChainMediaLine.getPreviousMedia(this) != null ? temporalChainMediaLine.getPreviousMedia(this).getMedia(): null;
+		Media previousMedia = temporalMediaNodeList.getPreviousMedia(this) != null ? temporalMediaNodeList.getPreviousMedia(this).getMedia(): null;
 		
 		if(previousMedia != null){
-			beginData = new XYChart.Data<Number, String>(bigDecimalBegin.subtract(new BigDecimal(previousMedia.getEnd().toString())), temporalChainMediaLine.getId());
+			beginData = new XYChart.Data<Number, String>(bigDecimalBegin.subtract(new BigDecimal(previousMedia.getEnd().toString())), temporalMediaNodeList.getId());
 		} else{
-			beginData = new XYChart.Data<Number, String>(bigDecimalBegin, temporalChainMediaLine.getId());
+			beginData = new XYChart.Data<Number, String>(bigDecimalBegin, temporalMediaNodeList.getId());
 		}
 		
 		BorderPane invisibleNode = new BorderPane();

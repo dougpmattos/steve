@@ -1,7 +1,5 @@
 package view.temporalViewPane;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
@@ -23,7 +21,6 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.StackPane;
 import javafx.scene.shape.ClosePath;
-import javafx.scene.shape.Line;
 import javafx.scene.shape.LineTo;
 import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.Path;
@@ -276,17 +273,17 @@ public class TemporalChainPane extends StackPane implements Observer{
     	
     	while(!mediaAdded && temporalMediaNodeListListIndex < temporalMediaNodeListList.size()){
     		
-    		boolean isPossibleAdd = true;
+    		boolean isPossibleAdd = false;
     		TemporalMediaNodeList temporalMediaNodeList = temporalMediaNodeListList.get(temporalMediaNodeListListIndex);
     		int index = 0;
-    		while(isPossibleAdd && index < temporalMediaNodeList.size()){
+    		while(!isPossibleAdd && index < temporalMediaNodeList.size()){
     			Media currentMedia = temporalMediaNodeList.get(index).getMedia();
     			allenRelation = identifyAllenRelation(media, currentMedia);
     			
-    			if( (!allenRelation.equals(AllenRelation.MEETS)) &&  (!allenRelation.equals(AllenRelation.MET_BY))
-    			&& (!allenRelation.equals(AllenRelation.BEFORE)) && (!allenRelation.equals(AllenRelation.AFTER))){
+    			if( (allenRelation.equals(AllenRelation.MEETS)) || (allenRelation.equals(AllenRelation.MET_BY))
+    			|| (!allenRelation.equals(AllenRelation.BEFORE)) || (!allenRelation.equals(AllenRelation.AFTER))){
     				
-    				isPossibleAdd = false;
+    				isPossibleAdd = true;
     				
     			}
     			
@@ -298,8 +295,6 @@ public class TemporalChainPane extends StackPane implements Observer{
     			TemporalMediaNode temporalMediaNode = new TemporalMediaNode(controller, media, temporalChainModel, temporalViewPane, repositoryPane, temporalMediaNodeList); 
     			
     			temporalMediaNodeList.add(temporalMediaNode);
-//    			//TODO esta aumentando o numero e nao substituinod a lista
-//    			temporalMediaNodeListList.(temporalMediaNodeListListIndex, temporalMediaNodeList);
     			
     			stackedBarChart.getData().addAll(temporalMediaNode.getBeginSerie(), temporalMediaNode.getEndSerie());
     			

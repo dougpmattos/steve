@@ -58,24 +58,6 @@ public class TemporalViewPane extends BorderPane implements Observer, view.commo
 		temporalChainScrollPane.setId("temporal-chain-scroll-pane");
 		
 		TemporalChainPane temporalChainPane = new TemporalChainPane(controller, temporalViewModel, temporalChainModel, this, repositoryPane);
-		
-//		Node node = temporalChainPane.lookup(".chart-content");
-//		// parent = (Pane) node.getParent();
-//		temporalChainPane.getChildList().remove(node);
-//		ScrollPane scroll = new ScrollPane();
-//		scroll.setContent(node);
-//		temporalChainPane.getChildList().add(scroll);
-		
-		//TemporalChainPaneTest temporalChainPane = new TemporalChainPaneTest(controller, temporalViewModel, temporalChainModel, this);
-		
-		
-		//TODO line
-//		Line temporalChainLine = new Line();
-//		temporalChainLine.setStartX(0);
-//		temporalChainLine.setEndX(temporalChainPane.getHeight());
-//		temporalChainLine.setRotate(90);
-		
-		//temporalChainScrollPane.setContent(temporalChainPane);
 
 		Tab mainTemporalChainTab = new Tab();
 		
