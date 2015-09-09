@@ -14,6 +14,7 @@ import javafx.scene.Node;
 import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.StackedBarChart;
+import javafx.scene.chart.XYChart;
 import javafx.scene.input.DataFormat;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
@@ -48,6 +49,7 @@ public class TemporalChainPane extends StackPane implements Observer{
 	private Controller controller;
 	
 	private StackedBarChart<Number, String> stackedBarChart;
+	private XYChart.Series<Number, String> serie;
 	private TemporalView temporalViewModel;
 	private TemporalChain temporalChainModel;
 	private TemporalViewPane temporalViewPane;
@@ -69,7 +71,9 @@ public class TemporalChainPane extends StackPane implements Observer{
     	yAxis.setCategories(FXCollections.<String>observableArrayList(yAxisCategoryList));
     	
 		stackedBarChart = new StackedBarChart<Number, String>(xAxis, yAxis);
-    	
+		serie = new XYChart.Series<Number, String>();
+		stackedBarChart.getData().addAll(serie);
+		
 		getChildren().add(stackedBarChart);
 		
     	setId(String.valueOf(temporalChainModel.getId()));
@@ -134,6 +138,7 @@ public class TemporalChainPane extends StackPane implements Observer{
 		        		Double droppedTime = stackedBarChart.getXAxis().getValueForDisplay(event.getX()).doubleValue();
 		        		droppedTime = MediaUtil.approximateDouble(droppedTime - BORDER_DIFF);
 		        		
+		        		System.out.println("Dropped Time: " + droppedTime);
 			        	droppedMedia.setBegin(droppedTime);
 			        	droppedMedia.setEnd(droppedTime + droppedMedia.getDuration());
 			        	
@@ -294,9 +299,11 @@ public class TemporalChainPane extends StackPane implements Observer{
     			
     			TemporalMediaNode temporalMediaNode = new TemporalMediaNode(controller, media, temporalChainModel, temporalViewPane, repositoryPane, temporalMediaNodeList); 
     			
+    			System.out.println(temporalMediaNode.getInvisibleBeginData().toString() + " - " + temporalMediaNode.getEndData().toString());
+    			
     			temporalMediaNodeList.add(temporalMediaNode);
     			
-    			stackedBarChart.getData().addAll(temporalMediaNode.getBeginSerie(), temporalMediaNode.getEndSerie());
+    			serie.getData().addAll(temporalMediaNode.getInvisibleBeginData(), temporalMediaNode.getEndData());
     			
     			mediaAdded = true;
     			
@@ -320,7 +327,7 @@ public class TemporalChainPane extends StackPane implements Observer{
 //    		CategoryAxis yAxis = (CategoryAxis) getYAxis();
 //    		yAxis.setCategories(FXCollections.<String>observableArrayList(yAxisCategoryList));
     		
-    		stackedBarChart.getData().addAll(temporalMediaNode.getBeginSerie(), temporalMediaNode.getEndSerie());
+    		serie.getData().addAll(temporalMediaNode.getInvisibleBeginData(), temporalMediaNode.getEndData());
     		
     	}
 

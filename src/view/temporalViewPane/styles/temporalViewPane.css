@@ -18,10 +18,11 @@
     -fx-tick-label-font-size: 12px;
     -fx-tick-label-fill: white;
     -fx-background-color: #263238;
-	-fx-tick-length: 5; 
+	-fx-tick-length: 5;
+	-fx-tick-unit: 5; 
 	-fx-tick-label-gap: 3;
 	-fx-tick-mark-visible: true;
-	-fx-minor-tick-visible: false;
+	-fx-minor-tick-visible: true;
 	-fx-side: top;
 }
 #axis-y{
@@ -33,6 +34,9 @@
     -fx-border-color: transparent;
 }
 .axis-tick-mark {
+    -fx-stroke: #607D8B;
+}
+.axis-minor-tick-mark {
     -fx-stroke: #607D8B;
 }
 .chart{

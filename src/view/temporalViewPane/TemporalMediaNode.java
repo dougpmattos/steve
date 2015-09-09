@@ -1,24 +1,22 @@
 package view.temporalViewPane;
 
 import java.math.BigDecimal;
-import java.text.DecimalFormat;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
-import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.DragEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.shape.Rectangle;
 import model.common.Media;
 import model.temporalView.TemporalChain;
+import model.utility.MediaUtil;
 import view.repositoryPane.RepositoryMediaItemContainer;
 import view.repositoryPane.RepositoryPane;
 import controller.Controller;
@@ -26,22 +24,15 @@ import controller.Controller;
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public class TemporalMediaNode {
 
-	private static final int SIZE_DIFFERENCE = 15;
-	
 	private Controller controller;
 	private Media media;
 	private TemporalMediaNodeList temporalMediaNodeList;
 	private TemporalViewPane temporalViewPane;
 	private RepositoryPane repositoryPane;
 	private TemporalChain temporalChainModel;
-	private XYChart.Series<Number, String> beginSerie;
-	private XYChart.Data<Number, String> beginData;
-	private XYChart.Series<Number, String> endSerie;
+	private XYChart.Data<Number, String> invisibleBeginData;
 	private XYChart.Data<Number, String> endData;
 	private HBox containerNode;
-	
-	private double dragDeltaX;
-	private double dragDeltaY;
 	
 	public TemporalMediaNode(Controller controller, Media media, TemporalChain temporalChainModel, TemporalViewPane temporalViewPane, RepositoryPane repositoryPane, TemporalMediaNodeList temporalMediaNodeList){
 		
@@ -52,38 +43,33 @@ public class TemporalMediaNode {
 		this.temporalViewPane = temporalViewPane;
 		this.repositoryPane = repositoryPane;
 		
-		createBeginSerieData();
-		createEndSerieData();	
+		createInvisibleBeginData();
+		createEndData();	
 		
 	}
 
-	private void createEndSerieData() {
+	private void createEndData() {
 		
-		endSerie = new XYChart.Series<Number, String>();
-		endSerie.setName(media.getName());
 		endData = new XYChart.Data<Number, String>(media.getDuration(), temporalMediaNodeList.getId());
 		endData.setNode(createNode());
-		endSerie.getData().add(endData);
 		
 	}
 
-	private void createBeginSerieData() {
-		
-		beginSerie = new XYChart.Series<Number, String>();
+	private void createInvisibleBeginData() {
+
 		BigDecimal bigDecimalBegin = new BigDecimal(Double.toString(media.getBegin()));
 	
 		Media previousMedia = temporalMediaNodeList.getPreviousMedia(this) != null ? temporalMediaNodeList.getPreviousMedia(this).getMedia(): null;
 		
 		if(previousMedia != null){
-			beginData = new XYChart.Data<Number, String>(bigDecimalBegin.subtract(new BigDecimal(previousMedia.getEnd().toString())), temporalMediaNodeList.getId());
+			invisibleBeginData = new XYChart.Data<Number, String>(MediaUtil.approximateDouble(bigDecimalBegin.subtract(new BigDecimal(previousMedia.getEnd().toString())).doubleValue()), temporalMediaNodeList.getId());
 		} else{
-			beginData = new XYChart.Data<Number, String>(bigDecimalBegin, temporalMediaNodeList.getId());
+			invisibleBeginData = new XYChart.Data<Number, String>(MediaUtil.approximateDouble(bigDecimalBegin.doubleValue()), temporalMediaNodeList.getId());
 		}
 		
 		BorderPane invisibleNode = new BorderPane();
 		invisibleNode.setVisible(false);
-		beginData.setNode(invisibleNode);
-		beginSerie.getData().add(beginData);
+		invisibleBeginData.setNode(invisibleNode);
 		
 	}
 	
@@ -188,12 +174,12 @@ public class TemporalMediaNode {
 		
 	}
 
-	public XYChart.Series<Number, String> getEndSerie() {
-		return endSerie;
+	public XYChart.Data<Number, String> getEndData() {
+		return endData;
 	}
 
-	public XYChart.Series<Number, String> getBeginSerie() {
-		return beginSerie;
+	public XYChart.Data<Number, String> getInvisibleBeginData() {
+		return invisibleBeginData;
 	}
 	
 	public Media getMedia(){
