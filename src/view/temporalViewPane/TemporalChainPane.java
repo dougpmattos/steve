@@ -13,7 +13,6 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.NumberAxis;
-import javafx.scene.chart.StackedBarChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.input.DataFormat;
 import javafx.scene.input.DragEvent;
@@ -34,7 +33,6 @@ import model.temporalView.enums.TemporalViewOperator;
 import model.utility.MediaUtil;
 import model.utility.Operation;
 import view.repositoryPane.RepositoryPane;
-import view.temporalViewPane.enums.AllenRelation;
 import controller.Controller;
 
 @SuppressWarnings({ "unchecked", "rawtypes" })
@@ -48,16 +46,17 @@ public class TemporalChainPane extends StackPane implements Observer{
 
 	private Controller controller;
 	
-	private StackedBarChart<Number, String> stackedBarChart;
+	private TimeLineChart<Number, String> timeLineChart;
 	private XYChart.Series<Number, String> serie;
 	private TemporalView temporalViewModel;
 	private TemporalChain temporalChainModel;
 	private TemporalViewPane temporalViewPane;
 	private RepositoryPane repositoryPane;
 	private ArrayList<String> yAxisCategoryList = new ArrayList<String>();
-	private ArrayList<TemporalMediaNodeList> temporalMediaNodeListList = new ArrayList<TemporalMediaNodeList>();
 	private Path indicativeLine;
 	private Path playLine;
+	private ArrayList<TimeLineXYChartData> timeLineXYChartDataList = new ArrayList<TimeLineXYChartData>();
+	private ArrayList<ArrayList<TimeLineXYChartData>> timeLineXYChartDataLineList = new ArrayList<ArrayList<TimeLineXYChartData>>();
 	
 	public TemporalChainPane(Controller controller, TemporalView temporalViewModel, TemporalChain temporalChainModel, TemporalViewPane temporalViewPane, RepositoryPane repositoryPane){
     	
@@ -70,11 +69,11 @@ public class TemporalChainPane extends StackPane implements Observer{
     	yAxisCategoryList.addAll(FXCollections.<String>observableArrayList("4", "3", "2", "1", "0"));
     	yAxis.setCategories(FXCollections.<String>observableArrayList(yAxisCategoryList));
     	
-		stackedBarChart = new StackedBarChart<Number, String>(xAxis, yAxis);
+		timeLineChart = new TimeLineChart<Number, String>(xAxis, yAxis);
 		serie = new XYChart.Series<Number, String>();
-		stackedBarChart.getData().addAll(serie);
+		timeLineChart.getData().addAll(serie);
 		
-		getChildren().add(stackedBarChart);
+		getChildren().add(timeLineChart);
 		
     	setId(String.valueOf(temporalChainModel.getId()));
     	setAlignment(Pos.BOTTOM_LEFT);
@@ -92,12 +91,12 @@ public class TemporalChainPane extends StackPane implements Observer{
     	playLine.getElements().addAll(new MoveTo(0, 10), new LineTo(15, 10), new LineTo(7.5, 23), new ClosePath(), new MoveTo(7.5, 23), new VLineTo());
     	playLine.setId("play-line");
     	getChildren().add(playLine);
-    	stackedBarChart.heightProperty().addListener(new ChangeListener(){
+    	timeLineChart.heightProperty().addListener(new ChangeListener(){
 			@Override 
 	        public void changed(ObservableValue o,Object oldVal, Object newVal){
 				PathElement pathElement = playLine.getElements().get(5);
 				if(pathElement instanceof VLineTo){
-					((VLineTo) pathElement).setY(stackedBarChart.getHeight());
+					((VLineTo) pathElement).setY(timeLineChart.getHeight());
 				}
 			}
 	    });
@@ -135,7 +134,7 @@ public class TemporalChainPane extends StackPane implements Observer{
 		        		
 		        	} else{
 		        	
-		        		Double droppedTime = stackedBarChart.getXAxis().getValueForDisplay(event.getX()).doubleValue();
+		        		Double droppedTime = timeLineChart.getXAxis().getValueForDisplay(event.getX()).doubleValue();
 		        		droppedTime = MediaUtil.approximateDouble(droppedTime - BORDER_DIFF);
 		        		
 		        		System.out.println("Dropped Time: " + droppedTime);
@@ -166,7 +165,7 @@ public class TemporalChainPane extends StackPane implements Observer{
 						
 						PathElement pathElement = indicativeLine.getElements().get(1);
 						if(pathElement instanceof VLineTo){
-							((VLineTo) pathElement).setY(stackedBarChart.getHeight());
+							((VLineTo) pathElement).setY(timeLineChart.getHeight());
 						}
 						getChildren().add(indicativeLine);
 				
@@ -210,7 +209,7 @@ public class TemporalChainPane extends StackPane implements Observer{
 				
 				PathElement pathElement = indicativeLine.getElements().get(1);
 				if(pathElement instanceof VLineTo){
-					((VLineTo) pathElement).setY(stackedBarChart.getHeight());
+					((VLineTo) pathElement).setY(timeLineChart.getHeight());
 				}
 				getChildren().add(indicativeLine);
 				
@@ -252,13 +251,13 @@ public class TemporalChainPane extends StackPane implements Observer{
 		
 		Operation<TemporalViewOperator> operation = (Operation<TemporalViewOperator>) obj;
 		Media media = (Media) operation.getOperating();
-		TemporalChain temporalChainModel = (TemporalChain) operation.getArg();
+		int line = (int) operation.getArg();
 		
 		switch(operation.getOperator()){
 		
 			case ADD_TEMPORAL_CHAIN_MEDIA:
 				
-	            addTemporalChainMedia(media, temporalChainModel);
+	            addTemporalChainMedia(media, line);
 	            
 	            break;
 
@@ -270,114 +269,26 @@ public class TemporalChainPane extends StackPane implements Observer{
 	
 	}
 	
-	private void addTemporalChainMedia(Media media, TemporalChain temporalChainModel){
-
-    	boolean mediaAdded = false;
-    	AllenRelation allenRelation;
-    	int temporalMediaNodeListListIndex = 0;
-    	
-    	while(!mediaAdded && temporalMediaNodeListListIndex < temporalMediaNodeListList.size()){
-    		
-    		boolean isPossibleAdd = false;
-    		TemporalMediaNodeList temporalMediaNodeList = temporalMediaNodeListList.get(temporalMediaNodeListListIndex);
-    		int index = 0;
-    		while(!isPossibleAdd && index < temporalMediaNodeList.size()){
-    			Media currentMedia = temporalMediaNodeList.get(index).getMedia();
-    			allenRelation = identifyAllenRelation(media, currentMedia);
-    			
-    			if( (allenRelation.equals(AllenRelation.MEETS)) || (allenRelation.equals(AllenRelation.MET_BY))
-    			|| (!allenRelation.equals(AllenRelation.BEFORE)) || (!allenRelation.equals(AllenRelation.AFTER))){
-    				
-    				isPossibleAdd = true;
-    				
-    			}
-    			
-    			index++;
-    		}
-    		
-    		if(isPossibleAdd){
-    			
-    			TemporalMediaNode temporalMediaNode = new TemporalMediaNode(controller, media, temporalChainModel, temporalViewPane, repositoryPane, temporalMediaNodeList); 
-    			
-    			System.out.println(temporalMediaNode.getInvisibleBeginData().toString() + " - " + temporalMediaNode.getEndData().toString());
-    			
-    			temporalMediaNodeList.add(temporalMediaNode);
-    			
-    			serie.getData().addAll(temporalMediaNode.getInvisibleBeginData(), temporalMediaNode.getEndData());
-    			
-    			mediaAdded = true;
-    			
-    		}
-    		
-    		temporalMediaNodeListListIndex++;
-    	}
-    	
-    	if(!mediaAdded){
-    		
-    		int newLineIndex = temporalMediaNodeListList.size();
-    		TemporalMediaNodeList temporalMediaNodeList = new TemporalMediaNodeList(String.valueOf(newLineIndex));
-    		
-    		TemporalMediaNode temporalMediaNode = new TemporalMediaNode(controller, media, temporalChainModel, temporalViewPane, repositoryPane, temporalMediaNodeList); 
-    		
-    		temporalMediaNodeList.add(temporalMediaNode);
-    		temporalMediaNodeListList.add(newLineIndex, temporalMediaNodeList);
-    		
-    		//TODO somente quando ultrapassar 5 linhas
-//    		yAxisCategoryList.add(Integer.toString(newLineIndex));
-//    		CategoryAxis yAxis = (CategoryAxis) getYAxis();
-//    		yAxis.setCategories(FXCollections.<String>observableArrayList(yAxisCategoryList));
-    		
-    		serie.getData().addAll(temporalMediaNode.getInvisibleBeginData(), temporalMediaNode.getEndData());
-    		
-    	}
-
+	private void addTemporalChainMedia(Media media, int line){
+		
+		TimeLineXYChartData timeLineXYChartData = new TimeLineXYChartData(controller, media, temporalChainModel, temporalViewPane, repositoryPane, line); 	
+		serie.getData().add(timeLineXYChartData.getXYChartData());
+		
+		timeLineXYChartDataList.add(timeLineXYChartData);
+		timeLineXYChartDataLineList.add(line, timeLineXYChartDataList);
+		
 	}
 	
-	private AllenRelation identifyAllenRelation(Media media, Media currentMedia) {
-		
-		double begin = media.getBegin();
-		double end = media.getEnd();
-		double currentMediaBegin = currentMedia.getBegin();
-		double currentMediaEnd = currentMedia.getEnd();
-		
-		if(end == currentMediaBegin){
-			return AllenRelation.MEETS;
-		}else if(begin == currentMediaEnd){
-			return AllenRelation.MET_BY;
-		}else if(begin == currentMediaBegin && end == currentMediaEnd){
-			return AllenRelation.EQUALS;
-		}else if(begin == currentMediaBegin){
-			return AllenRelation.STARTS;
-		}else if(end == currentMediaEnd){
-			return AllenRelation.FINISHES;
-		}else if(end < currentMediaBegin){
-			return AllenRelation.BEFORE;
-		}else if(begin > currentMediaEnd){
-			return AllenRelation.AFTER;
-		}else if(end > currentMediaBegin && end < currentMediaEnd){
-			return AllenRelation.OVERLAPS;
-		}else if(begin > currentMediaBegin && begin < currentMediaEnd){
-			return AllenRelation.OVERLAPPED_BY;
-		}else if(begin > currentMediaBegin && end < currentMediaEnd){
-			return AllenRelation.DURING;
-		}else if(begin < currentMediaBegin && end > currentMediaEnd){
-			return AllenRelation.CONTAINS;
-		}else{
-			return null;
-		}
-				
-	}
-
-	private String getYAxisCategory(){
-		return yAxisCategoryList.get(yAxisCategoryList.size() - 1);
-	}
-
 	public ObservableList<Node> getChildList() {
         return getChildren();
     }
 	
-	public ArrayList<TemporalMediaNodeList> getTemporalChainMediaListList(){
-		return temporalMediaNodeListList;
+	public XYChart.Series<Number, String> getSerie() {
+		return serie;
+	}
+	
+	public ArrayList<ArrayList<TimeLineXYChartData>> getTimeLineXYChartDataLineList(){
+		return timeLineXYChartDataLineList;
 	}
 	
 }

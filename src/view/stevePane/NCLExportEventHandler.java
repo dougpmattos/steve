@@ -88,7 +88,7 @@ public class NCLExportEventHandler implements EventHandler<ActionEvent>{
             
             for(TemporalChain temporalChain : temporalView.getTemporalChainList()){
             	
-            	for(Media media :  temporalChain.getMediaList()){
+            	for(Media media :  temporalChain.getMediaAllList()){
             		
             		NCLRegion nclRegion = createNCLRegion(nclRegBase, media);
             		NCLDescriptor nclDescriptor = createNCLDescriptor(nclDescBase, temporalChain, media, nclRegion);

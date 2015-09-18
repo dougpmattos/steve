@@ -1,6 +1,6 @@
 package view.temporalViewPane;
 
-import java.math.BigDecimal;
+import java.util.ArrayList;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -11,65 +11,46 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.shape.Rectangle;
 import model.common.Media;
 import model.temporalView.TemporalChain;
-import model.utility.MediaUtil;
 import view.repositoryPane.RepositoryMediaItemContainer;
 import view.repositoryPane.RepositoryPane;
 import controller.Controller;
 
 @SuppressWarnings({ "unchecked", "rawtypes" })
-public class TemporalMediaNode {
+public class TimeLineXYChartData {
 
 	private Controller controller;
 	private Media media;
-	private TemporalMediaNodeList temporalMediaNodeList;
+	private int line;
 	private TemporalViewPane temporalViewPane;
 	private RepositoryPane repositoryPane;
 	private TemporalChain temporalChainModel;
-	private XYChart.Data<Number, String> invisibleBeginData;
-	private XYChart.Data<Number, String> endData;
+	private XYChart.Data<Number, String> xyChartData;
 	private HBox containerNode;
 	
-	public TemporalMediaNode(Controller controller, Media media, TemporalChain temporalChainModel, TemporalViewPane temporalViewPane, RepositoryPane repositoryPane, TemporalMediaNodeList temporalMediaNodeList){
+	public TimeLineXYChartData(Controller controller, Media media, TemporalChain temporalChainModel, TemporalViewPane temporalViewPane, RepositoryPane repositoryPane, int line){
 		
 		this.controller = controller;
 		this.media = media;
 		this.temporalChainModel = temporalChainModel;
-		this.temporalMediaNodeList = temporalMediaNodeList;
+		this.line = line;
 		this.temporalViewPane = temporalViewPane;
 		this.repositoryPane = repositoryPane;
-		
-		createInvisibleBeginData();
-		createEndData();	
+
+		createXYChartData();	
 		
 	}
 
-	private void createEndData() {
+	private void createXYChartData() {
 		
-		endData = new XYChart.Data<Number, String>(media.getDuration(), temporalMediaNodeList.getId());
-		endData.setNode(createNode());
-		
-	}
-
-	private void createInvisibleBeginData() {
-
-		BigDecimal bigDecimalBegin = new BigDecimal(Double.toString(media.getBegin()));
-	
-		Media previousMedia = temporalMediaNodeList.getPreviousMedia(this) != null ? temporalMediaNodeList.getPreviousMedia(this).getMedia(): null;
-		
-		if(previousMedia != null){
-			invisibleBeginData = new XYChart.Data<Number, String>(MediaUtil.approximateDouble(bigDecimalBegin.subtract(new BigDecimal(previousMedia.getEnd().toString())).doubleValue()), temporalMediaNodeList.getId());
-		} else{
-			invisibleBeginData = new XYChart.Data<Number, String>(MediaUtil.approximateDouble(bigDecimalBegin.doubleValue()), temporalMediaNodeList.getId());
-		}
-		
-		BorderPane invisibleNode = new BorderPane();
-		invisibleNode.setVisible(false);
-		invisibleBeginData.setNode(invisibleNode);
+		xyChartData = new XYChart.Data<Number, String>();
+		xyChartData.setExtraValue(media.getBegin());
+		xyChartData.setXValue(media.getEnd());
+		xyChartData.setYValue("0");
+		xyChartData.setNode(createNode());
 		
 	}
 	
@@ -139,10 +120,11 @@ public class TemporalMediaNode {
 				for(Tab temporalTab : temporalViewPane.getTemporalChainTabPane().getTabs()){
 					
 					TemporalChainPane temporalChainPane = (TemporalChainPane) temporalTab.getContent();
-					for(TemporalMediaNodeList temporalMediaNodeList : temporalChainPane.getTemporalChainMediaListList()){
-						for(TemporalMediaNode temporalMediaNode : temporalMediaNodeList){
-							if(temporalMediaNode.getMedia() != media){
-								Label labelMediaNode = (Label) temporalMediaNode.getContainerNode().getChildren().get(1);
+
+					for(ArrayList<TimeLineXYChartData> timeLineXYChartDataList : temporalChainPane.getTimeLineXYChartDataLineList()){
+						for(TimeLineXYChartData timeLineXYChartData : timeLineXYChartDataList){
+							if(timeLineXYChartData.getMedia() != media){
+								Label labelMediaNode = (Label) timeLineXYChartData.getContainerNode().getChildren().get(1);
 								labelMediaNode.getStylesheets().remove("view/temporalViewPane/styles/mousePressedTemporalMediaNode.css");
 							}
 						}
@@ -174,12 +156,8 @@ public class TemporalMediaNode {
 		
 	}
 
-	public XYChart.Data<Number, String> getEndData() {
-		return endData;
-	}
-
-	public XYChart.Data<Number, String> getInvisibleBeginData() {
-		return invisibleBeginData;
+	public XYChart.Data<Number, String> getXYChartData() {
+		return xyChartData;
 	}
 	
 	public Media getMedia(){

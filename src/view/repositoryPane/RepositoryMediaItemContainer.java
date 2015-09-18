@@ -14,9 +14,8 @@ import javafx.scene.input.TransferMode;
 import javafx.scene.layout.BorderPane;
 import model.common.Media;
 import view.temporalViewPane.TemporalChainPane;
-import view.temporalViewPane.TemporalMediaNode;
-import view.temporalViewPane.TemporalMediaNodeList;
 import view.temporalViewPane.TemporalViewPane;
+import view.temporalViewPane.TimeLineXYChartData;
 
 public class RepositoryMediaItemContainer extends BorderPane implements view.common.Observable {
 	
@@ -82,10 +81,10 @@ public class RepositoryMediaItemContainer extends BorderPane implements view.com
 	        	for(Tab temporalTab : temporalViewPane.getTemporalChainTabPane().getTabs()){
 	        		
 	        		TemporalChainPane temporalChainPane = (TemporalChainPane) temporalTab.getContent();
-					for(TemporalMediaNodeList temporalMediaNodeList : temporalChainPane.getTemporalChainMediaListList()){
-						for(TemporalMediaNode temporalMediaNode : temporalMediaNodeList){
-							if(temporalMediaNode.getMedia() != media){
-								Label labelMediaNode = (Label) temporalMediaNode.getContainerNode().getChildren().get(1);
+					for(ArrayList<TimeLineXYChartData> timeLineXYChartDataList : temporalChainPane.getTimeLineXYChartDataLineList()){
+						for(TimeLineXYChartData timeLineXYChartData : timeLineXYChartDataList){
+							if(timeLineXYChartData.getMedia() != media){
+								Label labelMediaNode = (Label) timeLineXYChartData.getContainerNode().getChildren().get(1);
 								labelMediaNode.getStylesheets().remove("view/temporalViewPane/styles/mousePressedTemporalMediaNode.css");
 							}
 						}	
