@@ -124,11 +124,6 @@ public class TemporalChain extends Observable implements Serializable {
     	ArrayList<Media> newMediaList = new ArrayList<Media>();
     	newMediaList.add(media);
     	mediaLineList.add(newLineIndex, newMediaList);
-    		
-    	//TODO somente quando ultrapassar 5 linhas
-//   	yAxisCategoryList.add(Integer.toString(newLineIndex));
-//    	CategoryAxis yAxis = (CategoryAxis) getYAxis();
-//    	YAxis.setCategories(FXCollections.<String>observableArrayList(yAxisCategoryList));
 
     	return newLineIndex;
 		

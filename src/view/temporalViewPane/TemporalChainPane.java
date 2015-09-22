@@ -57,14 +57,16 @@ public class TemporalChainPane extends StackPane implements Observer{
 	private Path playLine;
 	private ArrayList<TimeLineXYChartData> timeLineXYChartDataList = new ArrayList<TimeLineXYChartData>();
 	private ArrayList<ArrayList<TimeLineXYChartData>> timeLineXYChartDataLineList = new ArrayList<ArrayList<TimeLineXYChartData>>();
+	NumberAxis xAxis;
+	CategoryAxis yAxis;
 	
 	public TemporalChainPane(Controller controller, TemporalView temporalViewModel, TemporalChain temporalChainModel, TemporalViewPane temporalViewPane, RepositoryPane repositoryPane){
     	
-		NumberAxis xAxis = new NumberAxis();
+		xAxis = new NumberAxis();
     	xAxis.setAutoRanging(false);
     	xAxis.setUpperBound(50);
 
-    	CategoryAxis yAxis = new CategoryAxis();
+    	yAxis = new CategoryAxis();
     	yAxis.setId("axis-y");
     	yAxisCategoryList.addAll(FXCollections.<String>observableArrayList("4", "3", "2", "1", "0"));
     	yAxis.setCategories(FXCollections.<String>observableArrayList(yAxisCategoryList));
@@ -270,7 +272,14 @@ public class TemporalChainPane extends StackPane implements Observer{
 	}
 	
 	private void addTemporalChainMedia(Media media, int line){
-		
+
+		if(line > 4){
+			
+			yAxisCategoryList.add(String.valueOf(line));
+			yAxis.setCategories(FXCollections.<String>observableArrayList(yAxisCategoryList));
+	
+		}
+	
 		TimeLineXYChartData timeLineXYChartData = new TimeLineXYChartData(controller, media, temporalChainModel, temporalViewPane, repositoryPane, line); 	
 		serie.getData().add(timeLineXYChartData.getXYChartData());
 		
