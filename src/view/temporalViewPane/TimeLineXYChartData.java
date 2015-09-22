@@ -49,7 +49,7 @@ public class TimeLineXYChartData {
 		xyChartData = new XYChart.Data<Number, String>();
 		xyChartData.setExtraValue(media.getBegin());
 		xyChartData.setXValue(media.getEnd());
-		xyChartData.setYValue("0");
+		xyChartData.setYValue(String.valueOf(line));
 		xyChartData.setNode(createNode());
 		
 	}

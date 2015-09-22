@@ -84,67 +84,53 @@ public class TemporalChain extends Observable implements Serializable {
 	}
 	
 	private int addMediaLineList(Media media){
-		
-//		boolean mediaAdded = false;
-//    	AllenRelation allenRelation;
-//    	int temporalMediaNodeListListIndex = 0;
-//    	
-//    	while(!mediaAdded && temporalMediaNodeListListIndex < temporalMediaNodeListList.size()){
-//    		
-//    		boolean isPossibleAdd = false;
-//    		TemporalMediaNodeList temporalMediaNodeList = temporalMediaNodeListList.get(temporalMediaNodeListListIndex);
-//    		int index = 0;
-//    		while(!isPossibleAdd && index < temporalMediaNodeList.size()){
-//    			Media currentMedia = temporalMediaNodeList.get(index).getMedia();
-//    			allenRelation = identifyAllenRelation(media, currentMedia);
-//    			
-//    			if( (allenRelation.equals(AllenRelation.MEETS)) || (allenRelation.equals(AllenRelation.MET_BY))
-//    			|| (!allenRelation.equals(AllenRelation.BEFORE)) || (!allenRelation.equals(AllenRelation.AFTER))){
-//    				
-//    				isPossibleAdd = true;
-//    				
-//    			}
-//    			
-//    			index++;
-//    		}
-//    		
-//    		if(isPossibleAdd){
-//    			
-//    			TimeLineXYChartData temporalMediaNode = new TimeLineXYChartData(controller, media, temporalChainModel, temporalViewPane, repositoryPane, temporalMediaNodeList); 
-//    			
-//    			System.out.println(temporalMediaNode.getInvisibleBeginData().toString() + " - " + temporalMediaNode.getXYChartData().toString());
-//    			
-//    			temporalMediaNodeList.add(temporalMediaNode);
-//    			
-//    			serie.getData().addAll(temporalMediaNode.getInvisibleBeginData(), temporalMediaNode.getXYChartData());
-//    			
-//    			mediaAdded = true;
-//    			
-//    		}
-//    		
-//    		temporalMediaNodeListListIndex++;
-//    	}
-//    	
-//    	if(!mediaAdded){
-//    		
-//    		int newLineIndex = temporalMediaNodeListList.size();
-//    		TemporalMediaNodeList temporalMediaNodeList = new TemporalMediaNodeList(String.valueOf(newLineIndex));
-//    		
-//    		TimeLineXYChartData temporalMediaNode = new TimeLineXYChartData(controller, media, temporalChainModel, temporalViewPane, repositoryPane, temporalMediaNodeList); 
-//    		
-//    		temporalMediaNodeList.add(temporalMediaNode);
-//    		temporalMediaNodeListList.add(newLineIndex, temporalMediaNodeList);
-//    		
-//    		//TODO somente quando ultrapassar 5 linhas
-////    		yAxisCategoryList.add(Integer.toString(newLineIndex));
-////    		CategoryAxis yAxis = (CategoryAxis) getYAxis();
-////    		yAxis.setCategories(FXCollections.<String>observableArrayList(yAxisCategoryList));
-//    		
-//    		serie.getData().addAll(temporalMediaNode.getInvisibleBeginData(), temporalMediaNode.getXYChartData());
-//    		
-//    	}
+
+    	AllenRelation allenRelation;
+    	int line = 0;
     	
-    	return 0;
+    	while(line < mediaLineList.size()){
+    		
+    		boolean isPossibleAdd = true;
+    		ArrayList<Media> mediaList = mediaLineList.get(line);
+    		int index = 0;
+    		
+    		while(isPossibleAdd && index < mediaList.size()){
+    			
+    			Media currentMedia = mediaList.get(index);
+    			allenRelation = identifyAllenRelation(media, currentMedia);
+    			
+    			if ( !((allenRelation.equals(AllenRelation.MEETS)) || (allenRelation.equals(AllenRelation.MET_BY))
+    			|| (allenRelation.equals(AllenRelation.BEFORE)) || (allenRelation.equals(AllenRelation.AFTER)))){
+    				
+    				isPossibleAdd = false;
+    				
+    			}
+    			
+    			index++;
+    			
+    		}
+    		
+    		if(isPossibleAdd){
+    			
+    			mediaList.add(media);
+    			return line;
+
+    		}
+    		
+    		line++;
+    	}
+
+    	int newLineIndex = mediaLineList.size();
+    	ArrayList<Media> newMediaList = new ArrayList<Media>();
+    	newMediaList.add(media);
+    	mediaLineList.add(newLineIndex, newMediaList);
+    		
+    	//TODO somente quando ultrapassar 5 linhas
+//   	yAxisCategoryList.add(Integer.toString(newLineIndex));
+//    	CategoryAxis yAxis = (CategoryAxis) getYAxis();
+//    	YAxis.setCategories(FXCollections.<String>observableArrayList(yAxisCategoryList));
+
+    	return newLineIndex;
 		
 	}
 	
