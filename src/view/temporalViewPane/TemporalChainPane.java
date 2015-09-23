@@ -274,8 +274,8 @@ public class TemporalChainPane extends StackPane implements Observer{
 	private void addTemporalChainMedia(Media media, int line){
 
 		if(line > 4){
-			
-			yAxisCategoryList.add(String.valueOf(line));
+
+			yAxisCategoryList.add(0, String.valueOf(line));
 			yAxis.setCategories(FXCollections.<String>observableArrayList(yAxisCategoryList));
 	
 		}
