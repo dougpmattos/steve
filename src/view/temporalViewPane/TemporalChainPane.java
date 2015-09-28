@@ -27,12 +27,14 @@ import javafx.scene.shape.Path;
 import javafx.scene.shape.PathElement;
 import javafx.scene.shape.VLineTo;
 import model.common.Media;
+import model.temporalView.Synchronous;
 import model.temporalView.TemporalChain;
 import model.temporalView.TemporalView;
 import model.temporalView.enums.TemporalViewOperator;
 import model.utility.MediaUtil;
 import model.utility.Operation;
 import view.repositoryPane.RepositoryPane;
+import view.stevePane.StevePane;
 import controller.Controller;
 
 @SuppressWarnings({ "unchecked", "rawtypes" })
@@ -57,10 +59,12 @@ public class TemporalChainPane extends StackPane implements Observer{
 	private Path playLine;
 	private ArrayList<TimeLineXYChartData> timeLineXYChartDataList = new ArrayList<TimeLineXYChartData>();
 	private ArrayList<ArrayList<TimeLineXYChartData>> timeLineXYChartDataLineList = new ArrayList<ArrayList<TimeLineXYChartData>>();
+	private StevePane stevePane;
+	
 	NumberAxis xAxis;
 	CategoryAxis yAxis;
 	
-	public TemporalChainPane(Controller controller, TemporalView temporalViewModel, TemporalChain temporalChainModel, TemporalViewPane temporalViewPane, RepositoryPane repositoryPane){
+	public TemporalChainPane(Controller controller, TemporalView temporalViewModel, TemporalChain temporalChainModel, TemporalViewPane temporalViewPane, RepositoryPane repositoryPane, StevePane stevePane){
     	
 		xAxis = new NumberAxis();
     	xAxis.setAutoRanging(false);
@@ -84,6 +88,7 @@ public class TemporalChainPane extends StackPane implements Observer{
     	this.temporalChainModel = temporalChainModel;
     	this.temporalViewPane = temporalViewPane;
     	this.repositoryPane = repositoryPane;
+    	this.stevePane = stevePane;
 
     	indicativeLine = new Path();
     	indicativeLine.getElements().addAll(new MoveTo(), new VLineTo());
@@ -139,7 +144,6 @@ public class TemporalChainPane extends StackPane implements Observer{
 		        		Double droppedTime = timeLineChart.getXAxis().getValueForDisplay(event.getX()).doubleValue();
 		        		droppedTime = MediaUtil.approximateDouble(droppedTime - BORDER_DIFF);
 		        		
-		        		System.out.println("Dropped Time: " + droppedTime);
 			        	droppedMedia.setBegin(droppedTime);
 			        	droppedMedia.setEnd(droppedTime + droppedMedia.getDuration());
 			        	
@@ -252,8 +256,27 @@ public class TemporalChainPane extends StackPane implements Observer{
 	public void update(Observable o, Object obj) {
 		
 		Operation<TemporalViewOperator> operation = (Operation<TemporalViewOperator>) obj;
-		Media media = (Media) operation.getOperating();
-		int line = (int) operation.getArg();
+		Object operating = operation.getOperating();
+		Object operator = operation.getOperator();
+		
+		Media media = null;
+		int line = 0;
+		
+		if(operating instanceof Media){
+			
+			media = (Media) operation.getOperating();
+			
+		} else if (operating instanceof Synchronous<?>){
+			
+		}
+		
+		if(operator instanceof TemporalChain){
+			//TODO
+		} else{
+			line = (int) operation.getArg();
+		}
+		
+		
 		
 		switch(operation.getOperator()){
 		
@@ -262,6 +285,13 @@ public class TemporalChainPane extends StackPane implements Observer{
 	            addTemporalChainMedia(media, line);
 	            
 	            break;
+	            
+			case ADD_SYNC_RELATION:
+				
+				System.out.println("TESTE");
+				//TODO fazer o desenho das setas.
+	            //addSyncRelation(media, synchronousRelation);
+				break;
 
         	default:
         	
@@ -280,7 +310,7 @@ public class TemporalChainPane extends StackPane implements Observer{
 	
 		}
 	
-		TimeLineXYChartData timeLineXYChartData = new TimeLineXYChartData(controller, media, temporalChainModel, temporalViewPane, repositoryPane, line); 	
+		TimeLineXYChartData timeLineXYChartData = new TimeLineXYChartData(controller, media, temporalChainModel, temporalViewPane, this,repositoryPane, line, stevePane); 	
 		serie.getData().add(timeLineXYChartData.getXYChartData());
 		
 		timeLineXYChartDataList.add(timeLineXYChartData);
@@ -299,5 +329,11 @@ public class TemporalChainPane extends StackPane implements Observer{
 	public ArrayList<ArrayList<TimeLineXYChartData>> getTimeLineXYChartDataLineList(){
 		return timeLineXYChartDataLineList;
 	}
+
+	public TemporalChain getTemporalChainModel() {
+		return temporalChainModel;
+	}
+	
+	
 	
 }

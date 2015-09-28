@@ -17,6 +17,7 @@ import model.common.Media;
 import model.temporalView.TemporalChain;
 import view.repositoryPane.RepositoryMediaItemContainer;
 import view.repositoryPane.RepositoryPane;
+import view.stevePane.StevePane;
 import controller.Controller;
 
 @SuppressWarnings({ "unchecked", "rawtypes" })
@@ -30,15 +31,19 @@ public class TimeLineXYChartData {
 	private TemporalChain temporalChainModel;
 	private XYChart.Data<Number, String> xyChartData;
 	private HBox containerNode;
+	private TemporalChainPane temporalChainPane;
+	private StevePane stevePane;
 	
-	public TimeLineXYChartData(Controller controller, Media media, TemporalChain temporalChainModel, TemporalViewPane temporalViewPane, RepositoryPane repositoryPane, int line){
+	public TimeLineXYChartData(Controller controller, Media media, TemporalChain temporalChainModel, TemporalViewPane temporalViewPane, TemporalChainPane temporalChainPane, RepositoryPane repositoryPane, int line, StevePane stevePane){
 		
 		this.controller = controller;
 		this.media = media;
 		this.temporalChainModel = temporalChainModel;
 		this.line = line;
 		this.temporalViewPane = temporalViewPane;
+		this.temporalChainPane = temporalChainPane;
 		this.repositoryPane = repositoryPane;
+		this.stevePane = stevePane;
 
 		createXYChartData();	
 		
@@ -100,7 +105,7 @@ public class TimeLineXYChartData {
 
 			@Override
 			public void handle(MouseEvent mouseEvent) {
-				
+
 				for(Node repositoryMediaItemContainer : repositoryPane.getRepositoryMediaItemContainerListPane().getAllTypes()){
 					
 					RepositoryMediaItemContainer repoMediaItemContainer = (RepositoryMediaItemContainer) repositoryMediaItemContainer;
@@ -109,10 +114,15 @@ public class TimeLineXYChartData {
 
 				}
 				
-				temporalViewPane.setSelectedMedia(media);
+				if(stevePane.isMetaDown()){
+					temporalViewPane.addSelectedMedia(media);
+				}else {
+					temporalViewPane.clearSelectedMedia();
+					temporalViewPane.addSelectedMedia(media);
+				}
 				
 				Label source = (Label) node.getChildren().get(1);
-
+				
 				if(source.getStylesheets().isEmpty()){
 					source.getStylesheets().add("view/temporalViewPane/styles/mousePressedTemporalMediaNode.css");
 	        	}
@@ -123,9 +133,9 @@ public class TimeLineXYChartData {
 
 					for(ArrayList<TimeLineXYChartData> timeLineXYChartDataList : temporalChainPane.getTimeLineXYChartDataLineList()){
 						for(TimeLineXYChartData timeLineXYChartData : timeLineXYChartDataList){
-							if(timeLineXYChartData.getMedia() != media){
+							if(!temporalViewPane.getSelectedMediaList().contains(timeLineXYChartData.getMedia())){
 								Label labelMediaNode = (Label) timeLineXYChartData.getContainerNode().getChildren().get(1);
-								labelMediaNode.getStylesheets().remove("view/temporalViewPane/styles/mousePressedTemporalMediaNode.css");
+								labelMediaNode.getStylesheets().clear();
 							}
 						}
 						
@@ -142,6 +152,7 @@ public class TimeLineXYChartData {
 	        @Override
 	        public void handle(MouseEvent mouseEvent) {
 	        	node.setTranslateX(mouseEvent.getSceneX() - node.getLayoutX());
+	        	node.toFront();
 	        }
 	        
 	    });

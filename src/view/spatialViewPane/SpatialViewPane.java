@@ -32,7 +32,6 @@ public class SpatialViewPane extends SplitPane implements view.common.Observer {
 	private Tab propertyTab;
 	private Tab infoTab;
 	private TabPane propertyInfoTabPane;
-	private Media selectedMedia;
 	
     public SpatialViewPane(Controller controller, TemporalView temporalViewModel, TemporalViewPane temporalViewPane, RepositoryPane repositoryPane) {
   

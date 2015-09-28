@@ -1,12 +1,16 @@
 package view.stevePane;
 
+import java.util.ArrayList;
+
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.CheckMenuItem;
+import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
+import javafx.scene.control.Tab;
 import javafx.scene.input.KeyCombination;
 import model.repository.RepositoryMediaList;
 import model.temporalView.TemporalView;
@@ -15,7 +19,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import view.common.Language;
-import view.spatialViewPane.SpatialViewPane;
+import view.temporalViewPane.TemporalChainPane;
+import view.temporalViewPane.TemporalViewPane;
+import view.temporalViewPane.TimeLineXYChartData;
 import controller.Controller;
 
 @SuppressWarnings({"rawtypes","unchecked"})
@@ -26,6 +32,7 @@ public class SteveMenuBar extends MenuBar{
 	private Controller controller;
 	private TemporalView temporalView;
 	private RepositoryMediaList repositoryMediaList;
+	private TemporalViewPane temporalViewPane;
 	
 	private Menu menuFile;
 	private Menu menuEdit;
@@ -57,11 +64,12 @@ public class SteveMenuBar extends MenuBar{
 	private  CheckMenuItem checkMenuItemSpatialView; 
 	private CheckMenuItem checkMenuItemShowRelations;
 	
-	public SteveMenuBar(Controller controller, TemporalView temporalView, RepositoryMediaList repositoryMediaList){
+	public SteveMenuBar(Controller controller, TemporalView temporalView, RepositoryMediaList repositoryMediaList, TemporalViewPane temporalViewPane){
 		
 		this.controller = controller;
 		this.temporalView = temporalView;
 		this.repositoryMediaList = repositoryMediaList;
+		this.temporalViewPane = temporalViewPane;
 		
 		createMenu();
 		
@@ -183,8 +191,36 @@ public class SteveMenuBar extends MenuBar{
 		});
 		
 		menuItemSelectAll.setOnAction(new EventHandler<ActionEvent>() {
+			
 		    public void handle(ActionEvent t) {
-			   //TODO
+
+		    	Tab selectedTab = null;
+		    	TemporalChainPane temporalChainPane = null;
+		    	
+		    	for (Tab tab : temporalViewPane.getTemporalChainTabPane().getTabs()){
+		    		if(tab.isSelected()){
+		    			selectedTab = tab;
+		    			break;
+		    		}
+		    	}
+		    	if(selectedTab != null){
+		    		temporalChainPane = (TemporalChainPane) selectedTab.getContent();
+		    	}
+
+		    	if(temporalChainPane != null){
+		    		
+		    		for(ArrayList<TimeLineXYChartData> timeLineXYChartDataList : temporalChainPane.getTimeLineXYChartDataLineList()){
+			    		for(TimeLineXYChartData timeLineXYChartData : timeLineXYChartDataList){
+							
+							temporalViewPane.addSelectedMedia(timeLineXYChartData.getMedia());
+							Label labelMediaNode = (Label) timeLineXYChartData.getContainerNode().getChildren().get(1);
+							labelMediaNode.getStylesheets().add("view/temporalViewPane/styles/mousePressedTemporalMediaNode.css");
+							
+						}
+			    	}
+		    		
+		    	}
+	
 		    }
 		});
 

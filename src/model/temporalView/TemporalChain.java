@@ -173,7 +173,7 @@ public class TemporalChain extends Observable implements Serializable {
 		relationList.add(synchronousRelation);
 		
 		setChanged();
-		Operation<TemporalViewOperator> operation = new Operation<TemporalViewOperator>(TemporalViewOperator.ADD_SYNC_RELATION, synchronousRelation, getId());
+		Operation<TemporalViewOperator> operation = new Operation<TemporalViewOperator>(TemporalViewOperator.ADD_SYNC_RELATION, synchronousRelation, this);
         notifyObservers(operation);
         
 	}
@@ -183,7 +183,7 @@ public class TemporalChain extends Observable implements Serializable {
 		relationList.remove(synchronousRelation);
 		
 		setChanged();
-		Operation<TemporalViewOperator> operation = new Operation<TemporalViewOperator>(TemporalViewOperator.ADD_SYNC_RELATION, synchronousRelation, getId());
+		Operation<TemporalViewOperator> operation = new Operation<TemporalViewOperator>(TemporalViewOperator.ADD_SYNC_RELATION, synchronousRelation, this);
         notifyObservers(operation);
         
 	}

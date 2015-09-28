@@ -2,13 +2,19 @@ package view.temporalViewPane;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import model.common.Media;
+import model.temporalView.Synchronous;
+import model.temporalView.enums.RelationType;
 import view.common.Language;
 import view.common.SliderButton;
 import controller.Controller;
@@ -32,8 +38,13 @@ public class TemporalViewButtonPane extends BorderPane {
 	private Button synchronizeButton;
 	private CheckBox showAnchorsLinksButton;
 	private HBox alignmentButtonPane;
+	private TemporalViewPane temporalViewPane;
+	private Controller controller;
 	
-	public TemporalViewButtonPane(Controller controller, TabPane temporalChainTabPane){
+	public TemporalViewButtonPane(Controller controller, TabPane temporalChainTabPane, TemporalViewPane temporalViewPane){
+		
+		this.controller = controller;
+		this.temporalViewPane = temporalViewPane;
 		
 		setId("button-pane");
 	    getStylesheets().add("view/temporalViewPane/styles/temporalViewButtonPane.css");
@@ -132,6 +143,43 @@ public class TemporalViewButtonPane extends BorderPane {
 	
 	private void createButtonActions(TabPane temporalChainTabPane){
 		
+		startsButton.setOnAction(new EventHandler<ActionEvent>() {
+			
+		    public void handle(ActionEvent t) {
+		    	
+		    	Media relationMasterMedia = temporalViewPane.getFirstSelectedMedia();
+	
+		    	for(Media media : temporalViewPane.getSelectedMediaList()){
+		    		
+		    		if(media != relationMasterMedia){
+		    			
+		    			Synchronous<Media> synchronousRelation = new Synchronous<Media>();
+		    			synchronousRelation.setType(RelationType.STARTS);
+		    			
+		    		  	Tab selectedTab = null;
+				    	TemporalChainPane temporalChainPane = null;
+				    	
+				    	for (Tab tab : temporalViewPane.getTemporalChainTabPane().getTabs()){
+				    		if(tab.isSelected()){
+				    			selectedTab = tab;
+				    			break;
+				    		}
+				    	}
+				    	if(selectedTab != null){
+				    		temporalChainPane = (TemporalChainPane) selectedTab.getContent();
+				    	}
+				    	
+		    			controller.addSynchronousRelation(temporalChainPane.getTemporalChainModel(), synchronousRelation);
+		    			
+		    		}
+		    		
+		    	}
+		    	
+		    	
+		    }
+		    
+		});
+		
 		zoomButton.getSlider().valueProperty().addListener(new ChangeListener<Number>() {
             public void changed(ObservableValue<? extends Number> ov, Number old_val, Number new_val) {
 //            	ScrollPane teste = (ScrollPane) temporalChainTabPane.getTabs().get(0).getContent();
@@ -140,6 +188,10 @@ public class TemporalViewButtonPane extends BorderPane {
 //            	//new_val.doubleValue()
             }
         });
+		
+	}
+	
+	public void addSyncRelation(){
 		
 	}
 	

@@ -15,6 +15,7 @@ import model.temporalView.enums.TemporalViewOperator;
 import model.utility.Operation;
 import view.common.Language;
 import view.repositoryPane.RepositoryPane;
+import view.stevePane.StevePane;
 import controller.Controller;
 
 @SuppressWarnings("unchecked")
@@ -28,23 +29,26 @@ public class TemporalViewPane extends BorderPane implements Observer, view.commo
 	private TemporalViewButtonPane temporalViewButtonPane;
 	private RepositoryPane repositoryPane;
 	private ArrayList<view.common.Observer> observers;
-	private Media selectedMedia;
+	private Media firstSelectedMedia;
+	private ArrayList<Media> selectedMediaList = new ArrayList<Media>();
+	private StevePane stevePane;
 	
-	public TemporalViewPane(Controller controller, TemporalView temporalViewModel, RepositoryPane repositoryPane){
+	public TemporalViewPane(Controller controller, TemporalView temporalViewModel, RepositoryPane repositoryPane, StevePane stevePane){
 		
 		setId("temporal-view-pane");
 		getStylesheets().add("view/temporalViewPane/styles/temporalViewPane.css");
-		
-		observers = new ArrayList<view.common.Observer>();
-		
+
 		this.temporalViewModel = temporalViewModel;
 		this.repositoryPane = repositoryPane;
+		this.stevePane = stevePane;
 		
 		temporalChainTabPane = new TabPane();
-		temporalViewButtonPane = new TemporalViewButtonPane(controller, temporalChainTabPane);
+		temporalViewButtonPane = new TemporalViewButtonPane(controller, temporalChainTabPane, this);
       		
 	    setCenter(temporalChainTabPane);
 	    setBottom(temporalViewButtonPane);
+	    
+	    observers = new ArrayList<view.common.Observer>();
 	    
 	    temporalViewModel.addObserver(this);
 	    
@@ -57,7 +61,7 @@ public class TemporalViewPane extends BorderPane implements Observer, view.commo
 		ScrollPane temporalChainScrollPane = new ScrollPane();
 		temporalChainScrollPane.setId("temporal-chain-scroll-pane");
 		
-		TemporalChainPane temporalChainPane = new TemporalChainPane(controller, temporalViewModel, temporalChainModel, this, repositoryPane);
+		TemporalChainPane temporalChainPane = new TemporalChainPane(controller, temporalViewModel, temporalChainModel, this, repositoryPane, stevePane);
 
 		Tab mainTemporalChainTab = new Tab();
 		
@@ -111,6 +115,10 @@ public class TemporalViewPane extends BorderPane implements Observer, view.commo
 		
 	}
 
+	public TabPane getTemporalChainTabPane (){
+		return temporalChainTabPane;
+	}
+	
 	@Override
 	public void addObserver(view.common.Observer o) {
 		observers.add(o);
@@ -131,22 +139,44 @@ public class TemporalViewPane extends BorderPane implements Observer, view.commo
 
 		for(int i = 0; i < observers.size(); i++){
 			view.common.Observer observer = (view.common.Observer) observers.get(i);
-			observer.update(this, selectedMedia);
+			observer.update(this, firstSelectedMedia);
 		}
 		
 	}
 	
-	public void  setSelectedMedia(Media selectedMedia){
-		this.selectedMedia = selectedMedia;
-		notifyObservers();
+	public void  addSelectedMedia(Media selectedMedia){
+		
+		selectedMediaList.add(selectedMedia);
+		
+		if(selectedMediaList.size() == 1){
+			
+			this.firstSelectedMedia = selectedMedia;
+			notifyObservers();
+			
+		}
+		
 	}
 	
-	public Media getSelectedMedia(){
-		return selectedMedia;
+	public void  removeSelectedMedia(Media selectedMedia){
+		
+		selectedMediaList.remove(selectedMedia);
+		
 	}
 	
-	public TabPane getTemporalChainTabPane (){
-		return temporalChainTabPane;
+	public void  clearSelectedMedia(){
+		
+		selectedMediaList.clear();
+		
 	}
 
+	public ArrayList<Media> getSelectedMediaList() {
+		return selectedMediaList;
+	}
+
+	public Media getFirstSelectedMedia() {
+		return firstSelectedMedia;
+	}
+	
+	
+	
 }

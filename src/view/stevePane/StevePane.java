@@ -4,10 +4,13 @@ package view.stevePane;
 import java.io.IOException;
 import java.util.Locale;
 
+import javafx.event.EventHandler;
 import javafx.geometry.Orientation;
 import javafx.scene.Scene;
 import javafx.scene.control.SplitPane;
 import javafx.scene.image.Image;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import model.repository.RepositoryMediaList;
@@ -25,8 +28,8 @@ import controller.Controller;
  */
 public class StevePane extends Scene{
 	
-	private static final int STVE_HEIGHT = 768;
-	private static final int STVE_WITDH = 1366;
+	private static final int STEVE_HEIGHT = 768;
+	private static final int STEVE_WITDH = 1366;
 	private static final String SEPARATOR = "   -   ";
 
 	private RepositoryMediaList repositoryMediaList;
@@ -41,6 +44,7 @@ public class StevePane extends Scene{
     private SplitPane repositorySpatialViewSplitPane;
     private SplitPane containerSplitPane;
     private Locale defaultLocale;
+    private Boolean isMetaDown = false;
     
     private static BorderPane containerBorderPane = new BorderPane();
     
@@ -48,7 +52,7 @@ public class StevePane extends Scene{
     	
     	super(containerBorderPane);
     	getStylesheets().add("view/stevePane/styles/stevePane.css");
-    	containerBorderPane.setPrefSize(STVE_WITDH, STVE_HEIGHT);
+    	containerBorderPane.setPrefSize(STEVE_WITDH, STEVE_HEIGHT);
     	
     	this.controller = controller;
     	this.repositoryMediaList = repositoryMediaList;
@@ -61,10 +65,10 @@ public class StevePane extends Scene{
 		defaultLocale = new Locale("en","US");
 		Language.setLocale(defaultLocale);
 		
-		stveMenuBar = new SteveMenuBar(controller, temporalView, repositoryMediaList);
     	repositoryPane = new RepositoryPane(controller, repositoryMediaList);
-    	temporalViewPane = new TemporalViewPane(controller, temporalView, repositoryPane);
+    	temporalViewPane = new TemporalViewPane(controller, temporalView, repositoryPane, this);
     	spatialViewPane = new SpatialViewPane(controller, temporalView, temporalViewPane, repositoryPane);
+    	stveMenuBar = new SteveMenuBar(controller, temporalView, repositoryMediaList, temporalViewPane);
 	   
     	repositoryPane.setTemporalViewPane(temporalViewPane);
     	
@@ -81,10 +85,48 @@ public class StevePane extends Scene{
     	containerBorderPane.setTop(stveMenuBar);
     	containerBorderPane.setCenter(containerSplitPane);
 		
+    	setEventHandlers();
+    	
 		stage.setScene(this);
 		stage.setTitle(Language.translate("untitled.project") + SEPARATOR + Language.translate("steve"));
 		stage.getIcons().add(new Image(getClass().getResourceAsStream("/view/stevePane/images/logo.png")));
 		stage.show();
+		
+	}
+	
+	public void setEventHandlers(){
+		
+		containerBorderPane.setOnKeyPressed(new EventHandler<KeyEvent>() {
+
+			@Override
+			public void handle(KeyEvent keyEvent) {
+				
+				if(keyEvent.getCode() == KeyCode.COMMAND){
+					isMetaDown = true;
+				}
+				
+			}
+			
+		});
+		
+		containerBorderPane.setOnKeyReleased(new EventHandler<KeyEvent>() {
+
+			@Override
+			public void handle(KeyEvent keyEvent) {
+				
+				if(keyEvent.getCode() == KeyCode.COMMAND){
+					isMetaDown = false;
+				}
+
+			}
+			
+		});
+		
+	}
+	
+	public Boolean isMetaDown(){
+		
+		return isMetaDown;
 		
 	}
 

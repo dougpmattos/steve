@@ -12,6 +12,7 @@ import view.stevePane.StevePane;
 import javafx.stage.Stage;
 import model.common.Media;
 import model.repository.RepositoryMediaList;
+import model.temporalView.Synchronous;
 import model.temporalView.TemporalChain;
 import model.temporalView.TemporalView;
 import br.uff.midiacom.ana.util.exception.XMLException;
@@ -94,6 +95,10 @@ public class Controller {
 
 	public void populateTemporalInfoPropertyJavaBean(TemporalMediaInfoPane infoPane, Media media) {
 		media.populateTemporalInfoPropertyJavaBean(infoPane);
+	}
+	
+	public void addSynchronousRelation(TemporalChain temporalChain, Synchronous<Media> synchronousRelation){
+		temporalChain.addSynchronousRelation(synchronousRelation);
 	}
 	
 }
