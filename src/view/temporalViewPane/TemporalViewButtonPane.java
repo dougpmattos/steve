@@ -148,13 +148,17 @@ public class TemporalViewButtonPane extends BorderPane {
 		    public void handle(ActionEvent t) {
 		    	
 		    	Media relationMasterMedia = temporalViewPane.getFirstSelectedMedia();
+		    	
+		    	Synchronous<Media> synchronousRelation = new Synchronous<Media>();
+    			synchronousRelation.setType(RelationType.STARTS);
+    			synchronousRelation.setMasterMedia(relationMasterMedia);
+    			synchronousRelation.setExplicit(true);
 	
 		    	for(Media media : temporalViewPane.getSelectedMediaList()){
 		    		
 		    		if(media != relationMasterMedia){
 		    			
-		    			Synchronous<Media> synchronousRelation = new Synchronous<Media>();
-		    			synchronousRelation.setType(RelationType.STARTS);
+		    			synchronousRelation.addSlaveMedia(media);
 		    			
 		    		  	Tab selectedTab = null;
 				    	TemporalChainPane temporalChainPane = null;
@@ -188,10 +192,6 @@ public class TemporalViewButtonPane extends BorderPane {
 //            	//new_val.doubleValue()
             }
         });
-		
-	}
-	
-	public void addSyncRelation(){
 		
 	}
 	
