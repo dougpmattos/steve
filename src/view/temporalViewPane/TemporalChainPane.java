@@ -257,13 +257,24 @@ public class TemporalChainPane extends StackPane implements Observer{
 		
 		Operation<TemporalViewOperator> operation = (Operation<TemporalViewOperator>) obj;
 
+		Media media;
+		int line;
+		
 		switch(operation.getOperator()){
 		
 			case ADD_TEMPORAL_CHAIN_MEDIA:
 				
-				Media media = (Media) operation.getOperating();
-				int line = (int) operation.getArg();
+				media = (Media) operation.getOperating();
+				line = (int) operation.getArg();
 	            addTemporalChainMedia(media, line);
+	            
+	            break;
+	            
+			case REMOVE_TEMPORAL_CHAIN_MEDIA:
+				
+				media = (Media) operation.getOperating();
+				line = (int) operation.getArg();
+	            removeTemporalChainMedia(media, line);
 	            
 	            break;
 	            
@@ -300,8 +311,31 @@ public class TemporalChainPane extends StackPane implements Observer{
 		
 	}
 	
+	private void removeTemporalChainMedia(Media media, int line){
+
+		ArrayList<TimeLineXYChartData> timeLineXYChartDataLine = timeLineXYChartDataLineList.get(line);
+		int i = 0;
+		Boolean removed = false;
+		
+		while(i < timeLineXYChartDataLine.size() && !removed){
+			
+			TimeLineXYChartData timeLineXYChartData = timeLineXYChartDataLine.get(i);
+			
+			if(timeLineXYChartData.getMedia() == media){
+				timeLineXYChartDataLine.remove(timeLineXYChartData);
+				serie.getData().remove(timeLineXYChartData.getXYChartData());
+				removed = true;
+			}
+			
+			i++;
+		}
+
+	}
+	
 	private void addSyncRelation(Synchronous<Media> syncRelation, TemporalChain temporalChainModel){
-		//TODO reposicionar as mídias e fazer desenho da seta da relação entre as mídias.
+		
+		//TODO desenhar as setas das relações entre as mídias.
+
 	}
 	
 	public ObservableList<Node> getChildList() {

@@ -67,7 +67,7 @@ public class TemporalChain extends Observable implements Serializable {
 		int line = removeMediaLineList(media);
 		
 		setChanged();
-		Operation<TemporalViewOperator> operation = new Operation<TemporalViewOperator>(TemporalViewOperator.ADD_TEMPORAL_CHAIN_MEDIA, media, line);
+		Operation<TemporalViewOperator> operation = new Operation<TemporalViewOperator>(TemporalViewOperator.REMOVE_TEMPORAL_CHAIN_MEDIA, media, line);
         notifyObservers(operation);
         
         temporalViewMediaNumber--;
@@ -75,8 +75,24 @@ public class TemporalChain extends Observable implements Serializable {
 	}
 	
 	private int removeMediaLineList(Media media) {
-		// TODO Auto-generated method stub
-		return 0;
+		
+		int line = 0;
+    	Boolean removed = false;
+		
+    	while(line < mediaLineList.size()){
+    		
+    		ArrayList<Media> mediaList = mediaLineList.get(line);
+    		
+    		if(mediaList.remove(media)){
+    			return line;
+    		}
+    		line++;
+    		
+    	}
+    	
+    	return -1;
+		
+		
 	}
 
 	public ArrayList<Media> getMediaAllList() {
@@ -164,13 +180,34 @@ public class TemporalChain extends Observable implements Serializable {
 				
 	}
 
-//	private String getYAxisCategory(){
-//		//return yAxisCategoryList.get(yAxisCategoryList.size() - 1);
-//	}
-	
 	public void addSynchronousRelation(Synchronous<Media> synchronousRelation){
 		
 		relationList.add(synchronousRelation);
+		
+		switch(synchronousRelation.getType()){
+		    
+			case STARTS:
+	
+				for(Media slaveMedia : synchronousRelation.getSlaveMediaList()){
+					
+					slaveMedia.setBegin(synchronousRelation.getMasterMedia().getBegin());
+					slaveMedia.setEnd(synchronousRelation.getMasterMedia().getBegin() + slaveMedia.getDuration());
+					removeMedia(slaveMedia);
+					addMedia(slaveMedia);
+					
+				}
+				
+	            break;
+	            
+			case STARTS_DELAY:
+	
+				break;
+	
+	    	default:
+	    	
+	    		break;
+    		
+		}
 		
 		setChanged();
 		Operation<TemporalViewOperator> operation = new Operation<TemporalViewOperator>(TemporalViewOperator.ADD_SYNC_RELATION, synchronousRelation, this);
