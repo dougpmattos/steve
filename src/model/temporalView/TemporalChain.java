@@ -7,6 +7,7 @@ import java.util.Observable;
 import model.common.Media;
 import model.temporalView.enums.TemporalViewOperator;
 import model.utility.Operation;
+import view.common.MessageDialog;
 import view.temporalViewPane.enums.AllenRelation;
 
 @SuppressWarnings("rawtypes")
@@ -115,8 +116,11 @@ public class TemporalChain extends Observable implements Serializable {
     			Media currentMedia = mediaList.get(index);
     			allenRelation = identifyAllenRelation(media, currentMedia);
     			
-    			if ( !((allenRelation.equals(AllenRelation.MEETS)) || (allenRelation.equals(AllenRelation.MET_BY))
-    			|| (allenRelation.equals(AllenRelation.BEFORE)) || (allenRelation.equals(AllenRelation.AFTER)))){
+    			//INFO Caso use a representação de Meets que coloca a primeira mídia escrava na mesma linha após a mídia mestre da relação.
+//    			if ( !((allenRelation.equals(AllenRelation.MEETS)) || (allenRelation.equals(AllenRelation.MET_BY))
+//    			|| (allenRelation.equals(AllenRelation.BEFORE)) || (allenRelation.equals(AllenRelation.AFTER)))){
+    			
+    			if (!(allenRelation.equals(AllenRelation.BEFORE) || (allenRelation.equals(AllenRelation.AFTER)))){
     				
     				isPossibleAdd = false;
     				
@@ -182,10 +186,14 @@ public class TemporalChain extends Observable implements Serializable {
 
 	public void addSynchronousRelation(Synchronous<Media> synchronousRelation){
 		
+		//INFO Após definir a relação, é necessário redefinir o início, fim e duração das mídias
+		//para permitir dispô-las na time line. Porém, o que define a ordem de apresentação no modelo do editor
+		//são as relações, pois o editor se baseia em eventos e não utiliza o paradigma timeline na autoria.
+		
 		relationList.add(synchronousRelation);
 		
 		switch(synchronousRelation.getType()){
-		    
+		
 			case STARTS:
 	
 				for(Media slaveMedia : synchronousRelation.getSlaveMediaList()){
@@ -197,10 +205,79 @@ public class TemporalChain extends Observable implements Serializable {
 					
 				}
 				
-	            break;
+				break;
 	            
 			case STARTS_DELAY:
-	
+				//TODO
+				break;
+				
+			case FINISHES:
+				
+				for(Media slaveMedia : synchronousRelation.getSlaveMediaList()){
+					
+					Double begin = synchronousRelation.getMasterMedia().getEnd() - slaveMedia.getDuration();
+					if(begin > 0){
+						slaveMedia.setBegin(begin);
+					}else {
+						slaveMedia.setBegin(0.0);
+					}
+					
+					slaveMedia.setEnd(synchronousRelation.getMasterMedia().getEnd());
+					slaveMedia.setDuration(slaveMedia.getEnd() - slaveMedia.getBegin());
+					removeMedia(slaveMedia);
+					addMedia(slaveMedia);
+					
+				}
+				
+				break;
+			
+			case MEETS:
+				
+				for(Media slaveMedia : synchronousRelation.getSlaveMediaList()){
+					
+					slaveMedia.setBegin(synchronousRelation.getMasterMedia().getEnd());
+					slaveMedia.setEnd(slaveMedia.getBegin() + slaveMedia.getDuration());
+					removeMedia(slaveMedia);
+					addMedia(slaveMedia);
+					
+				}
+				
+				break;
+			
+			case MEETS_DELAY:
+				//TODO
+				break;
+			
+			case MET_BY:
+				
+				for(Media slaveMedia : synchronousRelation.getSlaveMediaList()){
+					
+					slaveMedia.setEnd(synchronousRelation.getMasterMedia().getBegin());
+					Double begin = slaveMedia.getEnd() - slaveMedia.getDuration();
+					if(begin > 0){
+						slaveMedia.setBegin(begin);
+					}else {
+						slaveMedia.setBegin(0.0);
+					}
+					
+					slaveMedia.setDuration(slaveMedia.getEnd() - slaveMedia.getBegin());
+					if(slaveMedia.getDuration() == 0){
+						new MessageDialog("Não é possível definir a relação com esta mídia mestre.", MessageDialog.ICON_INFO).showAndWait();
+					}else {
+						removeMedia(slaveMedia);
+						addMedia(slaveMedia);
+					}
+		
+				}
+				
+				break;
+			
+			case MET_BY_DELAY:
+				//TODO
+				break;
+			
+			case BEFORE:
+				//TODO
 				break;
 	
 	    	default:

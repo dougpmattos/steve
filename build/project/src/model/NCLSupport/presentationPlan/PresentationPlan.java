@@ -1,25 +1,20 @@
 
 package model.NCLSupport.presentationPlan;
 
-import java.awt.BorderLayout;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.swing.JFrame;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-
 import model.NCLSupport.HTG.HTGCondition;
 import model.NCLSupport.HTG.HTGEdge;
 import model.NCLSupport.HTG.HTGVertice;
 import model.NCLSupport.HTG.HypermediaTemporalGraph;
-import model.NCLSupport.utility.HtgUtil;
+import model.NCLSupport.utility.HTGUtil;
+import model.utility.MediaUtil;
 import br.uff.midiacom.ana.util.enums.NCLEventAction;
 import br.uff.midiacom.ana.util.enums.NCLEventType;
 
@@ -105,7 +100,7 @@ public class PresentationPlan {
             cumulativeTime = (Double) presentationPlan[previousVertice.getPresentPlanPosition()][TIME_COLUMN];
             if(condition.isInteractive()){
                 subInitialVertice = edge.getOutput();
-                HypermediaTemporalGraph subHtg = HtgUtil.constructSubHtg(subInitialVertice);
+                HypermediaTemporalGraph subHtg = HTGUtil.constructSubHtg(subInitialVertice);
                 PresentationPlan presentationPlan = new PresentationPlan(subHtg);
 //                constructSecPresentationPlan(subHtg);
 //                dephFirstSearchHTG(subInitialVertice);
@@ -116,7 +111,7 @@ public class PresentationPlan {
             }
             HTGVertice adjVert = edge.getOutput();
             if(!adjVert.getEventType().equalsIgnoreCase(NCLEventType.SELECTION.toString())){
-                 presentationPlan[adjVert.getPresentPlanPosition()][TIME_COLUMN] = HtgUtil.approximateDouble(time);
+                 presentationPlan[adjVert.getPresentPlanPosition()][TIME_COLUMN] = MediaUtil.approximateDouble(time);
             }
             if(!adjVert.getVisited()){
                 dephFirstSearchHTG(adjVert);
@@ -171,12 +166,12 @@ public class PresentationPlan {
         int nextPos = 0;
         for(int i = 0; i < presentationPlan.length; i++)   {
             HTGVertice startVertice = (HTGVertice) presentationPlan[i][0];
-            if(startVertice.getAction().equals("start")){
+            if(startVertice.getEventAction().equals("start")){
                 auxMatrix[nextPos] =  presentationPlan[i];
                 nextPos++;
                 for(int j = i+1; j < presentationPlan.length; j++)   {
                     HTGVertice stopVertice = (HTGVertice) presentationPlan[j][0];
-                    if(stopVertice.getAction().equals("stop") &&
+                    if(stopVertice.getEventAction().equals("stop") &&
                        stopVertice.getAnchorId().equals(startVertice.getAnchorId()) &&
                        stopVertice.getEventType().equals(startVertice.getEventType())){
                         auxMatrix[nextPos]= presentationPlan[j];

@@ -5,11 +5,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import model.NCLSupport.extendedAna.Area;
-import model.NCLSupport.extendedAna.Media;
-import model.NCLSupport.utility.BindUtil;
-import model.NCLSupport.utility.ConnectorUtil;
-import model.NCLSupport.utility.LinkUtil;
+import model.NCLSupport.utility.NCLBindUtil;
+import model.NCLSupport.utility.NCLConnectorUtil;
+import model.NCLSupport.utility.NCLLinkUtil;
+import model.NCLSupport.utility.NCLMediaUtil;
 import br.uff.midiacom.ana.connector.NCLAssessmentStatement;
 import br.uff.midiacom.ana.connector.NCLAttributeAssessment;
 import br.uff.midiacom.ana.connector.NCLCausalConnector;
@@ -17,8 +16,10 @@ import br.uff.midiacom.ana.connector.NCLCompoundCondition;
 import br.uff.midiacom.ana.connector.NCLCondition;
 import br.uff.midiacom.ana.connector.NCLConnectorParam;
 import br.uff.midiacom.ana.connector.NCLSimpleCondition;
+import br.uff.midiacom.ana.interfaces.NCLArea;
 import br.uff.midiacom.ana.link.NCLBind;
 import br.uff.midiacom.ana.link.NCLLink;
+import br.uff.midiacom.ana.node.NCLMedia;
 import br.uff.midiacom.ana.util.enums.NCLConditionOperator;
 import br.uff.midiacom.ana.util.enums.NCLOperator;
 import br.uff.midiacom.ana.util.exception.XMLException;
@@ -27,42 +28,46 @@ import br.uff.midiacom.ana.util.exception.XMLException;
  *
  * @author Douglas
  */
+
+@SuppressWarnings("rawtypes")
 public class HTGCondition implements Cloneable{
+	
+	private String durVariable;
+	private Double value;
+	private Double processedAreaEndValue = null;
     
-    String durVariable;
-    Double value;
-    Double processedAreaEndValue = null;
+	private List<HTGVertice> conditionVerticeList = new ArrayList<HTGVertice>();
+	private String qualifier;
     
-    List<HTGVertice> conditionVerticeList = new ArrayList<HTGVertice>();
-    String qualifier;
+	private String operator = null;
+	private String assessmentStatement = null;
+	private String comparator;
+	private String assessmentValue;
+	private String anchorId;
     
-    String operator = null;
-    String assessmentStatement = null;
-    String comparator;
-    String assessmentValue;
-    String anchorId;
+	private String interactivity = null;
+	private String key;
     
-    String interactivity = null;
-    String key;
-    
-    String delay = null;
-    String actionDelay;
+	private String delay = null;
+	private String actionDelay;
     
     public HTGCondition(){
         
     }
     
-    public HTGCondition(Media media) throws XMLException, IOException {
-        durVariable = "Dur"+media.getId().substring(0,1).toUpperCase()+media.getId().substring(1);
-        value = media.getDuration();
+    public HTGCondition(NCLMedia nclMedia) throws XMLException, IOException {
+        durVariable = "Dur"+nclMedia.getId().substring(0,1).toUpperCase()+nclMedia.getId().substring(1);
+        value = NCLMediaUtil.getDuration(nclMedia);
     }
     
-    public HTGCondition(Area area, Double dur, Boolean isAreaEnd) throws XMLException, IOException {
-        Media mediaParent = (Media) area.getParent(); 
+    public HTGCondition(NCLArea area, Double dur, Boolean isAreaEnd) throws XMLException, IOException {
+    	NCLMedia mediaParent = (NCLMedia) area.getParent(); 
         durVariable = "Dur"+mediaParent.getId().substring(0,1).toUpperCase()+mediaParent.getId().substring(1);
         value = dur;
         if(isAreaEnd){
-            processedAreaEndValue = area.getAreaEnd() - area.getAreaBegin();
+        	Double areaBegin = area.getBegin() != null ? area.getBegin().getTimeInSeconds() : null;
+        	Double areaEnd = area.getEnd() != null ? area.getEnd().getTimeInSeconds() : null;
+            processedAreaEndValue = areaEnd - areaBegin;
         }
        
     }
@@ -77,6 +82,7 @@ public class HTGCondition implements Cloneable{
     }
     
     public Double getValue(){
+    	
         if(assessmentStatement!=null){//pois estou ignorando os vertices que testam essas variavéis
             return 0.0;
         }
@@ -98,9 +104,9 @@ public class HTGCondition implements Cloneable{
             return Double.valueOf(delay);
         }
         return null;
+        
     }
     
-    @SuppressWarnings("rawtypes")
 	public void addDefaultCondition(HTGVertice conditionVertice, NCLSimpleCondition simpleCondition, String compoundConditionOperator){
         
         conditionVerticeList.add(conditionVertice);
@@ -118,48 +124,46 @@ public class HTGCondition implements Cloneable{
         value = null;
     }
     
-    @SuppressWarnings("rawtypes")
 	public void addAssessmentStatement(NCLAssessmentStatement nclAssessmentStatement,NCLLink link) throws XMLException {
         NCLBind bind;
         comparator = nclAssessmentStatement.getComparator().toString();
         Object objectValueAssessment = nclAssessmentStatement.getValueAssessment();
         if(objectValueAssessment instanceof NCLConnectorParam){
             NCLConnectorParam connectorParam = (NCLConnectorParam) objectValueAssessment;
-            assessmentValue = ConnectorUtil.getParamValue(connectorParam,link);
+            assessmentValue = NCLConnectorUtil.getParamValue(connectorParam,link);
         }else{
             assessmentValue = objectValueAssessment.toString();
         }
         NCLAttributeAssessment attributeAssessment = (NCLAttributeAssessment) nclAssessmentStatement.getAttributeAssessments().get(0);
-        bind = BindUtil.getReferencedBind_AttributeAssessment(attributeAssessment.getRole(), link);
-        if(BindUtil.hasInterface(bind)){
-            anchorId = BindUtil.getInterfaceId(bind);
+        bind = NCLBindUtil.getReferencedBind_AttributeAssessment(attributeAssessment.getRole(), link);
+        if(NCLBindUtil.hasInterface(bind)){
+            anchorId = NCLBindUtil.getInterfaceId(bind);
         }else{
-            anchorId = BindUtil.getComponentId(bind);
+            anchorId = NCLBindUtil.getComponentId(bind);
         }
         String eventType = attributeAssessment.getEventType().toString();
         assessmentStatement = anchorId+" "+comparator+" "+assessmentValue;
         value = null;
     }
     
-    @SuppressWarnings("rawtypes")
 	public void addInteractivity(NCLLink link, NCLBind bind) {
-        NCLCausalConnector connector = LinkUtil.getConnector(link);
+        NCLCausalConnector connector = NCLLinkUtil.getConnector(link);
         NCLCondition nclCondition = connector.getCondition();
         if(nclCondition instanceof NCLSimpleCondition){
             NCLSimpleCondition simpleCondition = (NCLSimpleCondition) nclCondition;
             Object objectKey = simpleCondition.getKey();
             if(objectKey instanceof NCLConnectorParam){
                 NCLConnectorParam connectorParam = (NCLConnectorParam) objectKey;
-                key = ConnectorUtil.getParamValue(connectorParam,link);
+                key = NCLConnectorUtil.getParamValue(connectorParam,link);
             }else{
                 key = objectKey.toString();
             }
         }else if(nclCondition instanceof NCLCompoundCondition){
-            NCLSimpleCondition simpleCondition = ConnectorUtil.getSimpleCondition(connector,BindUtil.getRoleName(bind));
+            NCLSimpleCondition simpleCondition = NCLConnectorUtil.getSimpleCondition(connector,NCLBindUtil.getRoleName(bind));
             Object objectKey = simpleCondition.getKey();
             if(objectKey instanceof NCLConnectorParam){
                 NCLConnectorParam connectorParam = (NCLConnectorParam) objectKey;
-                key = ConnectorUtil.getParamValue(connectorParam,link);
+                key = NCLConnectorUtil.getParamValue(connectorParam,link);
             }else{
                 key = objectKey.toString();
             }
@@ -168,11 +172,10 @@ public class HTGCondition implements Cloneable{
         value = null;
     }
     
-    @SuppressWarnings("rawtypes")
 	public void addDelay(Object objectDelay, NCLLink link) {
         if(objectDelay instanceof NCLConnectorParam){
             NCLConnectorParam connectorParam = (NCLConnectorParam) objectDelay;
-            this.delay = ConnectorUtil.getParamValue(connectorParam,link);
+            this.delay = NCLConnectorUtil.getParamValue(connectorParam,link);
         }else{
             this.delay = objectDelay.toString();
         }

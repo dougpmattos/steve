@@ -143,6 +143,16 @@ public class TemporalViewButtonPane extends BorderPane {
 	
 	private void createButtonActions(TabPane temporalChainTabPane){
 		
+		equalsButton.setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent event) {
+	
+				
+			}
+			
+		});
+		
 		startsButton.setOnAction(new EventHandler<ActionEvent>() {
 			
 		    public void handle(ActionEvent t) {
@@ -177,8 +187,128 @@ public class TemporalViewButtonPane extends BorderPane {
 		    			
 		    		}
 		    		
-		    	}
+		    	}	
 		    	
+		    }
+		    
+		});
+		
+		finishesButton.setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent event) {
+				
+				Media relationMasterMedia = temporalViewPane.getFirstSelectedMedia();
+		    	
+		    	Synchronous<Media> synchronousRelation = new Synchronous<Media>();
+    			synchronousRelation.setType(RelationType.FINISHES);
+    			synchronousRelation.setMasterMedia(relationMasterMedia);
+    			synchronousRelation.setExplicit(true);
+	
+		    	for(Media media : temporalViewPane.getSelectedMediaList()){
+		    		
+		    		if(media != relationMasterMedia){
+		    			
+		    			synchronousRelation.addSlaveMedia(media);
+		    			
+		    		  	Tab selectedTab = null;
+				    	TemporalChainPane temporalChainPane = null;
+				    	
+				    	for (Tab tab : temporalViewPane.getTemporalChainTabPane().getTabs()){
+				    		if(tab.isSelected()){
+				    			selectedTab = tab;
+				    			break;
+				    		}
+				    	}
+				    	if(selectedTab != null){
+				    		temporalChainPane = (TemporalChainPane) selectedTab.getContent();
+				    	}
+				    	
+		    			controller.addSynchronousRelation(temporalChainPane.getTemporalChainModel(), synchronousRelation);
+		    			
+		    		}
+		    		
+		    	}
+				
+			}
+			
+		});
+		
+		meetsButton.setOnAction(new EventHandler<ActionEvent>() {
+			
+		    public void handle(ActionEvent t) {
+		    	
+		    	Media relationMasterMedia = temporalViewPane.getFirstSelectedMedia();
+		    	
+		    	Synchronous<Media> synchronousRelation = new Synchronous<Media>();
+    			synchronousRelation.setType(RelationType.MEETS);
+    			synchronousRelation.setMasterMedia(relationMasterMedia);
+    			synchronousRelation.setExplicit(true);
+	
+		    	for(Media media : temporalViewPane.getSelectedMediaList()){
+		    		
+		    		if(media != relationMasterMedia){
+		    			
+		    			synchronousRelation.addSlaveMedia(media);
+		    			
+		    		  	Tab selectedTab = null;
+				    	TemporalChainPane temporalChainPane = null;
+				    	
+				    	for (Tab tab : temporalViewPane.getTemporalChainTabPane().getTabs()){
+				    		if(tab.isSelected()){
+				    			selectedTab = tab;
+				    			break;
+				    		}
+				    	}
+				    	if(selectedTab != null){
+				    		temporalChainPane = (TemporalChainPane) selectedTab.getContent();
+				    	}
+				    	
+		    			controller.addSynchronousRelation(temporalChainPane.getTemporalChainModel(), synchronousRelation);
+		    			
+		    		}
+		    		
+		    	}	
+		    	
+		    }
+		    
+		});
+		
+		metByButton.setOnAction(new EventHandler<ActionEvent>() {
+			
+		    public void handle(ActionEvent t) {
+		    	
+		    	Media relationMasterMedia = temporalViewPane.getFirstSelectedMedia();
+		    	
+		    	Synchronous<Media> synchronousRelation = new Synchronous<Media>();
+    			synchronousRelation.setType(RelationType.MET_BY);
+    			synchronousRelation.setMasterMedia(relationMasterMedia);
+    			synchronousRelation.setExplicit(true);
+	
+		    	for(Media media : temporalViewPane.getSelectedMediaList()){
+		    		
+		    		if(media != relationMasterMedia){
+		    			
+		    			synchronousRelation.addSlaveMedia(media);
+		    			
+		    		  	Tab selectedTab = null;
+				    	TemporalChainPane temporalChainPane = null;
+				    	
+				    	for (Tab tab : temporalViewPane.getTemporalChainTabPane().getTabs()){
+				    		if(tab.isSelected()){
+				    			selectedTab = tab;
+				    			break;
+				    		}
+				    	}
+				    	if(selectedTab != null){
+				    		temporalChainPane = (TemporalChainPane) selectedTab.getContent();
+				    	}
+				    	
+		    			controller.addSynchronousRelation(temporalChainPane.getTemporalChainModel(), synchronousRelation);
+		    			
+		    		}
+		    		
+		    	}	
 		    	
 		    }
 		    

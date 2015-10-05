@@ -218,7 +218,7 @@ public class TemporalChainPane extends StackPane implements Observer{
 					((VLineTo) pathElement).setY(timeLineChart.getHeight());
 				}
 				getChildren().add(indicativeLine);
-				
+			
 			}
 		});
 		

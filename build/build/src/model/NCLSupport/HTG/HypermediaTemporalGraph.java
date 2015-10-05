@@ -30,8 +30,10 @@ public class HypermediaTemporalGraph {
     private HTGJGraph htgJgraph = new HTGJGraph();
     
     public HypermediaTemporalGraph(){
+    	
         vertices = new ArrayList<HTGVertice>();
         edges = new ArrayList<HTGEdge>(); 
+        
     }
     
     public HypermediaTemporalGraph(List<HTGVertice> vertices, List<HTGEdge> edges){
@@ -60,7 +62,7 @@ public class HypermediaTemporalGraph {
         Iterator iterator = vertices.iterator();
         while (iterator.hasNext() && mediaVertice==null) {
             vertice = (HTGVertice) iterator.next();
-            if(vertice.eventAction.equalsIgnoreCase(eventAction) && vertice.getAnchorId().equalsIgnoreCase(anchorId) && 
+            if(vertice.getEventAction().equalsIgnoreCase(eventAction) && vertice.getAnchorId().equalsIgnoreCase(anchorId) && 
                vertice.getEventType().equalsIgnoreCase(eventType)){
                 mediaVertice = vertice;
             }      
@@ -109,10 +111,10 @@ public class HypermediaTemporalGraph {
     public String toString() {
         String htg = "";
         for (HTGVertice u : vertices) {
-            htg += "(" + u.eventAction + "," + u.anchorId + "," + u.eventType + ")";
+            htg += "(" + u.getEventAction() + "," + u.getAnchorId() + "," + u.getEventType() + ")";
             for (HTGEdge e : u.getAdjacencies()) {
                 HTGVertice v = e.output;
-                htg += " -- " + e.condition + " -->" + "(" + v.eventAction + "," + v.anchorId + "," + v.eventType + ")" + ", ";
+                htg += " -- " + e.condition + " -->" + "(" + v.getEventAction() + "," + v.getAnchorId() + "," + v.getEventType() + ")" + ", ";
             }
 
             htg += "\n";

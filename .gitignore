@@ -1,1 +1,6 @@
 /bin/
+/build/
+/.DS_Store
+/.gitignore
+/build.fxbuild
+/hs_err_pid53346.log
