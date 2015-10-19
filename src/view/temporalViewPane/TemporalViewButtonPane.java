@@ -15,6 +15,7 @@ import javafx.scene.layout.HBox;
 import model.common.Media;
 import model.temporalView.Synchronous;
 import model.temporalView.enums.RelationType;
+import view.common.InputDialog;
 import view.common.Language;
 import view.common.SliderButton;
 import controller.Controller;
@@ -35,7 +36,6 @@ public class TemporalViewButtonPane extends BorderPane {
 	private Button equalsButton;
 	private SliderButton zoomButton;
 	private HBox otherButtonPane;
-	private Button synchronizeButton;
 	private CheckBox showAnchorsLinksButton;
 	private HBox alignmentButtonPane;
 	private TemporalViewPane temporalViewPane;
@@ -107,10 +107,6 @@ public class TemporalViewButtonPane extends BorderPane {
         beforeButton = new Button();
         beforeButton.setId("before-button");
         beforeButton.setTooltip(new Tooltip(Language.translate("before")));
-
-        synchronizeButton = new Button(Language.translate("synchronize"));
-        synchronizeButton.setId("synchronize-button");
-        synchronizeButton.setTooltip(new Tooltip(Language.translate("synchronize-button")));
         
         Label icon = new Label();
 		icon.setId("zoom-icon");
@@ -120,7 +116,6 @@ public class TemporalViewButtonPane extends BorderPane {
         otherButtonPane = new HBox();
         otherButtonPane.setId("other-button-pane");
         otherButtonPane.setFillHeight(false);
-        otherButtonPane.getChildren().add(synchronizeButton);
         otherButtonPane.getChildren().add(zoomButton);
         otherButtonPane.getChildren().add(showAnchorsLinksButton);
 	       
@@ -147,7 +142,8 @@ public class TemporalViewButtonPane extends BorderPane {
 
 			@Override
 			public void handle(ActionEvent event) {
-	
+				
+				//TODO
 				
 			}
 			
@@ -169,25 +165,46 @@ public class TemporalViewButtonPane extends BorderPane {
 		    		if(media != relationMasterMedia){
 		    			
 		    			synchronousRelation.addSlaveMedia(media);
+
+		    		}
+		    		
+		    	}
+		    	
+		    	addSynchronousRelationToModel(synchronousRelation);
+		    	
+		    }
+		    
+		});
+		
+		startsDelayButton.setOnAction(new EventHandler<ActionEvent>() {
+			
+		    public void handle(ActionEvent t) {
+		    	
+		    	Double delay = showInputDialog();
+		    	
+		    	if(delay == null){
+		    		return;
+		    	}
+
+		    	Media relationMasterMedia = temporalViewPane.getFirstSelectedMedia();
+		    	
+		    	Synchronous<Media> synchronousRelation = new Synchronous<Media>();
+    			synchronousRelation.setType(RelationType.STARTS_DELAY);
+    			synchronousRelation.setMasterMedia(relationMasterMedia);
+    			synchronousRelation.setDelay(delay);
+    			synchronousRelation.setExplicit(true);
+	
+		    	for(Media media : temporalViewPane.getSelectedMediaList()){
+		    		
+		    		if(media != relationMasterMedia){
 		    			
-		    		  	Tab selectedTab = null;
-				    	TemporalChainPane temporalChainPane = null;
-				    	
-				    	for (Tab tab : temporalViewPane.getTemporalChainTabPane().getTabs()){
-				    		if(tab.isSelected()){
-				    			selectedTab = tab;
-				    			break;
-				    		}
-				    	}
-				    	if(selectedTab != null){
-				    		temporalChainPane = (TemporalChainPane) selectedTab.getContent();
-				    	}
-				    	
-		    			controller.addSynchronousRelation(temporalChainPane.getTemporalChainModel(), synchronousRelation);
+		    			synchronousRelation.addSlaveMedia(media);
 		    			
 		    		}
 		    		
-		    	}	
+		    	}
+		    	
+		    	addSynchronousRelationToModel(synchronousRelation);
 		    	
 		    }
 		    
@@ -211,24 +228,46 @@ public class TemporalViewButtonPane extends BorderPane {
 		    			
 		    			synchronousRelation.addSlaveMedia(media);
 		    			
-		    		  	Tab selectedTab = null;
-				    	TemporalChainPane temporalChainPane = null;
-				    	
-				    	for (Tab tab : temporalViewPane.getTemporalChainTabPane().getTabs()){
-				    		if(tab.isSelected()){
-				    			selectedTab = tab;
-				    			break;
-				    		}
-				    	}
-				    	if(selectedTab != null){
-				    		temporalChainPane = (TemporalChainPane) selectedTab.getContent();
-				    	}
-				    	
-		    			controller.addSynchronousRelation(temporalChainPane.getTemporalChainModel(), synchronousRelation);
+		    		}
+		    		
+		    	}
+		    	
+		    	addSynchronousRelationToModel(synchronousRelation);
+				
+			}
+			
+		});
+		
+		finishesDelayButton.setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent event) {
+				
+				Double delay = showInputDialog();
+		    	
+		    	if(delay == null){
+		    		return;
+		    	}
+
+				Media relationMasterMedia = temporalViewPane.getFirstSelectedMedia();
+		    	
+		    	Synchronous<Media> synchronousRelation = new Synchronous<Media>();
+    			synchronousRelation.setType(RelationType.FINISHES_DELAY);
+    			synchronousRelation.setMasterMedia(relationMasterMedia);
+    			synchronousRelation.setDelay(delay);
+    			synchronousRelation.setExplicit(true);
+	
+		    	for(Media media : temporalViewPane.getSelectedMediaList()){
+		    		
+		    		if(media != relationMasterMedia){
+		    			
+		    			synchronousRelation.addSlaveMedia(media);
 		    			
 		    		}
 		    		
 		    	}
+		    	
+		    	addSynchronousRelationToModel(synchronousRelation);
 				
 			}
 			
@@ -251,28 +290,50 @@ public class TemporalViewButtonPane extends BorderPane {
 		    			
 		    			synchronousRelation.addSlaveMedia(media);
 		    			
-		    		  	Tab selectedTab = null;
-				    	TemporalChainPane temporalChainPane = null;
-				    	
-				    	for (Tab tab : temporalViewPane.getTemporalChainTabPane().getTabs()){
-				    		if(tab.isSelected()){
-				    			selectedTab = tab;
-				    			break;
-				    		}
-				    	}
-				    	if(selectedTab != null){
-				    		temporalChainPane = (TemporalChainPane) selectedTab.getContent();
-				    	}
-				    	
-		    			controller.addSynchronousRelation(temporalChainPane.getTemporalChainModel(), synchronousRelation);
-		    			
 		    		}
 		    		
 		    	}	
 		    	
+		    	addSynchronousRelationToModel(synchronousRelation);
+		    	
 		    }
 		    
 		});
+		
+		meetsDelayButton.setOnAction(new EventHandler<ActionEvent>() {
+			
+		    public void handle(ActionEvent t) {
+		    	
+		    	Double delay = showInputDialog();
+		    	
+		    	if(delay == null){
+		    		return;
+		    	}
+		    	
+		    	Media relationMasterMedia = temporalViewPane.getFirstSelectedMedia();
+		    	
+		    	Synchronous<Media> synchronousRelation = new Synchronous<Media>();
+    			synchronousRelation.setType(RelationType.MEETS_DELAY);
+    			synchronousRelation.setMasterMedia(relationMasterMedia);
+    			synchronousRelation.setDelay(delay);
+    			synchronousRelation.setExplicit(true);
+	
+		    	for(Media media : temporalViewPane.getSelectedMediaList()){
+		    		
+		    		if(media != relationMasterMedia){
+		    			
+		    			synchronousRelation.addSlaveMedia(media);
+		    			
+		    		}
+		    		
+		    	}
+		    	
+		    	addSynchronousRelationToModel(synchronousRelation);
+		    	
+		    }
+		    
+		});
+		
 		
 		metByButton.setOnAction(new EventHandler<ActionEvent>() {
 			
@@ -291,24 +352,79 @@ public class TemporalViewButtonPane extends BorderPane {
 		    			
 		    			synchronousRelation.addSlaveMedia(media);
 		    			
-		    		  	Tab selectedTab = null;
-				    	TemporalChainPane temporalChainPane = null;
-				    	
-				    	for (Tab tab : temporalViewPane.getTemporalChainTabPane().getTabs()){
-				    		if(tab.isSelected()){
-				    			selectedTab = tab;
-				    			break;
-				    		}
-				    	}
-				    	if(selectedTab != null){
-				    		temporalChainPane = (TemporalChainPane) selectedTab.getContent();
-				    	}
-				    	
-		    			controller.addSynchronousRelation(temporalChainPane.getTemporalChainModel(), synchronousRelation);
+		    		}
+		    		
+		    	}
+		    	
+		    	addSynchronousRelationToModel(synchronousRelation);
+		    	
+		    }
+  
+		});
+		
+		metByDelayButton.setOnAction(new EventHandler<ActionEvent>() {
+			
+		    public void handle(ActionEvent t) {
+		    	
+		    	Double delay = showInputDialog();
+		    	
+		    	if(delay == null){
+		    		return;
+		    	}
+		    	
+		    	Media relationMasterMedia = temporalViewPane.getFirstSelectedMedia();
+		    	
+		    	Synchronous<Media> synchronousRelation = new Synchronous<Media>();
+    			synchronousRelation.setType(RelationType.MET_BY_DELAY);
+    			synchronousRelation.setMasterMedia(relationMasterMedia);
+    			synchronousRelation.setDelay(delay);
+    			synchronousRelation.setExplicit(true);
+	
+		    	for(Media media : temporalViewPane.getSelectedMediaList()){
+		    		
+		    		if(media != relationMasterMedia){
+		    			
+		    			synchronousRelation.addSlaveMedia(media);
 		    			
 		    		}
 		    		
-		    	}	
+		    	}
+		    	
+		    	addSynchronousRelationToModel(synchronousRelation);
+		    	
+		    }
+  
+		});
+		
+		beforeButton.setOnAction(new EventHandler<ActionEvent>() {
+			
+		    public void handle(ActionEvent t) {
+		    	
+		    	Double delay = showInputDialog();
+		    	
+		    	if(delay == null){
+		    		return;
+		    	}
+		    	
+		    	Media relationMasterMedia = temporalViewPane.getFirstSelectedMedia();
+		    	
+		    	Synchronous<Media> synchronousRelation = new Synchronous<Media>();
+    			synchronousRelation.setType(RelationType.BEFORE);
+    			synchronousRelation.setMasterMedia(relationMasterMedia);
+    			synchronousRelation.setDelay(delay);
+    			synchronousRelation.setExplicit(true);
+	
+		    	for(Media media : temporalViewPane.getSelectedMediaList()){
+		    		
+		    		if(media != relationMasterMedia){
+		    			
+		    			synchronousRelation.addSlaveMedia(media);
+		    			
+		    		}
+		    		
+		    	}
+		    	
+		    	addSynchronousRelationToModel(synchronousRelation);
 		    	
 		    }
 		    
@@ -322,6 +438,41 @@ public class TemporalViewButtonPane extends BorderPane {
 //            	//new_val.doubleValue()
             }
         });
+		
+	}
+	
+	private void addSynchronousRelationToModel(Synchronous<Media> synchronousRelation) {
+		
+		Tab selectedTab = null;
+    	TemporalChainPane temporalChainPane = null;
+    	
+    	for (Tab tab : temporalViewPane.getTemporalChainTabPane().getTabs()){
+    		if(tab.isSelected()){
+    			selectedTab = tab;
+    			break;
+    		}
+    	}
+    	if(selectedTab != null){
+    		temporalChainPane = (TemporalChainPane) selectedTab.getContent();
+    	}
+    	
+		controller.addSynchronousRelation(temporalChainPane.getTemporalChainModel(), synchronousRelation);
+	}
+	
+	private Double showInputDialog() {
+		
+		InputDialog inputDialog = new InputDialog(Language.translate("type.delay"),null, "cancel","ok", "Delay in seconds: ", 190);
+    	String input = inputDialog.showAndWaitAndReturn();
+    	Double delay;
+    	
+    	if(input == null){
+    		return null;
+    	}else if(input.isEmpty()){
+    		delay = 0.0;
+    	}else {
+    		delay = Double.valueOf(input);
+    	}
+		return delay;
 		
 	}
 	

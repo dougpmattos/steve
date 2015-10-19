@@ -168,7 +168,13 @@ public class MediaTreePane extends TreeView<Object>{
 	}
 
 	public Media getSelectedMedia() {
-		return (Media) getSelectionModel().getSelectedItem().getValue();
+		
+		if(getSelectionModel().getSelectedItem() != null){
+			return (Media) getSelectionModel().getSelectedItem().getValue();
+		}else {
+			return null;	
+		}
+		
 	}
 	
     

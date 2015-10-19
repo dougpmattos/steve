@@ -3,8 +3,6 @@ package view.repositoryPane;
 import java.io.File;
 import java.util.List;
 
-import view.common.Language;
-import view.common.MessageDialog;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Button;
@@ -14,6 +12,8 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.FileChooser;
 import model.common.Media;
+import view.common.Language;
+import view.common.MessageDialog;
 import controller.Controller;
 
 /**
@@ -97,7 +97,9 @@ public class RepositoryButtonPane extends BorderPane{
                 		Media media = new Media();
                 		media.setFile(file);
                 		if(!controller.addRepositoryMedia(media)){
-                			new MessageDialog("Media's already added.", MessageDialog.ICON_INFO).showAndWait();
+                			MessageDialog messageDialog = new MessageDialog(Language.translate("media.has.already.imported") + ":          " + media.getName(), 
+                												Language.translate("select.other.media"), "OK", 150);
+                	    	messageDialog.showAndWait();
                 		}
                     }
                 }                      
@@ -111,7 +113,9 @@ public class RepositoryButtonPane extends BorderPane{
             	} else if(mediaTreePane.getSelectedMedia() != null){
             		controller.deleteRepositoryMedia(mediaTreePane.getSelectedMedia());
             	} else{
-            		new MessageDialog("Please, select a media to delete.", MessageDialog.ICON_INFO).showAndWait();
+            		MessageDialog messageDialog = new MessageDialog(Language.translate("no.media.selected"), 
+														Language.translate("select.a.media"), "OK", 150);
+            		messageDialog.showAndWait();
             	}
             	
             	

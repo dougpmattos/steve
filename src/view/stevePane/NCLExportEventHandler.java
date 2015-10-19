@@ -114,7 +114,8 @@ public class NCLExportEventHandler implements EventHandler<ActionEvent>{
         } catch (XMLException ex) {
         	
         	logger.error(ex.getMessage());
-        	new MessageDialog(ex.getMessage(), MessageDialog.ICON_INFO);
+        	MessageDialog messageDialog = new MessageDialog(ex.getMessage(), "OK", 150);
+            messageDialog.showAndWait();
         	
         }
 		
@@ -236,7 +237,8 @@ public class NCLExportEventHandler implements EventHandler<ActionEvent>{
                 
 			} catch (IOException e) {
 				logger.error(e.getMessage());
-				new MessageDialog(e.getMessage(), MessageDialog.ICON_INFO).showAndWait();
+				MessageDialog messageDialog = new MessageDialog(e.getMessage(), "OK", 150);
+		        messageDialog.showAndWait();
 			}
             
         }

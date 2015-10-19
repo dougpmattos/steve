@@ -59,7 +59,8 @@ public class OpenEventHandler implements EventHandler<ActionEvent> {
             
 		} catch (IOException | ClassNotFoundException e) {
 			logger.error(e.getMessage());
-			new MessageDialog(e.getMessage(), MessageDialog.ICON_INFO).showAndWait();
+			MessageDialog messageDialog = new MessageDialog(e.getMessage(), "OK", 150);
+	        messageDialog.showAndWait();
 		}
 		
 		

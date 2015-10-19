@@ -2,15 +2,13 @@ package view.common;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -21,65 +19,129 @@ import javafx.stage.StageStyle;
  */
 public class MessageDialog extends Stage {
  
-    private final int WIDTH_DEFAULT = 300;
-    public static final int ICON_INFO = 0;
-    public static final int ICON_ERROR = 1;    
+    private static final int HEIGHT = 200;
+	private static final int WIDTH = 350;
+    
+    private Scene scene;
+    private String title;
+    private String msg;
+    private String leftButtonText;
+    private String rightButtonText;
+    private Label msgLabel;
+    private Label titleLabel;
+    private Button leftButton;
+    private Button rightButton;
+    private BorderPane containerBorderPane;
+    private VBox containerVBox;
+    private VBox containerTitleMsgVBox;
+    private HBox containerHBox;
+    private int height;
  
-    public MessageDialog(String msg, int type) {
+    public MessageDialog(String title, String msg, String leftButtonText, String rightButonText, int height) {
+
         setResizable(false);
         initModality(Modality.APPLICATION_MODAL);
-        initStyle(StageStyle.TRANSPARENT);
+        initStyle(StageStyle.DECORATED);
         
-        Label label = new Label(msg);
-        label.setWrapText(true);
-        label.setGraphicTextGap(20);
-        //label.setGraphic(new ImageView(getImage(type)));
+        this.title = title;
+        this.msg = msg;
+        this.leftButtonText = leftButtonText;
+        this.rightButtonText = rightButonText;
+        this.height = height;
         
-        Button button = new Button("OK");
-        button.setId("ok-button");
-        button.setOnAction(new EventHandler<ActionEvent>(){
-            @Override
-            public void handle(ActionEvent arg0) {
-                MessageDialog.this.close();
-            }
-        });
- 
-        BorderPane borderPane = new BorderPane();
-        //borderPane.setId("border-pane");
+        createLabels();
+        createButtons();
+       
+        setLayout();
+        
+        createButtonActions();
 
-        borderPane.getStylesheets().add("view/repositoryPane/styles/messageDialog.css");       
-        borderPane.setTop(label);
- 
-        HBox hbox2 = new HBox();
-        hbox2.setAlignment(Pos.CENTER);
-        hbox2.getChildren().add(button);
-        borderPane.setBottom(hbox2);
- 
-        // calculate width of string
-        final Text text = new Text(msg);
-        text.snapshot(null, null);
-        // + 20 because there is padding 10 left and right
-        int width = (int) text.getLayoutBounds().getWidth() + 40;
- 
-        if (width < WIDTH_DEFAULT)
-            width = WIDTH_DEFAULT;
- 
-        int height = 100;
- 
-        final Scene scene = new Scene(borderPane, width, height);
+        scene = new Scene(containerBorderPane, WIDTH, height);
         scene.setFill(Color.TRANSPARENT);
         setScene(scene);
- 
-//        // make sure this stage is centered on top of its owner
-//        setX(owner.getX() + (owner.getWidth() / 2 - width / 2));
-//        setY(owner.getY() + (owner.getHeight() / 2 - height / 2));
+
     }
- 
-    private Image getImage(int type) {
-        if (type == ICON_ERROR)
-            return new Image(getClass().getResourceAsStream("/view/images/images/error.png"));
-        else
-            return new Image(getClass().getResourceAsStream("/view/images/images/warning.png"));
+    
+    public MessageDialog(String title, String msg, String rightButonText, int height) {
+    	this(title, msg, null, rightButonText, height);
     }
+    
+    public MessageDialog(String msg, String rightButonText, int height) {
+    	this(null, msg, null, rightButonText, height);
+    }
+    
+    public void createLabels(){
+    	
+    	if(title != null){
+    		titleLabel = new Label(title);
+    		titleLabel.setId("title-label");
+        	titleLabel.setWrapText(true);
+    	}
+    	
+        msgLabel = new Label(msg);
+        msgLabel.setId("msg-label");
+        msgLabel.setWrapText(true);
+
+    }
+    
+    public void createButtons(){
+		
+		if(leftButtonText != null){
+			leftButton = new Button(leftButtonText.toUpperCase());
+		}
+	    
+	    rightButton = new Button(rightButtonText.toUpperCase());
+	
+	}
+    
+    
+    public void setLayout(){
+    	
+    	containerBorderPane = new BorderPane();
+        containerBorderPane.setId("container-border-pane");
+        containerBorderPane.getStylesheets().add("view/common/styles/dialog.css"); 
+        
+        containerVBox = new VBox();
+        containerVBox.setId("container-vbox");
+        containerTitleMsgVBox = new VBox();
+        containerTitleMsgVBox.setId( "container-title-msg-vbox");
+        if(title != null){
+        	containerTitleMsgVBox.getChildren().add(titleLabel);
+        }
+        containerTitleMsgVBox.getChildren().add(msgLabel);
+        containerVBox.getChildren().add(containerTitleMsgVBox);
+        
+        containerHBox = new HBox();
+        containerHBox.setId("container-hbox");
+        if(leftButton != null){
+        	containerHBox.getChildren().add(leftButton);
+        }
+        containerHBox.getChildren().add(rightButton);
+        
+        containerVBox.getChildren().add(containerHBox);
+        
+        containerBorderPane.setTop(containerVBox);
+
+    }
+    
+    public void createButtonActions(){
+    	
+    	if(leftButton != null){
+    		leftButton.setOnAction(new EventHandler<ActionEvent>(){
+        		@Override
+                public void handle(ActionEvent arg0) {
+        			MessageDialog.this.close();  
+        		}
+        	});
+    	}
+
+    	rightButton.setOnAction(new EventHandler<ActionEvent>(){
+    		@Override
+    		public void handle(ActionEvent arg0) {
+    			MessageDialog.this.close();  
+        	}
+        });
+    	  
+   }
  
 }

@@ -53,7 +53,8 @@ public class SaveEventHandler implements EventHandler<ActionEvent> {
             
 		} catch (IOException e) {
 			logger.error(e.getMessage());
-			new MessageDialog(e.getMessage(), MessageDialog.ICON_INFO).showAndWait();
+			MessageDialog messageDialog = new MessageDialog(e.getMessage(), "OK", 150);
+	        messageDialog.showAndWait();
 		}
 		
 	}

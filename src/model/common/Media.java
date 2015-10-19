@@ -195,7 +195,8 @@ public class Media implements Serializable{
        } catch (Exception ex) {
     	   
            Logger.getLogger(Media.class.getName()).log(Level.SEVERE, null, ex);
-           new MessageDialog(ex.getMessage(), MessageDialog.ICON_INFO).showAndWait();
+           MessageDialog messageDialog = new MessageDialog(ex.getMessage(), "OK", 150);
+           messageDialog.showAndWait();
            return null;
            
        }
