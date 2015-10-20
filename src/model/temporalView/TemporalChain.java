@@ -5,8 +5,10 @@ import java.util.ArrayList;
 import java.util.Observable;
 
 import model.common.Media;
+import model.temporalView.enums.RelationType;
 import model.temporalView.enums.TemporalViewOperator;
 import model.utility.Operation;
+import view.common.InputDialog;
 import view.common.Language;
 import view.common.MessageDialog;
 import view.temporalViewPane.enums.AllenRelation;
@@ -191,16 +193,35 @@ public class TemporalChain extends Observable implements Serializable {
 	
 				for(Media slaveMedia : synchronousRelation.getSlaveMediaList()){
 					
-//					if(relationList){
-//						
-//					}else {
-//						
-//						slaveMedia.setBegin(synchronousRelation.getMasterMedia().getBegin());
-//						slaveMedia.setEnd(slaveMedia.getBegin() + slaveMedia.getDuration());
-//						removeMedia(slaveMedia);
-//						addMedia(slaveMedia);
-//						
-//					}
+					ArrayList<Relation> slaveMediaRelationList = getSlaveMediaRelationList();
+					
+					if(slaveMediaRelationList != null){
+						
+						for(Relation<Media> slaveMediaRelation : slaveMediaRelationList){
+							
+							Synchronous<Media> slaveMediaSynchronousRelation = (Synchronous<Media>) slaveMediaRelation;
+							
+							if(slaveMediaSynchronousRelation.getType() == RelationType.BEFORE){
+								
+								Boolean keepGoing = showBlockedRelationInputDialog(slaveMedia, slaveMediaSynchronousRelation);
+								
+						    	
+							}else if(){
+								
+							}else {
+								
+							}
+							
+						}
+						
+					}else {
+						
+						slaveMedia.setBegin(synchronousRelation.getMasterMedia().getBegin());
+						slaveMedia.setEnd(slaveMedia.getBegin() + slaveMedia.getDuration());
+						removeMedia(slaveMedia);
+						addMedia(slaveMedia);
+						
+					}
 					
 				}
 				
@@ -380,6 +401,14 @@ public class TemporalChain extends Observable implements Serializable {
 		Operation<TemporalViewOperator> operation = new Operation<TemporalViewOperator>(TemporalViewOperator.ADD_SYNC_RELATION, synchronousRelation, this);
         notifyObservers(operation);
         
+	}
+	
+	public String showBlockedRelationInputDialog(Media slaveMedia, Synchronous<Media> synchronousRelation){
+		
+		InputDialog showBlockedRelationInputDialog = new InputDialog("It's not possible to define this alignment for this media as slave",null, "cancel","ok", "Delay in seconds: ", 190);
+    	System.out.println(showBlockedRelationInputDialog.showAndWaitAndReturn());
+		return null;
+		
 	}
 	
 	public void removeSynchronousRelation(Synchronous<Media> synchronousRelation){
