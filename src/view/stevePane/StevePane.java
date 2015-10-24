@@ -101,7 +101,7 @@ public class StevePane extends Scene{
 			@Override
 			public void handle(KeyEvent keyEvent) {
 				
-				if(keyEvent.getCode() == KeyCode.COMMAND){
+				if(keyEvent.getCode() == KeyCode.COMMAND || keyEvent.getCode() == KeyCode.SHIFT){
 					isMetaDown = true;
 				}
 				
@@ -114,7 +114,7 @@ public class StevePane extends Scene{
 			@Override
 			public void handle(KeyEvent keyEvent) {
 				
-				if(keyEvent.getCode() == KeyCode.COMMAND){
+				if(keyEvent.getCode() == KeyCode.COMMAND || keyEvent.getCode() == KeyCode.SHIFT){
 					isMetaDown = false;
 				}
 

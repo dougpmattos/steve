@@ -191,40 +191,93 @@ public class TemporalChain extends Observable implements Serializable {
 			
 			case STARTS:
 	
-				for(Media slaveMedia : synchronousRelation.getSlaveMediaList()){
+//				Boolean keepGoing = true;
+//				
+//				for(Media slaveMedia : synchronousRelation.getSlaveMediaList()){
+//					
+//					Boolean slaveChanged = false;
+//					
+//					ArrayList<Relation> slaveMediaRelationList = getSlaveMediaRelationList();
 					
-					ArrayList<Relation> slaveMediaRelationList = getSlaveMediaRelationList();
-					
-					if(slaveMediaRelationList != null){
+//					if(slaveMediaRelationList != null){
+//						
+//						for(Relation<Media> slaveMediaRelation : slaveMediaRelationList){
+//							
+//							Synchronous<Media> slaveMediaSynchronousRelation = (Synchronous<Media>) slaveMediaRelation;
+//							
+//							if(slaveMediaSynchronousRelation.getType() == RelationType.BEFORE){
+//								
+//								keepGoing = showBlockedRelationInputDialog(slaveMedia, slaveMediaSynchronousRelation);
+//								if(!keepGoing){
+//									break;//verificar se o break saiu dos doiss for	
+//								}
+//								
+//						    	
+//							}else {
+//							
+//								if(escravo){
+//									
+//									if(){
+//										
+//									}else if(){
+//										
+//									}else{
+//										slaveChanged = true;
+//									}
+//									
+//								}
+//								if(mestre){
+//									if(slaveChanged){
+//										
+//									}else {
+										
+//										slaveMedia.setBegin(synchronousRelation.getMasterMedia().getBegin());
+//										slaveMedia.setEnd(slaveMedia.getBegin() + slaveMedia.getDuration());
+//										removeMedia(slaveMedia);
+//										addMedia(slaveMedia);
+//										
+//										arratsr filhos recursivamete
+//									}
+//								}
+//								
+//							}
+//							
+//						}
+//						if(!keepGoing){
+//							break;
+//						}
+//						
+//					}else {
 						
-						for(Relation<Media> slaveMediaRelation : slaveMediaRelationList){
-							
-							Synchronous<Media> slaveMediaSynchronousRelation = (Synchronous<Media>) slaveMediaRelation;
-							
-							if(slaveMediaSynchronousRelation.getType() == RelationType.BEFORE){
-								
-								Boolean keepGoing = showBlockedRelationInputDialog(slaveMedia, slaveMediaSynchronousRelation);
-								
-						    	
-							}else if(){
-								
-							}else {
-								
-							}
-							
+//						slaveMedia.setBegin(synchronousRelation.getMasterMedia().getBegin());
+//						slaveMedia.setEnd(slaveMedia.getBegin() + slaveMedia.getDuration());
+//						removeMedia(slaveMedia);
+//						addMedia(slaveMedia);
+						
+//					}
+//					
+//				}
+//				
+//				if(keepGoing && nenhumaEscravaDefinida){
+//					
+//					MessageDialog messageDialog = new MessageDialog(Language.translate("it.is.not.possible.to.define.alignment"), 
+//							Language.translate("no.selected.media.could.be.slave.for.the.relation"), "OK", 190);
+//					messageDialog.showAndWait();
+//					
+//				} else if(keepGoing){
+//					relationList.add(synchronousRelation);
+//				}
+				
+						
+						for(Media slaveMedia : synchronousRelation.getSlaveMediaList()){
+							slaveMedia.setBegin(synchronousRelation.getMasterMedia().getBegin());
+							slaveMedia.setEnd(slaveMedia.getBegin() + slaveMedia.getDuration());
+							removeMedia(slaveMedia);
+							addMedia(slaveMedia);
 						}
 						
-					}else {
 						
-						slaveMedia.setBegin(synchronousRelation.getMasterMedia().getBegin());
-						slaveMedia.setEnd(slaveMedia.getBegin() + slaveMedia.getDuration());
-						removeMedia(slaveMedia);
-						addMedia(slaveMedia);
 						
-					}
-					
-				}
-				
 				break;
 	            
 			case STARTS_DELAY:
