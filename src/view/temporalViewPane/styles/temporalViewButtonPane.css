@@ -163,13 +163,13 @@
  *                                                                             *
  ******************************************************************************/
 
-#synchronize-button{
+#interactivity-button{
  	-fx-background-color: #607D8B;
  	-fx-text-fill: #FFFFFF;
  	-fx-background-radius: 0;
  	-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);
 }
-#synchronize-button:hover {
+#interactivity-button:hover {
 	-fx-background-color: #00BFA5;
 }
 

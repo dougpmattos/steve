@@ -83,12 +83,13 @@ public class RepositoryMediaItemContainer extends BorderPane implements view.com
 	        		TemporalChainPane temporalChainPane = (TemporalChainPane) temporalTab.getContent();
 					for(ArrayList<TimeLineXYChartData> timeLineXYChartDataList : temporalChainPane.getTimeLineXYChartDataLineList()){
 						for(TimeLineXYChartData timeLineXYChartData : timeLineXYChartDataList){
-							if(timeLineXYChartData.getContainerNode().getStylesheets().remove("view/temporalViewPane/styles/mousePressedSlaveTemporalMediaNode.css")){
+							if(timeLineXYChartData.getContainerNode().getStylesheets().remove("view/temporalViewPane/styles/mousePressedSlaveTemporalMediaNode.css") ||
+							   timeLineXYChartData.getContainerNode().getStylesheets().remove("view/temporalViewPane/styles/mousePressedTemporalMediaNode.css")){
+								
 								timeLineXYChartData.getMediaImageClip().setHeight(timeLineXYChartData.getMediaImageClip().getHeight()+5);
-							}else {
-								timeLineXYChartData.getContainerNode().getStylesheets().remove("view/temporalViewPane/styles/mousePressedTemporalMediaNode.css");
+						
 							}
-						}	
+						}
 					}	
 				 }
 	        	

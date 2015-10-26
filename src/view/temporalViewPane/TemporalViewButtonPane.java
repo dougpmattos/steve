@@ -34,6 +34,7 @@ public class TemporalViewButtonPane extends BorderPane {
 	private Button duringButton;
 	private Button overlapsButton;
 	private Button equalsButton;
+	private Button interactivityButton;
 	private SliderButton zoomButton;
 	private HBox otherButtonPane;
 	private CheckBox showAnchorsLinksButton;
@@ -108,6 +109,10 @@ public class TemporalViewButtonPane extends BorderPane {
         beforeButton.setId("before-button");
         beforeButton.setTooltip(new Tooltip(Language.translate("before")));
         
+        interactivityButton = new Button(Language.translate("interactivity"));
+        interactivityButton.setId("interactivity-button");
+        interactivityButton.setTooltip(new Tooltip(Language.translate("interactivity-button")));
+        
         Label icon = new Label();
 		icon.setId("zoom-icon");
         zoomButton = new SliderButton(0.0, 100.0, 50.0, 150.0, icon, false);
@@ -116,6 +121,7 @@ public class TemporalViewButtonPane extends BorderPane {
         otherButtonPane = new HBox();
         otherButtonPane.setId("other-button-pane");
         otherButtonPane.setFillHeight(false);
+        otherButtonPane.getChildren().add(interactivityButton);
         otherButtonPane.getChildren().add(zoomButton);
         otherButtonPane.getChildren().add(showAnchorsLinksButton);
 	       

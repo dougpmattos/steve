@@ -5,13 +5,13 @@ import java.util.ArrayList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.CheckMenuItem;
-import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.Tab;
 import javafx.scene.input.KeyCombination;
+import javafx.scene.shape.Rectangle;
 import model.repository.RepositoryMediaList;
 import model.temporalView.TemporalView;
 
@@ -213,8 +213,11 @@ public class SteveMenuBar extends MenuBar{
 			    		for(TimeLineXYChartData timeLineXYChartData : timeLineXYChartDataList){
 							
 							temporalViewPane.addSelectedMedia(timeLineXYChartData.getMedia());
-							Label labelMediaNode = (Label) timeLineXYChartData.getContainerNode().getChildren().get(1);
-							labelMediaNode.getStylesheets().add("view/temporalViewPane/styles/mousePressedTemporalMediaNode.css");
+							if(timeLineXYChartData.getContainerNode().getStylesheets().isEmpty()){
+								timeLineXYChartData.getContainerNode().getStylesheets().add("view/temporalViewPane/styles/mousePressedTemporalMediaNode.css");
+								Rectangle mediaImageClip = (Rectangle) timeLineXYChartData.getContainerNode().getChildren().get(0).getClip();
+								mediaImageClip.setHeight(mediaImageClip.getHeight()-5);
+							}
 							
 						}
 			    	}

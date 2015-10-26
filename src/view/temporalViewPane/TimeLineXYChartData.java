@@ -85,15 +85,8 @@ public class TimeLineXYChartData {
 					if(containerNode.getStylesheets().isEmpty()){
 						mediaImageClip.setHeight((double) newVal);
 					}else {
-						
-						if(containerNode.getStylesheets().get(0).equalsIgnoreCase("view/temporalViewPane/styles/mousePressedSlaveTemporalMediaNode.css")){
-							mediaImageClip.setHeight((double) newVal-5);
-						}else {
-							mediaImageClip.setHeight((double) newVal);
-						}
-						
-					}
-					
+						mediaImageClip.setHeight((double) newVal-5);
+					}	
 					
 			}
 	    });
@@ -139,6 +132,7 @@ public class TimeLineXYChartData {
 					if(media == temporalViewPane.getFirstSelectedMedia()){
 
 						if(node.getStylesheets().isEmpty()){
+							mediaImageClip.setHeight(containerNode.getHeight()-5);
 							node.getStylesheets().add("view/temporalViewPane/styles/mousePressedTemporalMediaNode.css");
 						}
 						
@@ -157,12 +151,15 @@ public class TimeLineXYChartData {
 					temporalViewPane.addSelectedMedia(media);
 					
 					if(node.getStylesheets().remove("view/temporalViewPane/styles/mousePressedSlaveTemporalMediaNode.css")){
+						
 						mediaImageClip.setHeight(mediaImageClip.getHeight()+5);
-					}else {
-						node.getStylesheets().remove("view/temporalViewPane/styles/mousePressedTemporalMediaNode.css");
+						
+					}else if(node.getStylesheets().remove("view/temporalViewPane/styles/mousePressedTemporalMediaNode.css")){
+						mediaImageClip.setHeight(mediaImageClip.getHeight()+5);
 					}
-
+					
 					node.getStylesheets().add("view/temporalViewPane/styles/mousePressedTemporalMediaNode.css");
+					mediaImageClip.setHeight(mediaImageClip.getHeight()-5);
 					
 				}
 				
@@ -173,11 +170,14 @@ public class TimeLineXYChartData {
 					for(ArrayList<TimeLineXYChartData> timeLineXYChartDataList : temporalChainPane.getTimeLineXYChartDataLineList()){
 						for(TimeLineXYChartData timeLineXYChartData : timeLineXYChartDataList){
 							if(!temporalViewPane.getSelectedMediaList().contains(timeLineXYChartData.getMedia())){
-								if(timeLineXYChartData.getContainerNode().getStylesheets().remove("view/temporalViewPane/styles/mousePressedSlaveTemporalMediaNode.css")){
+
+								if(timeLineXYChartData.getContainerNode().getStylesheets().remove("view/temporalViewPane/styles/mousePressedSlaveTemporalMediaNode.css")||
+								   timeLineXYChartData.getContainerNode().getStylesheets().remove("view/temporalViewPane/styles/mousePressedTemporalMediaNode.css")){
+									
 									timeLineXYChartData.getMediaImageClip().setHeight(timeLineXYChartData.getMediaImageClip().getHeight()+5);
-								}else {
-									timeLineXYChartData.getContainerNode().getStylesheets().remove("view/temporalViewPane/styles/mousePressedTemporalMediaNode.css");
+									
 								}
+
 							}
 						}
 						
