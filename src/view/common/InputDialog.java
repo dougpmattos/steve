@@ -57,7 +57,9 @@ public class InputDialog extends Stage {
         this.height = height;
         
         createLabels();
-        createInputField();
+        if(inputLabelText != null){
+        	createInputField();
+        }
         createButtons();
        
         setLayout();
@@ -82,9 +84,11 @@ public class InputDialog extends Stage {
             msgLabel.setWrapText(true);
     	}
         
-        inputLabel = new Label(inputLabelText);
-        inputLabel.setId("input-text-label");
-        inputLabel.setWrapText(true);
+    	if(inputLabelText != null){
+    		inputLabel = new Label(inputLabelText);
+            inputLabel.setId("input-text-label");
+            inputLabel.setWrapText(true);
+    	}
 
     }
     
@@ -125,10 +129,12 @@ public class InputDialog extends Stage {
         	containerTitleMsgVBox.getChildren().add(msgLabel);
         }
 
-        containerInputFieldGridPane = new GridPane();
-        containerInputFieldGridPane.setId("input-field-grid-pane");
-        containerInputFieldGridPane.add(inputLabel, 0, 0);
-        containerInputFieldGridPane.add(inputField, 1, 0);
+        if(inputField != null){
+        	containerInputFieldGridPane = new GridPane();
+            containerInputFieldGridPane.setId("input-field-grid-pane");
+            containerInputFieldGridPane.add(inputLabel, 0, 0);
+            containerInputFieldGridPane.add(inputField, 1, 0);
+        }
 
         containerButtonHBox = new HBox();
         containerButtonHBox.setId("container-hbox");
@@ -139,7 +145,9 @@ public class InputDialog extends Stage {
         
         
         containerInpuFieldButtonTitleMsgVBox.getChildren().add(containerTitleMsgVBox);
-        containerInpuFieldButtonTitleMsgVBox.getChildren().add(containerInputFieldGridPane);
+        if(containerInputFieldGridPane != null){
+        	containerInpuFieldButtonTitleMsgVBox.getChildren().add(containerInputFieldGridPane);
+        }
         containerInpuFieldButtonTitleMsgVBox.getChildren().add(containerButtonHBox);
         
         containerBorderPane.setTop(containerInpuFieldButtonTitleMsgVBox);
@@ -175,13 +183,16 @@ public class InputDialog extends Stage {
     	switch(buttonClicked){
     	
 	    	case LEFT_BUTTON:
-	            return null;
+	            return "left";
 	            
 	        case RIGHT_BUTTON:
-	        	return inputField.getText();
+	        	if(inputField != null){
+	        		return inputField.getText();
+	        	}
+	        	return "right";
 	           
 	        case CLOSE_BUTTON:
-	        	return null;
+	        	return "";
             
     	}
     	
