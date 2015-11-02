@@ -148,8 +148,9 @@ public class TemporalViewButtonPane extends BorderPane {
 
 			@Override
 			public void handle(ActionEvent event) {
-				
-				//TODO
+
+				startsButton.fire();
+				finishesButton.fire();
 				
 			}
 			
@@ -402,6 +403,75 @@ public class TemporalViewButtonPane extends BorderPane {
   
 		});
 		
+		duringButton.setOnAction(new EventHandler<ActionEvent>() {
+			
+			 public void handle(ActionEvent t) {
+				
+				Media relationMasterMedia = temporalViewPane.getFirstSelectedMedia();
+				 
+				Double startDelay = showInputDialogOfFirstDelay();
+			    	
+		    	if(startDelay == null){
+		    		return;
+		    	}
+			    	
+				Double secondDelay = showInputDialogOfSecondDelay();
+				Double metByDelay;
+				if(secondDelay == null){
+		    		return;
+		    	}else {
+		    		metByDelay =  relationMasterMedia.getDuration() - secondDelay;
+		    	}
+
+		    	Synchronous<Media> synchronousRelation = new Synchronous<Media>();
+    			synchronousRelation.setType(RelationType.MET_BY_DELAY);
+    			synchronousRelation.setMasterMedia(relationMasterMedia);
+    			synchronousRelation.setDelay(metByDelay);
+    			synchronousRelation.setExplicit(true);
+	
+		    	for(Media media : temporalViewPane.getSelectedMediaList()){
+		    		
+		    		if(media != relationMasterMedia){
+		    			
+		    			synchronousRelation.addSlaveMedia(media);
+		    			
+		    		}
+		    		
+		    	}
+		    	
+		    	addSynchronousRelationToModel(synchronousRelation);
+
+		    	Synchronous<Media> startDelayRelation = new Synchronous<Media>();
+    			startDelayRelation.setType(RelationType.STARTS_DELAY);
+    			startDelayRelation.setMasterMedia(relationMasterMedia);
+    			startDelayRelation.setDelay(startDelay);
+    			startDelayRelation.setExplicit(true);
+	
+		    	for(Media media : temporalViewPane.getSelectedMediaList()){
+		    		
+		    		if(media != relationMasterMedia){
+		    			
+		    			startDelayRelation.addSlaveMedia(media);
+		    			
+		    		}
+		    		
+		    	}
+		    	
+		    	addSynchronousRelationToModel(startDelayRelation);
+		    	
+			 }
+			 
+		});
+		
+		overlapsButton.setOnAction(new EventHandler<ActionEvent>() {
+			
+			 public void handle(ActionEvent t) {
+				 startsDelayButton.fire();
+				 finishesDelayButton.fire();
+			 }
+			 
+		});
+		
 		beforeButton.setOnAction(new EventHandler<ActionEvent>() {
 			
 		    public void handle(ActionEvent t) {
@@ -468,6 +538,40 @@ public class TemporalViewButtonPane extends BorderPane {
 	private Double showInputDialog() {
 		
 		InputDialog inputDialog = new InputDialog(Language.translate("type.delay"),null, "cancel","ok", "Delay in seconds: ", 190);
+    	String input = inputDialog.showAndWaitAndReturn();
+    	Double delay;
+    	
+    	if(input == null){
+    		return null;
+    	}else if(input.isEmpty()){
+    		delay = 0.0;
+    	}else {
+    		delay = Double.valueOf(input);
+    	}
+		return delay;
+		
+	}
+	
+	private Double showInputDialogOfFirstDelay(){
+		
+		InputDialog inputDialog = new InputDialog(Language.translate("type.first.delay"),null, "cancel","ok", "Delay in seconds: ", 190);
+    	String input = inputDialog.showAndWaitAndReturn();
+    	Double delay;
+    	
+    	if(input == null){
+    		return null;
+    	}else if(input.isEmpty()){
+    		delay = 0.0;
+    	}else {
+    		delay = Double.valueOf(input);
+    	}
+		return delay;
+		
+	}
+	
+	private Double showInputDialogOfSecondDelay(){
+		
+		InputDialog inputDialog = new InputDialog(Language.translate("type.second.delay"),null, "cancel","ok", "Delay in seconds: ", 190);
     	String input = inputDialog.showAndWaitAndReturn();
     	Double delay;
     	

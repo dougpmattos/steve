@@ -15,6 +15,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.shape.Rectangle;
 import model.common.Media;
 import model.temporalView.TemporalChain;
+import model.utility.MediaUtil;
 import view.repositoryPane.RepositoryMediaItemContainer;
 import view.repositoryPane.RepositoryPane;
 import view.stevePane.StevePane;
@@ -23,6 +24,8 @@ import controller.Controller;
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public class TimeLineXYChartData {
 
+	private static final double BORDER_DIFF = 0.26;
+	
 	private Controller controller;
 	private Media media;
 	private int line;
@@ -30,13 +33,16 @@ public class TimeLineXYChartData {
 	private RepositoryPane repositoryPane;
 	private TemporalChain temporalChainModel;
 	private XYChart.Data<Number, String> xyChartData;
+	private TimeLineChart<Number, String> timeLineChart;
 	private HBox containerNode;
 	private TemporalChainPane temporalChainPane;
 	private StevePane stevePane;
 	private Rectangle mediaImageClip;
 	private ImageView imageView;
+	private Boolean wasDragged;
 	
-	public TimeLineXYChartData(Controller controller, Media media, TemporalChain temporalChainModel, TemporalViewPane temporalViewPane, TemporalChainPane temporalChainPane, RepositoryPane repositoryPane, int line, StevePane stevePane){
+	public TimeLineXYChartData(Controller controller, Media media, TemporalChain temporalChainModel, TemporalViewPane temporalViewPane, 
+			TemporalChainPane temporalChainPane, RepositoryPane repositoryPane, int line, StevePane stevePane, TimeLineChart<Number, String> timeLineChart){
 		
 		this.controller = controller;
 		this.media = media;
@@ -44,8 +50,10 @@ public class TimeLineXYChartData {
 		this.line = line;
 		this.temporalViewPane = temporalViewPane;
 		this.temporalChainPane = temporalChainPane;
+		this.timeLineChart = timeLineChart;
 		this.repositoryPane = repositoryPane;
 		this.stevePane = stevePane;
+		wasDragged = false;
 
 		createXYChartData();	
 		
@@ -195,6 +203,7 @@ public class TimeLineXYChartData {
 	        public void handle(MouseEvent mouseEvent) {
 	        	node.setTranslateX(mouseEvent.getSceneX() - node.getLayoutX());
 	        	node.toFront();
+	        	wasDragged = true;
 	        }
 	        
 	    });
@@ -202,7 +211,23 @@ public class TimeLineXYChartData {
 
 			@Override
 			public void handle(MouseEvent event) {
+				
+				if(wasDragged){
+					
+					Double droppedTime = timeLineChart.getXAxis().getValueForDisplay(event.getX()).doubleValue();
+	        		droppedTime = MediaUtil.approximateDouble(droppedTime);
+	        		
+		        	media.setBegin(droppedTime);
+		        	media.setEnd(droppedTime + media.getDuration());
+		        	
+	        		controller.addMediaTemporalChain(media, temporalChainModel);
+					
+					wasDragged = false;
+				}
 		        
+		        
+
+				
 			}
 	    	
 	    });

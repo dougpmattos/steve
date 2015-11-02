@@ -303,7 +303,7 @@ public class TemporalChainPane extends StackPane implements Observer{
 	
 		}
 	
-		TimeLineXYChartData timeLineXYChartData = new TimeLineXYChartData(controller, media, temporalChainModel, temporalViewPane, this,repositoryPane, line, stevePane); 	
+		TimeLineXYChartData timeLineXYChartData = new TimeLineXYChartData(controller, media, temporalChainModel, temporalViewPane, this,repositoryPane, line, stevePane, timeLineChart); 	
 		serie.getData().add(timeLineXYChartData.getXYChartData());
 		
 		timeLineXYChartDataList.add(timeLineXYChartData);
