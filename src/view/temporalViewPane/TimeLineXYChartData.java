@@ -224,10 +224,7 @@ public class TimeLineXYChartData {
 					
 					wasDragged = false;
 				}
-		        
-		        
 
-				
 			}
 	    	
 	    });

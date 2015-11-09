@@ -19,6 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import view.common.Language;
+import view.common.MessageDialog;
 import view.temporalViewPane.TemporalChainPane;
 import view.temporalViewPane.TemporalViewPane;
 import view.temporalViewPane.TimeLineXYChartData;
@@ -108,7 +109,12 @@ public class SteveMenuBar extends MenuBar{
 		
 		menuItemAbout.setOnAction(new EventHandler<ActionEvent>() {
 		    public void handle(ActionEvent t) {
-			   //TODO
+		    	
+		    	MessageDialog messageDialog = new MessageDialog("STEVE", "Spatio-Temporal View Editor              Version 1.0-0                   "
+		    			+ "Copyright 2015 Douglas Paulo de Mattos. MidiaCom Lab. UFF. All rights reserved.                     "
+		    			+ "This product includes software developed by other MidiaCom Lab projects including aNa and NCL4WEB, https://www.aNa.com.br, https://www.NCL4WEB.com.br", "OK", 300);
+	            messageDialog.showAndWait();
+	            
 		    }
 		});
 		

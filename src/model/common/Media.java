@@ -50,7 +50,7 @@ public class Media implements Serializable{
 	public void setFile(File mediaFile){
 		
 		this.mediaFile = mediaFile;
-		this.name = mediaFile.getAbsoluteFile().getName();
+		this.name = mediaFile.getAbsoluteFile().getName().substring(0, mediaFile.getAbsoluteFile().getName().indexOf("."));
 	    this.path = mediaFile.getAbsolutePath();
 	    this.mediaType = getMediaType(mediaFile);
 	    this.mimeType = getMimeType(mediaFile);
@@ -60,7 +60,10 @@ public class Media implements Serializable{
 	    }
 	    
 	}
-	
+
+	public void setName(String name){
+		this.name = name;
+	}
 	public String getName() {
 		   return name;
 	}

@@ -1,13 +1,18 @@
 package view.stevePane;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.stage.FileChooser;
+import model.NCLSupport.enums.ImportedNCLCausalConnectorType;
 import model.common.Media;
 import model.spatialView.PositionProperty;
 import model.spatialView.SizeProperty;
@@ -27,38 +32,56 @@ import view.common.MessageDialog;
 import br.uff.midiacom.ana.NCLBody;
 import br.uff.midiacom.ana.NCLDoc;
 import br.uff.midiacom.ana.NCLHead;
+import br.uff.midiacom.ana.connector.NCLCausalConnector;
 import br.uff.midiacom.ana.connector.NCLConnectorBase;
 import br.uff.midiacom.ana.descriptor.NCLDescriptor;
 import br.uff.midiacom.ana.descriptor.NCLDescriptorBase;
 import br.uff.midiacom.ana.descriptor.NCLDescriptorParam;
 import br.uff.midiacom.ana.interfaces.NCLPort;
+import br.uff.midiacom.ana.link.NCLBind;
+import br.uff.midiacom.ana.link.NCLLink;
+import br.uff.midiacom.ana.link.NCLLinkParam;
 import br.uff.midiacom.ana.node.NCLMedia;
 import br.uff.midiacom.ana.region.NCLRegion;
 import br.uff.midiacom.ana.region.NCLRegionBase;
+import br.uff.midiacom.ana.reuse.NCLImportBase;
 import br.uff.midiacom.ana.util.SrcType;
 import br.uff.midiacom.ana.util.TimeType;
 import br.uff.midiacom.ana.util.enums.NCLAttributes;
+import br.uff.midiacom.ana.util.enums.NCLDefaultActionRole;
+import br.uff.midiacom.ana.util.enums.NCLDefaultConditionRole;
 import br.uff.midiacom.ana.util.enums.NCLMimeType;
-import br.uff.midiacom.ana.util.enums.NCLUriType;
 import br.uff.midiacom.ana.util.exception.XMLException;
+import br.uff.midiacom.ana.util.reference.ExternalReferenceType;
 
 @SuppressWarnings({"rawtypes", "unchecked"})
 public class NCLExportEventHandler implements EventHandler<ActionEvent>{
 
+	private static final String EXPORTED_NCL_DOCUMENT = " Exported NCL Document";
+	private static final String DELAY = "delay";
+
 	final Logger logger = LoggerFactory.getLogger(NCLExportEventHandler.class);
 
 	private TemporalView temporalView;
+	private FileInputStream fileInputStream;
+	private FileOutputStream fileOutputStream;
+	private File causalConnectorBaseFile;
 	
 	public NCLExportEventHandler(TemporalView temporalView){
+		
 		this.temporalView = temporalView;
+		causalConnectorBaseFile = new File("src/model/NCLSupport/NCLFiles/causalConnectorBase.ncl");
+		
 	}
 	
 	@Override
 	public void handle(ActionEvent actionEvent) {
-		   
+
 		NCLDoc nclDoc = createNCLDoc();
 		
-    	saveNCLDoc(nclDoc);
+		if(nclDoc != null){
+			saveNCLDoc(nclDoc);
+		}
     	
     }
 	
@@ -81,6 +104,14 @@ public class NCLExportEventHandler implements EventHandler<ActionEvent>{
             NCLDescriptorBase nclDescBase = new NCLDescriptorBase();
             
             NCLConnectorBase nclConBase = new NCLConnectorBase();
+            NCLImportBase nclImportBase = new NCLImportBase<>();
+            nclImportBase.setDocumentURI(new SrcType("causalConnectorBase.ncl"));
+            nclImportBase.setBaseId("causalConnectorBase");
+            nclImportBase.setAlias("connectorBase");
+            NCLDoc importedNCLCausalConnectorBase = new NCLDoc();
+            importedNCLCausalConnectorBase.loadXML(causalConnectorBaseFile);
+            nclImportBase.setImportedDoc(importedNCLCausalConnectorBase);
+            nclConBase.addImportBase(nclImportBase);
 
             nclHead.addRegionBase(nclRegBaseList.get(0));
             nclHead.setDescriptorBase(nclDescBase);
@@ -88,34 +119,19 @@ public class NCLExportEventHandler implements EventHandler<ActionEvent>{
             
             for(TemporalChain temporalChain : temporalView.getTemporalChainList()){
             	
-            	for(Media media :  temporalChain.getMediaAllList()){
-            		
-            		NCLRegion nclRegion = createNCLRegion(nclRegBase, media);
-            		NCLDescriptor nclDescriptor = createNCLDescriptor(nclDescBase, temporalChain, media, nclRegion);
-            		NCLMedia nclMedia = createNCLMedia(media, nclDescriptor);
-            		
-            		nclRegBase.addRegion(nclRegion);
-    				nclDescBase.addDescriptor(nclDescriptor);
-    				nclBody.addNode(nclMedia);
-    				
-    				if(temporalChain.getId() == 0){
-    					
-            			NCLPort nclPort = new NCLPort();
-    		            nclPort.setId("port_" + temporalChain.getMasterMedia().getName());
-    		            nclPort.setComponent(nclMedia);
-    		            
-    		            nclBody.addPort(nclPort);
-    		            
-            		}
-            		
-            	}
+            	createNCLPort(nclBody, nclRegBase, nclDescBase, temporalChain);	
+            	createNCLMediaDescriptorRegion(nclBody, nclRegBase, nclDescBase, temporalChain);
+            	createNCLLinks(nclBody, nclImportBase, temporalChain);
+            	
             }
             
         } catch (XMLException ex) {
         	
         	logger.error(ex.getMessage());
-        	MessageDialog messageDialog = new MessageDialog(ex.getMessage(), "OK", 150);
+        	MessageDialog messageDialog = new MessageDialog(Language.translate("error"), 
+					Language.translate("error.during.the.export") + ": " + ex.getMessage(), "OK", 150);
             messageDialog.showAndWait();
+            return null;
         	
         }
 		
@@ -123,16 +139,314 @@ public class NCLExportEventHandler implements EventHandler<ActionEvent>{
 		
 	}
 
-	private NCLMedia createNCLMedia(Media media,
-			NCLDescriptor nclDescriptor) throws XMLException {
+	private void createNCLPort(NCLBody nclBody, NCLRegionBase nclRegBase, NCLDescriptorBase nclDescBase, TemporalChain temporalChain) throws XMLException {
+		
+		if(temporalChain.getId() == 0){
+			
+			NCLPort nclPort = new NCLPort();
+			
+			if(temporalChain.getMasterMedia() != null){
+				nclPort.setId("port_" + temporalChain.getMasterMedia().getName());
+				NCLRegion nclRegion = createNCLRegion(nclRegBase, temporalChain.getMasterMedia());
+			    NCLDescriptor nclDescriptor = createNCLDescriptor(nclDescBase, temporalChain, temporalChain.getMasterMedia(), nclRegion);
+			    NCLMedia nclMedia = createNCLMedia(temporalChain.getMasterMedia(), nclDescriptor);
+			    nclPort.setComponent(nclMedia);
+			}
+		    
+		    nclBody.addPort(nclPort);
+		    
+		}
+	}
+
+	private void createNCLMediaDescriptorRegion(NCLBody nclBody,
+			NCLRegionBase nclRegBase, NCLDescriptorBase nclDescBase,
+			TemporalChain temporalChain) throws XMLException {
+		
+		for(Media media :  temporalChain.getMediaAllList()){
+			
+			NCLRegion nclRegion = createNCLRegion(nclRegBase, media);
+			NCLDescriptor nclDescriptor = createNCLDescriptor(nclDescBase, temporalChain, media, nclRegion);
+			NCLMedia nclMedia = createNCLMedia(media, nclDescriptor);
+			
+			nclRegBase.addRegion(nclRegion);
+			nclDescBase.addDescriptor(nclDescriptor);
+			nclBody.addNode(nclMedia);
+			
+		}
+	}
+
+	private void createNCLLinks(NCLBody nclBody, NCLImportBase nclImportBase, TemporalChain temporalChain) throws XMLException {
+		
+		for(Relation<Media> relation : temporalChain.getRelationList()){
+			
+			Synchronous<Media> synchronousRelation = (Synchronous<Media>) relation;
+			
+			NCLLink nclLink = new NCLLink<>();
+			nclLink.setId("link_" + synchronousRelation.getId());
+			
+			NCLDoc casualConnectorBaseNCLDoc = nclImportBase.getImportedDoc();
+			NCLHead connectorBaseNCLHead = casualConnectorBaseNCLDoc.getHead();
+			NCLConnectorBase nclConnectorBaseOfImportedBase = connectorBaseNCLHead.getConnectorBase();
+			
+			NCLCausalConnector importedNCLCausalConnector;
+			ExternalReferenceType externalReferenceType;
+			NCLBind conditionNCLBind;
+			NCLLinkParam nclLinkParamDelay;
+			
+			switch(synchronousRelation.getType()){
+
+				case STARTS:
+					
+					importedNCLCausalConnector = nclConnectorBaseOfImportedBase.getCausalConnector(ImportedNCLCausalConnectorType.ONBEGIN_START.getDescription());
+					externalReferenceType = new ExternalReferenceType<>(nclImportBase, importedNCLCausalConnector);
+					nclLink.setXconnector(externalReferenceType);
+					
+					conditionNCLBind = new NCLBind();
+					conditionNCLBind.setRole(importedNCLCausalConnector.findRole(NCLDefaultConditionRole.ONBEGIN.toString()));
+					conditionNCLBind.setComponent(nclBody.findNode(synchronousRelation.getMasterMedia().getName()));
+					nclLink.addBind(conditionNCLBind);
+					
+					for(Media slaveMedia : synchronousRelation.getSlaveMediaList()){
+						NCLBind startNCLBind = new NCLBind();
+		    			startNCLBind.setRole(importedNCLCausalConnector.findRole(NCLDefaultActionRole.START.toString()));
+		    			startNCLBind.setComponent(nclBody.findNode(slaveMedia.getName()));
+		    			nclLink.addBind(startNCLBind);
+					}
+					
+					nclBody.addLink(nclLink);
+					
+					break;
+					
+				case STARTS_DELAY:
+					
+					importedNCLCausalConnector = nclConnectorBaseOfImportedBase.getCausalConnector(ImportedNCLCausalConnectorType.ONBEGIN_START_DELAY.getDescription());
+					externalReferenceType = new ExternalReferenceType<>(nclImportBase, importedNCLCausalConnector);
+					nclLink.setXconnector(externalReferenceType);
+					
+					conditionNCLBind = new NCLBind();
+					conditionNCLBind.setRole(importedNCLCausalConnector.findRole(NCLDefaultConditionRole.ONBEGIN.toString()));
+					conditionNCLBind.setComponent(nclBody.findNode(synchronousRelation.getMasterMedia().getName()));
+					nclLink.addBind(conditionNCLBind);
+					
+					for(Media slaveMedia : synchronousRelation.getSlaveMediaList()){
+						NCLBind startNCLBind = new NCLBind();
+		    			startNCLBind.setRole(importedNCLCausalConnector.findRole(NCLDefaultActionRole.START.toString()));
+		    			startNCLBind.setComponent(nclBody.findNode(slaveMedia.getName()));
+		    			nclLink.addBind(startNCLBind);
+					}
+					
+					nclLinkParamDelay = new NCLLinkParam();
+					nclLinkParamDelay.setName(importedNCLCausalConnector.getConnectorParam(DELAY));
+					nclLinkParamDelay.setValue(new TimeType(synchronousRelation.getDelay()));
+					nclLink.addLinkParam(nclLinkParamDelay);
+					
+					nclBody.addLink(nclLink);
+					
+					break;
+					
+				case FINISHES:
+					
+					importedNCLCausalConnector = nclConnectorBaseOfImportedBase.getCausalConnector(ImportedNCLCausalConnectorType.ONEND_STOP.getDescription());
+					externalReferenceType = new ExternalReferenceType<>(nclImportBase, importedNCLCausalConnector);
+					nclLink.setXconnector(externalReferenceType);
+					
+					conditionNCLBind = new NCLBind();
+					conditionNCLBind.setRole(importedNCLCausalConnector.findRole(NCLDefaultConditionRole.ONEND.toString()));
+					conditionNCLBind.setComponent(nclBody.findNode(synchronousRelation.getMasterMedia().getName()));
+					nclLink.addBind(conditionNCLBind);
+					
+					for(Media slaveMedia : synchronousRelation.getSlaveMediaList()){
+						NCLBind startNCLBind = new NCLBind();
+		    			startNCLBind.setRole(importedNCLCausalConnector.findRole(NCLDefaultActionRole.STOP.toString()));
+		    			startNCLBind.setComponent(nclBody.findNode(slaveMedia.getName()));
+		    			nclLink.addBind(startNCLBind);
+					}
+					
+					nclBody.addLink(nclLink);
+
+					break;
+				
+				case FINISHES_DELAY:
+
+					importedNCLCausalConnector = nclConnectorBaseOfImportedBase.getCausalConnector(ImportedNCLCausalConnectorType.ONEND_STOP_DELAY.getDescription());
+					externalReferenceType = new ExternalReferenceType<>(nclImportBase, importedNCLCausalConnector);
+					nclLink.setXconnector(externalReferenceType);
+					
+					conditionNCLBind = new NCLBind();
+					conditionNCLBind.setRole(importedNCLCausalConnector.findRole(NCLDefaultConditionRole.ONEND.toString()));
+					conditionNCLBind.setComponent(nclBody.findNode(synchronousRelation.getMasterMedia().getName()));
+					nclLink.addBind(conditionNCLBind);
+					
+					for(Media slaveMedia : synchronousRelation.getSlaveMediaList()){
+						NCLBind startNCLBind = new NCLBind();
+		    			startNCLBind.setRole(importedNCLCausalConnector.findRole(NCLDefaultActionRole.STOP.toString()));
+		    			startNCLBind.setComponent(nclBody.findNode(slaveMedia.getName()));
+		    			nclLink.addBind(startNCLBind);
+					}
+					
+					nclLinkParamDelay = new NCLLinkParam();
+					nclLinkParamDelay.setName(importedNCLCausalConnector.getConnectorParam(DELAY));
+					nclLinkParamDelay.setValue(new TimeType(synchronousRelation.getDelay()));
+					nclLink.addLinkParam(nclLinkParamDelay);
+
+					nclBody.addLink(nclLink);
+					
+					break;
+					
+				case MEETS:
+					
+					importedNCLCausalConnector = nclConnectorBaseOfImportedBase.getCausalConnector(ImportedNCLCausalConnectorType.ONEND_START.getDescription());
+					externalReferenceType = new ExternalReferenceType<>(nclImportBase, importedNCLCausalConnector);
+					nclLink.setXconnector(externalReferenceType);
+					
+					conditionNCLBind = new NCLBind();
+					conditionNCLBind.setRole(importedNCLCausalConnector.findRole(NCLDefaultConditionRole.ONEND.toString()));
+					conditionNCLBind.setComponent(nclBody.findNode(synchronousRelation.getMasterMedia().getName()));
+					nclLink.addBind(conditionNCLBind);
+					
+					for(Media slaveMedia : synchronousRelation.getSlaveMediaList()){
+						NCLBind startNCLBind = new NCLBind();
+		    			startNCLBind.setRole(importedNCLCausalConnector.findRole(NCLDefaultActionRole.START.toString()));
+		    			startNCLBind.setComponent(nclBody.findNode(slaveMedia.getName()));
+		    			nclLink.addBind(startNCLBind);
+					}
+					
+					nclBody.addLink(nclLink);
+
+					break;
+				
+				case MEETS_DELAY:
+		
+					importedNCLCausalConnector = nclConnectorBaseOfImportedBase.getCausalConnector(ImportedNCLCausalConnectorType.ONEND_START_DELAY.getDescription());
+					externalReferenceType = new ExternalReferenceType<>(nclImportBase, importedNCLCausalConnector);
+					nclLink.setXconnector(externalReferenceType);
+					
+					conditionNCLBind = new NCLBind();
+					conditionNCLBind.setRole(importedNCLCausalConnector.findRole(NCLDefaultConditionRole.ONEND.toString()));
+					conditionNCLBind.setComponent(nclBody.findNode(synchronousRelation.getMasterMedia().getName()));
+					nclLink.addBind(conditionNCLBind);
+					
+					for(Media slaveMedia : synchronousRelation.getSlaveMediaList()){
+						NCLBind startNCLBind = new NCLBind();
+		    			startNCLBind.setRole(importedNCLCausalConnector.findRole(NCLDefaultActionRole.START.toString()));
+		    			startNCLBind.setComponent(nclBody.findNode(slaveMedia.getName()));
+		    			nclLink.addBind(startNCLBind);
+					}
+					
+					nclLinkParamDelay = new NCLLinkParam();
+					nclLinkParamDelay.setName(importedNCLCausalConnector.getConnectorParam(DELAY));
+					nclLinkParamDelay.setValue(new TimeType(synchronousRelation.getDelay()));
+					nclLink.addLinkParam(nclLinkParamDelay);
+					
+					nclBody.addLink(nclLink);
+					
+					break;
+				
+				case MET_BY:
+					
+					importedNCLCausalConnector = nclConnectorBaseOfImportedBase.getCausalConnector(ImportedNCLCausalConnectorType.ONBEGIN_STOP.getDescription());
+					externalReferenceType = new ExternalReferenceType<>(nclImportBase, importedNCLCausalConnector);
+					nclLink.setXconnector(externalReferenceType);
+					
+					conditionNCLBind = new NCLBind();
+					conditionNCLBind.setRole(importedNCLCausalConnector.findRole(NCLDefaultConditionRole.ONBEGIN.toString()));
+					conditionNCLBind.setComponent(nclBody.findNode(synchronousRelation.getMasterMedia().getName()));
+					nclLink.addBind(conditionNCLBind);
+					
+					for(Media slaveMedia : synchronousRelation.getSlaveMediaList()){
+						NCLBind startNCLBind = new NCLBind();
+		    			startNCLBind.setRole(importedNCLCausalConnector.findRole(NCLDefaultActionRole.STOP.toString()));
+		    			startNCLBind.setComponent(nclBody.findNode(slaveMedia.getName()));
+		    			nclLink.addBind(startNCLBind);
+					}
+					
+					nclBody.addLink(nclLink);
+					
+					break;
+				
+				case MET_BY_DELAY:
+				
+					importedNCLCausalConnector = nclConnectorBaseOfImportedBase.getCausalConnector(ImportedNCLCausalConnectorType.ONBEGIN_STOP_DELAY.getDescription());
+					externalReferenceType = new ExternalReferenceType<>(nclImportBase, importedNCLCausalConnector);
+					nclLink.setXconnector(externalReferenceType);
+					
+					conditionNCLBind = new NCLBind();
+					conditionNCLBind.setRole(importedNCLCausalConnector.findRole(NCLDefaultConditionRole.ONBEGIN.toString()));
+					conditionNCLBind.setComponent(nclBody.findNode(synchronousRelation.getMasterMedia().getName()));
+					nclLink.addBind(conditionNCLBind);
+					
+					for(Media slaveMedia : synchronousRelation.getSlaveMediaList()){
+						NCLBind startNCLBind = new NCLBind();
+		    			startNCLBind.setRole(importedNCLCausalConnector.findRole(NCLDefaultActionRole.STOP.toString()));
+		    			startNCLBind.setComponent(nclBody.findNode(slaveMedia.getName()));
+		    			nclLink.addBind(startNCLBind);
+					}
+					
+					nclLinkParamDelay = new NCLLinkParam();
+					nclLinkParamDelay.setName(importedNCLCausalConnector.getConnectorParam(DELAY));
+					nclLinkParamDelay.setValue(new TimeType(synchronousRelation.getDelay()));
+					nclLink.addLinkParam(nclLinkParamDelay);
+					
+					nclBody.addLink(nclLink);
+					
+					break;
+				
+				case BEFORE:
+					
+					for(int i  = 0; i < synchronousRelation.getSlaveMediaList().size(); i++){
+						
+						NCLLink beforeNCLLink = new NCLLink<>();
+						beforeNCLLink.setId("link_" + synchronousRelation.getId() + i);
+						
+						Media slaveMedia = synchronousRelation.getSlaveMediaList().get(i);
+		
+						importedNCLCausalConnector = nclConnectorBaseOfImportedBase.getCausalConnector(ImportedNCLCausalConnectorType.ONEND_START_DELAY.getDescription());
+						externalReferenceType = new ExternalReferenceType<>(nclImportBase, importedNCLCausalConnector);
+						beforeNCLLink.setXconnector(externalReferenceType);
+						
+						conditionNCLBind = new NCLBind();
+						conditionNCLBind.setRole(importedNCLCausalConnector.findRole(NCLDefaultConditionRole.ONEND.toString()));
+						
+						if(i == 0){
+							conditionNCLBind.setComponent(nclBody.findNode(synchronousRelation.getMasterMedia().getName()));
+						}else {
+							conditionNCLBind.setComponent(nclBody.findNode(synchronousRelation.getSlaveMediaList().get(i-1).getName()));
+						}
+						
+						beforeNCLLink.addBind(conditionNCLBind);
+					
+						NCLBind startNCLBind = new NCLBind();
+		    			startNCLBind.setRole(importedNCLCausalConnector.findRole(NCLDefaultActionRole.START.toString()));
+		    			startNCLBind.setComponent(nclBody.findNode(slaveMedia.getName()));
+		    			beforeNCLLink.addBind(startNCLBind);
+					
+						nclLinkParamDelay = new NCLLinkParam();
+						nclLinkParamDelay.setName(importedNCLCausalConnector.getConnectorParam(DELAY));
+						nclLinkParamDelay.setValue(new TimeType(synchronousRelation.getDelay()));
+						beforeNCLLink.addLinkParam(nclLinkParamDelay);
+						
+						nclBody.addLink(beforeNCLLink);
+						
+					}
+					
+					break;
+			
+			}
+			
+		}
+	}
+
+	private NCLMedia createNCLMedia(Media media, NCLDescriptor nclDescriptor) throws XMLException {
+		
 		NCLMedia nclMedia = new NCLMedia();
 		nclMedia.setId(media.getName());
-		nclMedia.setSrc(new SrcType(NCLUriType.FILE, media.getName()));
+		nclMedia.setSrc(new SrcType("media/" + media.getFile().getAbsoluteFile().getName()));
 		if(media.getMimeType() != null){
 			nclMedia.setType(NCLMimeType.getEnumType(media.getMimeType().toString()));
 		}
 		nclMedia.setDescriptor(nclDescriptor);
 		return nclMedia;
+		
 	}
 
 	private NCLDescriptor createNCLDescriptor(NCLDescriptorBase nclDescBase, TemporalChain temporalChain, Media media, NCLRegion nclRegion) throws XMLException {
@@ -228,21 +542,66 @@ public class NCLExportEventHandler implements EventHandler<ActionEvent>{
 				
 				if(file != null){
 				
-					File auxFile = new File(file.getAbsolutePath() + ".ncl");
+					String exportedNCLDocumentDir = file.getAbsolutePath() + EXPORTED_NCL_DOCUMENT;
+					String mediaDir = exportedNCLDocumentDir + "/media";
+					Boolean mediaDirCreated = (new File(mediaDir)).mkdirs();
+					
+					if (mediaDirCreated) {
+
+						copyMediaFiles(mediaDir);
+						
+						fileInputStream = new FileInputStream(causalConnectorBaseFile);
+						FileChannel sourceChannel = fileInputStream.getChannel();
+						fileOutputStream = new FileOutputStream(new File(exportedNCLDocumentDir + "/" + causalConnectorBaseFile.getAbsoluteFile().getName()));
+						FileChannel destChannel = fileOutputStream.getChannel();
+				        destChannel.transferFrom(sourceChannel, 0, sourceChannel.size());
+				        sourceChannel.close();
+				        destChannel.close();
+						
+						
+					}
+					
+					File auxFile = new File(exportedNCLDocumentDir + "/" + file.getAbsoluteFile().getName() + ".ncl");
 					FileWriter fileWriter = new FileWriter(auxFile);
 					fileWriter.write(nclCode);
                     fileWriter.close();
+                    MessageDialog messageDialog = new MessageDialog(Language.translate("ncl.export.is.ready"), 
+                    		Language.translate("your.hypermedia.presentation.has.been.successfully.exported.to.ncl.document"), "OK", 150);
+    		        messageDialog.showAndWait();
                     
 				}
                 
-			} catch (IOException e) {
+			} catch (Exception e) {
+				
 				logger.error(e.getMessage());
-				MessageDialog messageDialog = new MessageDialog(e.getMessage(), "OK", 150);
+				MessageDialog messageDialog = new MessageDialog(Language.translate("error.during.the.export"), 
+						Language.translate("could.not.find.the.ncl.document.directory") + ": " + e.getMessage(), "OK", 150);
 		        messageDialog.showAndWait();
+		        
 			}
             
         }
 
+	}
+
+	private void copyMediaFiles(String mediaDir) throws FileNotFoundException, IOException {
+		
+		for(TemporalChain temporalChain : temporalView.getTemporalChainList()){
+			
+			for(Media media :  temporalChain.getMediaAllList()){
+
+			    fileInputStream = new FileInputStream(media.getFile());
+				FileChannel sourceChannel = fileInputStream.getChannel();
+				fileOutputStream = new FileOutputStream(new File(mediaDir + "/" + media.getFile().getAbsoluteFile().getName()));
+				FileChannel destChannel = fileOutputStream.getChannel();
+		        destChannel.transferFrom(sourceChannel, 0, sourceChannel.size());
+		        sourceChannel.close();
+		        destChannel.close();
+				
+			}
+			
+		}
+		
 	}
 
 }

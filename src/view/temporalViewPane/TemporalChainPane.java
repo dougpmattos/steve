@@ -126,6 +126,10 @@ public class TemporalChainPane extends StackPane implements Observer{
 				Dragboard dragBoard = event.getDragboard();
 		        Object[] contentTypes = dragBoard.getContentTypes().toArray();
 		        Media droppedMedia = (Media) dragBoard.getContent((DataFormat) contentTypes[0]);
+		        int duplicatedMediaCount = getDuplicatedMediaCount(droppedMedia);
+		        if(duplicatedMediaCount > 0){
+		        	droppedMedia.setName(droppedMedia.getName() + "_" + duplicatedMediaCount++);
+		        }
 
 		        try{
 		        	
@@ -160,6 +164,20 @@ public class TemporalChainPane extends StackPane implements Observer{
 		        	
 		        }
 		        
+			}
+
+			private int getDuplicatedMediaCount(Media droppedMedia) {
+				
+				int i = 0;
+				
+				for(Media media : temporalChainModel.getMediaAllList()){
+					if(media.getName().equalsIgnoreCase(droppedMedia.getName())){
+						i++;
+					}
+				}
+				
+				return i;
+				
 			}
 		});
 		
