@@ -67,7 +67,7 @@ public class StevePane extends Scene{
 		
     	repositoryPane = new RepositoryPane(controller, repositoryMediaList);
     	temporalViewPane = new TemporalViewPane(controller, temporalView, repositoryPane, this);
-    	spatialViewPane = new SpatialViewPane(controller, temporalView, temporalViewPane, repositoryPane);
+    	spatialViewPane = new SpatialViewPane(controller, temporalView, temporalViewPane, repositoryPane, repositoryMediaList);
     	stveMenuBar = new SteveMenuBar(controller, temporalView, repositoryMediaList, temporalViewPane);
 	   
     	repositoryPane.setTemporalViewPane(temporalViewPane);

@@ -10,6 +10,8 @@ import javafx.scene.chart.XYChart;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.shape.Rectangle;
@@ -123,6 +125,8 @@ public class TimeLineXYChartData {
 			@Override
 			public void handle(MouseEvent mouseEvent) {
 
+				node.requestFocus();
+				
 				for(Node repositoryMediaItemContainer : repositoryPane.getRepositoryMediaItemContainerListPane().getAllTypes()){
 					
 					RepositoryMediaItemContainer repoMediaItemContainer = (RepositoryMediaItemContainer) repositoryMediaItemContainer;
@@ -226,6 +230,27 @@ public class TimeLineXYChartData {
 				}
 
 			}
+	    	
+	    });
+	    
+	    node.setOnKeyReleased(new EventHandler<KeyEvent>() {
+	    	
+	    	@Override
+			public void handle(KeyEvent event) {
+	    		
+	    		if(event.getCode() == KeyCode.DELETE || event.getCode() == KeyCode.BACK_SPACE){
+	    			
+	    			for(int i=0; i<temporalViewPane.getSelectedMediaList().size(); i++){
+	    				
+	    				Media media = temporalViewPane.getSelectedMediaList().get(i);
+	    				temporalViewPane.clearSelectedMedia();
+		    			controller.removeMediaTemporalChain(media, temporalChainModel);
+		    			
+	    			}
+	    	
+	    		}
+
+	    	}
 	    	
 	    });
 		

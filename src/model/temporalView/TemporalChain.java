@@ -45,7 +45,8 @@ public class TemporalChain extends Observable implements Serializable {
 	public void setMasterMedia(Media masterMedia){
 		
 		this.masterMedia = masterMedia;
-        
+		addMedia(masterMedia);
+		
 	}
 	
 	public Media getMasterMedia() {
@@ -56,6 +57,9 @@ public class TemporalChain extends Observable implements Serializable {
 
 		mediaAllList.add(media);
 		int line = addMediaLineList(media);
+		if(masterMedia.getBegin() != 0){
+			masterMedia = getMediaWithLowestBegin();
+		}
 		
 		setChanged();
 		Operation<TemporalViewOperator> operation = new Operation<TemporalViewOperator>(TemporalViewOperator.ADD_TEMPORAL_CHAIN_MEDIA, media, line);
@@ -69,6 +73,10 @@ public class TemporalChain extends Observable implements Serializable {
 		
 		mediaAllList.remove(media);
 		int line = removeMediaLineList(media);
+		if(masterMedia == media){
+			masterMedia = getMediaWithLowestBegin();
+		}
+		removeMediaOfRelations(media);
 		
 		setChanged();
 		Operation<TemporalViewOperator> operation = new Operation<TemporalViewOperator>(TemporalViewOperator.REMOVE_TEMPORAL_CHAIN_MEDIA, media, line);
@@ -78,6 +86,48 @@ public class TemporalChain extends Observable implements Serializable {
         
 	}
 	
+	private Media getMediaWithLowestBegin() {
+		
+		Media mediaWithLowestBegin = null;
+		
+		if(!mediaAllList.isEmpty()){
+			mediaWithLowestBegin = mediaAllList.get(0);
+		}
+		
+		for(int i=1; i < mediaAllList.size(); i++){
+			
+			Media media = mediaAllList.get(i);
+			
+			if(media.getBegin() < mediaWithLowestBegin.getBegin()){
+				mediaWithLowestBegin = media;
+			}
+			
+		}
+		
+		return mediaWithLowestBegin;
+		
+	}
+
+	private void removeMediaOfRelations(Media media) {
+		
+		for(int i=0; i < relationList.size(); i++){
+			
+			Relation relation = relationList.get(i);
+			
+			Synchronous<Media> synchronousRelation = (Synchronous<Media>) relation;
+			if(synchronousRelation.getMasterMedia() == media){
+				removeSynchronousRelation(synchronousRelation);
+			}else {
+				synchronousRelation.removeSlaveMedia(media);
+				if(synchronousRelation.getSlaveMediaList().isEmpty()){
+					removeSynchronousRelation(synchronousRelation);
+				}
+			}
+			
+		}
+		
+	}
+
 	private int removeMediaLineList(Media media) {
 		
 		int line = 0;
@@ -905,7 +955,7 @@ public class TemporalChain extends Observable implements Serializable {
 		relationList.remove(synchronousRelation);
 		
 		setChanged();
-		Operation<TemporalViewOperator> operation = new Operation<TemporalViewOperator>(TemporalViewOperator.ADD_SYNC_RELATION, synchronousRelation, this);
+		Operation<TemporalViewOperator> operation = new Operation<TemporalViewOperator>(TemporalViewOperator.REMOVE_SYNC_RELATION, synchronousRelation, this);
         notifyObservers(operation);
         
 	}

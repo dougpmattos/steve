@@ -13,6 +13,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.BorderPane;
 import model.common.Media;
+import model.repository.enums.RepositoryOperator;
 import view.temporalViewPane.TemporalChainPane;
 import view.temporalViewPane.TemporalViewPane;
 import view.temporalViewPane.TimeLineXYChartData;
@@ -126,7 +127,7 @@ public class RepositoryMediaItemContainer extends BorderPane implements view.com
 	
 	public void setSelected(boolean selected) {
 		this.selected = selected;
-		notifyObservers();
+		notifyObservers(RepositoryOperator.SELECT_REPOSITORY_MEDIA);
 	}
 
 	public Boolean getSelected(){
@@ -149,11 +150,11 @@ public class RepositoryMediaItemContainer extends BorderPane implements view.com
 	}
 	
 	@Override
-	public void notifyObservers() {
+	public void notifyObservers(Object operator) {
 
 		for(int i = 0; i < observers.size(); i++){
 			view.common.Observer observer = (view.common.Observer) observers.get(i);
-			observer.update(this, getMedia());
+			observer.update(this, getMedia(), operator);
 		}
 		
 	}

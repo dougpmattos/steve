@@ -327,19 +327,19 @@ public class RepositoryMediaItemContainerListPane extends ScrollPane implements 
 	}
 	
 	@Override
-	public void notifyObservers() {
+	public void notifyObservers(Object operator) {
 
 		for(int i = 0; i < observers.size(); i++){
 			view.common.Observer observer = (view.common.Observer) observers.get(i);
-			observer.update(this, getSelectedMedia());
+			observer.update(this, getSelectedMedia(), operator);
 		}
 		
 	}
 
 	@Override
-	public void update(Observable o, Object obj) {
+	public void update(Observable o, Object obj, Object operator) {
 		
-		notifyObservers();
+		notifyObservers(operator);
 
 	}
 	

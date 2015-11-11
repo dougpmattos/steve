@@ -117,7 +117,7 @@ public class RepositoryMediaList extends Observable implements Serializable{
         allTypes.clear();
         
         setChanged();
-        Operation<RepositoryOperator> operation = new Operation<RepositoryOperator>(RepositoryOperator.CLEAR_REPOSITORY_MEDIA_LIST);
+        Operation<RepositoryOperator> operation = new Operation<RepositoryOperator>(RepositoryOperator.CLEAR_SELECTION_REPOSITORY_MEDIA);
         notifyObservers(operation);
         
     }

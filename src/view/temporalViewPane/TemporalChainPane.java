@@ -27,6 +27,7 @@ import javafx.scene.shape.Path;
 import javafx.scene.shape.PathElement;
 import javafx.scene.shape.VLineTo;
 import model.common.Media;
+import model.temporalView.Relation;
 import model.temporalView.Synchronous;
 import model.temporalView.TemporalChain;
 import model.temporalView.TemporalView;
@@ -112,6 +113,9 @@ public class TemporalChainPane extends StackPane implements Observer{
     	createMouseEvent();
     	
     	temporalChainModel.addObserver(this);
+    	for(Relation relation: temporalChainModel.getRelationList()){
+    		relation.addObserver(this);
+    	}
     	
     	this.controller = controller;
     	
@@ -141,7 +145,6 @@ public class TemporalChainPane extends StackPane implements Observer{
 			        	droppedMedia.setEnd(droppedMedia.getDuration());
 			        	
 			        	controller.setMasterMedia(droppedMedia, temporalChainModel);
-		        		controller.addMediaTemporalChain(droppedMedia, temporalChainModel);
 		        		
 		        	} else{
 		        	
@@ -277,6 +280,8 @@ public class TemporalChainPane extends StackPane implements Observer{
 
 		Media media;
 		int line;
+		Synchronous<Media> syncRelation;
+		TemporalChain temporalChainModel;
 		
 		switch(operation.getOperator()){
 		
@@ -298,9 +303,25 @@ public class TemporalChainPane extends StackPane implements Observer{
 	            
 			case ADD_SYNC_RELATION:
 				
-				Synchronous<Media> syncRelation = (Synchronous<Media>) operation.getOperating();
-				TemporalChain temporalChainModel = (TemporalChain) operation.getArg();
+				syncRelation = (Synchronous<Media>) operation.getOperating();
+				temporalChainModel = (TemporalChain) operation.getArg();
 	            addSyncRelation(syncRelation, temporalChainModel);
+				
+				break;
+				
+			case REMOVE_SYNC_RELATION:
+				
+				syncRelation = (Synchronous<Media>) operation.getOperating();
+				temporalChainModel = (TemporalChain) operation.getArg();
+	            removeSyncRelation(syncRelation, temporalChainModel);
+				
+				break;
+			
+			case REMOVE_SLAVE_MEDIA_OF_SYNC_RELATION:
+				
+				media = (Media) operation.getOperating();
+				syncRelation = (Synchronous<Media>) operation.getArg();
+	            removeSlaveMediaOfSyncRelation(media, syncRelation);
 				
 				break;
 
@@ -353,6 +374,18 @@ public class TemporalChainPane extends StackPane implements Observer{
 	private void addSyncRelation(Synchronous<Media> syncRelation, TemporalChain temporalChainModel){
 		
 		//TODO desenhar as setas das relações entre as mídias.
+
+	}
+	
+	private void removeSyncRelation(Synchronous<Media> syncRelation, TemporalChain temporalChainModel){
+		
+		//TODO remover as setas das relações entre as mídias.
+
+	}
+	
+	private void removeSlaveMediaOfSyncRelation(Media slaveMedia, Synchronous<Media> syncRelation){
+		
+		//TODO remover as seta que aponta para a mídia escrava removida da relação.
 
 	}
 	

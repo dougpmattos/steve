@@ -88,7 +88,7 @@ public class RepositoryPane extends BorderPane implements Observer {
 		        	
 		            break;
 				
-		        case CLEAR_REPOSITORY_MEDIA_LIST:
+		        case CLEAR_SELECTION_REPOSITORY_MEDIA:
 		        	
 		        	repositoryMediaItemContainerListPane.getAllTypes().clear();
 		        	repositoryMediaItemContainerListPane.getImages().clear();

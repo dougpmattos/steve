@@ -135,11 +135,13 @@ public class TemporalViewPane extends BorderPane implements Observer, view.commo
 	}
 
 	@Override
-	public void notifyObservers() {
+	public void notifyObservers(Object operator) {
 
+		TemporalViewOperator temporalViewOperator = (TemporalViewOperator) operator;
+		
 		for(int i = 0; i < observers.size(); i++){
 			view.common.Observer observer = (view.common.Observer) observers.get(i);
-			observer.update(this, firstSelectedMedia);
+			observer.update(this, firstSelectedMedia, temporalViewOperator);
 		}
 		
 	}
@@ -151,21 +153,16 @@ public class TemporalViewPane extends BorderPane implements Observer, view.commo
 		if(selectedMediaList.size() == 1){
 			
 			this.firstSelectedMedia = selectedMedia;
-			notifyObservers();
+			notifyObservers(TemporalViewOperator.SELECT_TEMPORAL_MEDIA);
 			
 		}
 		
 	}
-	
-	public void  removeSelectedMedia(Media selectedMedia){
-		
-		selectedMediaList.remove(selectedMedia);
-		
-	}
-	
+
 	public void  clearSelectedMedia(){
 		
 		selectedMediaList.clear();
+		notifyObservers(TemporalViewOperator.CLEAR_SELECTION_TEMPORAL_MEDIA);
 		
 	}
 

@@ -1,6 +1,9 @@
 
 package view.spatialViewPane;
 
+import java.util.Observable;
+import java.util.Observer;
+
 import javafx.geometry.Orientation;
 import javafx.scene.control.Label;
 import javafx.scene.control.SplitPane;
@@ -8,7 +11,11 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.HBox;
 import model.common.Media;
+import model.repository.RepositoryMediaList;
+import model.repository.enums.RepositoryOperator;
 import model.temporalView.TemporalView;
+import model.temporalView.enums.TemporalViewOperator;
+import model.utility.Operation;
 import view.common.Language;
 import view.repositoryPane.RepositoryPane;
 import view.temporalViewPane.TemporalViewPane;
@@ -19,7 +26,7 @@ import controller.Controller;
  *
  * @author Douglas
  */
-public class SpatialViewPane extends SplitPane implements view.common.Observer {
+public class SpatialViewPane extends SplitPane implements view.common.Observer, Observer {
 
 	private Controller controller;
 	
@@ -32,8 +39,9 @@ public class SpatialViewPane extends SplitPane implements view.common.Observer {
 	private Tab propertyTab;
 	private Tab infoTab;
 	private TabPane propertyInfoTabPane;
+	private HBox labelContainer;
 	
-    public SpatialViewPane(Controller controller, TemporalView temporalViewModel, TemporalViewPane temporalViewPane, RepositoryPane repositoryPane) {
+    public SpatialViewPane(Controller controller, TemporalView temporalViewModel, TemporalViewPane temporalViewPane, RepositoryPane repositoryPane, RepositoryMediaList repositoryMediaList) {
   
     	setOrientation(Orientation.HORIZONTAL);
     	setDividerPositions(0.5);
@@ -44,7 +52,7 @@ public class SpatialViewPane extends SplitPane implements view.common.Observer {
     	
     	displayPane = new DisplayPane();
     	
-    	HBox labelContainer = new HBox();
+    	labelContainer = new HBox();
 		labelContainer.setId("label-container");
 		Label label = new Label(Language.translate("no.selected.media"));
 		labelContainer.getChildren().add(label);
@@ -53,26 +61,64 @@ public class SpatialViewPane extends SplitPane implements view.common.Observer {
     	
     	temporalViewPane.addObserver(this);
     	repositoryPane.getRepositoryMediaItemContainerListPane().addObserver(this);
+    	repositoryMediaList.addObserver(this);
     	
     	this.controller = controller;
     	
     }
 
     @Override
-	public void update(view.common.Observable o, Object obj) {
-		
-    	if(obj instanceof Media){
+	public void update(view.common.Observable o, Object obj, Object operator) {
+	
+    	if(operator instanceof RepositoryOperator){
     		
-    		Media selectedMedia = (Media) obj;
+    		RepositoryOperator repositoryOperator = (RepositoryOperator) operator;
     		
-    		if(selectedMedia.getBegin() != null){
-    			createPropertyInfoTabPane(controller, selectedMedia);
-    		}else{
-    			createMediaInfoTabPane(controller, selectedMedia);
+    		switch (repositoryOperator) {
+    		
+	    		case SELECT_REPOSITORY_MEDIA:
+	    			
+	    			if(obj instanceof Media){
+	    				Media selectedMedia = (Media) obj;
+	    				createMediaInfoTabPane(controller, selectedMedia);
+	    			}
+	    			
+	    			break;
+
+	    		default:
+	    			break;
+	    			
     		}
     		
+    	}else if(operator instanceof TemporalViewOperator){
+    		
+    		TemporalViewOperator temporalViewOperator = (TemporalViewOperator) operator;
+    		
+    		switch (temporalViewOperator) {
+    		
+				case SELECT_TEMPORAL_MEDIA:
+					
+					if(obj instanceof Media){
+						Media selectedMedia = (Media) obj;
+						createPropertyInfoTabPane(controller, selectedMedia);
+					}
+					
+					break;
+				
+				case CLEAR_SELECTION_TEMPORAL_MEDIA:
+					
+					getItems().clear();
+			    	getItems().addAll(labelContainer, displayPane);
+			    	
+					break;
+					
+				default:
+					break;
+					
+			}
+    		
     	}
-		
+	
 	}
     
 	private void createPropertyInfoTabPane(Controller controller, Media media) {
@@ -114,6 +160,40 @@ public class SpatialViewPane extends SplitPane implements view.common.Observer {
     	getItems().clear();
     	getItems().addAll(propertyInfoTabPane, displayPane);
     	
+	}
+
+	@Override
+	public void update(Observable o, Object arg) {
+		
+		if(o instanceof RepositoryMediaList){
+			
+			Operation<RepositoryOperator> operation = (Operation<RepositoryOperator>) arg;
+			Media media = (Media) operation.getOperating();
+
+			switch(operation.getOperator()){
+			
+				case CLEAR_SELECTION_REPOSITORY_MEDIA:
+					
+					getItems().clear();
+			    	getItems().addAll(labelContainer, displayPane);
+			    	
+					break;
+					
+	    		case REMOVE_REPOSITORY_MEDIA:
+					
+					getItems().clear();
+			    	getItems().addAll(labelContainer, displayPane);
+			    	
+					break;
+		        	
+		        default:
+		        	
+		        	break;
+		        	
+			}
+			
+		}
+		
 	}
     
 }

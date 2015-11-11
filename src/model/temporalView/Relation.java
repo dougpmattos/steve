@@ -2,8 +2,12 @@ package model.temporalView;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Observable;
 
-public abstract class Relation<E> implements Serializable{
+import model.temporalView.enums.TemporalViewOperator;
+import model.utility.Operation;
+
+public abstract class Relation<E> extends Observable implements Serializable {
 
 	private static final long serialVersionUID = 3044752885230388480L;
 
@@ -38,7 +42,14 @@ public abstract class Relation<E> implements Serializable{
 	}
 	
 	public void removeSlaveMedia(E slaveMedia) {
-		slaveMediaList.remove(slaveMedia);
+		
+		if(slaveMediaList.remove(slaveMedia)){
+			
+			setChanged();
+			Operation<TemporalViewOperator> operation = new Operation<TemporalViewOperator>(TemporalViewOperator.REMOVE_SLAVE_MEDIA_OF_SYNC_RELATION, slaveMedia, this);
+	        notifyObservers(operation);
+	        
+		}
 	}
 
 	public ArrayList<E> getSlaveMediaList() {

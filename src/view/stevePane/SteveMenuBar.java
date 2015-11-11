@@ -220,6 +220,7 @@ public class SteveMenuBar extends MenuBar{
 							
 							temporalViewPane.addSelectedMedia(timeLineXYChartData.getMedia());
 							if(timeLineXYChartData.getContainerNode().getStylesheets().isEmpty()){
+								timeLineXYChartData.getContainerNode().requestFocus();
 								timeLineXYChartData.getContainerNode().getStylesheets().add("view/temporalViewPane/styles/mousePressedTemporalMediaNode.css");
 								Rectangle mediaImageClip = (Rectangle) timeLineXYChartData.getContainerNode().getChildren().get(0).getClip();
 								mediaImageClip.setHeight(mediaImageClip.getHeight()-5);

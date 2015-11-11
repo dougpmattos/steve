@@ -2,19 +2,19 @@ package controller;
 
 import java.io.IOException;
 
-import view.spatialViewPane.CropPane;
-import view.spatialViewPane.TemporalMediaInfoPane;
-import view.spatialViewPane.LevelPane;
-import view.spatialViewPane.PositionPane;
-import view.spatialViewPane.SizePane;
-import view.spatialViewPane.StylePane;
-import view.stevePane.StevePane;
 import javafx.stage.Stage;
 import model.common.Media;
 import model.repository.RepositoryMediaList;
 import model.temporalView.Synchronous;
 import model.temporalView.TemporalChain;
 import model.temporalView.TemporalView;
+import view.spatialViewPane.CropPane;
+import view.spatialViewPane.LevelPane;
+import view.spatialViewPane.PositionPane;
+import view.spatialViewPane.SizePane;
+import view.spatialViewPane.StylePane;
+import view.spatialViewPane.TemporalMediaInfoPane;
+import view.stevePane.StevePane;
 import br.uff.midiacom.ana.util.exception.XMLException;
 
 public class Controller {
@@ -99,6 +99,14 @@ public class Controller {
 	
 	public void addSynchronousRelation(TemporalChain temporalChain, Synchronous<Media> synchronousRelation){
 		temporalChain.addSynchronousRelation(synchronousRelation);
+	}
+
+	public void removeMediaTemporalChain(Media media, TemporalChain temporalChainModel) {
+		temporalChainModel.removeMedia(media);
+	}
+	
+	public void removeSynchronousRelation(TemporalChain temporalChain, Synchronous<Media> synchronousRelation){
+		temporalChain.removeSynchronousRelation(synchronousRelation);
 	}
 	
 }
