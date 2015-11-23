@@ -218,13 +218,10 @@ public class TimeLineXYChartData {
 				
 				if(wasDragged){
 					
-					Double droppedTime = timeLineChart.getXAxis().getValueForDisplay(event.getX()).doubleValue();
+					Double droppedTime = timeLineChart.getXAxis().getValueForDisplay(event.getSceneX()).doubleValue();
 	        		droppedTime = MediaUtil.approximateDouble(droppedTime);
-	        		
-		        	media.setBegin(droppedTime);
-		        	media.setEnd(droppedTime + media.getDuration());
-		        	
-	        		controller.addMediaTemporalChain(media, temporalChainModel);
+
+	        		controller.dragMediaTemporalChain(temporalChainModel, media, droppedTime);
 					
 					wasDragged = false;
 				}
@@ -244,7 +241,7 @@ public class TimeLineXYChartData {
 	    				
 	    				Media media = temporalViewPane.getSelectedMediaList().get(i);
 	    				temporalViewPane.clearSelectedMedia();
-		    			controller.removeMediaTemporalChain(media, temporalChainModel);
+		    			controller.removeMediaTemporalChain(media, temporalChainModel, true);
 		    			
 	    			}
 	    	

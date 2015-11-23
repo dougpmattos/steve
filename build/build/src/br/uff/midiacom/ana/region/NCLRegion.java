@@ -220,7 +220,7 @@ public class NCLRegion<T extends NCLElement,
      *          region left location or <i>null</i> to erase a location already defined.
      */
     public void setLeft(Object left) throws XMLException {
-        Object aux = this.left; 
+        Object aux = this.left;
         
         if(left == null){
             this.left = left;

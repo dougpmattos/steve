@@ -106,7 +106,8 @@ public enum NCLMediaType {
 
         return OTHER;
     }
-
+    
+    
     public static NCLMediaType getEnumType(NCLMimeType type){
         if(type == null)
             return null;
@@ -146,5 +147,4 @@ public enum NCLMediaType {
 
         return OTHER;
     }
-    
 }

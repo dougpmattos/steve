@@ -192,7 +192,7 @@ public class InputDialog extends Stage {
 	        	return "right";
 	           
 	        case CLOSE_BUTTON:
-	        	return "";
+	        	return "close";
             
     	}
     	

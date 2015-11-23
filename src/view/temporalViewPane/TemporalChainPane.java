@@ -373,7 +373,12 @@ public class TemporalChainPane extends StackPane implements Observer{
 	
 	private void addSyncRelation(Synchronous<Media> syncRelation, TemporalChain temporalChainModel){
 		
-		//TODO desenhar as setas das relações entre as mídias.
+		//TODO fazendo primeiramente para start
+//		Double masterBegin = syncRelation.getMasterMedia().getBegin();
+//	 	Path arrow = new Path();
+//	 	arrow.getElements().addAll(new MoveTo(0, 200), new LineTo(15, 10), new LineTo(7.5, 23), new ClosePath(), new MoveTo(7.5, 23), new VLineTo());
+//	 	arrow.setId("relation-arrow");
+//    	getChildren().add(arrow);
 
 	}
 	

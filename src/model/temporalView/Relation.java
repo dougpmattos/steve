@@ -11,7 +11,7 @@ public abstract class Relation<E> extends Observable implements Serializable {
 
 	private static final long serialVersionUID = 3044752885230388480L;
 
-	private static int relationNumber = 0;
+	public static int relationNumber = 0;
 	
 	private int id;
 	private E masterMedia;

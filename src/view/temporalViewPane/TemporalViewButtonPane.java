@@ -541,7 +541,7 @@ public class TemporalViewButtonPane extends BorderPane {
     	String input = inputDialog.showAndWaitAndReturn();
     	Double delay;
     	
-    	if(input == null){
+    	if(input == null || input.equals("left") || input.equals("close")){
     		return null;
     	}else if(input.isEmpty()){
     		delay = 0.0;

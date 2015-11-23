@@ -101,12 +101,16 @@ public class Controller {
 		temporalChain.addSynchronousRelation(synchronousRelation);
 	}
 
-	public void removeMediaTemporalChain(Media media, TemporalChain temporalChainModel) {
-		temporalChainModel.removeMedia(media);
+	public void removeMediaTemporalChain(Media media, TemporalChain temporalChainModel, Boolean isDeleteButton) {
+		temporalChainModel.removeMedia(media, isDeleteButton);
 	}
 	
 	public void removeSynchronousRelation(TemporalChain temporalChain, Synchronous<Media> synchronousRelation){
 		temporalChain.removeSynchronousRelation(synchronousRelation);
+	}
+
+	public void dragMediaTemporalChain(TemporalChain temporalChain, Media media, Double droppedTime) {
+		temporalChain.dragMedia(temporalChain, media, droppedTime);
 	}
 	
 }

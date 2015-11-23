@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Observable;
 
 import model.common.Media;
+import model.temporalView.enums.ConflictType;
 import model.temporalView.enums.RelationType;
 import model.temporalView.enums.TemporalViewOperator;
 import model.utility.Operation;
@@ -57,7 +58,10 @@ public class TemporalChain extends Observable implements Serializable {
 
 		mediaAllList.add(media);
 		int line = addMediaLineList(media);
-		if(masterMedia.getBegin() != 0){
+		
+		if(masterMedia == null){
+			masterMedia = media;
+		} else if(masterMedia.getBegin() != 0){
 			masterMedia = getMediaWithLowestBegin();
 		}
 		
@@ -69,21 +73,107 @@ public class TemporalChain extends Observable implements Serializable {
         
 	}
 	
-	public void removeMedia(Media media){
+	public void removeMedia(Media media, Boolean isDeleteButton){
 		
 		mediaAllList.remove(media);
 		int line = removeMediaLineList(media);
+		
 		if(masterMedia == media){
 			masterMedia = getMediaWithLowestBegin();
 		}
-		removeMediaOfRelations(media);
 		
+		if(isDeleteButton){
+			removeMediaOfRelations(media);
+		}
+
 		setChanged();
 		Operation<TemporalViewOperator> operation = new Operation<TemporalViewOperator>(TemporalViewOperator.REMOVE_TEMPORAL_CHAIN_MEDIA, media, line);
         notifyObservers(operation);
         
         temporalViewMediaNumber--;
         
+	}
+	
+	public void dragMedia(TemporalChain temporalChain, Media media, Double droppedTime) {
+
+    	media.setBegin(droppedTime);
+    	media.setEnd(droppedTime + media.getDuration());
+    	
+    	int mediaLine = getMediaLine(media);
+    	int lineToAddMedia = getLineToAddMedia(media);
+    	
+    	if(mediaLine != lineToAddMedia){
+    		removeMedia(media, false);
+    		addMedia(media);
+    	}
+    	
+    	dragChildren(media);
+
+	}
+	
+	private int getLineToAddMedia(Media media){
+		
+		AllenRelation allenRelation;
+    	int line = 0;
+    	
+    	while(line < mediaLineList.size()){
+    		
+    		boolean isPossibleAdd = true;
+    		ArrayList<Media> mediaList = mediaLineList.get(line);
+    		int index = 0;
+    		
+    		while(isPossibleAdd && index < mediaList.size()){
+    			
+    			Media currentMedia = mediaList.get(index);
+    			allenRelation = identifyAllenRelation(media, currentMedia);
+    			
+    			if(media != currentMedia){
+    				
+    				if (!(allenRelation.equals(AllenRelation.BEFORE) || (allenRelation.equals(AllenRelation.AFTER)))){
+        				
+        				isPossibleAdd = false;
+        				
+        			}
+    				
+    			}
+    			
+    			index++;
+    			
+    		}
+    		
+    		if(isPossibleAdd){
+
+    			return line;
+
+    		}
+    		
+    		line++;
+    	}
+
+    	int newLineIndex = mediaLineList.size();
+
+    	return newLineIndex;
+		
+	}
+	
+	private int getMediaLine(Media media){
+		
+		int line = 0;
+    	Boolean removed = false;
+		
+    	while(line < mediaLineList.size()){
+    		
+    		ArrayList<Media> mediaList = mediaLineList.get(line);
+    		
+    		if(mediaList.contains(media)){
+    			return line;
+    		}
+    		line++;
+    		
+    	}
+    	
+    	return -1;
+		
 	}
 	
 	private Media getMediaWithLowestBegin() {
@@ -237,12 +327,13 @@ public class TemporalChain extends Observable implements Serializable {
 
 		Boolean keepGoing = true;
 		Boolean atLeastOneSlaveMediaWasDefined = false;
+		int i;
 		
-		for(int i  = 0; i < synchronousRelationToBeDefined.getSlaveMediaList().size(); i++){
+		for(i  = 0; i < synchronousRelationToBeDefined.getSlaveMediaList().size(); i++){
 			
 			Media slaveMedia = synchronousRelationToBeDefined.getSlaveMediaList().get(i);
 			
-			Boolean slaveChanged = false;
+			Boolean slaveWasChangedModifyingDuration = false;
 			Boolean slaveBlockedForChanges = false;
 			
 			ArrayList<Relation> listOfAllRelations = getListOfAllRelations(slaveMedia);
@@ -253,28 +344,38 @@ public class TemporalChain extends Observable implements Serializable {
 	
 				if(listOfSlaveRelations.size() == 2){//INFO Uma mídia pode ser escrava de no máximo 2 relações
 					
-					keepGoing = showBlockedRelationInputDialog(slaveMedia, null);
+					showBlockedRelationMessageDialog(slaveMedia, ConflictType.BEGIN_END_DEFINED);
 					slaveBlockedForChanges = true;
 					
 				} else if(listOfSlaveRelations.size() == 1) { //INFO Apenas uma relação
 					
+					ConflictType conflictType;
+					
 					Synchronous<Media> synchronousRelationWhereSlaveMediaIsSlave = (Synchronous<Media>) listOfSlaveRelations.get(0);
 					
-					if(relationsDefineBeginOrEndSimultaneously(synchronousRelationToBeDefined, synchronousRelationWhereSlaveMediaIsSlave)){
+					conflictType = hasBeginOrEndAlreadyBeenDefined(synchronousRelationToBeDefined, synchronousRelationWhereSlaveMediaIsSlave);
+					
+					if(conflictType != null){
 						
-						keepGoing = showBlockedRelationInputDialog(slaveMedia, synchronousRelationWhereSlaveMediaIsSlave);
+						showBlockedRelationMessageDialog(slaveMedia, conflictType);
 						slaveBlockedForChanges = true;
 						
-					}else if(beginEndDefinedByNewRelationIsGreaterLessThanEndBeginDefinedByExistingRelation(synchronousRelationToBeDefined, synchronousRelationWhereSlaveMediaIsSlave, slaveMedia)){
+					}else {
 						
-						keepGoing = showBlockedRelationInputDialog(slaveMedia, synchronousRelationWhereSlaveMediaIsSlave);
-						slaveBlockedForChanges = true;
+						conflictType = isThereBeginGTEndOrEndLTBeginConflict(synchronousRelationToBeDefined, synchronousRelationWhereSlaveMediaIsSlave, slaveMedia);
 						
-					}else{
-						
-						defineRelationChangingDuration(synchronousRelationToBeDefined, i, slaveMedia);
-						slaveChanged = true;
-						atLeastOneSlaveMediaWasDefined = true;
+						if(conflictType != null){
+							
+							showBlockedRelationMessageDialog(slaveMedia, conflictType);
+							slaveBlockedForChanges = true;
+							
+						}else {
+							
+							defineRelationChangingDuration(synchronousRelationToBeDefined, i, slaveMedia);
+							slaveWasChangedModifyingDuration = true;
+							atLeastOneSlaveMediaWasDefined = true;
+							
+						}
 						
 					}
 					
@@ -284,7 +385,7 @@ public class TemporalChain extends Observable implements Serializable {
 					
 					if(!listOfMasterRelations.isEmpty()){
 						
-						if(slaveChanged){
+						if(slaveWasChangedModifyingDuration){
 							
 							dragChildren(slaveMedia);
 							
@@ -300,9 +401,16 @@ public class TemporalChain extends Observable implements Serializable {
 					
 				}
 	
-				if(!keepGoing){
-					break;
+				if(slaveBlockedForChanges && (i + 1) < synchronousRelationToBeDefined.getSlaveMediaList().size()){
+					
+					keepGoing = showContinueQuestionInputDialog();
+					
+					if(!keepGoing){
+						break;
+					}
+					
 				}
+				
 				
 			}else {
 			
@@ -337,6 +445,20 @@ public class TemporalChain extends Observable implements Serializable {
         
 	}
 
+	private Boolean showContinueQuestionInputDialog() {
+		
+		InputDialog showContinueQuestionInputDialog = new InputDialog(Language.translate("would.you.like.to.continue.defining.alignment"), null, "yes","no", null, 140);
+		
+		String answer = showContinueQuestionInputDialog.showAndWaitAndReturn();
+		
+		if(answer.equalsIgnoreCase("left")){
+    		return true;
+    	}else {
+    		return false;
+    	}
+		
+	}
+
 	private void dragChildren(Media slaveMedia) {
 		
 		ArrayList<Relation> listOfMasterRelations = getListOfMasterRelations(slaveMedia);
@@ -365,14 +487,14 @@ public class TemporalChain extends Observable implements Serializable {
 			case STARTS:
 				
 				slaveMedia.setBegin(synchronousRelationToBeDefined.getMasterMedia().getBegin());
-				removeMedia(slaveMedia);
+				removeMedia(slaveMedia, false);
 				addMedia(slaveMedia);
 				break;
 				
 			case STARTS_DELAY:
 				
 				slaveMedia.setBegin(synchronousRelationToBeDefined.getMasterMedia().getBegin() + synchronousRelationToBeDefined.getDelay());
-				removeMedia(slaveMedia);
+				removeMedia(slaveMedia, false);
 				addMedia(slaveMedia);
 	
 				break;
@@ -381,7 +503,7 @@ public class TemporalChain extends Observable implements Serializable {
 	
 				slaveMedia.setEnd(synchronousRelationToBeDefined.getMasterMedia().getEnd());
 				slaveMedia.setDuration(slaveMedia.getEnd() - slaveMedia.getBegin());
-				removeMedia(slaveMedia);
+				removeMedia(slaveMedia, false);
 				addMedia(slaveMedia);
 	
 				break;
@@ -390,7 +512,7 @@ public class TemporalChain extends Observable implements Serializable {
 	
 				slaveMedia.setEnd(synchronousRelationToBeDefined.getMasterMedia().getEnd() + synchronousRelationToBeDefined.getDelay());
 				slaveMedia.setDuration(slaveMedia.getEnd() - slaveMedia.getBegin());
-				removeMedia(slaveMedia);
+				removeMedia(slaveMedia, false);
 				addMedia(slaveMedia);
 	
 				break;
@@ -398,7 +520,7 @@ public class TemporalChain extends Observable implements Serializable {
 			case MEETS:
 	
 				slaveMedia.setBegin(synchronousRelationToBeDefined.getMasterMedia().getEnd());
-				removeMedia(slaveMedia);
+				removeMedia(slaveMedia, false);
 				addMedia(slaveMedia);
 	
 				break;
@@ -406,7 +528,7 @@ public class TemporalChain extends Observable implements Serializable {
 			case MEETS_DELAY:
 	
 				slaveMedia.setBegin(synchronousRelationToBeDefined.getMasterMedia().getEnd() + synchronousRelationToBeDefined.getDelay());
-				removeMedia(slaveMedia);
+				removeMedia(slaveMedia, false);
 				addMedia(slaveMedia);
 	
 				break;
@@ -422,7 +544,7 @@ public class TemporalChain extends Observable implements Serializable {
 					isPossibleDefineMetBy = false;
 					break;
 				}else {
-					removeMedia(slaveMedia);
+					removeMedia(slaveMedia, false);
 					addMedia(slaveMedia);
 				}
 	
@@ -445,7 +567,7 @@ public class TemporalChain extends Observable implements Serializable {
 					isPossibleDefineMetByDelay = false;
 					break;
 				}else {
-					removeMedia(slaveMedia);
+					removeMedia(slaveMedia, false);
 					addMedia(slaveMedia);
 				}
 	
@@ -468,7 +590,7 @@ public class TemporalChain extends Observable implements Serializable {
 				}
 	
 				slaveMedia.setBegin(beforeRelationBegin);
-				removeMedia(slaveMedia);
+				removeMedia(slaveMedia, false);
 				addMedia(slaveMedia);
 				
 				break;
@@ -485,7 +607,7 @@ public class TemporalChain extends Observable implements Serializable {
 				
 				slaveMedia.setBegin(synchronousRelationToBeDefined.getMasterMedia().getBegin());
 				slaveMedia.setEnd(slaveMedia.getBegin() + slaveMedia.getDuration());
-				removeMedia(slaveMedia);
+				removeMedia(slaveMedia, false);
 				addMedia(slaveMedia);
 				
 				break;
@@ -494,7 +616,7 @@ public class TemporalChain extends Observable implements Serializable {
 				
 				slaveMedia.setBegin(synchronousRelationToBeDefined.getMasterMedia().getBegin() + synchronousRelationToBeDefined.getDelay());
 				slaveMedia.setEnd(slaveMedia.getBegin() + slaveMedia.getDuration());
-				removeMedia(slaveMedia);
+				removeMedia(slaveMedia, false);
 				addMedia(slaveMedia);
 
 				break;
@@ -510,7 +632,7 @@ public class TemporalChain extends Observable implements Serializable {
 				
 				slaveMedia.setEnd(synchronousRelationToBeDefined.getMasterMedia().getEnd());
 				slaveMedia.setDuration(slaveMedia.getEnd() - slaveMedia.getBegin());
-				removeMedia(slaveMedia);
+				removeMedia(slaveMedia, false);
 				addMedia(slaveMedia);
 
 				break;
@@ -526,7 +648,7 @@ public class TemporalChain extends Observable implements Serializable {
 				
 				slaveMedia.setEnd(synchronousRelationToBeDefined.getMasterMedia().getEnd() + synchronousRelationToBeDefined.getDelay());
 				slaveMedia.setDuration(slaveMedia.getEnd() - slaveMedia.getBegin());
-				removeMedia(slaveMedia);
+				removeMedia(slaveMedia, false);
 				addMedia(slaveMedia);
 
 				break;
@@ -535,7 +657,7 @@ public class TemporalChain extends Observable implements Serializable {
 
 				slaveMedia.setBegin(synchronousRelationToBeDefined.getMasterMedia().getEnd());
 				slaveMedia.setEnd(slaveMedia.getBegin() + slaveMedia.getDuration());
-				removeMedia(slaveMedia);
+				removeMedia(slaveMedia, false);
 				addMedia(slaveMedia);
 
 				break;
@@ -544,7 +666,7 @@ public class TemporalChain extends Observable implements Serializable {
 
 				slaveMedia.setBegin(synchronousRelationToBeDefined.getMasterMedia().getEnd() + synchronousRelationToBeDefined.getDelay());
 				slaveMedia.setEnd(slaveMedia.getBegin() + slaveMedia.getDuration());
-				removeMedia(slaveMedia);
+				removeMedia(slaveMedia, false);
 				addMedia(slaveMedia);
 
 				break;
@@ -566,7 +688,7 @@ public class TemporalChain extends Observable implements Serializable {
 					isPossibleDefineMetBy = false;
 					break;
 				}else {
-					removeMedia(slaveMedia);
+					removeMedia(slaveMedia, false);
 					addMedia(slaveMedia);
 				}
 
@@ -595,7 +717,7 @@ public class TemporalChain extends Observable implements Serializable {
 					isPossibleDefineMetByDelay = false;
 					break;
 				}else {
-					removeMedia(slaveMedia);
+					removeMedia(slaveMedia, false);
 					addMedia(slaveMedia);
 				}
 
@@ -619,7 +741,7 @@ public class TemporalChain extends Observable implements Serializable {
 
 				slaveMedia.setBegin(beforeRelationBegin);
 				slaveMedia.setEnd(slaveMedia.getBegin() + slaveMedia.getDuration());
-				removeMedia(slaveMedia);
+				removeMedia(slaveMedia, false);
 				addMedia(slaveMedia);
 				
 				break;
@@ -633,7 +755,7 @@ public class TemporalChain extends Observable implements Serializable {
 	 * @param synchronousRelationWhereSlaveMediaIsSlave		The relations where the media selected to be slave belongs to.
 	 * @return true If the begin/end defined by the new relation is greater/less than the end/begin defined by the existing relation; false otherwise.
 	 */
-	private boolean beginEndDefinedByNewRelationIsGreaterLessThanEndBeginDefinedByExistingRelation( Synchronous<Media> synchronousRelationToBeDefined, 
+	private ConflictType isThereBeginGTEndOrEndLTBeginConflict( Synchronous<Media> synchronousRelationToBeDefined, 
 			Synchronous<Media> synchronousRelationWhereSlaveMediaIsSlave, Media newRelationSlaveMedia) {
 		
 		if(relationDefinesBegin(synchronousRelationToBeDefined)){
@@ -714,9 +836,9 @@ public class TemporalChain extends Observable implements Serializable {
 			}
 
 			if(newRelationBegin > existingRelationEnd){
-				return true;
+				return ConflictType.NEW_BEGIN_GREATER_THAN_EXISTING_END;
 			}else {
-				return false;
+				return null;
 			}
 			
 		}else {
@@ -797,9 +919,9 @@ public class TemporalChain extends Observable implements Serializable {
 			}
 			
 			if(newRelationEnd < existingRelationBegin){
-				return true;
+				return ConflictType.NEW_END_LESS_THAN_EXISTING_BEGIN;
 			}else {
-				return false;
+				return null;
 			}
 			
 		}
@@ -842,15 +964,18 @@ public class TemporalChain extends Observable implements Serializable {
 	 * @param synchronousRelationWhereSlaveMediaIsSlave		The relations where the media selected to be slave belongs to.
 	 * @return true if the relations define the same; false otherwise.
 	 */
-	private boolean relationsDefineBeginOrEndSimultaneously(Synchronous<Media> synchronousRelationToBeDefined, Synchronous<Media> synchronousRelationWhereSlaveMediaIsSlave) {
+	private ConflictType hasBeginOrEndAlreadyBeenDefined(Synchronous<Media> synchronousRelationToBeDefined, Synchronous<Media> synchronousRelationWhereSlaveMediaIsSlave) {
 
-		if(relationDefinesBegin(synchronousRelationToBeDefined) && relationDefinesBegin(synchronousRelationWhereSlaveMediaIsSlave)
-		   || relationDefinesEnd(synchronousRelationToBeDefined) && relationDefinesEnd(synchronousRelationWhereSlaveMediaIsSlave)){
+		if(relationDefinesBegin(synchronousRelationToBeDefined) && relationDefinesBegin(synchronousRelationWhereSlaveMediaIsSlave)){
 			
-			return true;
+			return ConflictType.BEGIN_DEFINED;
 			
-		}else {
-			return false;
+		} else if(relationDefinesEnd(synchronousRelationToBeDefined) && relationDefinesEnd(synchronousRelationWhereSlaveMediaIsSlave)){
+			
+			return ConflictType.END_DEFINED;
+			
+		} else{
+			return null;
 		}
 		
 	}
@@ -925,29 +1050,49 @@ public class TemporalChain extends Observable implements Serializable {
 		
 	}
 
-	public Boolean showBlockedRelationInputDialog(Media slaveMedia, Synchronous<Media> conflictingRelation){
+	public void showBlockedRelationMessageDialog(Media slaveMedia, ConflictType conflictType){
 		
-		InputDialog showBlockedRelationInputDialog;
+		MessageDialog showBlockedRelationMessageDialog;
 		
-		if(conflictingRelation != null){
-			showBlockedRelationInputDialog = new InputDialog(Language.translate("it.is.not.possible.to.define.alignment") + ": " + slaveMedia.getName(), 
-					Language.translate("conflicting.alignment") + conflictingRelation.getType().getDescription() + ". " +
-					Language.translate("would.you.like.to.continue.defining.alignment"), "yes","no", null, 220);
-		}else {
-			
-			showBlockedRelationInputDialog = new InputDialog(Language.translate("it.is.not.possible.to.define.alignment") + ": " + slaveMedia.getName(), 
-					Language.translate("would.you.like.to.continue.defining.alignment"), "yes","no", null, 210);
-			
+		switch (conflictType) {
+		
+			case BEGIN_END_DEFINED:
+				
+				showBlockedRelationMessageDialog = new MessageDialog(Language.translate("it.is.not.possible.to.define.alignment") + ": " + slaveMedia.getName(), 
+						Language.translate("begin.and.end.have.already.been.defined"), "OK", 160);
+				showBlockedRelationMessageDialog.showAndWait();
+				break;
+	
+			case BEGIN_DEFINED:
+				
+				showBlockedRelationMessageDialog = new MessageDialog(Language.translate("it.is.not.possible.to.define.alignment") + ": " + slaveMedia.getName(), 
+						Language.translate("begin.has.already.been.defined"), "OK", 160);
+				showBlockedRelationMessageDialog.showAndWait();
+				break;
+				
+			case END_DEFINED:
+				
+				showBlockedRelationMessageDialog = new MessageDialog(Language.translate("it.is.not.possible.to.define.alignment") + ": " + slaveMedia.getName(), 
+						Language.translate("end.has.already.been.defined"), "OK", 160);
+				showBlockedRelationMessageDialog.showAndWait();
+				break;
+				
+			case NEW_BEGIN_GREATER_THAN_EXISTING_END:
+				
+				showBlockedRelationMessageDialog = new MessageDialog(Language.translate("it.is.not.possible.to.define.alignment") + ": " + slaveMedia.getName(), 
+						Language.translate("new.begin.is.greater.than.the.end.defined.by.another.alignment"), "OK", 180);
+				showBlockedRelationMessageDialog.showAndWait();
+				break;
+				
+			case NEW_END_LESS_THAN_EXISTING_BEGIN:
+				
+				showBlockedRelationMessageDialog = new MessageDialog(Language.translate("it.is.not.possible.to.define.alignment") + ": " + slaveMedia.getName(), 
+						Language.translate("new.end.is.less.than.the.begin.defined.by.another.alignment"), "OK", 180);
+				showBlockedRelationMessageDialog.showAndWait();
+				break;
+				
 		}
-		
-		String answer = showBlockedRelationInputDialog.showAndWaitAndReturn();
-		
-		if(answer.equalsIgnoreCase("left")){
-    		return true;
-    	}else {
-    		return false;
-    	}
-		
+
 	}
 	
 	public void removeSynchronousRelation(Synchronous<Media> synchronousRelation){

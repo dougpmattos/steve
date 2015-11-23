@@ -68,6 +68,10 @@ public class Media implements Serializable{
 		   return name;
 	}
 	
+	public String getNCLName(){
+		return name.replaceAll("\\s+", "");
+	}
+	
 	public File getFile(){
 		return mediaFile;
 	}
