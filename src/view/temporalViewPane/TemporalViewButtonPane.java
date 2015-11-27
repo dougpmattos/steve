@@ -1,5 +1,7 @@
 package view.temporalViewPane;
 
+import java.util.ArrayList;
+
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -187,7 +189,7 @@ public class TemporalViewButtonPane extends BorderPane {
 			
 		    public void handle(ActionEvent t) {
 		    	
-		    	Double delay = showInputDialog();
+		    	Double delay = showDelayInputDialog();
 		    	
 		    	if(delay == null){
 		    		return;
@@ -250,7 +252,7 @@ public class TemporalViewButtonPane extends BorderPane {
 			@Override
 			public void handle(ActionEvent event) {
 				
-				Double delay = showInputDialog();
+				Double delay = showDelayInputDialog();
 		    	
 		    	if(delay == null){
 		    		return;
@@ -311,7 +313,7 @@ public class TemporalViewButtonPane extends BorderPane {
 			
 		    public void handle(ActionEvent t) {
 		    	
-		    	Double delay = showInputDialog();
+		    	Double delay = showDelayInputDialog();
 		    	
 		    	if(delay == null){
 		    		return;
@@ -373,7 +375,7 @@ public class TemporalViewButtonPane extends BorderPane {
 			
 		    public void handle(ActionEvent t) {
 		    	
-		    	Double delay = showInputDialog();
+		    	Double delay = showDelayInputDialog();
 		    	
 		    	if(delay == null){
 		    		return;
@@ -476,7 +478,7 @@ public class TemporalViewButtonPane extends BorderPane {
 			
 		    public void handle(ActionEvent t) {
 		    	
-		    	Double delay = showInputDialog();
+		    	Double delay = showDelayInputDialog();
 		    	
 		    	if(delay == null){
 		    		return;
@@ -501,6 +503,19 @@ public class TemporalViewButtonPane extends BorderPane {
 		    	}
 		    	
 		    	addSynchronousRelationToModel(synchronousRelation);
+		    	
+		    }
+		    
+		});
+		
+		interactivityButton.setOnAction(new EventHandler<ActionEvent>() {
+			
+		    public void handle(ActionEvent t) {
+		    	
+		    	Media firstSelectedMedia = temporalViewPane.getFirstSelectedMedia();
+		    	ArrayList<Media> mediaListDuringInteractivityTime = temporalViewPane.getMediaListDuringInteractivityTime();
+		    	
+		    	showInteractiveMediaWindow(firstSelectedMedia, mediaListDuringInteractivityTime);
 		    	
 		    }
 		    
@@ -535,7 +550,24 @@ public class TemporalViewButtonPane extends BorderPane {
 		controller.addSynchronousRelation(temporalChainPane.getTemporalChainModel(), synchronousRelation);
 	}
 	
-	private Double showInputDialog() {
+	private void showInteractiveMediaWindow(Media firstSelectedMedia, ArrayList<Media> mediaListDuringInteractivityTime){
+		
+		InteractiveMediaWindow interactiveMediaWindow = new InteractiveMediaWindow();
+    	String input = inputDialog.showAndWaitAndReturn();
+    	Double delay;
+    	
+    	if(input == null || input.equals("left") || input.equals("close")){
+    		return null;
+    	}else if(input.isEmpty()){
+    		delay = 0.0;
+    	}else {
+    		delay = Double.valueOf(input);
+    	}
+		return delay;
+		
+	}
+	
+	private Double showDelayInputDialog() {
 		
 		InputDialog inputDialog = new InputDialog(Language.translate("type.delay"),null, "cancel","ok", "Delay in seconds: ", 190);
     	String input = inputDialog.showAndWaitAndReturn();
