@@ -409,6 +409,12 @@ public class TemporalChainPane extends StackPane implements Observer{
 	public TemporalChain getTemporalChainModel() {
 		return temporalChainModel;
 	}
+
+	public ArrayList<Media> getMediaListDuringAnother(Media firstSelectedMedia, TemporalChainPane temporalChainPane) {
+		
+		return getTemporalChainModel().getMediaListDuringAnother(firstSelectedMedia, temporalChainPane);
+		
+	}
 	
 	
 	

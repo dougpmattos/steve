@@ -20,6 +20,11 @@
 		<mkdir dir="externalLibs" />
 	
 		<copy todir="externalLibs">
+			<fileset dir="/Users/Douglas/Applications/Eclipse Luna/plugins">
+				<filename name="org.hamcrest.core_1.3.0.v201303031735.jar"/>
+			</fileset>
+		</copy>
+		<copy todir="externalLibs">
 			<fileset dir="/Users/Douglas/Workspace/steve/libraries/SLF4J">
 				<filename name="slf4j-api-1.7.5.jar"/>
 			</fileset>
@@ -27,6 +32,11 @@
 		<copy todir="externalLibs">
 			<fileset dir="/Users/Douglas/Workspace/steve/libraries/Xuggle">
 				<filename name="xuggle-xuggler-5.4.jar"/>
+			</fileset>
+		</copy>
+		<copy todir="externalLibs">
+			<fileset dir="/Users/Douglas/Applications/Eclipse Luna/plugins/org.junit_4.11.0.v201303080030">
+				<filename name="junit.jar"/>
 			</fileset>
 		</copy>
 		<copy todir="externalLibs">
@@ -44,11 +54,6 @@
 				<filename name="slf4j-simple-1.7.5.jar"/>
 			</fileset>
 		</copy>
-		<copy todir="externalLibs">
-			<fileset dir="/Users/Douglas/Workspace/aNa/libraries">
-				<filename name="junit-4.11.jar"/>
-			</fileset>
-		</copy>
 	
 		<mkdir dir="project" />
 		<copy todir="project">
@@ -60,12 +65,12 @@
 		<mkdir dir="projectRefs" />
 		<copy todir="projectRefs">
 			<fileset dir="/Users/Douglas/Workspace">
-				<include name="aNa/src/**" />
+				<include name="aNa/test/**" />
 			</fileset>
 		</copy>
 		<copy todir="projectRefs">
 			<fileset dir="/Users/Douglas/Workspace">
-				<include name="aNa/test/**" />
+				<include name="aNa/src/**" />
 			</fileset>
 		</copy>
 	</target>
@@ -80,8 +85,9 @@
 			<fileset dir="externalLibs">
 				<include name="jgraph.jar"/>
 				<include name="slf4j-api-1.7.5.jar"/>
+				<include name="org.hamcrest.core_1.3.0.v201303031735.jar"/>
+				<include name="junit.jar"/>
 				<include name="slf4j-simple-1.7.5.jar"/>
-				<include name="junit-4.11.jar"/>
 				<include name="jgrapht-jdk1.6.jar"/>
 				<include name="xuggle-xuggler-5.4.jar"/>
 			</fileset>

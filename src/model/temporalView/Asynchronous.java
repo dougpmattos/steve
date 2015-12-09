@@ -1,7 +1,7 @@
 package model.temporalView;
 
 
-public class Asynchronous<T> extends Relation<T> {
+public abstract class Asynchronous<T> extends Relation<T> {
 
 	private static final long serialVersionUID = 5310555901053772316L;
 	

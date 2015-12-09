@@ -79,6 +79,8 @@ public class RepositoryMediaItemContainer extends BorderPane implements view.com
 	        @Override
 	        public void handle(MouseEvent e) {
 	        	
+	        	temporalViewPane.clearSelectedMedia();
+	        	
 	        	for(Tab temporalTab : temporalViewPane.getTemporalChainTabPane().getTabs()){
 	        		
 	        		TemporalChainPane temporalChainPane = (TemporalChainPane) temporalTab.getContent();

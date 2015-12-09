@@ -12,6 +12,8 @@ import model.utility.Operation;
 import view.common.InputDialog;
 import view.common.Language;
 import view.common.MessageDialog;
+import view.temporalViewPane.TemporalChainPane;
+import view.temporalViewPane.TimeLineXYChartData;
 import view.temporalViewPane.enums.AllenRelation;
 
 @SuppressWarnings("rawtypes")
@@ -288,7 +290,7 @@ public class TemporalChain extends Observable implements Serializable {
 		
 	}
 	
-	private AllenRelation identifyAllenRelation(Media media, Media currentMedia) {
+	public AllenRelation identifyAllenRelation(Media media, Media currentMedia) {
 		
 		double begin = media.getBegin();
 		double end = media.getEnd();
@@ -1058,35 +1060,35 @@ public class TemporalChain extends Observable implements Serializable {
 		
 			case BEGIN_END_DEFINED:
 				
-				showBlockedRelationMessageDialog = new MessageDialog(Language.translate("it.is.not.possible.to.define.alignment") + ": " + slaveMedia.getName(), 
+				showBlockedRelationMessageDialog = new MessageDialog(Language.translate("it.is.not.possible.to.define.alignment.for.this.slave") + ": " + slaveMedia.getName(), 
 						Language.translate("begin.and.end.have.already.been.defined"), "OK", 160);
 				showBlockedRelationMessageDialog.showAndWait();
 				break;
 	
 			case BEGIN_DEFINED:
 				
-				showBlockedRelationMessageDialog = new MessageDialog(Language.translate("it.is.not.possible.to.define.alignment") + ": " + slaveMedia.getName(), 
+				showBlockedRelationMessageDialog = new MessageDialog(Language.translate("it.is.not.possible.to.define.alignment.for.this.slave") + ": " + slaveMedia.getName(), 
 						Language.translate("begin.has.already.been.defined"), "OK", 160);
 				showBlockedRelationMessageDialog.showAndWait();
 				break;
 				
 			case END_DEFINED:
 				
-				showBlockedRelationMessageDialog = new MessageDialog(Language.translate("it.is.not.possible.to.define.alignment") + ": " + slaveMedia.getName(), 
+				showBlockedRelationMessageDialog = new MessageDialog(Language.translate("it.is.not.possible.to.define.alignment.for.this.slave") + ": " + slaveMedia.getName(), 
 						Language.translate("end.has.already.been.defined"), "OK", 160);
 				showBlockedRelationMessageDialog.showAndWait();
 				break;
 				
 			case NEW_BEGIN_GREATER_THAN_EXISTING_END:
 				
-				showBlockedRelationMessageDialog = new MessageDialog(Language.translate("it.is.not.possible.to.define.alignment") + ": " + slaveMedia.getName(), 
+				showBlockedRelationMessageDialog = new MessageDialog(Language.translate("it.is.not.possible.to.define.alignment.for.this.slave") + ": " + slaveMedia.getName(), 
 						Language.translate("new.begin.is.greater.than.the.end.defined.by.another.alignment"), "OK", 180);
 				showBlockedRelationMessageDialog.showAndWait();
 				break;
 				
 			case NEW_END_LESS_THAN_EXISTING_BEGIN:
 				
-				showBlockedRelationMessageDialog = new MessageDialog(Language.translate("it.is.not.possible.to.define.alignment") + ": " + slaveMedia.getName(), 
+				showBlockedRelationMessageDialog = new MessageDialog(Language.translate("it.is.not.possible.to.define.alignment.for.this.slave") + ": " + slaveMedia.getName(), 
 						Language.translate("new.end.is.less.than.the.begin.defined.by.another.alignment"), "OK", 180);
 				showBlockedRelationMessageDialog.showAndWait();
 				break;
@@ -1115,6 +1117,35 @@ public class TemporalChain extends Observable implements Serializable {
 	
 	public ArrayList<ArrayList<Media>> getMediaLineList() {
 		return mediaLineList;
+	}
+
+	public ArrayList<Media> getMediaListDuringAnother(Media firstSelectedMedia, TemporalChainPane temporalChainPane) {
+		
+		ArrayList<Media> mediaListDuringAnother = new ArrayList<Media>();
+		
+		for(ArrayList<TimeLineXYChartData> timeLineXYChartDataList : temporalChainPane.getTimeLineXYChartDataLineList()){
+			
+			for(TimeLineXYChartData timeLineXYChartData : timeLineXYChartDataList){
+			
+				AllenRelation allenRelation = identifyAllenRelation(firstSelectedMedia, timeLineXYChartData.getMedia());
+				
+				if(firstSelectedMedia != timeLineXYChartData.getMedia()){
+					
+					if ( !( allenRelation.equals(AllenRelation.BEFORE) || allenRelation.equals(AllenRelation.AFTER) ||
+							allenRelation.equals(AllenRelation.MEETS) || allenRelation.equals(AllenRelation.MET_BY) ) ){
+						
+						mediaListDuringAnother.add(timeLineXYChartData.getMedia());
+						
+					}
+					
+				}
+				
+			}
+			
+		}
+		
+		return mediaListDuringAnother;
+			
 	}
 	
 }

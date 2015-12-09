@@ -9,6 +9,7 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.BorderPane;
 import model.common.Media;
+import model.repository.RepositoryMediaList;
 import model.temporalView.TemporalChain;
 import model.temporalView.TemporalView;
 import model.temporalView.enums.TemporalViewOperator;
@@ -16,6 +17,7 @@ import model.utility.Operation;
 import view.common.Language;
 import view.repositoryPane.RepositoryPane;
 import view.stevePane.StevePane;
+import view.temporalViewPane.enums.AllenRelation;
 import controller.Controller;
 
 @SuppressWarnings("unchecked")
@@ -28,22 +30,24 @@ public class TemporalViewPane extends BorderPane implements Observer, view.commo
 	private TabPane temporalChainTabPane;
 	private TemporalViewButtonPane temporalViewButtonPane;
 	private RepositoryPane repositoryPane;
+	private RepositoryMediaList repositoryMediaList;
 	private ArrayList<view.common.Observer> observers;
 	private Media firstSelectedMedia;
 	private ArrayList<Media> selectedMediaList = new ArrayList<Media>();
 	private StevePane stevePane;
 	
-	public TemporalViewPane(Controller controller, TemporalView temporalViewModel, RepositoryPane repositoryPane, StevePane stevePane){
+	public TemporalViewPane(Controller controller, TemporalView temporalViewModel, RepositoryPane repositoryPane, StevePane stevePane, RepositoryMediaList repositoryMediaList){
 		
 		setId("temporal-view-pane");
 		getStylesheets().add("view/temporalViewPane/styles/temporalViewPane.css");
 
 		this.temporalViewModel = temporalViewModel;
 		this.repositoryPane = repositoryPane;
+		this.repositoryMediaList = repositoryMediaList;
 		this.stevePane = stevePane;
 		
 		temporalChainTabPane = new TabPane();
-		temporalViewButtonPane = new TemporalViewButtonPane(controller, temporalChainTabPane, this);
+		temporalViewButtonPane = new TemporalViewButtonPane(controller, temporalChainTabPane, this, repositoryMediaList);
       		
 	    setCenter(temporalChainTabPane);
 	    setBottom(temporalViewButtonPane);
@@ -162,6 +166,7 @@ public class TemporalViewPane extends BorderPane implements Observer, view.commo
 	public void  clearSelectedMedia(){
 		
 		selectedMediaList.clear();
+		this.firstSelectedMedia = null;
 		notifyObservers(TemporalViewOperator.CLEAR_SELECTION_TEMPORAL_MEDIA);
 		
 	}
@@ -173,7 +178,14 @@ public class TemporalViewPane extends BorderPane implements Observer, view.commo
 	public Media getFirstSelectedMedia() {
 		return firstSelectedMedia;
 	}
-	
-	
-	
+
+	public ArrayList<Media> getMediaListDuringInteractivityTime() {
+
+		Tab selectedTab = temporalChainTabPane.getSelectionModel().getSelectedItem();
+		TemporalChainPane temporalChainPane = (TemporalChainPane) selectedTab.getContent();
+		
+		return temporalChainPane.getMediaListDuringAnother(getFirstSelectedMedia(), temporalChainPane);
+
+	}
+
 }
