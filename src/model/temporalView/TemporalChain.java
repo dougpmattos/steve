@@ -6,6 +6,7 @@ import java.util.Observable;
 
 import model.common.Media;
 import model.temporalView.enums.ConflictType;
+import model.temporalView.enums.NumericInteractivityKey;
 import model.temporalView.enums.RelationType;
 import model.temporalView.enums.TemporalViewOperator;
 import model.utility.Operation;
@@ -25,16 +26,27 @@ public class TemporalChain extends Observable implements Serializable {
 	private static int temporalViewMediaNumber = 0;
 	
 	private int id;
+	private String name;
 	private Media masterMedia;
 	private ArrayList<Media> mediaAllList = new ArrayList<Media>();
 	private ArrayList<Relation> relationList = new ArrayList<Relation>();
 	private ArrayList<ArrayList<Media>> mediaLineList = new ArrayList<ArrayList<Media>>();
 
-	public TemporalChain() {
+	public TemporalChain(String name) {
 		
 		this.id = temporalChainNumber;
 		temporalChainNumber++;
 		
+		this.name = name;
+		
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public void setId(int id) {
@@ -988,10 +1000,14 @@ public class TemporalChain extends Observable implements Serializable {
 		
 		for(Relation<Media> relation : relationList){
 			
-			Synchronous<Media> synchronousRelation = (Synchronous<Media>) relation;
-			
-			if(slaveMedia.equals(synchronousRelation.getMasterMedia())){
-				listOfMasterRelations.add(synchronousRelation);
+			if(relation instanceof Synchronous){
+				
+				Synchronous<Media> synchronousRelation = (Synchronous<Media>) relation;
+				
+				if(slaveMedia.equals(synchronousRelation.getMasterMedia())){
+					listOfMasterRelations.add(synchronousRelation);
+				}
+				
 			}
 
 		}
@@ -1006,15 +1022,19 @@ public class TemporalChain extends Observable implements Serializable {
 		
 		for(Relation<Media> relation : relationList){
 			
-			Synchronous<Media> synchronousRelation = (Synchronous<Media>) relation;
-			
-			for(Media synchronousRelationSlave : synchronousRelation.getSlaveMediaList()){
-					
-				if(slaveMedia.equals(synchronousRelationSlave)){
-					listOfSlaveRelations.add(synchronousRelation);
-					break;
+			if(relation instanceof Synchronous){
+				
+				Synchronous<Media> synchronousRelation = (Synchronous<Media>) relation;
+				
+				for(Media synchronousRelationSlave : synchronousRelation.getSlaveMediaList()){
+						
+					if(slaveMedia.equals(synchronousRelationSlave)){
+						listOfSlaveRelations.add(synchronousRelation);
+						break;
+					}
+						
 				}
-					
+				
 			}
 
 		}
@@ -1029,17 +1049,21 @@ public class TemporalChain extends Observable implements Serializable {
 		
 		for(Relation<Media> relation : relationList){
 			
-			Synchronous<Media> synchronousRelation = (Synchronous<Media>) relation;
-			
-			if(slaveMedia.equals(synchronousRelation.getMasterMedia())){
-				listOfAllRelations.add(synchronousRelation);
-			}else {
+			if(relation instanceof Synchronous){
 				
-				for(Media synchronousRelationSlave : synchronousRelation.getSlaveMediaList()){
+				Synchronous<Media> synchronousRelation = (Synchronous<Media>) relation;
+				
+				if(slaveMedia.equals(synchronousRelation.getMasterMedia())){
+					listOfAllRelations.add(synchronousRelation);
+				}else {
 					
-					if(slaveMedia.equals(synchronousRelationSlave)){
-						listOfAllRelations.add(synchronousRelation);
-						break;
+					for(Media synchronousRelationSlave : synchronousRelation.getSlaveMediaList()){
+						
+						if(slaveMedia.equals(synchronousRelationSlave)){
+							listOfAllRelations.add(synchronousRelation);
+							break;
+						}
+						
 					}
 					
 				}
@@ -1146,6 +1170,18 @@ public class TemporalChain extends Observable implements Serializable {
 		
 		return mediaListDuringAnother;
 			
+	}
+	
+	 @Override
+	 public String toString(){
+		 return name;
+	 }
+
+	public void addInteractivityRelation(Interactivity<Media, NumericInteractivityKey> interactivityRelation) {
+	
+		//TODO refletir na interface - icone i na midia origem da inetratividade e nova cadeia caso foi definida uma e a seta para as midias que sao paradas.
+		relationList.add(interactivityRelation);
+		
 	}
 	
 }

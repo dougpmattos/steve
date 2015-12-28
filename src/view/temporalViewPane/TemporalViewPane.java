@@ -59,7 +59,7 @@ public class TemporalViewPane extends BorderPane implements Observer, view.commo
 	    this.controller = controller;
 	    
 	}
-	
+
 	public void addTemporalChainPane(TemporalChain temporalChainModel) {
 		
 		ScrollPane temporalChainScrollPane = new ScrollPane();
@@ -68,12 +68,8 @@ public class TemporalViewPane extends BorderPane implements Observer, view.commo
 		TemporalChainPane temporalChainPane = new TemporalChainPane(controller, temporalViewModel, temporalChainModel, this, repositoryPane, stevePane);
 
 		Tab mainTemporalChainTab = new Tab();
+		mainTemporalChainTab.setText(temporalChainModel.getName());
 		
-		if(temporalChainModel.getId() == 0){
-			mainTemporalChainTab.setText(Language.translate("main.temporal.chain"));
-		}else {
-			mainTemporalChainTab.setText(temporalChainModel.getId() + "  " + Language.translate("temporal.chain"));
-		}
 		mainTemporalChainTab.setClosable(false); 
 		mainTemporalChainTab.setContent(temporalChainPane);
 
@@ -186,6 +182,10 @@ public class TemporalViewPane extends BorderPane implements Observer, view.commo
 		
 		return temporalChainPane.getMediaListDuringAnother(getFirstSelectedMedia(), temporalChainPane);
 
+	}
+	
+	public TemporalView getTemporalViewModel() {
+		return temporalViewModel;
 	}
 
 }

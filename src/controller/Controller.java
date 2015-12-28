@@ -5,9 +5,12 @@ import java.io.IOException;
 import javafx.stage.Stage;
 import model.common.Media;
 import model.repository.RepositoryMediaList;
+import model.temporalView.Interactivity;
 import model.temporalView.Synchronous;
 import model.temporalView.TemporalChain;
 import model.temporalView.TemporalView;
+import model.temporalView.enums.NumericInteractivityKey;
+import view.common.Language;
 import view.spatialViewPane.CropPane;
 import view.spatialViewPane.LevelPane;
 import view.spatialViewPane.PositionPane;
@@ -32,7 +35,7 @@ public class Controller {
 		stevePane = new StevePane(this, repositoryMediaList, temporalView);
 		stevePane.createView(stage);
 
-		TemporalChain temporalChain = new TemporalChain();
+		TemporalChain temporalChain = new TemporalChain(Language.translate("main.temporal.chain"));
 		this.temporalView.addTemporalChain(temporalChain);
 		
 	}
@@ -112,5 +115,9 @@ public class Controller {
 	public void dragMediaTemporalChain(TemporalChain temporalChain, Media media, Double droppedTime) {
 		temporalChain.dragMedia(temporalChain, media, droppedTime);
 	}
-	
+
+	public void addInteractivityRelation(TemporalChain temporalChainModel, Interactivity<Media, NumericInteractivityKey> interactivityRelation) {
+		temporalChainModel.addInteractivityRelation(interactivityRelation);
+	}
+
 }

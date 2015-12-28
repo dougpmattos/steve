@@ -12,7 +12,8 @@ public enum InteractivityKeyType {
 	CHANNEL_CHANGE,
 	VOLUME_CHANGE,
 	COLORS,
-	CONTROL;
+	CONTROL,
+	ACTUATION;
 	
 	public String toString(){
 		
@@ -26,6 +27,7 @@ public enum InteractivityKeyType {
 			case VOLUME_CHANGE: return Language.translate("volume.change");
 			case COLORS: return Language.translate("colors");
 			case CONTROL: return Language.translate("control");
+			case ACTUATION: return Language.translate("actuation");
 
 			default: return super.toString();
 		

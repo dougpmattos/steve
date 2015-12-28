@@ -265,6 +265,12 @@
  * Specific Elements                                                           *
  *                                                                             *
  ******************************************************************************/
+#scroll-pane-container{
+	-fx-fit-to-height: true;
+	-fx-fit-to-width: true;
+	-fx-padding: 4;
+	-fx-border-color: #37474F;
+}
 #add-new-button{
 	-fx-text-fill: #B0BEC5;
 	-fx-background-color: transparent;
@@ -291,7 +297,7 @@
 	-fx-background-radius: 0;
 }
 #form-grid-pane{
-	-fx-padding: 0 0 0 30px;
+	-fx-padding: 0 0 30px 30px;
 	-fx-hgap: 50px;
 	-fx-vgap: 20px;
 }
@@ -332,6 +338,10 @@
 	-fx-font-size: 18;
 }
 #msg-label{
+	-fx-text-fill: #B0BEC5;
+	-fx-font-size: 14;
+}
+#media-to-be-stopped-label{
 	-fx-text-fill: #B0BEC5;
 	-fx-font-size: 14;
 }

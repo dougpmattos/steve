@@ -616,7 +616,7 @@ public class TemporalViewButtonPane extends BorderPane {
 		    		
 			    	ArrayList<Media> mediaListDuringInteractivityTime = temporalViewPane.getMediaListDuringInteractivityTime();
 			    	
-		    		InteractiveMediaWindow interactiveMediaWindow = new InteractiveMediaWindow(firstSelectedMedia, mediaListDuringInteractivityTime, repositoryMediaList.getAllTypesList());
+		    		InteractiveMediaWindow interactiveMediaWindow = new InteractiveMediaWindow(controller, temporalViewPane, firstSelectedMedia, mediaListDuringInteractivityTime, repositoryMediaList.getAllTypesList());
 			    	interactiveMediaWindow.showAndWait();
 			    	
 		    	}else{

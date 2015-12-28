@@ -3,6 +3,8 @@ package view.temporalViewPane;
 import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -58,7 +60,6 @@ public class TemporalChainPane extends StackPane implements Observer{
 	private ArrayList<String> yAxisCategoryList = new ArrayList<String>();
 	private Path indicativeLine;
 	private Path playLine;
-	private ArrayList<TimeLineXYChartData> timeLineXYChartDataList = new ArrayList<TimeLineXYChartData>();
 	private ArrayList<ArrayList<TimeLineXYChartData>> timeLineXYChartDataLineList = new ArrayList<ArrayList<TimeLineXYChartData>>();
 	private StevePane stevePane;
 	
@@ -164,6 +165,7 @@ public class TemporalChainPane extends StackPane implements Observer{
 		        } catch (Exception e){
 		        	
 		        	event.setDropCompleted(false);
+		        	Logger.getLogger(Media.class.getName()).log(Level.SEVERE, null, e);
 		        	
 		        }
 		        
@@ -345,8 +347,19 @@ public class TemporalChainPane extends StackPane implements Observer{
 		TimeLineXYChartData timeLineXYChartData = new TimeLineXYChartData(controller, media, temporalChainModel, temporalViewPane, this,repositoryPane, line, stevePane, timeLineChart); 	
 		serie.getData().add(timeLineXYChartData.getXYChartData());
 		
-		timeLineXYChartDataList.add(timeLineXYChartData);
-		timeLineXYChartDataLineList.add(line, timeLineXYChartDataList);
+		if(!timeLineXYChartDataLineList.isEmpty() && line < timeLineXYChartDataLineList.size()){
+			
+			ArrayList<TimeLineXYChartData> timeLineXYChartDataList = timeLineXYChartDataLineList.get(line);
+			timeLineXYChartDataList.add(timeLineXYChartData);
+			timeLineXYChartDataLineList.set(line, timeLineXYChartDataList);
+			
+		}else {
+			
+			ArrayList<TimeLineXYChartData> newTimeLineXYChartDataList = new ArrayList<TimeLineXYChartData>();
+			newTimeLineXYChartDataList.add(timeLineXYChartData);
+			timeLineXYChartDataLineList.add(line, newTimeLineXYChartDataList);
+			
+		}
 		
 	}
 	

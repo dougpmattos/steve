@@ -58,7 +58,7 @@ public class TemporalView extends Observable implements Serializable{
 		
 		for(TemporalChain existingTemporalChain : existingTemporalView.getTemporalChainList()){
 			
-			TemporalChain temporalChain = new TemporalChain();
+			TemporalChain temporalChain = new TemporalChain(existingTemporalChain.getName());
 			temporalChain.setId(existingTemporalChain.getId());
 			addTemporalChain(temporalChain);
 			if(existingTemporalChain.getMasterMedia() != null){

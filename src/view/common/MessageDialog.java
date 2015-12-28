@@ -41,7 +41,7 @@ public class MessageDialog extends Stage {
 
         setResizable(false);
         initModality(Modality.APPLICATION_MODAL);
-        initStyle(StageStyle.DECORATED);
+        initStyle(StageStyle.UNDECORATED);
         
         this.title = title;
         this.msg = msg;
