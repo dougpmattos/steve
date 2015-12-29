@@ -186,10 +186,11 @@ public class InputDialog extends Stage {
 	            return "left";
 	            
 	        case RIGHT_BUTTON:
-	        	if(!inputField.getText().isEmpty()){
+	        	if(inputField != null && !inputField.getText().isEmpty()){
 	        		return inputField.getText();
+	        	} else{
+	        		return "right";
 	        	}
-	        	return null;
 	           
 	        case CLOSE_BUTTON:
 	        	return "close";

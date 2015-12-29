@@ -25,19 +25,17 @@ public class MessageDialog extends Stage {
     private Scene scene;
     private String title;
     private String msg;
-    private String leftButtonText;
-    private String rightButtonText;
+    private String buttonText;
     private Label msgLabel;
     private Label titleLabel;
-    private Button leftButton;
-    private Button rightButton;
+    private Button button;
     private BorderPane containerBorderPane;
     private VBox containerVBox;
     private VBox containerTitleMsgVBox;
     private HBox containerHBox;
     private int height;
  
-    public MessageDialog(String title, String msg, String leftButtonText, String rightButonText, int height) {
+    public MessageDialog(String title, String msg, String buttonText, int height) {
 
         setResizable(false);
         initModality(Modality.APPLICATION_MODAL);
@@ -45,8 +43,7 @@ public class MessageDialog extends Stage {
         
         this.title = title;
         this.msg = msg;
-        this.leftButtonText = leftButtonText;
-        this.rightButtonText = rightButonText;
+        this.buttonText = buttonText;
         this.height = height;
         
         createLabels();
@@ -61,13 +58,9 @@ public class MessageDialog extends Stage {
         setScene(scene);
 
     }
-    
-    public MessageDialog(String title, String msg, String rightButonText, int height) {
-    	this(title, msg, null, rightButonText, height);
-    }
-    
+   
     public MessageDialog(String msg, String rightButonText, int height) {
-    	this(null, msg, null, rightButonText, height);
+    	this(null, msg, rightButonText, height);
     }
     
     public void createLabels(){
@@ -86,12 +79,10 @@ public class MessageDialog extends Stage {
     
     public void createButtons(){
 		
-		if(leftButtonText != null){
-			leftButton = new Button(leftButtonText.toUpperCase());
+		if(buttonText != null){
+			button = new Button(buttonText.toUpperCase());
 		}
-	    
-	    rightButton = new Button(rightButtonText.toUpperCase());
-	
+
 	}
     
     
@@ -113,11 +104,10 @@ public class MessageDialog extends Stage {
         
         containerHBox = new HBox();
         containerHBox.setId("container-hbox");
-        if(leftButton != null){
-        	containerHBox.getChildren().add(leftButton);
+        if(button != null){
+        	containerHBox.getChildren().add(button);
         }
-        containerHBox.getChildren().add(rightButton);
-        
+ 
         containerVBox.getChildren().add(containerHBox);
         
         containerBorderPane.setTop(containerVBox);
@@ -126,21 +116,14 @@ public class MessageDialog extends Stage {
     
     public void createButtonActions(){
     	
-    	if(leftButton != null){
-    		leftButton.setOnAction(new EventHandler<ActionEvent>(){
+    	if(button != null){
+    		button.setOnAction(new EventHandler<ActionEvent>(){
         		@Override
                 public void handle(ActionEvent arg0) {
         			MessageDialog.this.close();  
         		}
         	});
     	}
-
-    	rightButton.setOnAction(new EventHandler<ActionEvent>(){
-    		@Override
-    		public void handle(ActionEvent arg0) {
-    			MessageDialog.this.close();  
-        	}
-        });
     	  
    }
  

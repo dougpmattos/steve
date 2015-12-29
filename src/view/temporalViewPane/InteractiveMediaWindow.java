@@ -288,8 +288,15 @@ public class InteractiveMediaWindow extends Stage {
     	closeButton.setOnAction(new EventHandler<ActionEvent>(){
     		@Override
             public void handle(ActionEvent arg0) {
-    			//TODO discard new interactive media cancel erase
-    			  InteractiveMediaWindow.this.close();
+    		
+    			InputDialog showContinueQuestionInputDialog = new InputDialog(Language.translate("discard.new.interactive.media"), null, "no","discard", null, 140);
+    			
+    			String answer = showContinueQuestionInputDialog.showAndWaitAndReturn();
+    			
+    			if(answer.equalsIgnoreCase("right")){
+    				InteractiveMediaWindow.this.close();
+    	    	}
+
     		}
     	});
     	
@@ -297,6 +304,16 @@ public class InteractiveMediaWindow extends Stage {
     		@Override
             public void handle(ActionEvent arg0) {
 	
+    			if(mediaToBeStoppedField.getValue() == null && timelineToBeStartedField.getValue() == null){
+    				
+    				MessageDialog messageDialog = new MessageDialog(Language.translate("it.is.not.possible.to.define.new.interactive.media"), 
+							Language.translate("select.at.least.one.media.to.be.stopped.or.a.timeline.to.be.started"), "OK", 190);
+					messageDialog.showAndWait();
+					
+					return;
+					
+    			}
+    			
 				Tab selectedTab = null;
 		    	TemporalChainPane temporalChainPane = null;
 		    	
@@ -371,7 +388,10 @@ public class InteractiveMediaWindow extends Stage {
 
 		    	}
 		    	
-		    	interactivityRelation.setNewTemporalChain((TemporalChain) timelineToBeStartedField.getValue());
+		    	if(timelineToBeStartedField.getValue() != null){
+		    		interactivityRelation.setNewTemporalChain((TemporalChain) timelineToBeStartedField.getValue());
+		    	}
+		    	
 				interactivityRelation.setExplicit(true);
 				
 				for(int i=0; i < mediaCloseNewVBoxContainer.getChildren().size(); i++){
@@ -380,7 +400,9 @@ public class InteractiveMediaWindow extends Stage {
 						
 						HBox mediaCloseHBoxContainer = (HBox) mediaCloseNewVBoxContainer.getChildren().get(i);
 					    ChoiceBox<Media> mediaToBeStoppedField = (ChoiceBox<Media>) mediaCloseHBoxContainer.getChildren().get(0);
-					    interactivityRelation.addSlaveMedia(mediaToBeStoppedField.getValue());
+					    if(mediaToBeStoppedField.getValue() != null){
+					    	interactivityRelation.addSlaveMedia(mediaToBeStoppedField.getValue());
+					    }
 					    
 					}
 					
@@ -393,16 +415,28 @@ public class InteractiveMediaWindow extends Stage {
 				final MessageDialog messageDialog = new MessageDialog(Language.translate("no.alignment.was.defined"), 
 						Language.translate("the.operation.was.canceled.by.the.user"), "OK", 150);
 				messageDialog.show();
-				FadeTransition delay = new FadeTransition(Duration.seconds(5), messageDialog.getScene().getRoot());
-				delay.setFromValue(0.0);
-				delay.setToValue(1.0);
-				delay.play();
-				delay.setOnFinished(new EventHandler<ActionEvent>() {
+				FadeTransition fadeIn = new FadeTransition(Duration.seconds(1), messageDialog.getScene().getRoot());
+				fadeIn.setFromValue(0.0);
+				fadeIn.setToValue(1.0);
+				fadeIn.play();
+				fadeIn.setOnFinished(new EventHandler<ActionEvent>() {
 
 					@Override
 					public void handle(ActionEvent event) {
 						
-						messageDialog.close();
+						FadeTransition fadeOut = new FadeTransition(Duration.seconds(1), messageDialog.getScene().getRoot());
+						fadeOut.setFromValue(1.0);
+						fadeOut.setToValue(0.0);
+						fadeOut.play();
+						fadeOut.setOnFinished(new EventHandler<ActionEvent>() {
+
+							@Override
+							public void handle(ActionEvent event) {
+								
+								messageDialog.close();
+								
+							}
+						});
 						
 					}
 				});
