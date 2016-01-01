@@ -49,6 +49,12 @@
 				<simpleCondition role="onBegin"/>
 				<simpleAction role="stop" delay="$delay" max="unbounded"/>
 			</causalConnector>
+			
+			<causalConnector id="onSelectionStartStop">
+				<simpleCondition role="onSelection"/>
+				<simpleAction role="start" max="unbounded"/>
+				<simpleAction role="stop" max="unbounded"/>
+			</causalConnector>
 
 		</connectorBase>
 

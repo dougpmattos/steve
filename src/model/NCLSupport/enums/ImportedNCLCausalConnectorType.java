@@ -9,7 +9,8 @@ public enum ImportedNCLCausalConnectorType {
 	ONEND_START,
 	ONEND_START_DELAY,
 	ONBEGIN_STOP,
-	ONBEGIN_STOP_DELAY;
+	ONBEGIN_STOP_DELAY,
+	ONSELECTION_START_STOP;
 	
 	public String getDescription() {
 
@@ -23,6 +24,7 @@ public enum ImportedNCLCausalConnectorType {
             case ONEND_START_DELAY: return "onEndStartDelay";
             case ONBEGIN_STOP: return "onBeginStop";
             case ONBEGIN_STOP_DELAY: return "onBeginStopDelay";
+            case ONSELECTION_START_STOP: return "onSelectionStartStop";
 			
 		}
 		

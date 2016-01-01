@@ -1,22 +1,23 @@
 package model.temporalView;
 
+import java.util.ArrayList;
 
 public abstract class Asynchronous<T> extends Relation<T> {
 
 	private static final long serialVersionUID = 5310555901053772316L;
 	
-	private TemporalChain newTemporalChain;
+	private ArrayList<TemporalChain> temporalChainList;
 	
 	public Asynchronous() {
 		
 	}
 
-	public TemporalChain getNewTemporalChain() {
-		return newTemporalChain;
+	public ArrayList<TemporalChain> getTemporalChainList() {
+		return temporalChainList;
 	}
 
-	public void setNewTemporalChain(TemporalChain newTemporalChain) {
-		this.newTemporalChain = newTemporalChain;
+	public void setTemporalChainList(ArrayList<TemporalChain> temporalChainList) {
+		this.temporalChainList = temporalChainList;
 	}
 	
 }
