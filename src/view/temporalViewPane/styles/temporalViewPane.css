@@ -172,6 +172,10 @@
 	-fx-background-radius: 8;
 }
 
+#name-interactive-icon-container{
+	-fx-alignment: top_right;
+}
+
 #temporal-media-container:pressed{
 	-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);
 }
@@ -188,4 +192,12 @@
 	-fx-stroke: #64FFDA;
 	-fx-fill: #64FFDA;
 	-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);
+}
+#i-button{
+	-fx-graphic: url("../images/interactivity-button.png");
+	-fx-background-color: transparent;
+    -fx-padding: 0;
+}
+#i-button:hover{
+    -fx-graphic: url("../images/interactivity-button-hover.png");
 }

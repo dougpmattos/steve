@@ -1,12 +1,17 @@
 package view.temporalViewPane;
 
 import java.util.ArrayList;
+import java.util.Observable;
+import java.util.Observer;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.chart.XYChart;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
 import javafx.scene.image.ImageView;
@@ -14,17 +19,21 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.scene.shape.Rectangle;
 import model.common.Media;
+import model.temporalView.Interactivity;
 import model.temporalView.TemporalChain;
+import model.temporalView.enums.TemporalViewOperator;
 import model.utility.MediaUtil;
+import model.utility.Operation;
 import view.repositoryPane.RepositoryMediaItemContainer;
 import view.repositoryPane.RepositoryPane;
 import view.stevePane.StevePane;
 import controller.Controller;
 
 @SuppressWarnings({ "unchecked", "rawtypes" })
-public class TimeLineXYChartData {
+public class TimeLineXYChartData implements Observer {
 
 	private static final double BORDER_DIFF = 0.26;
 	
@@ -37,6 +46,7 @@ public class TimeLineXYChartData {
 	private XYChart.Data<Number, String> xyChartData;
 	private TimeLineChart<Number, String> timeLineChart;
 	private HBox containerNode;
+	private VBox nameInteractiveIconContainer;
 	private TemporalChainPane temporalChainPane;
 	private StevePane stevePane;
 	private Rectangle mediaImageClip;
@@ -57,6 +67,8 @@ public class TimeLineXYChartData {
 		this.stevePane = stevePane;
 		wasDragged = false;
 
+		temporalChainModel.addObserver(this);
+		
 		createXYChartData();	
 		
 	}
@@ -76,8 +88,12 @@ public class TimeLineXYChartData {
 		containerNode = new HBox();
 		containerNode.setId("temporal-media-container");
 	
+		nameInteractiveIconContainer = new VBox();
+		nameInteractiveIconContainer.setId("name-interactive-icon-container");
+		nameInteractiveIconContainer.setAlignment(Pos.CENTER_RIGHT);
 		Label mediaName = new Label(media.getName());
 		mediaName.setId("media-name");
+		nameInteractiveIconContainer.getChildren().add(mediaName);
 
 		mediaImageClip = new Rectangle();
 		mediaImageClip.setId("media-image");
@@ -104,13 +120,14 @@ public class TimeLineXYChartData {
 			@Override 
 	        public void changed(ObservableValue o,Object oldVal, Object newVal){
 				imageView.setFitWidth((double) newVal);
+				nameInteractiveIconContainer.setPrefWidth((double) newVal);
 				mediaName.setPrefWidth((double) newVal);
 				mediaImageClip.setWidth((double) newVal);
 			}
 	    });
 		
 		containerNode.getChildren().add(imageView);
-		containerNode.getChildren().add(mediaName);
+		containerNode.getChildren().add(nameInteractiveIconContainer);
 		
 		setListenerEvents(containerNode, repositoryPane);
 		
@@ -162,12 +179,12 @@ public class TimeLineXYChartData {
 					temporalViewPane.clearSelectedMedia();
 					temporalViewPane.addSelectedMedia(media);
 					
-					if(node.getStylesheets().remove("view/temporalViewPane/styles/mousePressedSlaveTemporalMediaNode.css")){
+					if(node.getStylesheets().remove("view/temporalViewPane/styles/borderOfMediaToBeStopped.css") ||
+					   node.getStylesheets().remove("view/temporalViewPane/styles/mousePressedSlaveTemporalMediaNode.css") ||
+					   node.getStylesheets().remove("view/temporalViewPane/styles/mousePressedTemporalMediaNode.css")){
 						
 						mediaImageClip.setHeight(mediaImageClip.getHeight()+5);
 						
-					}else if(node.getStylesheets().remove("view/temporalViewPane/styles/mousePressedTemporalMediaNode.css")){
-						mediaImageClip.setHeight(mediaImageClip.getHeight()+5);
 					}
 					
 					node.getStylesheets().add("view/temporalViewPane/styles/mousePressedTemporalMediaNode.css");
@@ -184,7 +201,8 @@ public class TimeLineXYChartData {
 							if(!temporalViewPane.getSelectedMediaList().contains(timeLineXYChartData.getMedia())){
 
 								if(timeLineXYChartData.getContainerNode().getStylesheets().remove("view/temporalViewPane/styles/mousePressedSlaveTemporalMediaNode.css")||
-								   timeLineXYChartData.getContainerNode().getStylesheets().remove("view/temporalViewPane/styles/mousePressedTemporalMediaNode.css")){
+								   timeLineXYChartData.getContainerNode().getStylesheets().remove("view/temporalViewPane/styles/mousePressedTemporalMediaNode.css") ||
+								   timeLineXYChartData.getContainerNode().getStylesheets().remove("view/temporalViewPane/styles/borderOfMediaToBeStopped.css")){
 									
 									timeLineXYChartData.getMediaImageClip().setHeight(timeLineXYChartData.getMediaImageClip().getHeight()+5);
 									
@@ -267,6 +285,70 @@ public class TimeLineXYChartData {
 	
 	public Rectangle getMediaImageClip(){
 		return mediaImageClip;
+	}
+	
+	@Override
+	public void update(Observable observable, Object arg) {
+		
+		if(observable instanceof TemporalChain){
+			
+			Operation<TemporalViewOperator> operation = (Operation<TemporalViewOperator>) arg;
+
+			switch(operation.getOperator()){
+			
+		        case ADD_INTERACTIVITY_RELATION:
+		        	
+		        	Interactivity<Media, ?> interactivityRelation = (Interactivity<Media, ?>) operation.getOperating();
+	
+		        	if(interactivityRelation.getMasterMedia() == media){
+		        		
+		        		Button iButton = new Button();
+		        		iButton.setId("i-button");
+		        		
+		        		iButton.setOnAction(new EventHandler<ActionEvent>() {
+
+							@Override
+							public void handle(ActionEvent event) {
+								
+								for(XYChart.Data<Number, String> xyChartData : temporalChainPane.getSerie().getData()){
+									
+									HBox containerNode = (HBox) xyChartData.getNode();
+									VBox nameInteractiveIconContainer = (VBox) containerNode.getChildren().get(1);
+									Label mediaLabel = (Label) nameInteractiveIconContainer.getChildren().get(0);
+									
+									for(Media media : interactivityRelation.getSlaveMediaList()){
+										
+										if(mediaLabel.getText().equalsIgnoreCase(media.getName())){
+											containerNode.getStylesheets().add("view/temporalViewPane/styles/borderOfMediaToBeStopped.css");
+											ImageView imageView = (ImageView) containerNode.getChildren().get(0);
+											Rectangle mediaImageClip = (Rectangle) imageView.getClip();
+											mediaImageClip.setHeight(mediaImageClip.getHeight()-5);
+										}
+										
+									}
+									
+								}
+								
+								
+							}
+							
+						});
+		        		
+		        		nameInteractiveIconContainer.getChildren().add(iButton);
+		        		
+		        	}
+		 
+		        	if(interactivityRelation.getSlaveMediaList().contains(media)){
+		        		containerNode.getStylesheets().add("view/temporalViewPane/styles/borderOfMediaToBeStopped.css");
+		        		mediaImageClip.setHeight(mediaImageClip.getHeight()-5);
+		        	}
+		        	
+		            break;
+		            	
+			}
+			
+		}
+		
 	}
 	
 }

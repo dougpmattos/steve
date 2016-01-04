@@ -1,0 +1,14 @@
+/*******************************************************************************
+ *                                                                             *
+ * Specific Elements                                                           *
+ *                                                                             *
+ ******************************************************************************/
+
+#container-border-pane{
+	-fx-background-color: #607D8B;
+	-fx-background-radius: 20;
+}
+#msg-label{
+	-fx-text-fill: #FFFFFF;
+	-fx-font-size: 14;
+}

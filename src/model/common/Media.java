@@ -3,6 +3,7 @@ package model.common;
 import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Observable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -14,7 +15,9 @@ import model.common.enums.MediaType;
 import model.common.enums.MimeType;
 import model.spatialView.PresentationProperty;
 import model.temporalView.TimeSegment;
+import model.temporalView.enums.TemporalViewOperator;
 import model.utility.MediaUtil;
+import model.utility.Operation;
 import view.common.MessageDialog;
 import view.spatialViewPane.TemporalMediaInfoPane;
 
@@ -157,7 +160,7 @@ public class Media implements Serializable{
    }
    
    public void setInteractive(Boolean interactive) {
-	   this.interactive = interactive;
+	   this.interactive = interactive;  
    }
    
    public Boolean getInteractive() {

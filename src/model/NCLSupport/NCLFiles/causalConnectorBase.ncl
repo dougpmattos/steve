@@ -52,8 +52,20 @@
 			
 			<causalConnector id="onSelectionStartStop">
 				<simpleCondition role="onSelection"/>
-				<simpleAction role="start" max="unbounded"/>
-				<simpleAction role="stop" max="unbounded"/>
+				<compoundAction operator="par">
+					<simpleAction role="start" max="unbounded"/>
+					<simpleAction role="stop" max="unbounded"/>
+				</compoundAction>
+			</causalConnector>
+
+			<causalConnector id="onSelectionStartStopDelay">
+				<connectorParam name="stopDelay"/>
+				<connectorParam name="startDelay"/>
+				<simpleCondition role="onSelection"/>
+				<compoundAction operator="par">
+					<simpleAction role="stop" delay="$stopDelay" max="unbounded"/>
+					<simpleAction role="start" delay="$startDelay" max="unbounded"/>
+				</compoundAction>
 			</causalConnector>
 
 		</connectorBase>

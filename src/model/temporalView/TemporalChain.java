@@ -6,7 +6,6 @@ import java.util.Observable;
 
 import model.common.Media;
 import model.temporalView.enums.ConflictType;
-import model.temporalView.enums.NumericInteractivityKey;
 import model.temporalView.enums.RelationType;
 import model.temporalView.enums.TemporalViewOperator;
 import model.utility.Operation;
@@ -1177,10 +1176,13 @@ public class TemporalChain extends Observable implements Serializable {
 		 return name;
 	 }
 
-	public void addInteractivityRelation(Interactivity<Media, NumericInteractivityKey> interactivityRelation) {
+	public void addInteractivityRelation(Interactivity<Media, ?> interactivityRelation) {
 	
-		//TODO refletir na interface - icone i na midia origem da inetratividade e nova cadeia caso foi definida uma e a seta para as midias que sao paradas.
 		relationList.add(interactivityRelation);
+		
+		setChanged();
+		Operation<TemporalViewOperator> operation = new Operation<TemporalViewOperator>(TemporalViewOperator.ADD_INTERACTIVITY_RELATION, interactivityRelation, this);
+        notifyObservers(operation);
 		
 	}
 	

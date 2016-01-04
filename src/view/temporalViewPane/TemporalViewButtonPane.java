@@ -662,7 +662,7 @@ public class TemporalViewButtonPane extends BorderPane {
 	
 	private Double showDelayInputDialog() {
 		
-		InputDialog inputDialog = new InputDialog(Language.translate("type.delay"),null, Language.translate("cancel"),"ok", "Delay in seconds: ", 190);
+		InputDialog inputDialog = new InputDialog(Language.translate("type.delay"),null, Language.translate("cancel"),"ok", Language.translate("type.first.delay") + ": ", 190);
     	String input = inputDialog.showAndWaitAndReturn();
     	Double delay;
     	
@@ -679,7 +679,7 @@ public class TemporalViewButtonPane extends BorderPane {
 	
 	private Double showInputDialogOfFirstDelay(){
 		
-		InputDialog inputDialog = new InputDialog(Language.translate("type.first.delay"),null, Language.translate("cancel"),"ok", "Delay in seconds: ", 190);
+		InputDialog inputDialog = new InputDialog(Language.translate("type.first.delay"),null, Language.translate("cancel"),"ok", Language.translate("type.first.delay") + ": ", 190);
     	String input = inputDialog.showAndWaitAndReturn();
     	Double delay;
     	
@@ -696,7 +696,7 @@ public class TemporalViewButtonPane extends BorderPane {
 	
 	private Double showInputDialogOfSecondDelay(){
 		
-		InputDialog inputDialog = new InputDialog(Language.translate("type.second.delay"),null, Language.translate("cancel"),"ok", "Delay in seconds: ", 190);
+		InputDialog inputDialog = new InputDialog(Language.translate("type.second.delay"),null, Language.translate("cancel"),"ok", Language.translate("type.first.delay") + ": ", 190);
     	String input = inputDialog.showAndWaitAndReturn();
     	Double delay;
     	
@@ -709,6 +709,10 @@ public class TemporalViewButtonPane extends BorderPane {
     	}
 		return delay;
 		
+	}
+	
+	public Boolean isShowAnchorsLinksButtonSelected(){
+		return showAnchorsLinksButton.isSelected();
 	}
 	
 }

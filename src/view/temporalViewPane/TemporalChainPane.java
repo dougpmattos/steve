@@ -29,6 +29,7 @@ import javafx.scene.shape.Path;
 import javafx.scene.shape.PathElement;
 import javafx.scene.shape.VLineTo;
 import model.common.Media;
+import model.temporalView.Interactivity;
 import model.temporalView.Relation;
 import model.temporalView.Synchronous;
 import model.temporalView.TemporalChain;
@@ -283,6 +284,7 @@ public class TemporalChainPane extends StackPane implements Observer{
 		Media media;
 		int line;
 		Synchronous<Media> syncRelation;
+		Interactivity<Media, ?> interactivityRelation;
 		TemporalChain temporalChainModel;
 		
 		switch(operation.getOperator()){

@@ -28,8 +28,11 @@ import model.temporalView.enums.RelationType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import view.common.InputDialog;
 import view.common.Language;
 import view.common.MessageDialog;
+import view.common.ReturnMessage;
+import view.utility.AnimationUtil;
 import br.uff.midiacom.ana.NCLBody;
 import br.uff.midiacom.ana.NCLDoc;
 import br.uff.midiacom.ana.NCLHead;
@@ -60,6 +63,8 @@ public class NCLExportEventHandler implements EventHandler<ActionEvent>{
 
 	private static final String EXPORTED_NCL_DOCUMENT = " Exported NCL Document";
 	private static final String DELAY = "delay";
+	private static final String STOP_DELAY = "stopDelay";
+	private static final String START_DELAY = "startDelay";
 
 	final Logger logger = LoggerFactory.getLogger(NCLExportEventHandler.class);
 
@@ -78,13 +83,52 @@ public class NCLExportEventHandler implements EventHandler<ActionEvent>{
 	@Override
 	public void handle(ActionEvent actionEvent) {
 
+		String temporalChains = chainMasterMediaStartsInInstantDifferentOfZero();
+		
+		if(!temporalChains.isEmpty()){
+			
+			InputDialog showContinueQuestionInputDialog = new InputDialog(Language.translate("master.media.of.the.following.temporal.chain.will.be.moved.to.instant.0s.in.the.ncl.document"), 
+					temporalChains + "\n" + Language.translate("would.you.like.to.continue.exporting.to.NCL"), "yes","no", null, 250);
+			
+			String answer = showContinueQuestionInputDialog.showAndWaitAndReturn();
+			
+			if(answer.equalsIgnoreCase("left")){
+				
+				exportToNCL();
+				
+	    	}
+			
+		} else{
+			
+			exportToNCL();
+			
+		}
+
+    }
+
+	private void exportToNCL() {
 		NCLDoc nclDoc = createNCLDoc();
 		
 		if(nclDoc != null){
 			saveNCLDoc(nclDoc);
 		}
-    	
-    }
+	}
+
+	private String chainMasterMediaStartsInInstantDifferentOfZero() {
+		
+		StringBuilder temporalChains = new StringBuilder(); 
+		
+		for(TemporalChain temporalChain : temporalView.getTemporalChainList()){
+			
+			if(temporalChain.getMasterMedia().getBegin() > 0){
+				temporalChains.append(temporalChain.getName() + "\n");
+			}
+			
+		}	
+		
+		return temporalChains.toString();
+
+	}
 	
 	private NCLDoc createNCLDoc(){
 		
@@ -439,34 +483,74 @@ public class NCLExportEventHandler implements EventHandler<ActionEvent>{
 				
 			} else if(relation instanceof Interactivity){
 				
-				Interactivity<Media, ?> InteractivityRelation = (Interactivity<Media, ?>) relation;
+				Interactivity<Media, ?> interactivityRelation = (Interactivity<Media, ?>) relation;
 				
 				NCLLink nclLink = new NCLLink<>();
-				nclLink.setId("link_" + InteractivityRelation.getId());
+				nclLink.setId("link_" + interactivityRelation.getId());
 				
-				importedNCLCausalConnector = nclConnectorBaseOfImportedBase.getCausalConnector(ImportedNCLCausalConnectorType.ONSELECTION_START_STOP.getDescription());
-				externalReferenceType = new ExternalReferenceType<>(nclImportBase, importedNCLCausalConnector);
-				nclLink.setXconnector(externalReferenceType);
-				
-				conditionNCLBind = new NCLBind();
-				conditionNCLBind.setRole(importedNCLCausalConnector.findRole(NCLDefaultConditionRole.ONSELECTION.toString()));
-				conditionNCLBind.setComponent(nclBody.findNode(InteractivityRelation.getMasterMedia().getNCLName()));
-				nclLink.addBind(conditionNCLBind);
-				
-				for(TemporalChain temporalChainToBeStarted : InteractivityRelation.getTemporalChainList()){
-					NCLBind startNCLBind = new NCLBind();
-	    			startNCLBind.setRole(importedNCLCausalConnector.findRole(NCLDefaultActionRole.START.toString()));
-	    			startNCLBind.setComponent(nclBody.findNode(temporalChainToBeStarted.getMasterMedia().getNCLName()));
-	    			nclLink.addBind(startNCLBind);
+				if(interactivityRelation.getStartDelay() == 0.0 && interactivityRelation.getStopDelay() == 0.0){
+					
+					importedNCLCausalConnector = nclConnectorBaseOfImportedBase.getCausalConnector(ImportedNCLCausalConnectorType.ONSELECTION_START_STOP.getDescription());
+					externalReferenceType = new ExternalReferenceType<>(nclImportBase, importedNCLCausalConnector);
+					nclLink.setXconnector(externalReferenceType);
+					
+					conditionNCLBind = new NCLBind();
+					conditionNCLBind.setRole(importedNCLCausalConnector.findRole(NCLDefaultConditionRole.ONSELECTION.toString()));
+					conditionNCLBind.setComponent(nclBody.findNode(interactivityRelation.getMasterMedia().getNCLName()));
+					nclLink.addBind(conditionNCLBind);
+					
+					for(TemporalChain temporalChainToBeStarted : interactivityRelation.getTemporalChainList()){
+						NCLBind startNCLBind = new NCLBind();
+		    			startNCLBind.setRole(importedNCLCausalConnector.findRole(NCLDefaultActionRole.START.toString()));
+		    			startNCLBind.setComponent(nclBody.findNode(temporalChainToBeStarted.getMasterMedia().getNCLName()));
+		    			nclLink.addBind(startNCLBind);
+					}
+					
+					for(Media slaveMedia : interactivityRelation.getSlaveMediaList()){
+						NCLBind stopNCLBind = new NCLBind();
+		    			stopNCLBind.setRole(importedNCLCausalConnector.findRole(NCLDefaultActionRole.STOP.toString()));
+		    			stopNCLBind.setComponent(nclBody.findNode(slaveMedia.getNCLName()));
+		    			nclLink.addBind(stopNCLBind);
+					}
+					
+				}else {
+					
+					importedNCLCausalConnector = nclConnectorBaseOfImportedBase.getCausalConnector(ImportedNCLCausalConnectorType.ONSELECTION_START_STOP_DELAY.getDescription());
+					externalReferenceType = new ExternalReferenceType<>(nclImportBase, importedNCLCausalConnector);
+					nclLink.setXconnector(externalReferenceType);
+					
+					conditionNCLBind = new NCLBind();
+					conditionNCLBind.setRole(importedNCLCausalConnector.findRole(NCLDefaultConditionRole.ONSELECTION.toString()));
+					conditionNCLBind.setComponent(nclBody.findNode(interactivityRelation.getMasterMedia().getNCLName()));
+					nclLink.addBind(conditionNCLBind);
+					
+					for(TemporalChain temporalChainToBeStarted : interactivityRelation.getTemporalChainList()){
+						NCLBind startNCLBind = new NCLBind();
+		    			startNCLBind.setRole(importedNCLCausalConnector.findRole(NCLDefaultActionRole.START.toString()));
+		    			startNCLBind.setComponent(nclBody.findNode(temporalChainToBeStarted.getMasterMedia().getNCLName()));
+		    			nclLink.addBind(startNCLBind);
+					}
+					
+					for(Media slaveMedia : interactivityRelation.getSlaveMediaList()){
+						NCLBind stopNCLBind = new NCLBind();
+		    			stopNCLBind.setRole(importedNCLCausalConnector.findRole(NCLDefaultActionRole.STOP.toString()));
+		    			stopNCLBind.setComponent(nclBody.findNode(slaveMedia.getNCLName()));
+		    			nclLink.addBind(stopNCLBind);
+					}
+					
+					NCLLinkParam nclLinkParamStopDelay = new NCLLinkParam();
+					nclLinkParamStopDelay.setName(importedNCLCausalConnector.getConnectorParam(STOP_DELAY));
+					nclLinkParamStopDelay.setValue(new TimeType(interactivityRelation.getStopDelay()));
+					
+					NCLLinkParam nclLinkParamStartDelay = new NCLLinkParam();
+					nclLinkParamStartDelay.setName(importedNCLCausalConnector.getConnectorParam(START_DELAY));
+					nclLinkParamStartDelay.setValue(new TimeType(interactivityRelation.getStartDelay()));
+					
+					nclLink.addLinkParam(nclLinkParamStopDelay);
+					nclLink.addLinkParam(nclLinkParamStartDelay);
+					
 				}
-				
-				for(Media slaveMedia : InteractivityRelation.getSlaveMediaList()){
-					NCLBind stopNCLBind = new NCLBind();
-	    			stopNCLBind.setRole(importedNCLCausalConnector.findRole(NCLDefaultActionRole.STOP.toString()));
-	    			stopNCLBind.setComponent(nclBody.findNode(slaveMedia.getNCLName()));
-	    			nclLink.addBind(stopNCLBind);
-				}
-				
+
 				nclBody.addLink(nclLink);
 				
 			}
@@ -685,9 +769,9 @@ public class NCLExportEventHandler implements EventHandler<ActionEvent>{
 					FileWriter fileWriter = new FileWriter(auxFile);
 					fileWriter.write(nclCode);
                     fileWriter.close();
-                    MessageDialog messageDialog = new MessageDialog(Language.translate("ncl.export.is.ready"), 
-                    		Language.translate("your.hypermedia.presentation.has.been.successfully.exported.to.ncl.document"), "OK", 150);
-    		        messageDialog.showAndWait();
+                    ReturnMessage returnMessage = new ReturnMessage(Language.translate("ncl.export.is.ready"), 300);
+                    returnMessage.show();
+                    AnimationUtil.applyFadeInOut(returnMessage);
                     
 				}
                 

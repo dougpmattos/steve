@@ -116,7 +116,7 @@ public class Controller {
 		temporalChain.dragMedia(temporalChain, media, droppedTime);
 	}
 
-	public void addInteractivityRelation(TemporalChain temporalChainModel, Interactivity<Media, NumericInteractivityKey> interactivityRelation) {
+	public void addInteractivityRelation(TemporalChain temporalChainModel, Interactivity<Media, ?> interactivityRelation) {
 		temporalChainModel.addInteractivityRelation(interactivityRelation);
 	}
 

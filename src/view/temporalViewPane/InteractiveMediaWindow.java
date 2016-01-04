@@ -2,7 +2,6 @@ package view.temporalViewPane;
 
 import java.util.ArrayList;
 
-import javafx.animation.FadeTransition;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -16,6 +15,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Separator;
 import javafx.scene.control.Tab;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -24,7 +24,6 @@ import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import javafx.util.Duration;
 import model.common.Media;
 import model.temporalView.Interactivity;
 import model.temporalView.TemporalChain;
@@ -41,6 +40,8 @@ import model.temporalView.enums.VolumeChangeInteractivityKey;
 import view.common.InputDialog;
 import view.common.Language;
 import view.common.MessageDialog;
+import view.common.ReturnMessage;
+import view.utility.AnimationUtil;
 import controller.Controller;
 
 /**
@@ -51,8 +52,8 @@ import controller.Controller;
 public class InteractiveMediaWindow extends Stage {
  
 	private static final String TITLE = Language.translate("new.interactive.media");    
-	private static final int HEIGHT = 350;
-	private static final int WIDTH = 500;
+	private static final int HEIGHT = 550;
+	private static final int WIDTH = 600;
     
 	private Controller controller;
 	private TemporalViewPane temporalViewPane;
@@ -63,14 +64,17 @@ public class InteractiveMediaWindow extends Stage {
 	private ChoiceBox interactivityKeyField;
     private ChoiceBox<Media> mediaToBeStoppedField;
     private ChoiceBox timelineToBeStartedField;
+    private TextField stopDelayField;
+    private TextField startDelayField;
     
     private GridPane formGridPane;
     private VBox mediaCloseNewVBoxContainer;
+    private VBox timelineCloseNewVBoxContainer;
 
+    private Media interactiveMedia;
 	private ArrayList<Media> mediaListDuringInteractivityTime;
+	private ObservableList timelineFieldOptions;
     private ArrayList<Media> repositoryMediaList;
-    
-    private int mediaToBeStoppedCount = 0;
     
     public InteractiveMediaWindow(Controller controller, TemporalViewPane temporalViewPane, Media firstSelectedMedia, ArrayList<Media> mediaListDuringInteractivityTime, ArrayList<Media> repositoryMediaList) {
 
@@ -81,6 +85,7 @@ public class InteractiveMediaWindow extends Stage {
         this.temporalViewPane = temporalViewPane;
         this.controller = controller;
         
+        this.interactiveMedia = firstSelectedMedia;
         this.mediaListDuringInteractivityTime = mediaListDuringInteractivityTime;
         this.repositoryMediaList = repositoryMediaList;
 
@@ -131,10 +136,23 @@ public class InteractiveMediaWindow extends Stage {
 
 	private GridPane createForm(){
     	
+		Label interactivityKeySubtitle = new Label(Language.translate("interactivity.key").toUpperCase());
 		Label interactivityKeyTypeLabel = new Label(Language.translate("interactivity.key.type"));
 		Label interactivityKeyLabel = new Label(Language.translate("interactivity.key"));
+		
+		Label stopActionSubtitle = new Label(Language.translate("stop.action"));
         Label mediaToBeStoppedLabel = new Label(Language.translate("media.to.be.stopped"));
+        Label stopDelayLabel = new Label(Language.translate("delay.to.stop.in.seconds"));
+        
+        Label startActionSubtitle = new Label(Language.translate("start.action"));
         Label timelineToBeStartedLabel = new Label(Language.translate("timeline.to.be.started"));
+        Label startDelayLabel = new Label(Language.translate("delay.to.start.in.seconds"));
+        
+        interactivityKeySubtitle.setId("subtitle-label");
+        stopActionSubtitle.setId("subtitle-label");
+        startActionSubtitle.setId("subtitle-label");
+        stopDelayLabel.setId("msg-label");
+        startDelayLabel.setId("msg-label");
         interactivityKeyTypeLabel.setId("msg-label");
         interactivityKeyLabel.setId("msg-label");
         mediaToBeStoppedLabel.setId("msg-label");
@@ -143,8 +161,10 @@ public class InteractiveMediaWindow extends Stage {
         interactivityKeyTypeField = new ChoiceBox<InteractivityKeyType>(FXCollections.observableArrayList(InteractivityKeyType.values()));
         interactivityKeyField = new ChoiceBox();
         mediaToBeStoppedField = new ChoiceBox<Media>(FXCollections.observableArrayList(mediaListDuringInteractivityTime));
+        stopDelayField = new TextField();
+        startDelayField = new TextField();
         
-        ObservableList timelineFieldOptions = FXCollections.observableArrayList(temporalViewPane.getTemporalViewModel().getTemporalChainList());
+        timelineFieldOptions = FXCollections.observableArrayList(temporalViewPane.getTemporalViewModel().getTemporalChainList());
         timelineFieldOptions.add(new Separator());
         timelineFieldOptions.add(Language.translate("add.new.timeline") + "...");
         timelineToBeStartedField = new ChoiceBox(timelineFieldOptions);
@@ -152,41 +172,83 @@ public class InteractiveMediaWindow extends Stage {
         interactivityKeyTypeField.setValue(InteractivityKeyType.ACTUATION);
         interactivityKeyField.setItems(FXCollections.observableArrayList(ActuationInteractivityKey.values()));
         interactivityKeyField.setValue(ActuationInteractivityKey.OK);
+        stopDelayField.setText("0");
+        startDelayField.setText("0");
         
         interactivityKeyTypeField.setId("new-interactive-media-field");
         interactivityKeyField.setId("new-interactive-media-field");
-        mediaToBeStoppedField.setId("new-interactive-media-field");
-        mediaToBeStoppedField.getProperties().put("mediaToBeStoppedCount", mediaToBeStoppedCount); 
+        mediaToBeStoppedField.setId("new-interactive-media-field"); 
         timelineToBeStartedField.setId("new-interactive-media-field");
-       
+        stopDelayField.setId("input-field");
+        startDelayField.setId("input-field");
+        
+        HBox interactivityKeySeparator = new HBox();
+        interactivityKeySeparator.setId("separator");
+        VBox interactivityKeySubtitleSeparatorContainer = new VBox();
+        interactivityKeySubtitleSeparatorContainer.setId("subtitle-separator-container");
+        interactivityKeySubtitleSeparatorContainer.getChildren().add(interactivityKeySubtitle);
+        interactivityKeySubtitleSeparatorContainer.getChildren().add(interactivityKeySeparator);
+        
+        HBox stopActionSeparator = new HBox();
+        stopActionSeparator.setId("separator");
+        VBox stopActionSubtitleSeparatorContainer = new VBox();
+        stopActionSubtitleSeparatorContainer.setId("subtitle-separator-container");
+        stopActionSubtitleSeparatorContainer.getChildren().add(stopActionSubtitle);
+        stopActionSubtitleSeparatorContainer.getChildren().add(stopActionSeparator);
+        
+        HBox startActionSeparator = new HBox();
+        startActionSeparator.setId("separator");
+        VBox startActionSubtitleSeparatorContainer = new VBox();
+        startActionSubtitleSeparatorContainer.setId("subtitle-separator-container");
+        startActionSubtitleSeparatorContainer.getChildren().add(startActionSubtitle);
+        startActionSubtitleSeparatorContainer.getChildren().add(startActionSeparator);
+        
         HBox mediaCloseHBoxContainer = new HBox();
         mediaCloseHBoxContainer.setId("media-close-button-hbox-container");
         mediaCloseHBoxContainer.getChildren().add(mediaToBeStoppedField);
+        
+        HBox timelineCloseHBoxContainer = new HBox();
+        timelineCloseHBoxContainer.setId("timeline-close-button-hbox-container");
+        timelineCloseHBoxContainer.getChildren().add(timelineToBeStartedField);
         
         mediaCloseNewVBoxContainer = new VBox();
         mediaCloseNewVBoxContainer.setId("media-close-button-vbox-container");
         mediaCloseNewVBoxContainer.getChildren().add(mediaCloseHBoxContainer);
         
+        timelineCloseNewVBoxContainer = new VBox();
+        timelineCloseNewVBoxContainer.setId("timeline-close-button-vbox-container");
+        timelineCloseNewVBoxContainer.getChildren().add(timelineCloseHBoxContainer);
+        
         GridPane formGridPane = new GridPane();
         formGridPane.setId("form-grid-pane");
         formGridPane.setValignment(mediaToBeStoppedLabel, VPos.TOP);
+        formGridPane.setValignment(timelineToBeStartedLabel, VPos.TOP);
         
+        formGridPane.add(interactivityKeySubtitleSeparatorContainer, 0, 1, 5, 1);
         formGridPane.add(interactivityKeyTypeLabel, 0, 2);
         formGridPane.add(interactivityKeyTypeField, 1, 2);
         formGridPane.add(interactivityKeyLabel, 0, 3);
         formGridPane.add(interactivityKeyField, 1, 3);
-        formGridPane.add(mediaToBeStoppedLabel, 0, 4);
-        formGridPane.add(mediaCloseNewVBoxContainer, 1, 4);
-        formGridPane.add(timelineToBeStartedLabel, 0, 5);
-        formGridPane.add(timelineToBeStartedField, 1, 5);
         
-        createActionEvents(formGridPane, mediaCloseHBoxContainer, mediaCloseNewVBoxContainer);
+        formGridPane.add(stopActionSubtitleSeparatorContainer, 0, 5, 5, 1);
+        formGridPane.add(mediaToBeStoppedLabel, 0, 6);
+        formGridPane.add(mediaCloseNewVBoxContainer, 1, 6);
+        formGridPane.add(stopDelayLabel, 0, 7);
+        formGridPane.add(stopDelayField, 1, 7);
+        
+        formGridPane.add(startActionSubtitleSeparatorContainer, 0, 9, 5, 1);
+        formGridPane.add(timelineToBeStartedLabel, 0, 10);
+        formGridPane.add(timelineCloseNewVBoxContainer, 1, 10);
+        formGridPane.add(startDelayLabel, 0, 11);
+        formGridPane.add(startDelayField, 1, 11);
+        
+        createActionEvents(formGridPane, mediaCloseHBoxContainer, mediaCloseNewVBoxContainer, timelineCloseHBoxContainer, timelineCloseNewVBoxContainer);
 		
         return formGridPane;
     	
     }
 
-	private void createActionEvents(GridPane formGridPane, HBox mediaCloseHBoxContainer, VBox mediaCloseNewVBoxContainer) {
+	private void createActionEvents(GridPane formGridPane, HBox mediaCloseHBoxContainer, VBox mediaCloseNewVBoxContainer, HBox timelineCloseHBoxContainer, VBox timelineCloseNewVBoxContainer) {
 		
 		interactivityKeyTypeField.setOnAction(new EventHandler<ActionEvent>() {
 
@@ -259,6 +321,22 @@ public class InteractiveMediaWindow extends Stage {
 			@Override
 			public void handle(Event event) {
 				
+				if(timelineToBeStartedField.getProperties().get("previousValue") == null){
+					
+					Button removeMediaButton = new Button();
+					removeMediaButton.setId("timeline-to-be-stopped-close-button");
+			    	timelineCloseHBoxContainer.getChildren().add(removeMediaButton);
+			    	
+			    	Button addNewButton = new Button(Language.translate("add.new"));
+			    	addNewButton.setId("add-new-button");
+			    	timelineCloseNewVBoxContainer.getChildren().add(addNewButton);
+			    	
+			    	createFormButtonActions(removeMediaButton, addNewButton, timelineCloseHBoxContainer, timelineCloseNewVBoxContainer);
+			    	
+				}
+				
+				timelineToBeStartedField.getProperties().put("previousValue", timelineToBeStartedField.getValue());
+				
 				if(timelineToBeStartedField.getValue() != null && timelineToBeStartedField.getValue().toString().equalsIgnoreCase("Add new timeline...")){
 					
 					timelineToBeStartedField.setValue(null);
@@ -283,6 +361,89 @@ public class InteractiveMediaWindow extends Stage {
 	}
 
     
+	private boolean areThereRepeatedMedia(){
+	
+		for(int i=0; i < mediaCloseNewVBoxContainer.getChildren().size(); i++){
+			
+			if (mediaCloseNewVBoxContainer.getChildren().get(i) instanceof HBox) {
+				
+				HBox mediaCloseHBoxContainer = (HBox) mediaCloseNewVBoxContainer.getChildren().get(i);
+			    ChoiceBox<Media> mediaToBeStoppedField = (ChoiceBox<Media>) mediaCloseHBoxContainer.getChildren().get(0);
+			    
+			    if(mediaToBeStoppedField.getValue() != null){
+			    	
+			    	Media media = mediaToBeStoppedField.getValue();
+			    	for(int j=i+1; j < mediaCloseNewVBoxContainer.getChildren().size(); j++){
+			    		
+			    		if (mediaCloseNewVBoxContainer.getChildren().get(j) instanceof HBox) {
+			    			
+			    			HBox jMediaCloseHBoxContainer = (HBox) mediaCloseNewVBoxContainer.getChildren().get(j);
+						    ChoiceBox<Media> jMediaToBeStoppedField = (ChoiceBox<Media>) jMediaCloseHBoxContainer.getChildren().get(0);
+						    
+						    if(jMediaToBeStoppedField.getValue() != null){
+						    	
+						    	Media jMedia = jMediaToBeStoppedField.getValue();
+						    	if(media == jMedia){
+						    		return true;
+						    	}
+						    }
+			    			
+			    		}
+					    
+			    	}
+			    	
+			    }
+			    
+			}
+			
+		}
+		
+		return false;
+		
+	}
+	
+	private boolean areThereRepeatedTemporalChain(){
+		
+		for(int i=0; i < timelineCloseNewVBoxContainer.getChildren().size(); i++){
+			
+			if (timelineCloseNewVBoxContainer.getChildren().get(i) instanceof HBox) {
+				
+				HBox timelineCloseHBoxContainer = (HBox) timelineCloseNewVBoxContainer.getChildren().get(i);
+			    ChoiceBox timelineToBeStartedField = (ChoiceBox) timelineCloseHBoxContainer.getChildren().get(0);
+			    
+			    if(timelineToBeStartedField.getValue() != null){
+			    	
+			    	TemporalChain temporalChain = (TemporalChain) timelineToBeStartedField.getValue();
+			    	
+			    	for(int j=i+1; j < timelineCloseNewVBoxContainer.getChildren().size(); j++){
+			    		
+			    		if (timelineCloseNewVBoxContainer.getChildren().get(j) instanceof HBox) {
+			    			
+			    			HBox jTimelineCloseHBoxContainer = (HBox) timelineCloseNewVBoxContainer.getChildren().get(j);
+						    ChoiceBox jTimelineToBeStoppedField = (ChoiceBox) jTimelineCloseHBoxContainer.getChildren().get(0);
+						    
+						    if(jTimelineToBeStoppedField.getValue() != null){
+						    	
+						    	TemporalChain jTemporalChain = (TemporalChain) jTimelineToBeStoppedField.getValue();
+						    	if(temporalChain == jTemporalChain){
+						    		return true;
+						    	}
+						    }
+			    			
+			    		}
+					    
+			    	}
+			    	
+			    }
+			    
+			}
+			
+		}
+		
+		return false;
+		
+	}
+	
     private void createToolBarButtonActions(Button closeButton, Button saveButton) {
 		
     	closeButton.setOnAction(new EventHandler<ActionEvent>(){
@@ -304,16 +465,40 @@ public class InteractiveMediaWindow extends Stage {
     		@Override
             public void handle(ActionEvent arg0) {
 	
+    			StringBuilder errorMessage = new StringBuilder();
+    			int high = 190;
+    			int count = 0;
+    			
     			if(mediaToBeStoppedField.getValue() == null && timelineToBeStartedField.getValue() == null){
-    				
-    				MessageDialog messageDialog = new MessageDialog(Language.translate("it.is.not.possible.to.define.new.interactive.media"), 
-							Language.translate("select.at.least.one.media.to.be.stopped.or.a.timeline.to.be.started"), "OK", 190);
-					messageDialog.showAndWait();
-					
-					return;
-					
+    				errorMessage.append(Language.translate("select.at.least.one.media.to.be.stopped.or.a.timeline.to.be.started") +"\n \n");
+    				count++;
+    			}
+    			if(areThereRepeatedMedia()){
+    				errorMessage.append(Language.translate("it.is.not.allowed.to.select.a.media.more.than.one.time.to.be.stopped") +"\n \n");
+    				count++;
+    			}
+    			if(areThereRepeatedTemporalChain()){
+    				errorMessage.append(Language.translate("it.is.not.allowed.to.select.a.temporal.chain.more.than.one.time.to.be.started") +"\n \n");
+    				count++;
     			}
     			
+    			if(errorMessage.length() != 0){
+    				
+    				if(count == 1){
+    					high = 190;
+    				}else if(count == 2) {
+    					high = 250;
+    				} else if(count == 3){
+    					high = 300;
+    				}
+    				
+    				MessageDialog messageDialog = new MessageDialog(Language.translate("it.is.not.possible.to.define.new.interactive.media"), errorMessage.toString(), "OK", high);
+    				messageDialog.showAndWait();
+    				
+    				return;
+    				
+    			}
+
 				Tab selectedTab = null;
 		    	TemporalChainPane temporalChainPane = null;
 		    	
@@ -387,10 +572,20 @@ public class InteractiveMediaWindow extends Stage {
 						break;
 
 		    	}
-		    	
-		    	if(timelineToBeStartedField.getValue() != null){
-		    		interactivityRelation.setNewTemporalChain((TemporalChain) timelineToBeStartedField.getValue());
-		    	}
+
+		    	for(int i=0; i < timelineCloseNewVBoxContainer.getChildren().size(); i++){
+					
+					if (timelineCloseNewVBoxContainer.getChildren().get(i) instanceof HBox) {
+						
+						HBox timelineCloseHBoxContainer = (HBox) timelineCloseNewVBoxContainer.getChildren().get(i);
+					    ChoiceBox timelineToBeStartedField = (ChoiceBox) timelineCloseHBoxContainer.getChildren().get(0);
+					    if(timelineToBeStartedField.getValue() != null){
+					    	interactivityRelation.addTemporalChain((TemporalChain) timelineToBeStartedField.getValue());
+					    }
+					    
+					}
+					
+				}
 		    	
 				interactivityRelation.setExplicit(true);
 				
@@ -407,65 +602,64 @@ public class InteractiveMediaWindow extends Stage {
 					}
 					
 				}
-		    		
+			
+				if(stopDelayField.getText().isEmpty()){
+		    		interactivityRelation.setStopDelay(0.0);
+		    	}else {
+		    		interactivityRelation.setStopDelay(Double.valueOf(stopDelayField.getText()));
+		    	}
+				
+				if(startDelayField.getText().isEmpty()){
+		    		interactivityRelation.setStartDelay(0.0);
+		    	}else {
+		    		interactivityRelation.setStartDelay(Double.valueOf(startDelayField.getText()));
+		    	}
+				
+				interactivityRelation.setMasterMedia(interactiveMedia);
+				interactiveMedia.setInteractive(true);
+				
 				controller.addInteractivityRelation(temporalChainPane.getTemporalChainModel(), interactivityRelation);
 				
 				InteractiveMediaWindow.this.close();
 				
-				final MessageDialog messageDialog = new MessageDialog(Language.translate("no.alignment.was.defined"), 
-						Language.translate("the.operation.was.canceled.by.the.user"), "OK", 150);
-				messageDialog.show();
-				FadeTransition fadeIn = new FadeTransition(Duration.seconds(1), messageDialog.getScene().getRoot());
-				fadeIn.setFromValue(0.0);
-				fadeIn.setToValue(1.0);
-				fadeIn.play();
-				fadeIn.setOnFinished(new EventHandler<ActionEvent>() {
-
-					@Override
-					public void handle(ActionEvent event) {
-						
-						FadeTransition fadeOut = new FadeTransition(Duration.seconds(1), messageDialog.getScene().getRoot());
-						fadeOut.setFromValue(1.0);
-						fadeOut.setToValue(0.0);
-						fadeOut.play();
-						fadeOut.setOnFinished(new EventHandler<ActionEvent>() {
-
-							@Override
-							public void handle(ActionEvent event) {
-								
-								messageDialog.close();
-								
-							}
-						});
-						
-					}
-				});
-
+				ReturnMessage returnMessage = new ReturnMessage(Language.translate("interactive.media.saved.successfully"), 350);
+				returnMessage.show();
+				AnimationUtil.applyFadeInOut(returnMessage);
+				
     		}
     		
     	});
 		
 	}
 
-	private void createFormButtonActions(Button removeMediaButton, Button addNewButton, HBox mediaCloseHBoxContainer, VBox mediaCloseNewVBoxContainer) {
+    private boolean isMediaField(Button removeMediaButton){
+    	
+    	if(removeMediaButton.getId().indexOf("timeline") != -1){
+    		return false;
+    	}else {
+    		return true;
+    	} 
+    	
+    }
+    
+	private void createFormButtonActions(Button removeMediaButton, Button addNewButton, HBox fieldCloseHBoxContainer, VBox fieldCloseNewVBoxContainer) {
 		
 		removeMediaButton.setOnAction(new EventHandler<ActionEvent>(){
     		@Override
             public void handle(ActionEvent arg0) {
 
-    			ChoiceBox<Media> mediaToBeStoppedField = (ChoiceBox<Media>) mediaCloseHBoxContainer.getChildren().get(0);
+    			ChoiceBox<Media> field = (ChoiceBox<Media>) fieldCloseHBoxContainer.getChildren().get(0);
 				
-    			if(mediaCloseNewVBoxContainer.getChildren().size() == 2){
+    			if(fieldCloseNewVBoxContainer.getChildren().size() == 2){
     				
-    				mediaToBeStoppedField.setValue(null);
+    				field.setValue(null);
     				
-    				mediaCloseNewVBoxContainer.getChildren().remove(1);
-    				mediaCloseHBoxContainer.getChildren().remove(1);
+    				fieldCloseNewVBoxContainer.getChildren().remove(1);
+    				fieldCloseHBoxContainer.getChildren().remove(1);
 
     			}else {
     				
-    				mediaCloseNewVBoxContainer.getChildren().remove(mediaCloseHBoxContainer);
-    				mediaToBeStoppedCount--;
+    				fieldCloseNewVBoxContainer.getChildren().remove(fieldCloseHBoxContainer);
     				
     			}
 
@@ -476,38 +670,43 @@ public class InteractiveMediaWindow extends Stage {
     		@Override
             public void handle(ActionEvent arg0) {
     			
-    			ChoiceBox mediaToBeStoppedField = new ChoiceBox<Media>(FXCollections.observableArrayList(mediaListDuringInteractivityTime));
-    			mediaToBeStoppedField.setId("new-interactive-media-field");
-    			mediaToBeStoppedCount++;
-    			mediaToBeStoppedField.getProperties().put("mediaToBeStoppedCount", mediaToBeStoppedCount);
+    			ChoiceBox choiceBoxField;
+    			HBox fieldCloseHBoxContainer = new HBox();
     			
-    			HBox mediaCloseHBoxContainer = new HBox();
-    		    mediaCloseHBoxContainer.setId("media-close-button-hbox-container");
-    		    mediaCloseHBoxContainer.getChildren().add(mediaToBeStoppedField);
+    			if(isMediaField(removeMediaButton)){
+    				choiceBoxField = new ChoiceBox<Media>(FXCollections.observableArrayList(mediaListDuringInteractivityTime));
+    				fieldCloseHBoxContainer.setId("media-close-button-hbox-container");
+    			}else {
+    				choiceBoxField = new ChoiceBox<Media>(FXCollections.observableArrayList(timelineFieldOptions));
+    				fieldCloseHBoxContainer.setId("timeline-close-button-hbox-container");
+    			}
+    			
+    			choiceBoxField.setId("new-interactive-media-field");
+    		    fieldCloseHBoxContainer.getChildren().add(choiceBoxField);
     
-    			mediaCloseNewVBoxContainer.getChildren().remove(addNewButton);
-    			mediaCloseNewVBoxContainer.getChildren().add(mediaCloseHBoxContainer);
+    			fieldCloseNewVBoxContainer.getChildren().remove(addNewButton);
+    			fieldCloseNewVBoxContainer.getChildren().add(fieldCloseHBoxContainer);
 
-    		    mediaToBeStoppedField.setOnAction(new EventHandler<ActionEvent>() {
+    		    choiceBoxField.setOnAction(new EventHandler<ActionEvent>() {
 
     				@Override
     				public void handle(ActionEvent event) {
     	
-    					if(mediaToBeStoppedField.getProperties().get("previousValue") == null){
+    					if(choiceBoxField.getProperties().get("previousValue") == null){
     						
     						Button removeMediaButton = new Button();
         					removeMediaButton.setId("media-to-be-stopped-close-button");
-        			    	mediaCloseHBoxContainer.getChildren().add(removeMediaButton);
+        			    	fieldCloseHBoxContainer.getChildren().add(removeMediaButton);
         			    	
         			    	Button addNewButton = new Button(Language.translate("add.new"));
         			    	addNewButton.setId("add-new-button");
-        			    	mediaCloseNewVBoxContainer.getChildren().add(addNewButton);
+        			    	fieldCloseNewVBoxContainer.getChildren().add(addNewButton);
         			    	
-        			    	createFormButtonActions(removeMediaButton, addNewButton, mediaCloseHBoxContainer, mediaCloseNewVBoxContainer);
+        			    	createFormButtonActions(removeMediaButton, addNewButton, fieldCloseHBoxContainer, fieldCloseNewVBoxContainer);
         			    	
     					}
     					
-    					mediaToBeStoppedField.getProperties().put("previousValue", mediaToBeStoppedField.getValue());
+    					choiceBoxField.getProperties().put("previousValue", choiceBoxField.getValue());
 
     				}
     				
