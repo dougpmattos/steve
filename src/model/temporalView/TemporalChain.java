@@ -217,14 +217,30 @@ public class TemporalChain extends Observable implements Serializable {
 			
 			Relation relation = relationList.get(i);
 			
-			Synchronous<Media> synchronousRelation = (Synchronous<Media>) relation;
-			if(synchronousRelation.getMasterMedia() == media){
-				removeSynchronousRelation(synchronousRelation);
-			}else {
-				synchronousRelation.removeSlaveMedia(media);
-				if(synchronousRelation.getSlaveMediaList().isEmpty()){
+			if(relation instanceof Synchronous){
+				
+				Synchronous<Media> synchronousRelation = (Synchronous<Media>) relation;
+				if(synchronousRelation.getMasterMedia() == media){
 					removeSynchronousRelation(synchronousRelation);
+				}else {
+					synchronousRelation.removeSlaveMedia(media);
+					if(synchronousRelation.getSlaveMediaList().isEmpty()){
+						removeSynchronousRelation(synchronousRelation);
+					}
 				}
+				
+			}else if(relation instanceof Interactivity){
+				
+				Interactivity<Media, ?> interactivityRelation = (Interactivity<Media, ?>) relation;
+				if(interactivityRelation.getMasterMedia() == media){
+					removeInteractivityRelation(interactivityRelation);
+				}else {
+					interactivityRelation.removeSlaveMedia(media);
+					if(interactivityRelation.getSlaveMediaList().isEmpty() && interactivityRelation.getTemporalChainList().isEmpty()){
+						removeInteractivityRelation(interactivityRelation);
+					}
+				}
+				
 			}
 			
 		}
@@ -1126,6 +1142,18 @@ public class TemporalChain extends Observable implements Serializable {
 		
 		setChanged();
 		Operation<TemporalViewOperator> operation = new Operation<TemporalViewOperator>(TemporalViewOperator.REMOVE_SYNC_RELATION, synchronousRelation, this);
+        notifyObservers(operation);
+        
+	}
+	
+	public void removeInteractivityRelation(Interactivity<Media, ?> interactivityRelation){
+		
+		relationList.remove(interactivityRelation);
+		
+		interactivityRelation.getMasterMedia().setInteractive(false);
+		
+		setChanged();
+		Operation<TemporalViewOperator> operation = new Operation<TemporalViewOperator>(TemporalViewOperator.REMOVE_INTERACTIVITY_RELATION, interactivityRelation, this);
         notifyObservers(operation);
         
 	}
