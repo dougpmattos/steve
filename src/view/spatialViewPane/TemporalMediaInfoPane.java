@@ -152,7 +152,7 @@ public class TemporalMediaInfoPane extends ScrollPane{
 		setStartTimeValue(Double.toString(media.getBegin()));
 		setEndTimeValue(Double.toString(media.getEnd()));
 		setDurationValue(Double.toString(media.getDuration()));
-		setInteractiveValue(media.getInteractive());
+		setInteractiveValue(media.isInteractive());
 		
 	}
 	

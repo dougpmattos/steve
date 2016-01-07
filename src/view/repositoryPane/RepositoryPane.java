@@ -24,10 +24,13 @@ public class RepositoryPane extends BorderPane implements Observer {
     private RepositoryButtonPane buttonPane;
     private TemporalViewPane temporalViewPane;
     private HBox labelContainer;
+    private RepositoryMediaList repositoryMediaList;
 		
 	public RepositoryPane(Controller controller, RepositoryMediaList repositoryMediaList){
 
 		getStylesheets().add("view/repositoryPane/styles/repositoryPane.css");
+		
+		this.repositoryMediaList = repositoryMediaList;
 		
 		mediaTreePane = new MediaTreePane();
 		repositoryMediaItemContainerListPane = new RepositoryMediaItemContainerListPane();
@@ -50,7 +53,7 @@ public class RepositoryPane extends BorderPane implements Observer {
 	    repositoryMediaList.addObserver(this);
 	    
 	}
-	
+
 	@Override
 	public void update(Observable observable, Object obj) {
 	
@@ -125,6 +128,10 @@ public class RepositoryPane extends BorderPane implements Observer {
 		this.temporalViewPane = temporalViewPane;
 		repositoryMediaItemContainerListPane.setTemporalViewPane(temporalViewPane);
 		
+	}
+	
+	public RepositoryMediaList getRepositoryMediaList() {
+		return repositoryMediaList;
 	}
 
 }

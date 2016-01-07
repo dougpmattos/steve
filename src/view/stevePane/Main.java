@@ -44,6 +44,7 @@ public class Main extends Application{
 				FadeTransition fadeOut = new FadeTransition(Duration.seconds(1.3), loadingWindow.getScene().getRoot());
 				fadeOut.setFromValue(1.0);
 				fadeOut.setToValue(0.0);
+				fadeOut.setDelay(Duration.seconds(1));
 				fadeOut.play();
 				fadeOut.setOnFinished(new EventHandler<ActionEvent>() {
 

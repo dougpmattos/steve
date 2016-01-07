@@ -50,13 +50,14 @@ import controller.Controller;
  */
 @SuppressWarnings({"unchecked","rawtypes"})
 public class InteractiveMediaWindow extends Stage {
- 
-	private static final String TITLE = Language.translate("new.interactive.media");    
-	private static final int HEIGHT = 550;
-	private static final int WIDTH = 600;
+     
+	private static final int HEIGHT = 600;
+	private static final int WIDTH = 650;
     
 	private Controller controller;
 	private TemporalViewPane temporalViewPane;
+	private Boolean isEdition;
+	private Interactivity interactivityRelation;
 	
     private Scene scene;
     
@@ -74,9 +75,8 @@ public class InteractiveMediaWindow extends Stage {
     private Media interactiveMedia;
 	private ArrayList<Media> mediaListDuringInteractivityTime;
 	private ObservableList timelineFieldOptions;
-    private ArrayList<Media> repositoryMediaList;
     
-    public InteractiveMediaWindow(Controller controller, TemporalViewPane temporalViewPane, Media firstSelectedMedia, ArrayList<Media> mediaListDuringInteractivityTime, ArrayList<Media> repositoryMediaList) {
+    public InteractiveMediaWindow(Controller controller, TemporalViewPane temporalViewPane, Media firstSelectedMedia, ArrayList<Media> mediaListDuringInteractivityTime) {
 
         setResizable(false);
         initModality(Modality.APPLICATION_MODAL);
@@ -84,10 +84,10 @@ public class InteractiveMediaWindow extends Stage {
 
         this.temporalViewPane = temporalViewPane;
         this.controller = controller;
+        isEdition = false;
         
         this.interactiveMedia = firstSelectedMedia;
         this.mediaListDuringInteractivityTime = mediaListDuringInteractivityTime;
-        this.repositoryMediaList = repositoryMediaList;
 
         BorderPane containerBorderPane = new BorderPane();
         containerBorderPane.setId("container-border-pane");
@@ -106,7 +106,53 @@ public class InteractiveMediaWindow extends Stage {
         setScene(scene);
 
     }
+    
+    public InteractiveMediaWindow(Controller controller, TemporalViewPane temporalViewPane, ArrayList<Media> mediaListDuringInteractivityTime, Interactivity<Media, ?> interactivityToLoad){
+    	
+    	setResizable(false);
+        initModality(Modality.APPLICATION_MODAL);
+        initStyle(StageStyle.UNDECORATED);
 
+        this.temporalViewPane = temporalViewPane;
+        this.controller = controller;
+        isEdition=true;
+        this.interactivityRelation = interactivityToLoad;
+        
+        this.interactiveMedia = interactivityToLoad.getMasterMedia();
+        this.mediaListDuringInteractivityTime = mediaListDuringInteractivityTime;
+        
+        BorderPane containerBorderPane = new BorderPane();
+        containerBorderPane.setId("container-border-pane");
+        containerBorderPane.getStylesheets().add("view/temporalViewPane/styles/interactivityMediaWindow.css");
+        
+        formGridPane = createForm();
+        ScrollPane scrollPaneContainer = new ScrollPane();
+        scrollPaneContainer.setContent(formGridPane);
+        scrollPaneContainer.setId("scroll-pane-container");
+        
+        containerBorderPane.setTop(createToolBar());
+        containerBorderPane.setCenter(scrollPaneContainer);
+
+        scene = new Scene(containerBorderPane, WIDTH, HEIGHT);
+        scene.setFill(Color.TRANSPARENT);
+        setScene(scene);
+        
+        populateInteractiveMediaWindow(interactivityToLoad);
+    	
+    }
+
+    private void populateInteractiveMediaWindow(Interactivity<Media, ?> interactivityToLoad){
+    	
+    	//interactivityKeyTypeField.setValue(interactivityToLoad.getInteractivityKeyType());
+        //interactivityKeyField.setValue(interactivityToLoad.getInteractivityKey());
+        stopDelayField.setText(interactivityToLoad.getStopDelay().toString());
+        startDelayField.setText(interactivityToLoad.getStartDelay().toString());
+
+//        mediaToBeStoppedField
+//        timelineToBeStartedField
+    	
+    }
+    
 	private BorderPane createToolBar(){
     	
     	BorderPane toolBarBorderPane = new BorderPane();
@@ -118,7 +164,14 @@ public class InteractiveMediaWindow extends Stage {
     	closeButton.setId("close-button");
     	createToolBarButtonActions(closeButton, saveButton);
     	
-    	Label titleLabe = new Label(TITLE);
+    	Label titleLabe;
+    	
+    	if(isEdition){
+    		titleLabe = new Label(Language.translate("edit.interactive.media"));
+    	}else {
+    		titleLabe = new Label(Language.translate("new.interactive.media"));
+    	}
+    	
     	titleLabe.setId("title-label");
     	titleLabe.setWrapText(true);
 
@@ -449,8 +502,14 @@ public class InteractiveMediaWindow extends Stage {
     	closeButton.setOnAction(new EventHandler<ActionEvent>(){
     		@Override
             public void handle(ActionEvent arg0) {
-    		
-    			InputDialog showContinueQuestionInputDialog = new InputDialog(Language.translate("discard.new.interactive.media"), null, "no","discard", null, 140);
+    			
+    			InputDialog showContinueQuestionInputDialog;
+    			
+    			if(isEdition){
+    				showContinueQuestionInputDialog = new InputDialog(Language.translate("discard.interactive.media.changes"), null, "no","discard", null, 140);
+    			}else {
+    				showContinueQuestionInputDialog = new InputDialog(Language.translate("discard.new.interactive.media"), null, "no","discard", null, 140);
+    			}
     			
     			String answer = showContinueQuestionInputDialog.showAndWaitAndReturn();
     			
@@ -512,67 +571,85 @@ public class InteractiveMediaWindow extends Stage {
 		    	if(selectedTab != null){
 		    		temporalChainPane = (TemporalChainPane) selectedTab.getContent();
 		    	}
-	
-		    	Interactivity interactivityRelation;
 		    	
 		    	switch (interactivityKeyTypeField.getValue()) {
 				
 					case NUMERIC:
 						
-						interactivityRelation = new Interactivity<Media, NumericInteractivityKey>();
+						if(!isEdition){
+							interactivityRelation = new Interactivity<Media, NumericInteractivityKey>();
+						}
 						interactivityRelation.setInteractivityKey((NumericInteractivityKey) interactivityKeyField.getValue());
 						break;
 						
 					case ALPHABETICAL:
 						
-						interactivityRelation = new Interactivity<Media, AlphabeticalInteractivityKey>();
+						if(!isEdition){
+							interactivityRelation = new Interactivity<Media, AlphabeticalInteractivityKey>();
+						}
 						interactivityRelation.setInteractivityKey((AlphabeticalInteractivityKey) interactivityKeyField.getValue());
 						break;
 						
 					case PROGRAMMING_GUIDE: 
 						
-						interactivityRelation = new Interactivity<Media, ProgrammingGuideInteractivityKey>();
+						if(!isEdition){
+							interactivityRelation = new Interactivity<Media, ProgrammingGuideInteractivityKey>();
+						}
 						interactivityRelation.setInteractivityKey((ProgrammingGuideInteractivityKey) interactivityKeyField.getValue());
 						break;
 						
 					case ARROWS: 
 						
-						interactivityRelation = new Interactivity<Media, ArrowInteractivityKey>();
+						if(!isEdition){
+							interactivityRelation = new Interactivity<Media, ArrowInteractivityKey>();
+						}
 						interactivityRelation.setInteractivityKey((ArrowInteractivityKey) interactivityKeyField.getValue());
 						break;
 						
 					case CHANNEL_CHANGE: 
 
-						interactivityRelation = new Interactivity<Media, ChannelChangeInteractivityKey>();
+						if(!isEdition){
+							interactivityRelation = new Interactivity<Media, ChannelChangeInteractivityKey>();
+						}
 						interactivityRelation.setInteractivityKey((ChannelChangeInteractivityKey) interactivityKeyField.getValue());
 						break;
 						
 					case VOLUME_CHANGE: 
 
-						interactivityRelation = new Interactivity<Media, VolumeChangeInteractivityKey>();
+						if(!isEdition){
+							interactivityRelation = new Interactivity<Media, VolumeChangeInteractivityKey>();
+						}
 						interactivityRelation.setInteractivityKey((VolumeChangeInteractivityKey) interactivityKeyField.getValue());
 						break;
 						
 					case COLORS: 
 
-						interactivityRelation = new Interactivity<Media, ColorInteractivityKey>();
+						if(!isEdition){
+							interactivityRelation = new Interactivity<Media, ColorInteractivityKey>();
+						}
 						interactivityRelation.setInteractivityKey((ColorInteractivityKey) interactivityKeyField.getValue());
 						break;
 						
 					case CONTROL:
 
-						interactivityRelation = new Interactivity<Media, ControlInteractivityKey>();
+						if(!isEdition){
+							interactivityRelation = new Interactivity<Media, ControlInteractivityKey>();
+						}
 						interactivityRelation.setInteractivityKey((ControlInteractivityKey) interactivityKeyField.getValue());
 						break;
 						
 					default:
 						
-						interactivityRelation = new Interactivity<Media, ActuationInteractivityKey>();
+						if(!isEdition){
+							interactivityRelation = new Interactivity<Media, ActuationInteractivityKey>();
+						}
 						interactivityRelation.setInteractivityKey(ActuationInteractivityKey.OK);
 						break;
 
 		    	}
 
+		    	interactivityRelation.getTemporalChainList().clear(); //INFO Se for edição, limpar a lista para não duplicar os valores.
+		    	
 		    	for(int i=0; i < timelineCloseNewVBoxContainer.getChildren().size(); i++){
 					
 					if (timelineCloseNewVBoxContainer.getChildren().get(i) instanceof HBox) {
@@ -588,6 +665,8 @@ public class InteractiveMediaWindow extends Stage {
 				}
 		    	
 				interactivityRelation.setExplicit(true);
+				
+				interactivityRelation.getSlaveMediaList().clear(); //INFO Se for edição, limpar a lista para não duplicar os valores.
 				
 				for(int i=0; i < mediaCloseNewVBoxContainer.getChildren().size(); i++){
 					
@@ -618,7 +697,11 @@ public class InteractiveMediaWindow extends Stage {
 				interactivityRelation.setMasterMedia(interactiveMedia);
 				interactiveMedia.setInteractive(true);
 				
-				controller.addInteractivityRelation(temporalChainPane.getTemporalChainModel(), interactivityRelation);
+				if(isEdition){
+					controller.updateInteractivityRelation(temporalChainPane.getTemporalChainModel(), interactivityRelation);
+				}else {
+					controller.addInteractivityRelation(temporalChainPane.getTemporalChainModel(), interactivityRelation);
+				}
 				
 				InteractiveMediaWindow.this.close();
 				

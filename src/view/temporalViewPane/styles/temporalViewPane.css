@@ -136,11 +136,24 @@
     -fx-border-color: transparent;
 }
 
+/*******************************************************************************
+ *                                                                             *
+ * MenuItem                                                                    *
+ *                                                                             *
+ ******************************************************************************/
 
-.context-menu {
-    -fx-background-color: #37474F;
+.menu-item:disabled{
+	-fx-background-color: #263238;
+	-fx-opacity: 1;
 }
 
+.menu-item >.label {
+    -fx-text-fill: white;
+}
+
+.menu-item:disabled > .label {
+    -fx-background-color: #263238;
+}
 
 /*******************************************************************************
  *                                                                             *

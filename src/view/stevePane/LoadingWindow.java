@@ -29,7 +29,7 @@ public class LoadingWindow extends Stage {
 
         setLayout();
 
-        scene = new Scene(containerBorderPane, 600, 400);
+        scene = new Scene(containerBorderPane, 500, 300);
         scene.setFill(Color.TRANSPARENT);
         setScene(scene);
 

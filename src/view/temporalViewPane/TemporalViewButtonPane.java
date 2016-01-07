@@ -16,7 +16,10 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import model.common.Media;
 import model.repository.RepositoryMediaList;
+import model.temporalView.Interactivity;
+import model.temporalView.Relation;
 import model.temporalView.Synchronous;
+import model.temporalView.TemporalChain;
 import model.temporalView.enums.RelationType;
 import view.common.InputDialog;
 import view.common.Language;
@@ -614,9 +617,50 @@ public class TemporalViewButtonPane extends BorderPane {
 		    	
 		    	if(firstSelectedMedia != null){
 		    		
-			    	ArrayList<Media> mediaListDuringInteractivityTime = temporalViewPane.getMediaListDuringInteractivityTime();
-			    	
-		    		InteractiveMediaWindow interactiveMediaWindow = new InteractiveMediaWindow(controller, temporalViewPane, firstSelectedMedia, mediaListDuringInteractivityTime, repositoryMediaList.getAllTypesList());
+		    		InteractiveMediaWindow interactiveMediaWindow;
+		    		ArrayList<Media> mediaListDuringInteractivityTime = temporalViewPane.getMediaListDuringInteractivityTime();
+		    		
+		    		if(!firstSelectedMedia.isInteractive()){
+		    			
+			    		interactiveMediaWindow = new InteractiveMediaWindow(controller, temporalViewPane, firstSelectedMedia, mediaListDuringInteractivityTime);
+
+		    		}else {
+		    		
+		    			Tab selectedTab = null;
+		    			for (Tab tab : temporalViewPane.getTemporalChainTabPane().getTabs()){
+		    	    		if(tab.isSelected()){
+		    	    			selectedTab = tab;
+		    	    			break;
+		    	    		}
+		    	    	}
+		    			TemporalChainPane temporalChainPane = null;
+		    	    	if(selectedTab != null){
+		    	    		temporalChainPane = (TemporalChainPane) selectedTab.getContent();
+		    	    	}
+		    	    	TemporalChain temporalChain = null;
+		    	    	if(temporalChainPane != null){
+		    	    		temporalChain = temporalChainPane.getTemporalChainModel();
+		    	    	}
+		    	    	
+		    	    	Interactivity interactivityToLoad = null;
+		    			for(Relation relation : temporalChain.getRelationList()){
+							
+							if(relation instanceof Interactivity){
+								
+								Interactivity interactivityRelation = (Interactivity) relation;
+								if(interactivityRelation.getMasterMedia() == firstSelectedMedia){
+									interactivityToLoad = interactivityRelation;
+									break;
+								}
+								
+							}
+							
+						}
+		    			
+			    		interactiveMediaWindow = new InteractiveMediaWindow(controller, temporalViewPane, mediaListDuringInteractivityTime, interactivityToLoad);
+			    		
+		    		}
+		    		
 			    	interactiveMediaWindow.showAndWait();
 			    	
 		    	}else{

@@ -1214,4 +1214,12 @@ public class TemporalChain extends Observable implements Serializable {
 		
 	}
 	
+	public void updateInteractivityRelation(Interactivity<Media, ?> interactivityRelation) {
+		
+		setChanged();
+		Operation<TemporalViewOperator> operation = new Operation<TemporalViewOperator>(TemporalViewOperator.EDIT_INTERACTIVITY_RELATION, interactivityRelation, this);
+        notifyObservers(operation);
+		
+	}
+	
 }

@@ -163,7 +163,7 @@ public class Media implements Serializable{
 	   this.interactive = interactive;  
    }
    
-   public Boolean getInteractive() {
+   public Boolean isInteractive() {
 	   return interactive;
    }
    

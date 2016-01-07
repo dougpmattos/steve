@@ -111,6 +111,10 @@ public class Controller {
 	public void removeSynchronousRelation(TemporalChain temporalChain, Synchronous<Media> synchronousRelation){
 		temporalChain.removeSynchronousRelation(synchronousRelation);
 	}
+	
+	public void removeInteractivityRelation(TemporalChain temporalChain, Interactivity<Media, ?> interactivityRelation){
+		temporalChain.removeInteractivityRelation(interactivityRelation);
+	}
 
 	public void dragMediaTemporalChain(TemporalChain temporalChain, Media media, Double droppedTime) {
 		temporalChain.dragMedia(temporalChain, media, droppedTime);
@@ -118,6 +122,10 @@ public class Controller {
 
 	public void addInteractivityRelation(TemporalChain temporalChainModel, Interactivity<Media, ?> interactivityRelation) {
 		temporalChainModel.addInteractivityRelation(interactivityRelation);
+	}
+	
+	public void updateInteractivityRelation(TemporalChain temporalChainModel, Interactivity<Media, ?> interactivityRelation) {
+		temporalChainModel.updateInteractivityRelation(interactivityRelation);
 	}
 
 }

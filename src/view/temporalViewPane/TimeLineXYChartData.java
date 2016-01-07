@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
 
-import controller.Controller;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -27,7 +26,9 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Rectangle;
 import model.common.Media;
+import model.repository.RepositoryMediaList;
 import model.temporalView.Interactivity;
+import model.temporalView.Relation;
 import model.temporalView.TemporalChain;
 import model.temporalView.enums.TemporalViewOperator;
 import model.utility.MediaUtil;
@@ -36,6 +37,7 @@ import view.common.Language;
 import view.repositoryPane.RepositoryMediaItemContainer;
 import view.repositoryPane.RepositoryPane;
 import view.stevePane.StevePane;
+import controller.Controller;
 
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public class TimeLineXYChartData implements Observer {
@@ -53,11 +55,18 @@ public class TimeLineXYChartData implements Observer {
 	private HBox containerNode;
 	private VBox nameInteractiveIconContainer;
 	private TemporalChainPane temporalChainPane;
+	private RepositoryMediaList repositoryMediaList;
 	private StevePane stevePane;
 	private Rectangle mediaImageClip;
 	private ImageView imageView;
 	private Boolean wasDragged;
 	private Button iButton;
+	private ContextMenu contextMenu;
+	private MenuItem menuItemDeleteInteractivity;
+	private MenuItem menuItemEditInteractivity;
+	private MenuItem menuItemAddInteractivity;
+	private SeparatorMenuItem menuItemSeparator;
+	private MenuItem menuItemDeleteMedia;
 	
 	public TimeLineXYChartData(Controller controller, Media media, TemporalChain temporalChainModel, TemporalViewPane temporalViewPane, 
 			TemporalChainPane temporalChainPane, RepositoryPane repositoryPane, int line, StevePane stevePane, TimeLineChart<Number, String> timeLineChart){
@@ -72,10 +81,84 @@ public class TimeLineXYChartData implements Observer {
 		this.repositoryPane = repositoryPane;
 		this.stevePane = stevePane;
 		wasDragged = false;
+		this.repositoryMediaList = repositoryPane.getRepositoryMediaList();
 
 		temporalChainModel.addObserver(this);
 		
-		createXYChartData();	
+		createPopupMenu(controller, media, temporalChainModel);
+		
+		createXYChartData();
+
+	}
+
+	private void createPopupMenu(Controller controller, Media media, TemporalChain temporalChainModel) {
+		
+		contextMenu = new ContextMenu();
+
+		menuItemDeleteInteractivity = new MenuItem (Language.translate("delete.interactivity"));
+		menuItemEditInteractivity = new MenuItem (Language.translate("edit.interactivity"));
+		menuItemAddInteractivity = new MenuItem (Language.translate("add.interactivity"));
+		menuItemSeparator = new SeparatorMenuItem();
+		menuItemDeleteMedia = new MenuItem (Language.translate("delete.media.context.menu"));
+		
+		contextMenu.getItems().addAll(menuItemDeleteMedia, menuItemSeparator, menuItemDeleteInteractivity, menuItemEditInteractivity, menuItemAddInteractivity);
+		
+		createMenuItemActions(controller, media, temporalChainModel);
+		
+	}
+
+	private void createMenuItemActions(Controller controller, Media media, TemporalChain temporalChainModel) {
+		
+		menuItemDeleteInteractivity.setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent event) {
+				
+				for(Relation relation : temporalChainModel.getRelationList()){
+					
+					if(relation instanceof Interactivity){
+						
+						Interactivity interactivityRelation = (Interactivity) relation;
+						if(interactivityRelation.getMasterMedia() == media){
+							controller.removeInteractivityRelation(temporalChainModel, interactivityRelation);
+							break;
+						}
+						
+					}
+					
+				}
+				
+			}
+		});
+		
+		menuItemEditInteractivity.setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent event) {
+				//TODO chamar a janela de interatividade populando o form com a info do modelo ja preecnhida
+			}
+		});
+		
+		menuItemAddInteractivity.setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent event) {
+				
+		    	ArrayList<Media> mediaListDuringInteractivityTime = temporalViewPane.getMediaListDuringInteractivityTime();
+		    	
+	    		InteractiveMediaWindow interactiveMediaWindow = new InteractiveMediaWindow(controller, temporalViewPane, media, mediaListDuringInteractivityTime);
+		    	interactiveMediaWindow.showAndWait();
+
+			}
+		});
+		
+		menuItemDeleteMedia.setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent event) {
+				controller.removeMediaTemporalChain(media, temporalChainModel, true);
+			}
+		});
 		
 	}
 
@@ -264,7 +347,6 @@ public class TimeLineXYChartData implements Observer {
 	    			for(int i=0; i<temporalViewPane.getSelectedMediaList().size(); i++){
 	    				
 	    				Media media = temporalViewPane.getSelectedMediaList().get(i);
-	    				temporalViewPane.clearSelectedMedia();
 		    			controller.removeMediaTemporalChain(media, temporalChainModel, true);
 		    			
 	    			}
@@ -280,25 +362,19 @@ public class TimeLineXYChartData implements Observer {
 			@Override
 			public void handle(MouseEvent mouseEvent) {
 				
-				ContextMenu contextMenu = new ContextMenu();
-				
-				if (mouseEvent.getButton() == MouseButton.SECONDARY) {
-					
-					MenuItem menuItemDeleteInteractivity = new MenuItem (Language.translate("delete.interactivity"));
-					MenuItem menuItemEditInteractivity = new MenuItem (Language.translate("edit.interactivity"));
-					MenuItem menuItemAddInteractivity = new MenuItem (Language.translate("add.interactivity"));
-					SeparatorMenuItem menuItemSeparator = new SeparatorMenuItem();
-					MenuItem menuItemDeleteMedia = new MenuItem (Language.translate("delete.media.context.menu"));
-					 
-					if(!media.getInteractive()){
+				if (mouseEvent.getButton() == MouseButton.SECONDARY && !contextMenu.isShowing()) {
+
+					if(!media.isInteractive()){
 						menuItemDeleteInteractivity.setDisable(true); 
 						menuItemEditInteractivity.setDisable(true);
+						menuItemAddInteractivity.setDisable(false);
 					}else{
+						menuItemDeleteInteractivity.setDisable(false); 
+						menuItemEditInteractivity.setDisable(false);
 						menuItemAddInteractivity.setDisable(true);
 					}
-					 
-					contextMenu.getItems().addAll(menuItemDeleteMedia, menuItemSeparator, menuItemDeleteInteractivity, menuItemEditInteractivity, menuItemAddInteractivity);
-					contextMenu.show(temporalChainPane, mouseEvent.getSceneX(), mouseEvent.getSceneY());
+
+					contextMenu.show(containerNode, mouseEvent.getScreenX(), mouseEvent.getScreenY());
 		
 			     }else {
 			    	 contextMenu.hide();
