@@ -207,8 +207,8 @@
 	-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);
 }
 #relation-arrow{
-	-fx-stroke: #64FFDA;
-	-fx-fill: #64FFDA;
+	-fx-stroke: red;
+	-fx-fill: red;
 	-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);
 }
 #i-button{

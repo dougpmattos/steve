@@ -70,7 +70,7 @@ public class TimeLineXYChartData implements Observer {
 	
 	public TimeLineXYChartData(Controller controller, Media media, TemporalChain temporalChainModel, TemporalViewPane temporalViewPane, 
 			TemporalChainPane temporalChainPane, RepositoryPane repositoryPane, int line, StevePane stevePane, TimeLineChart<Number, String> timeLineChart){
-		
+
 		this.controller = controller;
 		this.media = media;
 		this.temporalChainModel = temporalChainModel;
@@ -400,6 +400,10 @@ public class TimeLineXYChartData implements Observer {
 	
 	public Rectangle getMediaImageClip(){
 		return mediaImageClip;
+	}
+	
+	public TimeLineChart<Number, String> geTimeLineChart(){
+		return timeLineChart;
 	}
 	
 	@Override

@@ -114,12 +114,10 @@ public class TemporalChain extends Observable implements Serializable {
     	
     	int mediaLine = getMediaLine(media);
     	int lineToAddMedia = getLineToAddMedia(media);
-    	
-    	if(mediaLine != lineToAddMedia){
-    		removeMedia(media, false);
-    		addMedia(media);
-    	}
-    	
+  
+    	removeMedia(media, false);
+    	addMedia(media);
+  	
     	dragChildren(media);
 
 	}
