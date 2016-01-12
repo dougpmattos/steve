@@ -10,6 +10,7 @@ import javafx.event.EventHandler;
 import javafx.geometry.VPos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
@@ -63,6 +64,7 @@ public class InteractiveMediaWindow extends Stage {
     
     private ChoiceBox<InteractivityKeyType> interactivityKeyTypeField;
 	private ChoiceBox interactivityKeyField;
+	private CheckBox interactiveMediaWillBeStopped;
     private ChoiceBox<Media> mediaToBeStoppedField;
     private ChoiceBox timelineToBeStartedField;
     private TextField stopDelayField;
@@ -147,6 +149,13 @@ public class InteractiveMediaWindow extends Stage {
         //interactivityKeyField.setValue(interactivityToLoad.getInteractivityKey());
         stopDelayField.setText(interactivityToLoad.getStopDelay().toString());
         startDelayField.setText(interactivityToLoad.getStartDelay().toString());
+        
+        if(interactivityToLoad.getSlaveMediaList().contains(interactiveMedia)){
+        	interactiveMediaWillBeStopped.setSelected(true);
+        }else {
+        	interactiveMediaWillBeStopped.setSelected(false);
+        }
+        
 
 //        mediaToBeStoppedField
 //        timelineToBeStartedField
@@ -213,6 +222,7 @@ public class InteractiveMediaWindow extends Stage {
         
         interactivityKeyTypeField = new ChoiceBox<InteractivityKeyType>(FXCollections.observableArrayList(InteractivityKeyType.values()));
         interactivityKeyField = new ChoiceBox();
+        interactiveMediaWillBeStopped  =new CheckBox(Language.translate("interactive.media.will.be.stopped"));
         mediaToBeStoppedField = new ChoiceBox<Media>(FXCollections.observableArrayList(mediaListDuringInteractivityTime));
         stopDelayField = new TextField();
         startDelayField = new TextField();
@@ -225,11 +235,13 @@ public class InteractiveMediaWindow extends Stage {
         interactivityKeyTypeField.setValue(InteractivityKeyType.ACTUATION);
         interactivityKeyField.setItems(FXCollections.observableArrayList(ActuationInteractivityKey.values()));
         interactivityKeyField.setValue(ActuationInteractivityKey.OK);
+        interactiveMediaWillBeStopped.setSelected(true);
         stopDelayField.setText("0");
         startDelayField.setText("0");
         
         interactivityKeyTypeField.setId("new-interactive-media-field");
         interactivityKeyField.setId("new-interactive-media-field");
+        interactiveMediaWillBeStopped.setId("new-interactive-media-field");
         mediaToBeStoppedField.setId("new-interactive-media-field"); 
         timelineToBeStartedField.setId("new-interactive-media-field");
         stopDelayField.setId("input-field");
@@ -284,16 +296,17 @@ public class InteractiveMediaWindow extends Stage {
         formGridPane.add(interactivityKeyField, 1, 3);
         
         formGridPane.add(stopActionSubtitleSeparatorContainer, 0, 5, 5, 1);
-        formGridPane.add(mediaToBeStoppedLabel, 0, 6);
-        formGridPane.add(mediaCloseNewVBoxContainer, 1, 6);
-        formGridPane.add(stopDelayLabel, 0, 7);
-        formGridPane.add(stopDelayField, 1, 7);
+        formGridPane.add(interactiveMediaWillBeStopped, 0, 6);
+        formGridPane.add(mediaToBeStoppedLabel, 0, 7);
+        formGridPane.add(mediaCloseNewVBoxContainer, 1, 7);
+        formGridPane.add(stopDelayLabel, 0, 8);
+        formGridPane.add(stopDelayField, 1, 8);
         
-        formGridPane.add(startActionSubtitleSeparatorContainer, 0, 9, 5, 1);
-        formGridPane.add(timelineToBeStartedLabel, 0, 10);
-        formGridPane.add(timelineCloseNewVBoxContainer, 1, 10);
-        formGridPane.add(startDelayLabel, 0, 11);
-        formGridPane.add(startDelayField, 1, 11);
+        formGridPane.add(startActionSubtitleSeparatorContainer, 0, 10, 5, 1);
+        formGridPane.add(timelineToBeStartedLabel, 0, 11);
+        formGridPane.add(timelineCloseNewVBoxContainer, 1, 11);
+        formGridPane.add(startDelayLabel, 0, 12);
+        formGridPane.add(startDelayField, 1, 12);
         
         createActionEvents(formGridPane, mediaCloseHBoxContainer, mediaCloseNewVBoxContainer, timelineCloseHBoxContainer, timelineCloseNewVBoxContainer);
 		
@@ -528,7 +541,7 @@ public class InteractiveMediaWindow extends Stage {
     			int high = 190;
     			int count = 0;
     			
-    			if(mediaToBeStoppedField.getValue() == null && timelineToBeStartedField.getValue() == null){
+    			if(mediaToBeStoppedField.getValue() == null && timelineToBeStartedField.getValue() == null && !interactiveMediaWillBeStopped.isSelected()){
     				errorMessage.append(Language.translate("select.at.least.one.media.to.be.stopped.or.a.timeline.to.be.started") +"\n \n");
     				count++;
     			}
@@ -667,6 +680,10 @@ public class InteractiveMediaWindow extends Stage {
 				interactivityRelation.setExplicit(true);
 				
 				interactivityRelation.getSlaveMediaList().clear(); //INFO Se for edição, limpar a lista para não duplicar os valores.
+				
+				if(interactiveMediaWillBeStopped.isSelected()){
+					interactivityRelation.addSlaveMedia(interactiveMedia);
+				}
 				
 				for(int i=0; i < mediaCloseNewVBoxContainer.getChildren().size(); i++){
 					
