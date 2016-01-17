@@ -2,6 +2,7 @@ package view.temporalViewPane;
 
 import java.util.ArrayList;
 
+import controller.Controller;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -28,7 +29,6 @@ import javafx.stage.StageStyle;
 import model.common.Media;
 import model.temporalView.Interactivity;
 import model.temporalView.TemporalChain;
-import model.temporalView.enums.ActuationInteractivityKey;
 import model.temporalView.enums.AlphabeticalInteractivityKey;
 import model.temporalView.enums.ArrowInteractivityKey;
 import model.temporalView.enums.ChannelChangeInteractivityKey;
@@ -43,7 +43,6 @@ import view.common.Language;
 import view.common.MessageDialog;
 import view.common.ReturnMessage;
 import view.utility.AnimationUtil;
-import controller.Controller;
 
 /**
  *
@@ -232,9 +231,9 @@ public class InteractiveMediaWindow extends Stage {
         timelineFieldOptions.add(Language.translate("add.new.timeline") + "...");
         timelineToBeStartedField = new ChoiceBox(timelineFieldOptions);
         
-        interactivityKeyTypeField.setValue(InteractivityKeyType.ACTUATION);
-        interactivityKeyField.setItems(FXCollections.observableArrayList(ActuationInteractivityKey.values()));
-        interactivityKeyField.setValue(ActuationInteractivityKey.OK);
+        interactivityKeyTypeField.setValue(InteractivityKeyType.CONTROL);
+        interactivityKeyField.setItems(FXCollections.observableArrayList(ControlInteractivityKey.values()));
+        interactivityKeyField.setValue(ControlInteractivityKey.OK);
         interactiveMediaWillBeStopped.setSelected(true);
         stopDelayField.setText("0");
         startDelayField.setText("0");
@@ -346,9 +345,6 @@ public class InteractiveMediaWindow extends Stage {
 						break;
 					case CONTROL: 
 						interactivityKeyField.setItems(FXCollections.observableArrayList(ControlInteractivityKey.values()));
-						break;
-					case ACTUATION: 
-						interactivityKeyField.setItems(FXCollections.observableArrayList(ActuationInteractivityKey.values()));
 						break;
 
 				}
@@ -654,9 +650,9 @@ public class InteractiveMediaWindow extends Stage {
 					default:
 						
 						if(!isEdition){
-							interactivityRelation = new Interactivity<Media, ActuationInteractivityKey>();
+							interactivityRelation = new Interactivity<Media, ControlInteractivityKey>();
 						}
-						interactivityRelation.setInteractivityKey(ActuationInteractivityKey.OK);
+						interactivityRelation.setInteractivityKey(ControlInteractivityKey.OK);
 						break;
 
 		    	}

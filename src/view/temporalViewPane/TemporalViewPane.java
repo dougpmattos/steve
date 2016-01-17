@@ -4,10 +4,18 @@ import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
 
+import controller.Controller;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.geometry.Pos;
+import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import javafx.scene.control.Tooltip;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.StackPane;
 import model.common.Media;
 import model.repository.RepositoryMediaList;
 import model.temporalView.TemporalChain;
@@ -17,8 +25,6 @@ import model.utility.Operation;
 import view.common.Language;
 import view.repositoryPane.RepositoryPane;
 import view.stevePane.StevePane;
-import view.temporalViewPane.enums.AllenRelation;
-import controller.Controller;
 
 @SuppressWarnings("unchecked")
 public class TemporalViewPane extends BorderPane implements Observer, view.common.Observable{
@@ -35,6 +41,8 @@ public class TemporalViewPane extends BorderPane implements Observer, view.commo
 	private Media firstSelectedMedia;
 	private ArrayList<Media> selectedMediaList = new ArrayList<Media>();
 	private StevePane stevePane;
+	private StackPane tabAddButtonContainer;
+	private Button tabAddButton;
 	
 	public TemporalViewPane(Controller controller, TemporalView temporalViewModel, RepositoryPane repositoryPane, StevePane stevePane, RepositoryMediaList repositoryMediaList){
 		
@@ -46,10 +54,12 @@ public class TemporalViewPane extends BorderPane implements Observer, view.commo
 		this.repositoryMediaList = repositoryMediaList;
 		this.stevePane = stevePane;
 		
-		temporalChainTabPane = new TabPane();
+		
 		temporalViewButtonPane = new TemporalViewButtonPane(controller, temporalChainTabPane, this, repositoryMediaList);
-      		
-	    setCenter(temporalChainTabPane);
+      	
+		createTemporalChainTabPane();
+
+	    setCenter(tabAddButtonContainer);
 	    setBottom(temporalViewButtonPane);
 	    
 	    observers = new ArrayList<view.common.Observer>();
@@ -60,20 +70,55 @@ public class TemporalViewPane extends BorderPane implements Observer, view.commo
 	    
 	}
 
+	private void createTemporalChainTabPane() {
+		
+		temporalChainTabPane = new TabPane();
+		tabAddButtonContainer = new StackPane();
+		tabAddButtonContainer.setAlignment(Pos.TOP_LEFT);
+		
+		tabAddButtonContainer.getChildren().addAll(temporalChainTabPane);
+		
+		tabAddButton = new Button();
+		tabAddButton.setId("tab-add-button");
+		tabAddButton.setTooltip(new Tooltip(Language.translate("create.new.temporal.chain")));
+		
+		tabAddButton.setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent event) {
+				
+				addTemporalChainPane(new TemporalChain("Temporal Chain" + temporalChainTabPane.getTabs().size()));
+				
+			}
+			
+		});
+		
+		tabAddButtonContainer.getChildren().add(tabAddButton);
+		
+	}
+
 	public void addTemporalChainPane(TemporalChain temporalChainModel) {
 		
-		ScrollPane temporalChainScrollPane = new ScrollPane();
-		temporalChainScrollPane.setId("temporal-chain-scroll-pane");
+//		ScrollPane temporalChainScrollPane = new ScrollPane();
+//		temporalChainScrollPane.setId("temporal-chain-scroll-pane");
 		
 		TemporalChainPane temporalChainPane = new TemporalChainPane(controller, temporalViewModel, temporalChainModel, this, repositoryPane, stevePane);
 
-		Tab mainTemporalChainTab = new Tab();
-		mainTemporalChainTab.setText(temporalChainModel.getName());
+		Tab newTemporalChainTab = new Tab();
+		newTemporalChainTab.setText(temporalChainModel.getName());
+		newTemporalChainTab.setContent(temporalChainPane);
+		temporalChainTabPane.getTabs().add(newTemporalChainTab);
 		
-		mainTemporalChainTab.setClosable(false); 
-		mainTemporalChainTab.setContent(temporalChainPane);
-
-		temporalChainTabPane.getTabs().add(mainTemporalChainTab);
+		if(temporalChainTabPane.getTabs().size() == 1){
+			newTemporalChainTab.setClosable(false);
+		}
+		
+		Double positionX = temporalChainTabPane.getTabMinWidth()*temporalChainTabPane.getTabs().size() - temporalChainTabPane.getTabs().size()*10;
+		if(!(positionX + 20 > getWidth())){
+			tabAddButton.setTranslateX(positionX);	
+		}
+	
+		tabAddButton.setTranslateY(10);
 		
 	}
 	

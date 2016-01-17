@@ -219,3 +219,11 @@
 #i-button:hover{
     -fx-graphic: url("../images/interactivity-button-hover.png");
 }
+#tab-add-button{
+	-fx-graphic: url("../images/tab-add-button.png");
+	-fx-background-color: transparent;
+    -fx-padding: 0;
+}
+#tab-add-button:hover{
+	-fx-graphic: url("../images/tab-add-button-hover.png");
+}
