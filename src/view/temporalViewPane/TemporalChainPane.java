@@ -11,14 +11,13 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
-import javafx.geometry.Bounds;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Label;
-import javafx.scene.image.ImageView;
+import javafx.scene.control.Tab;
 import javafx.scene.input.DataFormat;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
@@ -32,7 +31,6 @@ import javafx.scene.shape.LineTo;
 import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.Path;
 import javafx.scene.shape.PathElement;
-import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.VLineTo;
 import model.common.Media;
 import model.temporalView.Interactivity;
@@ -43,8 +41,6 @@ import model.temporalView.TemporalView;
 import model.temporalView.enums.TemporalViewOperator;
 import model.utility.MediaUtil;
 import model.utility.Operation;
-import view.common.Language;
-import view.common.MessageDialog;
 import view.repositoryPane.RepositoryPane;
 import view.stevePane.StevePane;
 import controller.Controller;
@@ -71,6 +67,7 @@ public class TemporalChainPane extends StackPane implements Observer{
 	private Path playLine;
 	private ArrayList<ArrayList<TimeLineXYChartData>> timeLineXYChartDataLineList = new ArrayList<ArrayList<TimeLineXYChartData>>();
 	private StevePane stevePane;
+	private Tab parentTab;
 	
 	NumberAxis xAxis;
 	CategoryAxis yAxis;
@@ -336,13 +333,13 @@ public class TemporalChainPane extends StackPane implements Observer{
 	            removeSlaveMediaOfSyncRelation(media, syncRelation);
 				
 				break;
-				
+	        	
         	default:
         	
         		break;
         		
 		}
-	
+
 	}
 	
 	private void addTemporalChainMedia(Media media, int line){
@@ -415,10 +412,10 @@ public class TemporalChainPane extends StackPane implements Observer{
 //						vline.setY(10);
 						arrow.getElements().addAll(new MoveTo(0, 1), new LineTo(15, 1), new LineTo(7.5, 12), new ClosePath(), new MoveTo(7.5, 313), new VLineTo());
 						arrow.setId("relation-arrow");
-						getChildren().add(arrow);
+						//getChildren().add(arrow);
 				    	
 				    	//INFO tamanho doo caonteiner node:  BoundingBox [minX:0.0, minY:0.0, minZ:0.0, width:134.8, height:51.0, depth:0.0, maxX:134.8, maxY:51.0, maxZ:0.0]
-				    	System.out.println("Posição da midia (X): " + timeLineChart.getXAxis().getDisplayPosition(xyChartData.getXValue()));
+				    	System.out.println("Posicao da midia (X): " + timeLineChart.getXAxis().getDisplayPosition(xyChartData.getXValue()));
 				    	
 				    	//INFO tamanho do temporal chain = 1366 326 (BoundingBox [minX:0.0, minY:0.0, minZ:0.0, width:1366.0, height:326.0, depth:0.0, maxX:1366.0, maxY:326.0, maxZ:0.0])
 				    	//System.out.println("Tamanho do Temporal Cahin Pane (X/Y): " + getLayoutBounds());
@@ -524,7 +521,13 @@ public class TemporalChainPane extends StackPane implements Observer{
 		return getTemporalChainModel().getMediaListDuringAnother(firstSelectedMedia, temporalChainPane);
 		
 	}
+
+	public void setParentTab(Tab temporalChainTab) {
+		parentTab = temporalChainTab;
+	}
 	
-	
+	public Tab getParentTab(){
+		return parentTab;
+	}
 	
 }

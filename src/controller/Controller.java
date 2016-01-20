@@ -18,6 +18,7 @@ import view.spatialViewPane.SizePane;
 import view.spatialViewPane.StylePane;
 import view.spatialViewPane.TemporalMediaInfoPane;
 import view.stevePane.StevePane;
+import view.temporalViewPane.TemporalChainPane;
 import br.uff.midiacom.ana.util.exception.XMLException;
 
 public class Controller {
@@ -36,8 +37,16 @@ public class Controller {
 		stevePane.createView(stage);
 
 		TemporalChain temporalChain = new TemporalChain(Language.translate("main.temporal.chain"));
-		this.temporalView.addTemporalChain(temporalChain);
+		addTemporalChain(temporalChain);
 		
+	}
+	
+	public void addTemporalChain(TemporalChain temporalChain){
+		temporalView.addTemporalChain(temporalChain);
+	}
+	
+	public void removeTemporalChain(TemporalChain temporalChain) {
+		temporalView.removeTemporalChain(temporalChain);
 	}
 	
 	public void openExistingRepositoryMediaList(RepositoryMediaList existingRepositoryMediaList) {

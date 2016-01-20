@@ -4,20 +4,19 @@ import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
 
-import controller.Controller;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.Tooltip;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import model.common.Media;
 import model.repository.RepositoryMediaList;
+import model.temporalView.Interactivity;
 import model.temporalView.TemporalChain;
 import model.temporalView.TemporalView;
 import model.temporalView.enums.TemporalViewOperator;
@@ -25,6 +24,7 @@ import model.utility.Operation;
 import view.common.Language;
 import view.repositoryPane.RepositoryPane;
 import view.stevePane.StevePane;
+import controller.Controller;
 
 @SuppressWarnings("unchecked")
 public class TemporalViewPane extends BorderPane implements Observer, view.common.Observable{
@@ -87,14 +87,15 @@ public class TemporalViewPane extends BorderPane implements Observer, view.commo
 			@Override
 			public void handle(ActionEvent event) {
 				
-				addTemporalChainPane(new TemporalChain("Temporal Chain" + temporalChainTabPane.getTabs().size()));
+				controller.addTemporalChain(new TemporalChain("TEMPORAL CHAIN " + (temporalChainTabPane.getTabs().size() + 1)));
+				//addTemporalChainPane(new TemporalChain("TEMPORAL CHAIN " + (temporalChainTabPane.getTabs().size() + 1)));
 				
 			}
 			
 		});
 		
 		tabAddButtonContainer.getChildren().add(tabAddButton);
-		
+
 	}
 
 	public void addTemporalChainPane(TemporalChain temporalChainModel) {
@@ -103,22 +104,43 @@ public class TemporalViewPane extends BorderPane implements Observer, view.commo
 //		temporalChainScrollPane.setId("temporal-chain-scroll-pane");
 		
 		TemporalChainPane temporalChainPane = new TemporalChainPane(controller, temporalViewModel, temporalChainModel, this, repositoryPane, stevePane);
+		temporalChainModel.addObserver(this);
 
 		Tab newTemporalChainTab = new Tab();
 		newTemporalChainTab.setText(temporalChainModel.getName());
 		newTemporalChainTab.setContent(temporalChainPane);
+		temporalChainPane.setParentTab(newTemporalChainTab);
 		temporalChainTabPane.getTabs().add(newTemporalChainTab);
 		
 		if(temporalChainTabPane.getTabs().size() == 1){
 			newTemporalChainTab.setClosable(false);
 		}
+
+		Double positionX = temporalChainTabPane.getTabMinWidth()*temporalChainTabPane.getTabs().size() + temporalChainTabPane.getTabs().size()*10;
 		
-		Double positionX = temporalChainTabPane.getTabMinWidth()*temporalChainTabPane.getTabs().size() - temporalChainTabPane.getTabs().size()*10;
-		if(!(positionX + 20 > getWidth())){
+		if(!(positionX + 40 > getWidth())){
 			tabAddButton.setTranslateX(positionX);	
 		}
 	
-		tabAddButton.setTranslateY(10);
+		tabAddButton.setTranslateY(15);
+		
+		newTemporalChainTab.setOnClosed(new EventHandler<Event>() {
+
+			@Override
+			public void handle(Event event) {
+				
+				Double positionX = temporalChainTabPane.getTabMinWidth()*temporalChainTabPane.getTabs().size() + temporalChainTabPane.getTabs().size()*10;
+				
+				if(!(positionX + 40 > getWidth())){
+					tabAddButton.setTranslateX(positionX);	
+				}
+				
+				TemporalChainPane temporalChainPaneToBeRemoved = (TemporalChainPane) newTemporalChainTab.getContent();
+				controller.removeTemporalChain(temporalChainPaneToBeRemoved.getTemporalChainModel());
+			
+			}
+			
+		});
 		
 	}
 	
@@ -154,6 +176,26 @@ public class TemporalViewPane extends BorderPane implements Observer, view.commo
 		        	
 		        	break;
 		        	
+			}
+			
+		}else if(observable instanceof TemporalChain){
+			
+			Operation<TemporalViewOperator> operation = (Operation<TemporalViewOperator>) arg;
+
+			switch(operation.getOperator()){
+			
+		        case ADD_INTERACTIVITY_RELATION:
+		        	
+		        	Interactivity<Media, ?> interactivityRelation = (Interactivity<Media, ?>) operation.getOperating();
+		        	
+		        	for(Tab tab : getTemporalChainTabPane().getTabs()){
+		        		TemporalChainPane temporalChainPane = (TemporalChainPane) tab.getContent();
+		        		if(interactivityRelation.getTemporalChainList().contains(temporalChainPane.getTemporalChainModel())){
+		        			temporalChainPane.getParentTab().setStyle("-fx-border-color: #00BFA5;-fx-border-width: 2; -fx-border-radius: 8;");
+		        		}
+		        	}
+		        	
+		        	break;
 			}
 			
 		}

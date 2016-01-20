@@ -467,7 +467,7 @@ public class TimeLineXYChartData implements Observer {
 		        		containerNode.getStylesheets().add("view/temporalViewPane/styles/borderOfMediaToBeStopped.css");
 		        		mediaImageClip.setHeight(mediaImageClip.getHeight()-5);
 		        	}
-		        	
+		        	  	
 		            break;
 		            
 		        	case REMOVE_INTERACTIVITY_RELATION:
