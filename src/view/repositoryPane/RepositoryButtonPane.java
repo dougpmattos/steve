@@ -96,11 +96,22 @@ public class RepositoryButtonPane extends BorderPane{
                 	for (File file : fileList) {
                 		Media media = new Media();
                 		media.setFile(file);
-                		if(!controller.addRepositoryMedia(media)){
-                			MessageDialog messageDialog = new MessageDialog(Language.translate("media.has.already.imported") + ":          " + media.getName(), 
-                												Language.translate("select.other.media"), "OK", 150);
-                	    	messageDialog.showAndWait();
+                		
+                		if(media.getMediaType() == null){
+                			
+                			MessageDialog messageDialog = new MessageDialog(Language.translate("media.type.not.supported"), "OK", 110);
+                            messageDialog.showAndWait();
+                            
+                		} else {
+                			
+                			if(!controller.addRepositoryMedia(media)){
+                    			MessageDialog messageDialog = new MessageDialog(Language.translate("media.has.already.imported") + ": " + media.getName(), 
+                    												Language.translate("select.other.media"), "OK", 150);
+                    	    	messageDialog.showAndWait();
+                    		}
+                			
                 		}
+
                     }
                 }                      
             }

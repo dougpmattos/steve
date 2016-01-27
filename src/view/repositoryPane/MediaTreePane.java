@@ -14,7 +14,7 @@ import model.common.Media;
  */
 public class MediaTreePane extends TreeView<Object>{
     
-	private final String OTHERS = "Others";
+	private final String APPLICATION = "Application";
 	private final String TEXT = "Text";
 	private final String AUDIO = "Audio";
 	private final String VIDEO = "Video";
@@ -26,7 +26,7 @@ public class MediaTreePane extends TreeView<Object>{
 	private final TreeItem<Object> video = new TreeItem<Object>(VIDEO);
 	private final TreeItem<Object> audio = new TreeItem<Object>(AUDIO);
 	private final TreeItem<Object> text = new TreeItem<Object>(TEXT);
-	private final TreeItem<Object> others = new TreeItem<Object>(OTHERS);
+	private final TreeItem<Object> application = new TreeItem<Object>(APPLICATION);
 	
     public MediaTreePane(){
     	
@@ -35,7 +35,7 @@ public class MediaTreePane extends TreeView<Object>{
     	ImageView videoIcon = new ImageView(new Image(getClass().getResourceAsStream("/view/repositoryPane/images/videoNode.png")));
     	ImageView audioIcon = new ImageView(new Image(getClass().getResourceAsStream("/view/repositoryPane/images/audioNode.png")));
     	ImageView textIcon = new ImageView(new Image(getClass().getResourceAsStream("/view/repositoryPane/images/textNode.png")));
-    	ImageView othersIcon = new ImageView(new Image(getClass().getResourceAsStream("/view/repositoryPane/images/othersNode.png")));
+    	ImageView applicationIcon = new ImageView(new Image(getClass().getResourceAsStream("/view/repositoryPane/images/applicationNode.png")));
     	
     	allTypes.setGraphic(rootIcon);
     	allTypes.setExpanded(true);
@@ -47,8 +47,8 @@ public class MediaTreePane extends TreeView<Object>{
     	audio.setExpanded(true);
     	text.setGraphic(textIcon);
     	text.setExpanded(true);
-    	others.setGraphic(othersIcon);
-    	others.setExpanded(true);
+    	application.setGraphic(applicationIcon);
+    	application.setExpanded(true);
     	
 	 	getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
     	 
@@ -56,7 +56,7 @@ public class MediaTreePane extends TreeView<Object>{
         allTypes.getChildren().add(video);
         allTypes.getChildren().add(audio);
         allTypes.getChildren().add(text);
-        allTypes.getChildren().add(others);
+        allTypes.getChildren().add(application);
        
         setRoot(allTypes);
         
@@ -92,11 +92,10 @@ public class MediaTreePane extends TreeView<Object>{
                 text.getChildren().add(importedMediaTreeItem);
                 break;
                 
-            case OTHER:
-            case PROCEDURAL:
-            	importedMediaIcon.setImage(new Image(getClass().getResourceAsStream("/view/repositoryPane/images/othersTreeItem.png")));
+            case APPLICATION:
+            	importedMediaIcon.setImage(new Image(getClass().getResourceAsStream("/view/repositoryPane/images/applicationTreeItem.png")));
             	importedMediaTreeItem = new TreeItem<Object>(media, importedMediaIcon);
-                others.getChildren().add(importedMediaTreeItem);
+                application.getChildren().add(importedMediaTreeItem);
                 break;
                 
         }
@@ -145,12 +144,11 @@ public class MediaTreePane extends TreeView<Object>{
             	}
             	break;
                 
-            case OTHER:
-            case PROCEDURAL:
-            	ObservableList<TreeItem<Object>> othersList = others.getChildren();
+            case APPLICATION:
+            	ObservableList<TreeItem<Object>> othersList = application.getChildren();
             	for(TreeItem<Object> mediaTreeItem : othersList){
             		if(mediaTreeItem.getValue().toString().equalsIgnoreCase(selectedMedia.getName())){
-            			others.getChildren().remove(mediaTreeItem);
+            			application.getChildren().remove(mediaTreeItem);
             			break;
             		}
             	}
@@ -164,13 +162,19 @@ public class MediaTreePane extends TreeView<Object>{
         video.getChildren().clear();
         audio.getChildren().clear();
         text.getChildren().clear();
-        others.getChildren().clear();
+        application.getChildren().clear();
 	}
 
 	public Media getSelectedMedia() {
 		
 		if(getSelectionModel().getSelectedItem() != null){
-			return (Media) getSelectionModel().getSelectedItem().getValue();
+			
+			if(getSelectionModel().getSelectedItem().getValue() instanceof Media){
+				return (Media) getSelectionModel().getSelectedItem().getValue();
+			}else {
+				return null;
+			}
+			
 		}else {
 			return null;	
 		}

@@ -50,7 +50,7 @@ public class SpatialViewPane extends SplitPane implements view.common.Observer, 
     	
     	this.temporalViewModel = temporalViewModel;
     	
-    	displayPane = new DisplayPane();
+    	displayPane = new DisplayPane(temporalViewPane);
     	
     	labelContainer = new HBox();
 		labelContainer.setId("label-container");

@@ -1,10 +1,19 @@
 package view.spatialViewPane;
 
-import view.common.Language;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.control.Button;
+import javafx.scene.control.Tab;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
+import model.temporalView.TemporalChain;
+import view.common.Language;
+import view.temporalViewPane.TemporalChainPane;
+import view.temporalViewPane.TemporalViewPane;
 
 public class ControlButtonPane extends BorderPane{
 	
@@ -19,11 +28,18 @@ public class ControlButtonPane extends BorderPane{
 	private HBox fullButtonPane;
 	private HBox centerButtonPane;
 	private HBox refreshButtonPane;
+	private StackPane screen;
+	private TemporalChain temporalChainModel;
+	private TemporalChainPane selectedTemporalChainPane;
+	private TemporalViewPane temporalViewPane;
 	
-	public ControlButtonPane(){
+	public ControlButtonPane(StackPane screen, TemporalViewPane temporalViewPane){
 		
 		setId("control-button-pane");
-	    
+		
+		this.screen = screen;
+		this.temporalViewPane = temporalViewPane;
+		
 	    createButtons();
 	  
 	    setLeft(fullButtonPane);
@@ -31,7 +47,41 @@ public class ControlButtonPane extends BorderPane{
 		setRight(refreshButtonPane);
 		
 		createButtonActions();
+		
+		createListeners();
 
+	}
+	
+	private void createListeners(){
+		
+		temporalViewPane.getTemporalChainTabPane().getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Tab>() {
+
+			@Override
+			public void changed(ObservableValue<? extends Tab> observable, Tab oldValue, Tab newValue) {
+				
+				TemporalChainPane temporalChainPane = (TemporalChainPane) newValue.getContent();
+				selectedTemporalChainPane = temporalChainPane;
+				temporalChainModel = selectedTemporalChainPane.getTemporalChainModel();
+				
+			}
+			
+		});
+		
+		//TODO listener para a linha de play quando ela mudar de posicao. Para cada mudanca de posicao 
+		//pegar as midias que estao sobre a linha e exibir na tel conforme suas propriedades
+//		@Override
+//		public void handle(ActionEvent event) {
+//			
+//			for(Media media : temporalChainModel.getMediaUnderThePlayLineList()){
+//				
+//				ImageView imageMedia = media.generateMediaIcon();
+//				imageMedia.setFitWidth(300);
+//				screen.getChildren().add(imageMedia);
+//				
+//			}
+//
+//		}
+		
 	}
 	
 	public void createButtons(){
@@ -89,6 +139,20 @@ public class ControlButtonPane extends BorderPane{
 	}
 	
 	public void createButtonActions(){
+		
+		play.setOnAction(new EventHandler<ActionEvent>() {
+			
+			@Override
+			public void handle(ActionEvent event) {
+				
+				//TODO iniciar o movimento de translateX da linha play
+				//com o listner para a linha definido acimaa screen ira responder
+				
+			}
+			
+		});
+		
+		
 		
 	}
 	

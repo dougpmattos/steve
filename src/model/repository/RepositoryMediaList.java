@@ -21,7 +21,7 @@ public class RepositoryMediaList extends Observable implements Serializable{
     private ArrayList<Media> video = new ArrayList<Media>();
     private ArrayList<Media> audio = new ArrayList<Media>();
     private ArrayList<Media> text = new ArrayList<Media>();
-    private ArrayList<Media> others = new ArrayList<Media>();
+    private ArrayList<Media> application = new ArrayList<Media>();
     private ArrayList<Media> allTypes = new ArrayList<Media>();
     
     public RepositoryMediaList(){
@@ -59,9 +59,8 @@ public class RepositoryMediaList extends Observable implements Serializable{
                 text.add(media);
                 break;
                 
-            case OTHER:
-            case PROCEDURAL:
-                others.add(media);  
+            case APPLICATION:
+                application.add(media);  
                 break;
                 
         }
@@ -95,9 +94,8 @@ public class RepositoryMediaList extends Observable implements Serializable{
             text.remove(media);
             break;
             
-        case OTHER:
-        case PROCEDURAL:
-            others.remove(media);  
+        case APPLICATION:
+            application.remove(media);  
             break;
             
     	}
@@ -113,7 +111,7 @@ public class RepositoryMediaList extends Observable implements Serializable{
         video.clear();
         audio.clear();
         text.clear();
-        others.clear();
+        application.clear();
         allTypes.clear();
         
         setChanged();
@@ -146,8 +144,8 @@ public class RepositoryMediaList extends Observable implements Serializable{
         return text;
     }
     
-    public ArrayList<Media> getOthersList(){
-        return others;
+    public ArrayList<Media> getApplicationList(){
+        return application;
     }
 
 	public void openExistingRepositoryMediaList(RepositoryMediaList existingRepositoryMediaList) {

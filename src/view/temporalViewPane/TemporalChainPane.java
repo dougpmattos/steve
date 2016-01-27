@@ -64,7 +64,7 @@ public class TemporalChainPane extends StackPane implements Observer{
 	private RepositoryPane repositoryPane;
 	private ArrayList<String> yAxisCategoryList = new ArrayList<String>();
 	private Path indicativeLine;
-	private Path playLine;
+	private Path playhead;
 	private ArrayList<ArrayList<TimeLineXYChartData>> timeLineXYChartDataLineList = new ArrayList<ArrayList<TimeLineXYChartData>>();
 	private StevePane stevePane;
 	private Tab parentTab;
@@ -102,14 +102,14 @@ public class TemporalChainPane extends StackPane implements Observer{
     	indicativeLine.getElements().addAll(new MoveTo(), new VLineTo());
     	indicativeLine.setId("indicative-line");
     	
-    	playLine = new Path();
-    	playLine.getElements().addAll(new MoveTo(0, 10), new LineTo(15, 10), new LineTo(7.5, 23), new ClosePath(), new MoveTo(7.5, 23), new VLineTo());
-    	playLine.setId("play-line");
-    	getChildren().add(playLine);
+    	playhead = new Path();
+    	playhead.getElements().addAll(new MoveTo(0, 10), new LineTo(15, 10), new LineTo(7.5, 23), new ClosePath(), new MoveTo(7.5, 23), new VLineTo());
+    	playhead.setId("play-line");
+    	getChildren().add(playhead);
     	heightProperty().addListener(new ChangeListener(){
 			@Override 
 	        public void changed(ObservableValue o,Object oldVal, Object newVal){
-				PathElement pathElement = playLine.getElements().get(5);
+				PathElement pathElement = playhead.getElements().get(5);
 				if(pathElement instanceof VLineTo){
 					((VLineTo) pathElement).setY(getHeight());
 				}
@@ -275,7 +275,7 @@ public class TemporalChainPane extends StackPane implements Observer{
 		setOnMouseClicked(new EventHandler<MouseEvent>() {
 			
 			public void handle(MouseEvent mouseEvent) {
-				playLine.setTranslateX(mouseEvent.getX() - ARROW_DIFF);
+				playhead.setTranslateX(mouseEvent.getX() - ARROW_DIFF);
 	        }  
 	    });
 		

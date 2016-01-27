@@ -26,7 +26,7 @@ public class RepositoryMediaItemContainerListPane extends ScrollPane implements 
 	
 	final Logger logger = LoggerFactory.getLogger(RepositoryMediaItemContainerListPane.class);
 	
-	private final String OTHERS = "Others";
+	private final String APPLICATION = "Application";
 	private final String TEXT = "Text";
 	private final String AUDIO = "Audio";
 	private final String VIDEO = "Video";
@@ -38,7 +38,7 @@ public class RepositoryMediaItemContainerListPane extends ScrollPane implements 
 	private final FlowPane video = new FlowPane();
 	private final FlowPane audio = new FlowPane();
 	private final FlowPane text = new FlowPane();
-	private final FlowPane others = new FlowPane();
+	private final FlowPane application = new FlowPane();
 	
 	private TemporalViewPane temporalViewPane;
 	
@@ -78,9 +78,9 @@ public class RepositoryMediaItemContainerListPane extends ScrollPane implements 
 		text.setVgap(8);
 		text.setHgap(15);
 		
-		others.setPadding(new Insets(5, 0, 5, 0));
-		others.setVgap(8);
-		others.setHgap(15);
+		application.setPadding(new Insets(5, 0, 5, 0));
+		application.setVgap(8);
+		application.setHgap(15);
 		
 	}
 
@@ -107,8 +107,8 @@ public class RepositoryMediaItemContainerListPane extends ScrollPane implements 
         	setContent(text);
             break;
             
-        case OTHERS:
-        	setContent(others);
+        case APPLICATION:
+        	setContent(application);
             break;
 		}
 		
@@ -135,9 +135,8 @@ public class RepositoryMediaItemContainerListPane extends ScrollPane implements 
 		    	text.getChildren().add(createRepositoryMediaItem(media));
 		        break;
 		        
-		    case OTHER:
-		    case PROCEDURAL:
-		    	others.getChildren().add(createRepositoryMediaItem(media));
+		    case APPLICATION:
+		    	application.getChildren().add(createRepositoryMediaItem(media));
 		        break;
 		}
 		
@@ -210,18 +209,17 @@ public class RepositoryMediaItemContainerListPane extends ScrollPane implements 
 		    	text.getChildren().remove(repositoryTextMedia);
 		        break;
 		        
-		    case OTHER:
-		    case PROCEDURAL:
-		    	Iterator othersIt = others.getChildren().iterator();
-		    	Boolean mediaOthersFound = false;
-		    	RepositoryMediaItemContainer repositoryOthersMedia = null;
-		    	while(!mediaOthersFound && othersIt.hasNext()){
-		    		repositoryOthersMedia = (RepositoryMediaItemContainer) othersIt.next();
-		    		if(repositoryOthersMedia.getMedia().equals(media)){
-		    			mediaOthersFound = true;
+		    case APPLICATION:
+		    	Iterator applicationIt = application.getChildren().iterator();
+		    	Boolean mediaApplicationFound = false;
+		    	RepositoryMediaItemContainer repositoryApplicationMedia = null;
+		    	while(!mediaApplicationFound && applicationIt.hasNext()){
+		    		repositoryApplicationMedia = (RepositoryMediaItemContainer) applicationIt.next();
+		    		if(repositoryApplicationMedia.getMedia().equals(media)){
+		    			mediaApplicationFound = true;
 		    		}
 		    	}
-		    	others.getChildren().remove(repositoryOthersMedia);
+		    	application.getChildren().remove(repositoryApplicationMedia);
 		        break;
 		}
 		
@@ -259,8 +257,8 @@ public class RepositoryMediaItemContainerListPane extends ScrollPane implements 
 		return text.getChildren();
 	}
 	
-	public ObservableList<Node> getOthers(){
-		return others.getChildren();
+	public ObservableList<Node> getApplications(){
+		return application.getChildren();
 	}
 
 	public Media getSelectedMedia() {
@@ -300,7 +298,7 @@ public class RepositoryMediaItemContainerListPane extends ScrollPane implements 
 			}
 		}
 		
-		for(Node node : getOthers()){
+		for(Node node : getApplications()){
 			RepositoryMediaItemContainer repositoryMediaItemContainer = (RepositoryMediaItemContainer) node;
 			if(repositoryMediaItemContainer.getSelected()){
 				return repositoryMediaItemContainer.getMedia();

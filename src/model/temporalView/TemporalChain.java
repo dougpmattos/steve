@@ -108,20 +108,65 @@ public class TemporalChain extends Observable implements Serializable {
 	}
 	
 	public void dragMedia(TemporalChain temporalChain, Media media, Double droppedTime) {
+		
+		ArrayList<Media> rootMediaList = new ArrayList<Media>();
+		
+		addElementsInRootMediaList(media, rootMediaList);
+    		
+		if(rootMediaList.get(0) == media){
+			
+			media.setBegin(droppedTime);
+	    	media.setEnd(droppedTime + media.getDuration());
+	    	
+	    	removeMedia(media, false);
+	    	addMedia(media);
+	    	
+	    	dragChildren(media);
+			
+		}else {
+			
+			Double draggedTime = droppedTime - media.getBegin();
+			
+			for(Media rootMedia : rootMediaList){
+				
+				rootMedia.setBegin(rootMedia.getBegin() + draggedTime);
+				rootMedia.setEnd(rootMedia.getEnd() + draggedTime);
 
-    	media.setBegin(droppedTime);
-    	media.setEnd(droppedTime + media.getDuration());
-    	
-    	int mediaLine = getMediaLine(media);
-    	int lineToAddMedia = getLineToAddMedia(media);
-  
-    	removeMedia(media, false);
-    	addMedia(media);
-  	
-    	dragChildren(media);
-
+				removeMedia(rootMedia, false);
+				addMedia(rootMedia);
+				
+				dragChildren(rootMedia);
+				
+			}
+			
+		}
+		
 	}
 	
+	private void addElementsInRootMediaList(Media media, ArrayList<Media> rootMediaList){
+		
+		ArrayList<Relation> listOfSalveRelations = getListOfSlaveRelations(media);
+		
+		if(!listOfSalveRelations.isEmpty()){
+			
+			
+			for(Relation relation : listOfSalveRelations){
+				
+				Synchronous<Media> synchronousRelation = (Synchronous<Media>) relation;
+				Media masterMedia = synchronousRelation.getMasterMedia();
+				
+				addElementsInRootMediaList(masterMedia, rootMediaList);
+				
+			}
+			
+		}else {
+			
+			rootMediaList.add(media);
+			
+		}
+
+	}
+
 	private int getLineToAddMedia(Media media){
 		
 		AllenRelation allenRelation;
@@ -486,9 +531,9 @@ public class TemporalChain extends Observable implements Serializable {
 		
 	}
 
-	private void dragChildren(Media slaveMedia) {
+	private void dragChildren(Media rootMedia) {
 		
-		ArrayList<Relation> listOfMasterRelations = getListOfMasterRelations(slaveMedia);
+		ArrayList<Relation> listOfMasterRelations = getListOfMasterRelations(rootMedia);
 		
 		for(Relation relation : listOfMasterRelations){
 			
@@ -626,6 +671,7 @@ public class TemporalChain extends Observable implements Serializable {
 		
 	}
 
+	//INFO Após passar pela validação das relações, seta o início e fim das mídias de fato na cadeia utilizando inicio/fim das mídia mestre e delay conforme o tipo de relação.
 	private void defineRelation(Synchronous<Media> synchronousRelationToBeDefined, int i, Media slaveMedia) {
 		
 		switch(synchronousRelationToBeDefined.getType()){

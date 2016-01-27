@@ -8,8 +8,7 @@ public enum MediaType {
     IMAGE,
     AUDIO,
     VIDEO,
-    PROCEDURAL,
-    OTHER;
+    APPLICATION;
 	    
 	    
     public static MediaType getEnumType(String ext) throws Exception {
@@ -67,10 +66,11 @@ public enum MediaType {
         status |= ext.contentEquals(".xlt");
         status |= ext.contentEquals(".lua");
         if(status){
-            return PROCEDURAL;
+            return APPLICATION;
         }
+
+        return null;
         
-        return OTHER;
     }
     
     @Override
@@ -89,12 +89,9 @@ public enum MediaType {
 				
 			case VIDEO:
 				return "Video";
-				
-			case PROCEDURAL:
-				return "Procedural";
-				
-			case OTHER:
-				return "Other";
+	
+			case APPLICATION:
+				return "Application";
 				
 		}
 		

@@ -3,7 +3,6 @@ package model.common;
 import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Observable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -15,9 +14,7 @@ import model.common.enums.MediaType;
 import model.common.enums.MimeType;
 import model.spatialView.PresentationProperty;
 import model.temporalView.TimeSegment;
-import model.temporalView.enums.TemporalViewOperator;
 import model.utility.MediaUtil;
-import model.utility.Operation;
 import view.common.MessageDialog;
 import view.spatialViewPane.TemporalMediaInfoPane;
 
@@ -130,9 +127,8 @@ public class Media implements Serializable{
 				icon.setFitWidth(ICON_WIDTH);
 				break;
                    
-			case OTHER:
-			case PROCEDURAL:
-				icon = new ImageView(new Image(getClass().getResourceAsStream("/view/repositoryPane/images/others.png")));
+			case APPLICATION:
+				icon = new ImageView(new Image(getClass().getResourceAsStream("/view/repositoryPane/images/application.png")));
 				icon.setPreserveRatio(true);
 				icon.setSmooth(true);
 				icon.setFitWidth(ICON_WIDTH);
@@ -200,7 +196,11 @@ public class Media implements Serializable{
     	   
     	  String subType = getSubType(ext);
     	   
-          return MimeType.getEnumType(getMediaType().toString().toLowerCase() + "/" + subType);
+    	  if(getMediaType() != null){
+    		  return MimeType.getEnumType(getMediaType().toString().toLowerCase() + "/" + subType);  
+    	  }else {
+    		  return null;
+    	  }
            
        } catch (Exception ex) {
     	   
@@ -246,7 +246,7 @@ public class Media implements Serializable{
        } catch (Exception ex) {
     	   
            Logger.getLogger(Media.class.getName()).log(Level.SEVERE, null, ex);
-           return MediaType.OTHER;
+           return null;
            
        }
        

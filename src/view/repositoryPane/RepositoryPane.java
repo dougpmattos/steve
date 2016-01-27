@@ -98,7 +98,7 @@ public class RepositoryPane extends BorderPane implements Observer {
 		        	repositoryMediaItemContainerListPane.getVideos().clear();
 		        	repositoryMediaItemContainerListPane.getAudios().clear();
 		        	repositoryMediaItemContainerListPane.getTexts().clear();
-		        	repositoryMediaItemContainerListPane.getOthers().clear();
+		        	repositoryMediaItemContainerListPane.getApplications().clear();
 		        	mediaTreePane.clear();
 		        	
 		        	buttonPane.getDeleteButton().setDisable(true);

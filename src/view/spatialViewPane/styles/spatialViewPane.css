@@ -7,6 +7,9 @@
 #display-pane{
 	-fx-background-color: #000000;
 }
+#screen-pane{
+	-fx-background-color: #000000;
+}
 #property-button-pane{
     -fx-background-color: #263238;
     -fx-alignment: center;
