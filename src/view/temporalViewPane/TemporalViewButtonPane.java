@@ -619,47 +619,8 @@ public class TemporalViewButtonPane extends BorderPane {
 		    		
 		    		InteractiveMediaWindow interactiveMediaWindow;
 		    		ArrayList<Media> mediaListDuringInteractivityTime = temporalViewPane.getMediaListDuringInteractivityTime();
-		    		
-		    		if(!firstSelectedMedia.isInteractive()){
-		    			
-			    		interactiveMediaWindow = new InteractiveMediaWindow(controller, temporalViewPane, firstSelectedMedia, mediaListDuringInteractivityTime);
-
-		    		}else {
-		    		
-		    			Tab selectedTab = null;
-		    			for (Tab tab : temporalViewPane.getTemporalChainTabPane().getTabs()){
-		    	    		if(tab.isSelected()){
-		    	    			selectedTab = tab;
-		    	    			break;
-		    	    		}
-		    	    	}
-		    			TemporalChainPane temporalChainPane = null;
-		    	    	if(selectedTab != null){
-		    	    		temporalChainPane = (TemporalChainPane) selectedTab.getContent();
-		    	    	}
-		    	    	TemporalChain temporalChain = null;
-		    	    	if(temporalChainPane != null){
-		    	    		temporalChain = temporalChainPane.getTemporalChainModel();
-		    	    	}
-		    	    	
-		    	    	Interactivity interactivityToLoad = null;
-		    			for(Relation relation : temporalChain.getRelationList()){
-							
-							if(relation instanceof Interactivity){
-								
-								Interactivity interactivityRelation = (Interactivity) relation;
-								if(interactivityRelation.getMasterMedia() == firstSelectedMedia){
-									interactivityToLoad = interactivityRelation;
-									break;
-								}
-								
-							}
-							
-						}
-		    			
-			    		interactiveMediaWindow = new InteractiveMediaWindow(controller, temporalViewPane, mediaListDuringInteractivityTime, interactivityToLoad);
-			    		
-		    		}
+		    
+			    	interactiveMediaWindow = new InteractiveMediaWindow(controller, temporalViewPane, firstSelectedMedia, mediaListDuringInteractivityTime);
 		    		
 			    	interactiveMediaWindow.showAndWait();
 			    	

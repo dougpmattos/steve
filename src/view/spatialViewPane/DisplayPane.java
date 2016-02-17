@@ -22,5 +22,13 @@ public class DisplayPane extends BorderPane {
 		setBottom(controlButtonPane);
 		
 	}
+	
+	public StackPane getScreen(){
+		return screen;
+	}
+	
+	public ControlButtonPane getControlButtonPane(){
+		return controlButtonPane;
+	}
 
 }

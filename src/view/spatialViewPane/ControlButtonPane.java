@@ -2,8 +2,6 @@ package view.spatialViewPane;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.scene.control.Button;
 import javafx.scene.control.Tab;
 import javafx.scene.control.Tooltip;
@@ -66,22 +64,7 @@ public class ControlButtonPane extends BorderPane{
 			}
 			
 		});
-		
-		//TODO listener para a linha de play quando ela mudar de posicao. Para cada mudanca de posicao 
-		//pegar as midias que estao sobre a linha e exibir na tel conforme suas propriedades
-//		@Override
-//		public void handle(ActionEvent event) {
-//			
-//			for(Media media : temporalChainModel.getMediaUnderThePlayLineList()){
-//				
-//				ImageView imageMedia = media.generateMediaIcon();
-//				imageMedia.setFitWidth(300);
-//				screen.getChildren().add(imageMedia);
-//				
-//			}
-//
-//		}
-		
+
 	}
 	
 	public void createButtons(){
@@ -139,21 +122,11 @@ public class ControlButtonPane extends BorderPane{
 	}
 	
 	public void createButtonActions(){
-		
-		play.setOnAction(new EventHandler<ActionEvent>() {
-			
-			@Override
-			public void handle(ActionEvent event) {
-				
-				//TODO iniciar o movimento de translateX da linha play
-				//com o listner para a linha definido acimaa screen ira responder
-				
-			}
-			
-		});
-		
-		
-		
+
+	}
+	
+	public Button getPlayButton(){
+		return play;
 	}
 	
 }

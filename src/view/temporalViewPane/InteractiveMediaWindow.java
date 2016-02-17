@@ -81,7 +81,7 @@ public class InteractiveMediaWindow extends Stage {
 
         setResizable(false);
         initModality(Modality.APPLICATION_MODAL);
-        initStyle(StageStyle.UNDECORATED);
+        initStyle(StageStyle.UTILITY);
 
         this.temporalViewPane = temporalViewPane;
         this.controller = controller;

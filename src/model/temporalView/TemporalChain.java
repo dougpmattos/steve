@@ -397,7 +397,6 @@ public class TemporalChain extends Observable implements Serializable {
 
 	public void addSynchronousRelation(Synchronous<Media> synchronousRelationToBeDefined){
 
-		Boolean keepGoing = true;
 		Boolean atLeastOneSlaveMediaWasDefined = false;
 		int i;
 		
@@ -471,18 +470,9 @@ public class TemporalChain extends Observable implements Serializable {
 						
 					}
 					
+				}else {
+					synchronousRelationToBeDefined.getSlaveMediaList().remove(slaveMedia);
 				}
-	
-				if(slaveBlockedForChanges && (i + 1) < synchronousRelationToBeDefined.getSlaveMediaList().size()){
-					
-					keepGoing = showContinueQuestionInputDialog();
-					
-					if(!keepGoing){
-						break;
-					}
-					
-				}
-				
 				
 			}else {
 			
@@ -492,43 +482,21 @@ public class TemporalChain extends Observable implements Serializable {
 			}
 			
 		}
-		
-		if(keepGoing){
 			
-			if(!atLeastOneSlaveMediaWasDefined){
-				
-				MessageDialog messageDialog = new MessageDialog(Language.translate("it.is.not.possible.to.define.alignment"), 
-						Language.translate("no.selected.media.could.be.slave.for.the.relation"), "OK", 190);
-				messageDialog.showAndWait();
-				
-			}else {
-				relationList.add(synchronousRelationToBeDefined);
-			}
+		if(!atLeastOneSlaveMediaWasDefined){
+			
+			MessageDialog messageDialog = new MessageDialog(Language.translate("it.is.not.possible.to.define.alignment"), 
+					Language.translate("no.selected.media.could.be.slave.for.the.relation"), "OK", 190);
+			messageDialog.showAndWait();
 			
 		}else {
-			MessageDialog messageDialog = new MessageDialog(Language.translate("no.alignment.was.defined"), 
-					Language.translate("the.operation.was.canceled.by.the.user"), "OK", 150);
-			messageDialog.showAndWait();
+			relationList.add(synchronousRelationToBeDefined);
 		}
-		
+	
 		setChanged();
 		Operation<TemporalViewOperator> operation = new Operation<TemporalViewOperator>(TemporalViewOperator.ADD_SYNC_RELATION, synchronousRelationToBeDefined, this);
         notifyObservers(operation);
         
-	}
-
-	private Boolean showContinueQuestionInputDialog() {
-		
-		InputDialog showContinueQuestionInputDialog = new InputDialog(Language.translate("would.you.like.to.continue.defining.alignment"), null, "yes","no", null, 140);
-		
-		String answer = showContinueQuestionInputDialog.showAndWaitAndReturn();
-		
-		if(answer.equalsIgnoreCase("left")){
-    		return true;
-    	}else {
-    		return false;
-    	}
-		
 	}
 
 	private void dragChildren(Media rootMedia) {

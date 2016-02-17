@@ -135,7 +135,48 @@ public class TimeLineXYChartData implements Observer {
 
 			@Override
 			public void handle(ActionEvent event) {
+				
 				//TODO chamar a janela de interatividade populando o form com a info do modelo ja preecnhida
+	    		
+				Media firstSelectedMedia = temporalViewPane.getFirstSelectedMedia();
+				InteractiveMediaWindow interactiveMediaWindow;
+	    		ArrayList<Media> mediaListDuringInteractivityTime = temporalViewPane.getMediaListDuringInteractivityTime();
+	    		
+    			Tab selectedTab = null;
+    			for (Tab tab : temporalViewPane.getTemporalChainTabPane().getTabs()){
+    	    		if(tab.isSelected()){
+    	    			selectedTab = tab;
+    	    			break;
+    	    		}
+    	    	}
+    			TemporalChainPane temporalChainPane = null;
+    	    	if(selectedTab != null){
+    	    		temporalChainPane = (TemporalChainPane) selectedTab.getContent();
+    	    	}
+    	    	TemporalChain temporalChain = null;
+    	    	if(temporalChainPane != null){
+    	    		temporalChain = temporalChainPane.getTemporalChainModel();
+    	    	}
+    	    	
+    	    	Interactivity interactivityToLoad = null;
+    			for(Relation relation : temporalChain.getRelationList()){
+					
+					if(relation instanceof Interactivity){
+						
+						Interactivity interactivityRelation = (Interactivity) relation;
+						if(interactivityRelation.getMasterMedia() == firstSelectedMedia){
+							interactivityToLoad = interactivityRelation;
+							break;
+						}
+						
+					}
+					
+				}
+    			
+	    		interactiveMediaWindow = new InteractiveMediaWindow(controller, temporalViewPane, mediaListDuringInteractivityTime, interactivityToLoad);
+	    		
+		    	interactiveMediaWindow.showAndWait();
+		    			
 			}
 		});
 		

@@ -182,7 +182,9 @@
 }
 
 #temporal-chain-scroll-pane {
-    -fx-border-color: #263238;
+    /*-fx-border-color: #263238;*/
+    -fx-border-color: green;
+    -fx-background-color: blue;
     -fx-border-width: 10 0 0 0;
     -fx-fit-to-height: true;
     -fx-fit-to-width: true;

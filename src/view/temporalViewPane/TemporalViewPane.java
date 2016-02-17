@@ -9,6 +9,7 @@ import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.Tooltip;
@@ -88,7 +89,6 @@ public class TemporalViewPane extends BorderPane implements Observer, view.commo
 			public void handle(ActionEvent event) {
 				
 				controller.addTemporalChain(new TemporalChain("TEMPORAL CHAIN " + (temporalChainTabPane.getTabs().size() + 1)));
-				//addTemporalChainPane(new TemporalChain("TEMPORAL CHAIN " + (temporalChainTabPane.getTabs().size() + 1)));
 				
 			}
 			
@@ -99,9 +99,6 @@ public class TemporalViewPane extends BorderPane implements Observer, view.commo
 	}
 
 	public void addTemporalChainPane(TemporalChain temporalChainModel) {
-		
-//		ScrollPane temporalChainScrollPane = new ScrollPane();
-//		temporalChainScrollPane.setId("temporal-chain-scroll-pane");
 		
 		TemporalChainPane temporalChainPane = new TemporalChainPane(controller, temporalViewModel, temporalChainModel, this, repositoryPane, stevePane);
 		temporalChainModel.addObserver(this);

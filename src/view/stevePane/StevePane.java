@@ -129,5 +129,9 @@ public class StevePane extends Scene{
 		return isMetaDown;
 		
 	}
+	
+	public SpatialViewPane getSpatialViewPane(){
+		return spatialViewPane;
+	}
 
 }

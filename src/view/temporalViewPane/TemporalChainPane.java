@@ -10,6 +10,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -17,13 +18,16 @@ import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.DataFormat;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.ClosePath;
@@ -42,6 +46,8 @@ import model.temporalView.enums.TemporalViewOperator;
 import model.utility.MediaUtil;
 import model.utility.Operation;
 import view.repositoryPane.RepositoryPane;
+import view.spatialViewPane.ControlButtonPane;
+import view.spatialViewPane.DisplayPane;
 import view.stevePane.StevePane;
 import controller.Controller;
 
@@ -118,6 +124,8 @@ public class TemporalChainPane extends StackPane implements Observer{
 
     	createDragAndDropEvent();
     	createMouseEvent();
+    	createDisplayPaneButtonActions();
+    	createListeners();
     	
     	temporalChainModel.addObserver(this);
     	for(Relation relation: temporalChainModel.getRelationList()){
@@ -127,6 +135,56 @@ public class TemporalChainPane extends StackPane implements Observer{
     	this.controller = controller;
     	
      }
+	
+	private void createDisplayPaneButtonActions(){
+		
+		DisplayPane displayPane = stevePane.getSpatialViewPane().getDisplayPane();
+		ControlButtonPane controlButtonPane = displayPane.getControlButtonPane();
+		
+		
+		controlButtonPane.getPlayButton().setOnAction(new EventHandler<ActionEvent>() {
+			
+			@Override
+			public void handle(ActionEvent event) {
+				
+				//TODO iniciar o movimento de translateX da linha play
+//				while(){ enquanto nao chega na ultima midia, ir andando com a linha
+//					
+//				}
+				playhead.setTranslateX(500);
+	
+			}
+			
+		});
+		
+	}
+	
+	private void createListeners(){
+		
+		playhead.translateXProperty().addListener(new ChangeListener<Number>(){
+
+			@Override
+			public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+				
+				System.out.println(newValue);
+				DisplayPane displayPane = stevePane.getSpatialViewPane().getDisplayPane();
+				StackPane screen = displayPane.getScreen();
+				
+				//TODO listener para a linha de play quando ela mudar de posicao. Para cada mudanca de posicao 
+				//pegar as midias que estao sobre a linha e exibir na tel conforme suas propriedades	
+//				for(Media media : temporalChainModel.getMediaUnderThePlayLineList()){
+//					
+//					ImageView imageMedia = media.generateMediaIcon();
+//					imageMedia.setFitWidth(300);
+//					screen.getChildren().add(imageMedia);
+//					
+//				}
+
+			}
+			
+		});
+		
+	}
 	
 	private void createDragAndDropEvent() {
 		

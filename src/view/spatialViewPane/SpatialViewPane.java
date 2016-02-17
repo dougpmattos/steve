@@ -195,5 +195,9 @@ public class SpatialViewPane extends SplitPane implements view.common.Observer, 
 		}
 		
 	}
+	
+	public DisplayPane getDisplayPane(){
+		return displayPane;
+	}
     
 }
