@@ -5,8 +5,9 @@ import java.util.ArrayList;
 import java.util.Observable;
 
 import model.common.Media;
+import model.temporalView.enums.AllenRelation;
 import model.temporalView.enums.ConflictType;
-import model.temporalView.enums.RelationType;
+import model.temporalView.enums.TemporalRelationType;
 import model.temporalView.enums.TemporalViewOperator;
 import model.utility.Operation;
 import view.common.InputDialog;
@@ -14,7 +15,6 @@ import view.common.Language;
 import view.common.MessageDialog;
 import view.temporalViewPane.TemporalChainPane;
 import view.temporalViewPane.TimeLineXYChartData;
-import view.temporalViewPane.enums.AllenRelation;
 
 @SuppressWarnings("rawtypes")
 public class TemporalChain extends Observable implements Serializable {
@@ -28,7 +28,7 @@ public class TemporalChain extends Observable implements Serializable {
 	private String name;
 	private Media masterMedia;
 	private ArrayList<Media> mediaAllList = new ArrayList<Media>();
-	private ArrayList<Relation> relationList = new ArrayList<Relation>();
+	private ArrayList<TemporalRelation> relationList = new ArrayList<TemporalRelation>();
 	private ArrayList<ArrayList<Media>> mediaLineList = new ArrayList<ArrayList<Media>>();
 
 	public TemporalChain(String name) {
@@ -145,12 +145,12 @@ public class TemporalChain extends Observable implements Serializable {
 	
 	private void addElementsInRootMediaList(Media media, ArrayList<Media> rootMediaList){
 		
-		ArrayList<Relation> listOfSalveRelations = getListOfSlaveRelations(media);
+		ArrayList<TemporalRelation> listOfSalveRelations = getListOfSlaveRelations(media);
 		
 		if(!listOfSalveRelations.isEmpty()){
 			
 			
-			for(Relation relation : listOfSalveRelations){
+			for(TemporalRelation relation : listOfSalveRelations){
 				
 				Synchronous<Media> synchronousRelation = (Synchronous<Media>) relation;
 				Media masterMedia = synchronousRelation.getMasterMedia();
@@ -258,7 +258,7 @@ public class TemporalChain extends Observable implements Serializable {
 		
 		for(int i=0; i < relationList.size(); i++){
 			
-			Relation relation = relationList.get(i);
+			TemporalRelation relation = relationList.get(i);
 			
 			if(relation instanceof Synchronous){
 				
@@ -407,9 +407,9 @@ public class TemporalChain extends Observable implements Serializable {
 			Boolean slaveWasChangedModifyingDuration = false;
 			Boolean slaveBlockedForChanges = false;
 			
-			ArrayList<Relation> listOfAllRelations = getListOfAllRelations(slaveMedia);
-			ArrayList<Relation> listOfSlaveRelations = getListOfSlaveRelations(slaveMedia);
-			ArrayList<Relation> listOfMasterRelations = getListOfMasterRelations(slaveMedia);
+			ArrayList<TemporalRelation> listOfAllRelations = getListOfAllRelations(slaveMedia);
+			ArrayList<TemporalRelation> listOfSlaveRelations = getListOfSlaveRelations(slaveMedia);
+			ArrayList<TemporalRelation> listOfMasterRelations = getListOfMasterRelations(slaveMedia);
 			
 			if(!listOfAllRelations.isEmpty()){
 	
@@ -501,9 +501,9 @@ public class TemporalChain extends Observable implements Serializable {
 
 	private void dragChildren(Media rootMedia) {
 		
-		ArrayList<Relation> listOfMasterRelations = getListOfMasterRelations(rootMedia);
+		ArrayList<TemporalRelation> listOfMasterRelations = getListOfMasterRelations(rootMedia);
 		
-		for(Relation relation : listOfMasterRelations){
+		for(TemporalRelation relation : listOfMasterRelations){
 			
 			Synchronous<Media> synchronousRelation = (Synchronous<Media>) relation;
 			
@@ -803,8 +803,8 @@ public class TemporalChain extends Observable implements Serializable {
 			
 			Double newRelationBegin = 0.0;
 			Double existingRelationEnd = 0.0;
-			RelationType newRelationType = synchronousRelationToBeDefined.getType();
-			RelationType existingRelationType = synchronousRelationWhereSlaveMediaIsSlave.getType();
+			TemporalRelationType newRelationType = synchronousRelationToBeDefined.getType();
+			TemporalRelationType existingRelationType = synchronousRelationWhereSlaveMediaIsSlave.getType();
 			
 			switch (newRelationType) {
 			
@@ -886,8 +886,8 @@ public class TemporalChain extends Observable implements Serializable {
 			
 			Double newRelationEnd = 0.0;
 			Double existingRelationBegin = 0.0;
-			RelationType newRelationType = synchronousRelationToBeDefined.getType();
-			RelationType existingRelationType = synchronousRelationWhereSlaveMediaIsSlave.getType();
+			TemporalRelationType newRelationType = synchronousRelationToBeDefined.getType();
+			TemporalRelationType existingRelationType = synchronousRelationWhereSlaveMediaIsSlave.getType();
 			
 			switch (newRelationType) {
 			
@@ -971,10 +971,10 @@ public class TemporalChain extends Observable implements Serializable {
 
 	private boolean relationDefinesEnd(Synchronous<Media> synchronousRelation){
 		
-		RelationType relationType = synchronousRelation.getType();
+		TemporalRelationType relationType = synchronousRelation.getType();
 		
-		if(relationType == RelationType.FINISHES || relationType == RelationType.FINISHES_DELAY 
-		   ||relationType == RelationType.MET_BY || relationType == RelationType.MET_BY_DELAY){
+		if(relationType == TemporalRelationType.FINISHES || relationType == TemporalRelationType.FINISHES_DELAY 
+		   ||relationType == TemporalRelationType.MET_BY || relationType == TemporalRelationType.MET_BY_DELAY){
 			
 			return true;
 			
@@ -986,10 +986,10 @@ public class TemporalChain extends Observable implements Serializable {
 
 	private boolean relationDefinesBegin(Synchronous<Media> synchronousRelation){
 		
-		RelationType relationType = synchronousRelation.getType();
+		TemporalRelationType relationType = synchronousRelation.getType();
 		
-		if(relationType == RelationType.STARTS || relationType == RelationType.STARTS_DELAY ||relationType == RelationType.MEETS
-		   || relationType == RelationType.MEETS_DELAY || relationType == RelationType.BEFORE){
+		if(relationType == TemporalRelationType.STARTS || relationType == TemporalRelationType.STARTS_DELAY ||relationType == TemporalRelationType.MEETS
+		   || relationType == TemporalRelationType.MEETS_DELAY || relationType == TemporalRelationType.BEFORE){
 			
 			return true;
 			
@@ -1021,11 +1021,11 @@ public class TemporalChain extends Observable implements Serializable {
 		
 	}
 
-	private ArrayList<Relation> getListOfMasterRelations(Media slaveMedia) {
+	private ArrayList<TemporalRelation> getListOfMasterRelations(Media slaveMedia) {
 		
-		ArrayList<Relation> listOfMasterRelations = new ArrayList<Relation>(); 
+		ArrayList<TemporalRelation> listOfMasterRelations = new ArrayList<TemporalRelation>(); 
 		
-		for(Relation<Media> relation : relationList){
+		for(TemporalRelation<Media> relation : relationList){
 			
 			if(relation instanceof Synchronous){
 				
@@ -1043,11 +1043,11 @@ public class TemporalChain extends Observable implements Serializable {
 		
 	}
 
-	private ArrayList<Relation> getListOfSlaveRelations(Media slaveMedia) {
+	private ArrayList<TemporalRelation> getListOfSlaveRelations(Media slaveMedia) {
 		
-		ArrayList<Relation> listOfSlaveRelations = new ArrayList<Relation>(); 
+		ArrayList<TemporalRelation> listOfSlaveRelations = new ArrayList<TemporalRelation>(); 
 		
-		for(Relation<Media> relation : relationList){
+		for(TemporalRelation<Media> relation : relationList){
 			
 			if(relation instanceof Synchronous){
 				
@@ -1070,11 +1070,11 @@ public class TemporalChain extends Observable implements Serializable {
 		
 	}
 
-	private ArrayList<Relation> getListOfAllRelations(Media slaveMedia) {
+	private ArrayList<TemporalRelation> getListOfAllRelations(Media slaveMedia) {
 		
-		ArrayList<Relation> listOfAllRelations = new ArrayList<Relation>(); 
+		ArrayList<TemporalRelation> listOfAllRelations = new ArrayList<TemporalRelation>(); 
 		
-		for(Relation<Media> relation : relationList){
+		for(TemporalRelation<Media> relation : relationList){
 			
 			if(relation instanceof Synchronous){
 				
@@ -1170,7 +1170,7 @@ public class TemporalChain extends Observable implements Serializable {
         
 	}
 
-	public ArrayList<Relation> getRelationList() {
+	public ArrayList<TemporalRelation> getRelationList() {
 		return relationList;
 	}
 	

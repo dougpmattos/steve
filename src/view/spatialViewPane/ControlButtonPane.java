@@ -16,8 +16,6 @@ import view.temporalViewPane.TemporalViewPane;
 public class ControlButtonPane extends BorderPane{
 	
 	private Button fullScreen;
-	private Button previousFrame;
-	private Button nextFrame;
 	private Button play;
 	private Button stop;
 	private Button previousScene;
@@ -73,14 +71,6 @@ public class ControlButtonPane extends BorderPane{
 		fullScreen.setId("full-button");
 		fullScreen.setTooltip(new Tooltip(Language.translate("full.screen")));
 		
-		previousFrame = new Button();
-		previousFrame.setId("previous-frame-button");
-		previousFrame.setTooltip(new Tooltip(Language.translate("previous.frame")));
-		
-		nextFrame = new Button();
-		nextFrame.setId("next-frame-button");
-		nextFrame.setTooltip(new Tooltip(Language.translate("next.frame")));
-		
 		play = new Button();
 		play.setId("play-button");
 		play.setTooltip(new Tooltip(Language.translate("play")));
@@ -108,8 +98,6 @@ public class ControlButtonPane extends BorderPane{
 		
 		centerButtonPane = new HBox();
 		centerButtonPane.setId("center-button-pane");
-		centerButtonPane.getChildren().add(previousFrame);
-		centerButtonPane.getChildren().add(nextFrame);
 		centerButtonPane.getChildren().add(play);
 		centerButtonPane.getChildren().add(stop);
 		centerButtonPane.getChildren().add(previousScene);

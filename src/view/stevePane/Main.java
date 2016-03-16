@@ -6,8 +6,8 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import model.common.SpatialTemporalView;
 import model.repository.RepositoryMediaList;
-import model.temporalView.TemporalView;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,7 +27,7 @@ public class Main extends Application{
 	public void start(Stage stage) throws Exception {
 		
 		RepositoryMediaList repositoryMediaList = new RepositoryMediaList();
-		TemporalView temporalView = new TemporalView();
+		SpatialTemporalView temporalView = new SpatialTemporalView();
 		
 		LoadingWindow loadingWindow = new LoadingWindow();
 		loadingWindow.show();

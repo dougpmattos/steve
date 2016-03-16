@@ -7,7 +7,7 @@ import java.util.Observable;
 import model.temporalView.enums.TemporalViewOperator;
 import model.utility.Operation;
 
-public abstract class Relation<E> extends Observable implements Serializable {
+public abstract class TemporalRelation<E> extends Observable implements Serializable {
 
 	private static final long serialVersionUID = 3044752885230388480L;
 
@@ -18,7 +18,7 @@ public abstract class Relation<E> extends Observable implements Serializable {
 	private ArrayList<E> slaveMediaList = new ArrayList<E>();
 	private Boolean explicit = false;
 	
-	public Relation(){
+	public TemporalRelation(){
 		
 		this.id = relationNumber; 
 		relationNumber++;

@@ -8,8 +8,8 @@ import java.io.ObjectInputStream;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.stage.FileChooser;
+import model.common.SpatialTemporalView;
 import model.repository.RepositoryMediaList;
-import model.temporalView.TemporalView;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,10 +23,10 @@ public class OpenEventHandler implements EventHandler<ActionEvent> {
 	final Logger logger = LoggerFactory.getLogger(OpenEventHandler.class);
 	
 	private Controller controller;
-	private TemporalView temporalView;
+	private SpatialTemporalView temporalView;
 	private RepositoryMediaList repositoryMediaList;
 	
-	public OpenEventHandler(Controller controller, TemporalView temporalView, RepositoryMediaList repositoryMediaList){
+	public OpenEventHandler(Controller controller, SpatialTemporalView temporalView, RepositoryMediaList repositoryMediaList){
 		
 		this.controller = controller;
 		this.temporalView = temporalView;
@@ -48,7 +48,7 @@ public class OpenEventHandler implements EventHandler<ActionEvent> {
 			
 			   	FileInputStream fileInputStream = new FileInputStream(file);
 		    	ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
-		    	TemporalView existingTemporalView = (TemporalView) objectInputStream.readObject();
+		    	SpatialTemporalView existingTemporalView = (SpatialTemporalView) objectInputStream.readObject();
 		    	RepositoryMediaList existingRepositoryMediaList = (RepositoryMediaList) objectInputStream.readObject();
 		    	objectInputStream.close();
 		    	

@@ -17,10 +17,10 @@ import javafx.scene.layout.HBox;
 import model.common.Media;
 import model.repository.RepositoryMediaList;
 import model.temporalView.Interactivity;
-import model.temporalView.Relation;
+import model.temporalView.TemporalRelation;
 import model.temporalView.Synchronous;
 import model.temporalView.TemporalChain;
-import model.temporalView.enums.RelationType;
+import model.temporalView.enums.TemporalRelationType;
 import view.common.InputDialog;
 import view.common.Language;
 import view.common.MessageDialog;
@@ -222,7 +222,7 @@ public class TemporalViewButtonPane extends BorderPane {
 		    		Media relationMasterMedia = temporalViewPane.getFirstSelectedMedia();
 			    	
 			    	Synchronous<Media> synchronousRelation = new Synchronous<Media>();
-	    			synchronousRelation.setType(RelationType.STARTS);
+	    			synchronousRelation.setType(TemporalRelationType.STARTS);
 	    			synchronousRelation.setMasterMedia(relationMasterMedia);
 	    			synchronousRelation.setExplicit(true);
 		
@@ -259,7 +259,7 @@ public class TemporalViewButtonPane extends BorderPane {
 			    	Media relationMasterMedia = temporalViewPane.getFirstSelectedMedia();
 			    	
 			    	Synchronous<Media> synchronousRelation = new Synchronous<Media>();
-	    			synchronousRelation.setType(RelationType.STARTS_DELAY);
+	    			synchronousRelation.setType(TemporalRelationType.STARTS_DELAY);
 	    			synchronousRelation.setMasterMedia(relationMasterMedia);
 	    			synchronousRelation.setDelay(delay);
 	    			synchronousRelation.setExplicit(true);
@@ -292,7 +292,7 @@ public class TemporalViewButtonPane extends BorderPane {
 					Media relationMasterMedia = temporalViewPane.getFirstSelectedMedia();
 			    	
 			    	Synchronous<Media> synchronousRelation = new Synchronous<Media>();
-	    			synchronousRelation.setType(RelationType.FINISHES);
+	    			synchronousRelation.setType(TemporalRelationType.FINISHES);
 	    			synchronousRelation.setMasterMedia(relationMasterMedia);
 	    			synchronousRelation.setExplicit(true);
 		
@@ -330,7 +330,7 @@ public class TemporalViewButtonPane extends BorderPane {
 					Media relationMasterMedia = temporalViewPane.getFirstSelectedMedia();
 			    	
 			    	Synchronous<Media> synchronousRelation = new Synchronous<Media>();
-	    			synchronousRelation.setType(RelationType.FINISHES_DELAY);
+	    			synchronousRelation.setType(TemporalRelationType.FINISHES_DELAY);
 	    			synchronousRelation.setMasterMedia(relationMasterMedia);
 	    			synchronousRelation.setDelay(delay);
 	    			synchronousRelation.setExplicit(true);
@@ -362,7 +362,7 @@ public class TemporalViewButtonPane extends BorderPane {
 		    		Media relationMasterMedia = temporalViewPane.getFirstSelectedMedia();
 			    	
 			    	Synchronous<Media> synchronousRelation = new Synchronous<Media>();
-	    			synchronousRelation.setType(RelationType.MEETS);
+	    			synchronousRelation.setType(TemporalRelationType.MEETS);
 	    			synchronousRelation.setMasterMedia(relationMasterMedia);
 	    			synchronousRelation.setExplicit(true);
 		
@@ -399,7 +399,7 @@ public class TemporalViewButtonPane extends BorderPane {
 			    	Media relationMasterMedia = temporalViewPane.getFirstSelectedMedia();
 			    	
 			    	Synchronous<Media> synchronousRelation = new Synchronous<Media>();
-	    			synchronousRelation.setType(RelationType.MEETS_DELAY);
+	    			synchronousRelation.setType(TemporalRelationType.MEETS_DELAY);
 	    			synchronousRelation.setMasterMedia(relationMasterMedia);
 	    			synchronousRelation.setDelay(delay);
 	    			synchronousRelation.setExplicit(true);
@@ -432,7 +432,7 @@ public class TemporalViewButtonPane extends BorderPane {
 		    		Media relationMasterMedia = temporalViewPane.getFirstSelectedMedia();
 			    	
 			    	Synchronous<Media> synchronousRelation = new Synchronous<Media>();
-	    			synchronousRelation.setType(RelationType.MET_BY);
+	    			synchronousRelation.setType(TemporalRelationType.MET_BY);
 	    			synchronousRelation.setMasterMedia(relationMasterMedia);
 	    			synchronousRelation.setExplicit(true);
 		
@@ -469,7 +469,7 @@ public class TemporalViewButtonPane extends BorderPane {
 			    	Media relationMasterMedia = temporalViewPane.getFirstSelectedMedia();
 			    	
 			    	Synchronous<Media> synchronousRelation = new Synchronous<Media>();
-	    			synchronousRelation.setType(RelationType.MET_BY_DELAY);
+	    			synchronousRelation.setType(TemporalRelationType.MET_BY_DELAY);
 	    			synchronousRelation.setMasterMedia(relationMasterMedia);
 	    			synchronousRelation.setDelay(delay);
 	    			synchronousRelation.setExplicit(true);
@@ -515,7 +515,7 @@ public class TemporalViewButtonPane extends BorderPane {
 				    	}
 
 				    	Synchronous<Media> synchronousRelation = new Synchronous<Media>();
-		    			synchronousRelation.setType(RelationType.MET_BY_DELAY);
+		    			synchronousRelation.setType(TemporalRelationType.MET_BY_DELAY);
 		    			synchronousRelation.setMasterMedia(relationMasterMedia);
 		    			synchronousRelation.setDelay(metByDelay);
 		    			synchronousRelation.setExplicit(true);
@@ -533,7 +533,7 @@ public class TemporalViewButtonPane extends BorderPane {
 				    	addSynchronousRelationToModel(synchronousRelation);
 
 				    	Synchronous<Media> startDelayRelation = new Synchronous<Media>();
-		    			startDelayRelation.setType(RelationType.STARTS_DELAY);
+		    			startDelayRelation.setType(TemporalRelationType.STARTS_DELAY);
 		    			startDelayRelation.setMasterMedia(relationMasterMedia);
 		    			startDelayRelation.setDelay(startDelay);
 		    			startDelayRelation.setExplicit(true);
@@ -586,7 +586,7 @@ public class TemporalViewButtonPane extends BorderPane {
 			    	Media relationMasterMedia = temporalViewPane.getFirstSelectedMedia();
 			    	
 			    	Synchronous<Media> synchronousRelation = new Synchronous<Media>();
-	    			synchronousRelation.setType(RelationType.BEFORE);
+	    			synchronousRelation.setType(TemporalRelationType.BEFORE);
 	    			synchronousRelation.setMasterMedia(relationMasterMedia);
 	    			synchronousRelation.setDelay(delay);
 	    			synchronousRelation.setExplicit(true);

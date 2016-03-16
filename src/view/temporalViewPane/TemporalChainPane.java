@@ -37,11 +37,11 @@ import javafx.scene.shape.Path;
 import javafx.scene.shape.PathElement;
 import javafx.scene.shape.VLineTo;
 import model.common.Media;
+import model.common.SpatialTemporalView;
 import model.temporalView.Interactivity;
-import model.temporalView.Relation;
+import model.temporalView.TemporalRelation;
 import model.temporalView.Synchronous;
 import model.temporalView.TemporalChain;
-import model.temporalView.TemporalView;
 import model.temporalView.enums.TemporalViewOperator;
 import model.utility.MediaUtil;
 import model.utility.Operation;
@@ -64,7 +64,7 @@ public class TemporalChainPane extends StackPane implements Observer{
 	
 	private TimeLineChart<Number, String> timeLineChart;
 	private XYChart.Series<Number, String> serie;
-	private TemporalView temporalViewModel;
+	private SpatialTemporalView temporalViewModel;
 	private TemporalChain temporalChainModel;
 	private TemporalViewPane temporalViewPane;
 	private RepositoryPane repositoryPane;
@@ -78,7 +78,7 @@ public class TemporalChainPane extends StackPane implements Observer{
 	NumberAxis xAxis;
 	CategoryAxis yAxis;
 	
-	public TemporalChainPane(Controller controller, TemporalView temporalViewModel, TemporalChain temporalChainModel, TemporalViewPane temporalViewPane, RepositoryPane repositoryPane, StevePane stevePane){
+	public TemporalChainPane(Controller controller, SpatialTemporalView temporalViewModel, TemporalChain temporalChainModel, TemporalViewPane temporalViewPane, RepositoryPane repositoryPane, StevePane stevePane){
     	
 		xAxis = new NumberAxis();
     	xAxis.setAutoRanging(false);
@@ -128,7 +128,7 @@ public class TemporalChainPane extends StackPane implements Observer{
     	createListeners();
     	
     	temporalChainModel.addObserver(this);
-    	for(Relation relation: temporalChainModel.getRelationList()){
+    	for(TemporalRelation relation: temporalChainModel.getRelationList()){
     		relation.addObserver(this);
     	}
     	

@@ -1,19 +1,20 @@
-package model.temporalView;
+package model.common;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Observable;
 
+import model.temporalView.TemporalChain;
 import model.temporalView.enums.TemporalViewOperator;
 import model.utility.Operation;
 
-public class TemporalView extends Observable implements Serializable{
+public class SpatialTemporalView extends Observable implements Serializable{
 
 	private static final long serialVersionUID = 1818548173102220176L;
 	
 	private ArrayList<TemporalChain> temporalChainList = new ArrayList<TemporalChain>();
 	
-	public TemporalView(){
+	public SpatialTemporalView(){
 		
 	}
 
@@ -52,7 +53,7 @@ public class TemporalView extends Observable implements Serializable{
 		
 	}
 
-	public void openExistingTemporalView(TemporalView existingTemporalView) {
+	public void openExistingTemporalView(SpatialTemporalView existingTemporalView) {
 		
 		clearTemporalChainList();
 		

@@ -16,10 +16,10 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import model.common.Media;
+import model.common.SpatialTemporalView;
 import model.repository.RepositoryMediaList;
 import model.temporalView.Interactivity;
 import model.temporalView.TemporalChain;
-import model.temporalView.TemporalView;
 import model.temporalView.enums.TemporalViewOperator;
 import model.utility.Operation;
 import view.common.Language;
@@ -32,7 +32,7 @@ public class TemporalViewPane extends BorderPane implements Observer, view.commo
 
 	private Controller controller;
 	
-	private TemporalView temporalViewModel;
+	private SpatialTemporalView temporalViewModel;
 	
 	private TabPane temporalChainTabPane;
 	private TemporalViewButtonPane temporalViewButtonPane;
@@ -45,7 +45,7 @@ public class TemporalViewPane extends BorderPane implements Observer, view.commo
 	private StackPane tabAddButtonContainer;
 	private Button tabAddButton;
 	
-	public TemporalViewPane(Controller controller, TemporalView temporalViewModel, RepositoryPane repositoryPane, StevePane stevePane, RepositoryMediaList repositoryMediaList){
+	public TemporalViewPane(Controller controller, SpatialTemporalView temporalViewModel, RepositoryPane repositoryPane, StevePane stevePane, RepositoryMediaList repositoryMediaList){
 		
 		setId("temporal-view-pane");
 		getStylesheets().add("view/temporalViewPane/styles/temporalViewPane.css");
@@ -150,7 +150,7 @@ public class TemporalViewPane extends BorderPane implements Observer, view.commo
 	@Override
 	public void update(Observable observable, Object arg) {
 		
-		if(observable instanceof TemporalView){
+		if(observable instanceof SpatialTemporalView){
 			
 			Operation<TemporalViewOperator> operation = (Operation<TemporalViewOperator>) arg;
 
@@ -268,7 +268,7 @@ public class TemporalViewPane extends BorderPane implements Observer, view.commo
 
 	}
 	
-	public TemporalView getTemporalViewModel() {
+	public SpatialTemporalView getTemporalViewModel() {
 		return temporalViewModel;
 	}
 

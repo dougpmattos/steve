@@ -1,6 +1,6 @@
 package model.temporalView.enums;
 
-public enum RelationType {
+public enum TemporalRelationType {
 	
 	STARTS,
 	STARTS_DELAY,

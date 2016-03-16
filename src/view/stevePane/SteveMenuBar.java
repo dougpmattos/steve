@@ -12,8 +12,8 @@ import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.Tab;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.shape.Rectangle;
+import model.common.SpatialTemporalView;
 import model.repository.RepositoryMediaList;
-import model.temporalView.TemporalView;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,7 +31,7 @@ public class SteveMenuBar extends MenuBar{
 	final Logger logger = LoggerFactory.getLogger(SteveMenuBar.class);
 
 	private Controller controller;
-	private TemporalView temporalView;
+	private SpatialTemporalView temporalView;
 	private RepositoryMediaList repositoryMediaList;
 	private TemporalViewPane temporalViewPane;
 	
@@ -65,7 +65,7 @@ public class SteveMenuBar extends MenuBar{
 	private  CheckMenuItem checkMenuItemSpatialView; 
 	private CheckMenuItem checkMenuItemShowRelations;
 	
-	public SteveMenuBar(Controller controller, TemporalView temporalView, RepositoryMediaList repositoryMediaList, TemporalViewPane temporalViewPane){
+	public SteveMenuBar(Controller controller, SpatialTemporalView temporalView, RepositoryMediaList repositoryMediaList, TemporalViewPane temporalViewPane){
 		
 		this.controller = controller;
 		this.temporalView = temporalView;
@@ -252,11 +252,7 @@ public class SteveMenuBar extends MenuBar{
 		
 		menuItemExportNCL.setOnAction(new NCLExportEventHandler(temporalView));
 		
-		menuItemExportHTML5.setOnAction(new EventHandler<ActionEvent>() {
-		    public void handle(ActionEvent t) {
-			   //TODO
-		    }
-		});
+		menuItemExportHTML5.setOnAction(new HTMLExportEventHandler());
 		
 		menuItemExit.setOnAction(new EventHandler<ActionEvent>() {
 		    public void handle(ActionEvent t) {

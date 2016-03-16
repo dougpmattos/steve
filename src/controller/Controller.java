@@ -4,11 +4,11 @@ import java.io.IOException;
 
 import javafx.stage.Stage;
 import model.common.Media;
+import model.common.SpatialTemporalView;
 import model.repository.RepositoryMediaList;
 import model.temporalView.Interactivity;
 import model.temporalView.Synchronous;
 import model.temporalView.TemporalChain;
-import model.temporalView.TemporalView;
 import model.temporalView.enums.NumericInteractivityKey;
 import view.common.Language;
 import view.spatialViewPane.CropPane;
@@ -24,11 +24,11 @@ import br.uff.midiacom.ana.util.exception.XMLException;
 public class Controller {
 	
 	private RepositoryMediaList repositoryMediaList;
-	private TemporalView temporalView;
+	private SpatialTemporalView temporalView;
 	
 	private StevePane stevePane;
 	
-	public Controller(RepositoryMediaList repositoryMediaList, TemporalView temporalView, Stage stage) throws XMLException, IOException{
+	public Controller(RepositoryMediaList repositoryMediaList, SpatialTemporalView temporalView, Stage stage) throws XMLException, IOException{
 		
 		this.repositoryMediaList = repositoryMediaList;
 		this.temporalView = temporalView;
@@ -53,7 +53,7 @@ public class Controller {
 		repositoryMediaList.openExistingRepositoryMediaList(existingRepositoryMediaList);
 	}
 	
-	public void openExistingTemporalView(TemporalView existingTemporalView) {
+	public void openExistingTemporalView(SpatialTemporalView existingTemporalView) {
 		temporalView.openExistingTemporalView(existingTemporalView);
 	}
 	

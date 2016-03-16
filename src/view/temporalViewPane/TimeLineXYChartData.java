@@ -28,7 +28,7 @@ import javafx.scene.shape.Rectangle;
 import model.common.Media;
 import model.repository.RepositoryMediaList;
 import model.temporalView.Interactivity;
-import model.temporalView.Relation;
+import model.temporalView.TemporalRelation;
 import model.temporalView.TemporalChain;
 import model.temporalView.enums.TemporalViewOperator;
 import model.utility.MediaUtil;
@@ -114,7 +114,7 @@ public class TimeLineXYChartData implements Observer {
 			@Override
 			public void handle(ActionEvent event) {
 				
-				for(Relation relation : temporalChainModel.getRelationList()){
+				for(TemporalRelation relation : temporalChainModel.getRelationList()){
 					
 					if(relation instanceof Interactivity){
 						
@@ -159,7 +159,7 @@ public class TimeLineXYChartData implements Observer {
     	    	}
     	    	
     	    	Interactivity interactivityToLoad = null;
-    			for(Relation relation : temporalChain.getRelationList()){
+    			for(TemporalRelation relation : temporalChain.getRelationList()){
 					
 					if(relation instanceof Interactivity){
 						

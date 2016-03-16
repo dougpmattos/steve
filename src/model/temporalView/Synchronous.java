@@ -1,23 +1,23 @@
 package model.temporalView;
 
-import model.temporalView.enums.RelationType;
+import model.temporalView.enums.TemporalRelationType;
 
-public class Synchronous<T> extends Relation<T>{
+public class Synchronous<T> extends TemporalRelation<T>{
 
 	private static final long serialVersionUID = -3957097957495083244L;
 	
-	private RelationType type;
+	private TemporalRelationType type;
 	private Double delay;
 
 	public Synchronous(){
 		
 	}
 	
-	public void setType(RelationType type) {
+	public void setType(TemporalRelationType type) {
 		this.type = type;
 	}
 	
-	public RelationType getType() {
+	public TemporalRelationType getType() {
 		return type;
 	}
 

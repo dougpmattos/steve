@@ -13,8 +13,8 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
+import model.common.SpatialTemporalView;
 import model.repository.RepositoryMediaList;
-import model.temporalView.TemporalView;
 import view.common.Language;
 import view.repositoryPane.RepositoryPane;
 import view.spatialViewPane.SpatialViewPane;
@@ -33,7 +33,7 @@ public class StevePane extends Scene{
 	private static final String SEPARATOR = "   -   ";
 
 	private RepositoryMediaList repositoryMediaList;
-	private TemporalView temporalView;
+	private SpatialTemporalView temporalView;
 	
 	private Controller controller;
 	
@@ -48,7 +48,7 @@ public class StevePane extends Scene{
     
     private static BorderPane containerBorderPane = new BorderPane();
     
-    public StevePane(Controller controller, RepositoryMediaList repositoryMediaList, TemporalView temporalView) throws XMLException, IOException  {
+    public StevePane(Controller controller, RepositoryMediaList repositoryMediaList, SpatialTemporalView temporalView) throws XMLException, IOException  {
     	
     	super(containerBorderPane);
     	getStylesheets().add("view/stevePane/styles/stevePane.css");

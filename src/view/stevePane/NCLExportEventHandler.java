@@ -14,16 +14,16 @@ import javafx.event.EventHandler;
 import javafx.stage.FileChooser;
 import model.NCLSupport.enums.ImportedNCLCausalConnectorType;
 import model.common.Media;
+import model.common.SpatialTemporalView;
 import model.spatialView.PositionProperty;
 import model.spatialView.SizeProperty;
 import model.spatialView.enums.Size;
 import model.temporalView.Asynchronous;
 import model.temporalView.Interactivity;
-import model.temporalView.Relation;
+import model.temporalView.TemporalRelation;
 import model.temporalView.Synchronous;
 import model.temporalView.TemporalChain;
-import model.temporalView.TemporalView;
-import model.temporalView.enums.RelationType;
+import model.temporalView.enums.TemporalRelationType;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -68,12 +68,12 @@ public class NCLExportEventHandler implements EventHandler<ActionEvent>{
 
 	final Logger logger = LoggerFactory.getLogger(NCLExportEventHandler.class);
 
-	private TemporalView temporalView;
+	private SpatialTemporalView temporalView;
 	private FileInputStream fileInputStream;
 	private FileOutputStream fileOutputStream;
 	private File causalConnectorBaseFile;
 	
-	public NCLExportEventHandler(TemporalView temporalView){
+	public NCLExportEventHandler(SpatialTemporalView temporalView){
 		
 		this.temporalView = temporalView;
 		causalConnectorBaseFile = new File("src/model/NCLSupport/NCLFiles/causalConnectorBase.ncl");
@@ -232,7 +232,7 @@ public class NCLExportEventHandler implements EventHandler<ActionEvent>{
 		NCLBind conditionNCLBind;
 		NCLLinkParam nclLinkParamDelay;
 		
-		for(Relation<Media> relation : temporalChain.getRelationList()){
+		for(TemporalRelation<Media> relation : temporalChain.getRelationList()){
 			
 			if(relation instanceof Synchronous){
 				
@@ -616,15 +616,15 @@ public class NCLExportEventHandler implements EventHandler<ActionEvent>{
 	
 	private boolean isThereRelationStartsMedia(Media media, TemporalChain temporalChain){
 
-		for(Relation relation :  temporalChain.getRelationList()){
+		for(TemporalRelation relation :  temporalChain.getRelationList()){
 			
 			if(relation instanceof Synchronous){
 				
 				Synchronous synchronousRelation = (Synchronous) relation;
-				RelationType relationType = synchronousRelation.getType();
+				TemporalRelationType relationType = synchronousRelation.getType();
 				
-				if(relationType == RelationType.STARTS || relationType == RelationType.STARTS_DELAY ||relationType == RelationType.MEETS
-						   || relationType == RelationType.MEETS_DELAY || relationType == RelationType.BEFORE){
+				if(relationType == TemporalRelationType.STARTS || relationType == TemporalRelationType.STARTS_DELAY ||relationType == TemporalRelationType.MEETS
+						   || relationType == TemporalRelationType.MEETS_DELAY || relationType == TemporalRelationType.BEFORE){
 					
 					if(synchronousRelation.getSlaveMediaList().contains(media)){
 						 return true;
@@ -691,15 +691,15 @@ public class NCLExportEventHandler implements EventHandler<ActionEvent>{
 	
 	private Boolean isThereRelationFinishesMedia(Media media, TemporalChain temporalChain){
 
-		for(Relation relation :  temporalChain.getRelationList()){
+		for(TemporalRelation relation :  temporalChain.getRelationList()){
 			
 			if(relation instanceof Synchronous){
 				
 				Synchronous synchronousRelation = (Synchronous) relation;
-				RelationType relationType = synchronousRelation.getType();
+				TemporalRelationType relationType = synchronousRelation.getType();
 				
-				if(relationType.equals(RelationType.MET_BY) || relationType.equals(RelationType.MET_BY_DELAY)
-				   || relationType.equals(RelationType.FINISHES) || relationType.equals(RelationType.FINISHES_DELAY)){
+				if(relationType.equals(TemporalRelationType.MET_BY) || relationType.equals(TemporalRelationType.MET_BY_DELAY)
+				   || relationType.equals(TemporalRelationType.FINISHES) || relationType.equals(TemporalRelationType.FINISHES_DELAY)){
 					
 					if(synchronousRelation.getSlaveMediaList().contains(media)){
 						 return true;

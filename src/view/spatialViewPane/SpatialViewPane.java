@@ -11,9 +11,9 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.HBox;
 import model.common.Media;
+import model.common.SpatialTemporalView;
 import model.repository.RepositoryMediaList;
 import model.repository.enums.RepositoryOperator;
-import model.temporalView.TemporalView;
 import model.temporalView.enums.TemporalViewOperator;
 import model.utility.Operation;
 import view.common.Language;
@@ -30,7 +30,7 @@ public class SpatialViewPane extends SplitPane implements view.common.Observer, 
 
 	private Controller controller;
 	
-	private TemporalView temporalViewModel;
+	private SpatialTemporalView temporalViewModel;
 	
 	private DisplayPane displayPane;
 	private PropertyPane propertyPane;
@@ -41,7 +41,7 @@ public class SpatialViewPane extends SplitPane implements view.common.Observer, 
 	private TabPane propertyInfoTabPane;
 	private HBox labelContainer;
 	
-    public SpatialViewPane(Controller controller, TemporalView temporalViewModel, TemporalViewPane temporalViewPane, RepositoryPane repositoryPane, RepositoryMediaList repositoryMediaList) {
+    public SpatialViewPane(Controller controller, SpatialTemporalView temporalViewModel, TemporalViewPane temporalViewPane, RepositoryPane repositoryPane, RepositoryMediaList repositoryMediaList) {
   
     	setOrientation(Orientation.HORIZONTAL);
     	setDividerPositions(0.5);

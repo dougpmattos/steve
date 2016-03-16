@@ -1,4 +1,4 @@
-package view.temporalViewPane.enums;
+package model.temporalView.enums;
 
 public enum AllenRelation {
 	
