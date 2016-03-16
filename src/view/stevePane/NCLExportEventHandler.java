@@ -17,6 +17,7 @@ import model.common.Media;
 import model.common.SpatialTemporalView;
 import model.spatialView.PositionProperty;
 import model.spatialView.SizeProperty;
+import model.spatialView.enums.AspectRatio;
 import model.spatialView.enums.Size;
 import model.temporalView.Asynchronous;
 import model.temporalView.Interactivity;
@@ -661,10 +662,19 @@ public class NCLExportEventHandler implements EventHandler<ActionEvent>{
 		if(!isThereRelationFinishesMedia(media, temporalChain)){
 			nclDescriptor.setExplicitDur(new TimeType(media.getDuration()));
 		}
-		NCLDescriptorParam nclDescriptorParam = new NCLDescriptorParam();
-		nclDescriptorParam.setName(NCLAttributes.TRANSPARENCY);
-		nclDescriptorParam.setValue(media.getPresentationProperty().getStyleProperty().getTransparency()/100);
-		nclDescriptor.addDescriptorParam(nclDescriptorParam);
+		NCLDescriptorParam transparencyParam = new NCLDescriptorParam();
+		transparencyParam.setName(NCLAttributes.TRANSPARENCY);
+		transparencyParam.setValue(media.getPresentationProperty().getStyleProperty().getTransparency()/100);
+
+		NCLDescriptorParam fitParam = new NCLDescriptorParam();
+		fitParam.setName(NCLAttributes.FIT);
+		AspectRatio aspectRatio = media.getPresentationProperty().getSizeProperty().getAspectRatio();
+		if(aspectRatio != AspectRatio.NONE){
+			fitParam.setValue(media.getPresentationProperty().getSizeProperty().getAspectRatio().toString().toLowerCase());
+		}
+		
+		nclDescriptor.addDescriptorParam(transparencyParam);
+		nclDescriptor.addDescriptorParam(fitParam);
 		
 		return nclDescriptor;
 		
@@ -684,6 +694,7 @@ public class NCLExportEventHandler implements EventHandler<ActionEvent>{
 		nclRegion.setBottom(treatPositionSizeValue(mediaPositionProperty.getBottom()));
 		nclRegion.setWidth(treatPositionSizeValue(mediaSizeProperty.getWidth()));
 		nclRegion.setHeight(treatPositionSizeValue(mediaSizeProperty.getHeight()));
+		nclRegion.setzIndex(mediaPositionProperty.getOrderZ());
 		
 		return nclRegion;
 		
