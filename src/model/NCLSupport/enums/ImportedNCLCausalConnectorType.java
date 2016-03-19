@@ -5,6 +5,7 @@ public enum ImportedNCLCausalConnectorType {
 	ONBEGIN_START,
 	ONBEGIN_START_DELAY,
 	ONEND_STOP,
+	ONEND_ABORT,
 	ONEND_STOP_DELAY,
 	ONEND_START,
 	ONEND_START_DELAY,
@@ -20,6 +21,7 @@ public enum ImportedNCLCausalConnectorType {
 			case ONBEGIN_START: return "onBeginStart"; 
             case ONBEGIN_START_DELAY: return "onBeginStartDelay";
             case ONEND_STOP: return "onEndStop";
+            case ONEND_ABORT: return "onEndAbort";
             case ONEND_STOP_DELAY: return "onEndStopDelay";
             case ONEND_START: return "onEndStart";
             case ONEND_START_DELAY: return "onEndStartDelay";

@@ -12,6 +12,9 @@ import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.Tab;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.shape.Rectangle;
+import model.HTMLSupport.HTMLExportEventHandler;
+import model.NCLSupport.NCLExportEventHandler;
+import model.NCLSupport.NCLImportEventHandler;
 import model.common.SpatialTemporalView;
 import model.repository.RepositoryMediaList;
 
@@ -31,7 +34,7 @@ public class SteveMenuBar extends MenuBar{
 	final Logger logger = LoggerFactory.getLogger(SteveMenuBar.class);
 
 	private Controller controller;
-	private SpatialTemporalView temporalView;
+	private SpatialTemporalView spatialTemporalView;
 	private RepositoryMediaList repositoryMediaList;
 	private TemporalViewPane temporalViewPane;
 	
@@ -65,10 +68,10 @@ public class SteveMenuBar extends MenuBar{
 	private  CheckMenuItem checkMenuItemSpatialView; 
 	private CheckMenuItem checkMenuItemShowRelations;
 	
-	public SteveMenuBar(Controller controller, SpatialTemporalView temporalView, RepositoryMediaList repositoryMediaList, TemporalViewPane temporalViewPane){
+	public SteveMenuBar(Controller controller, SpatialTemporalView spatialTemporalView, RepositoryMediaList repositoryMediaList, TemporalViewPane temporalViewPane){
 		
 		this.controller = controller;
-		this.temporalView = temporalView;
+		this.spatialTemporalView = spatialTemporalView;
 		this.repositoryMediaList = repositoryMediaList;
 		this.temporalViewPane = temporalViewPane;
 		
@@ -238,7 +241,7 @@ public class SteveMenuBar extends MenuBar{
 
 	private void createFileMenuItemActions(){
 		
-		menuItemOpen.setOnAction(new OpenEventHandler(controller, temporalView, repositoryMediaList));
+		menuItemOpen.setOnAction(new OpenEventHandler(controller, spatialTemporalView, repositoryMediaList));
 		
 		menuItemClose.setOnAction(new EventHandler<ActionEvent>() {
 		    public void handle(ActionEvent t) {
@@ -246,13 +249,13 @@ public class SteveMenuBar extends MenuBar{
 		    }
 		});
 		
-		menuItemSave.setOnAction(new SaveEventHandler(temporalView, repositoryMediaList));
+		menuItemSave.setOnAction(new SaveEventHandler(spatialTemporalView, repositoryMediaList));
 		
 		menuItemImportNCL.setOnAction(new NCLImportEventHandler());
 		
-		menuItemExportNCL.setOnAction(new NCLExportEventHandler(temporalView));
+		menuItemExportNCL.setOnAction(new NCLExportEventHandler(spatialTemporalView));
 		
-		menuItemExportHTML5.setOnAction(new HTMLExportEventHandler());
+		menuItemExportHTML5.setOnAction(new HTMLExportEventHandler(spatialTemporalView));
 		
 		menuItemExit.setOnAction(new EventHandler<ActionEvent>() {
 		    public void handle(ActionEvent t) {

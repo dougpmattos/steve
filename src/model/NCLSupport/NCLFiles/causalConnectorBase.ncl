@@ -22,6 +22,11 @@
 				<simpleAction role="stop" max="unbounded"/>
 			</causalConnector>
 
+			<causalConnector id="onEndAbort">
+				<simpleCondition role="onEnd"/>
+				<simpleAction role="abort" max="unbounded"/>
+            </causalConnector>
+
 			<causalConnector id="onEndStopDelay">
 				<connectorParam name="delay"/>
 				<simpleCondition role="onEnd"/>

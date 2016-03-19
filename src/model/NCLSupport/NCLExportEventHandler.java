@@ -1,4 +1,4 @@
-package view.stevePane;
+package model.NCLSupport;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -21,9 +21,9 @@ import model.spatialView.enums.AspectRatio;
 import model.spatialView.enums.Size;
 import model.temporalView.Asynchronous;
 import model.temporalView.Interactivity;
-import model.temporalView.TemporalRelation;
 import model.temporalView.Synchronous;
 import model.temporalView.TemporalChain;
+import model.temporalView.TemporalRelation;
 import model.temporalView.enums.TemporalRelationType;
 
 import org.slf4j.Logger;
@@ -69,14 +69,14 @@ public class NCLExportEventHandler implements EventHandler<ActionEvent>{
 
 	final Logger logger = LoggerFactory.getLogger(NCLExportEventHandler.class);
 
-	private SpatialTemporalView temporalView;
+	private SpatialTemporalView spatialTemporalView;
 	private FileInputStream fileInputStream;
 	private FileOutputStream fileOutputStream;
 	private File causalConnectorBaseFile;
 	
 	public NCLExportEventHandler(SpatialTemporalView temporalView){
 		
-		this.temporalView = temporalView;
+		this.spatialTemporalView = temporalView;
 		causalConnectorBaseFile = new File("src/model/NCLSupport/NCLFiles/causalConnectorBase.ncl");
 		
 	}
@@ -95,31 +95,35 @@ public class NCLExportEventHandler implements EventHandler<ActionEvent>{
 			
 			if(answer.equalsIgnoreCase("left")){
 				
-				exportToNCL();
+				exportToNCL(false);
 				
 	    	}
 			
 		} else{
 			
-			exportToNCL();
+			exportToNCL(false);
 			
 		}
 
     }
 
-	private void exportToNCL() {
-		NCLDoc nclDoc = createNCLDoc();
+	public NCLDoc exportToNCL(Boolean isForHTMLExport) {
 		
-		if(nclDoc != null){
+		NCLDoc nclDoc = createNCLDoc(isForHTMLExport);
+		
+		if(nclDoc != null && !isForHTMLExport){
 			saveNCLDoc(nclDoc);
 		}
+		
+		return nclDoc;
+		
 	}
 
 	private String chainMasterMediaStartsInInstantDifferentOfZero() {
 		
 		StringBuilder temporalChains = new StringBuilder(); 
 		
-		for(TemporalChain temporalChain : temporalView.getTemporalChainList()){
+		for(TemporalChain temporalChain : spatialTemporalView.getTemporalChainList()){
 			
 			if(temporalChain.getMasterMedia().getBegin() > 0){
 				temporalChains.append(temporalChain.getName() + "\n");
@@ -131,7 +135,7 @@ public class NCLExportEventHandler implements EventHandler<ActionEvent>{
 
 	}
 	
-	private NCLDoc createNCLDoc(){
+	private NCLDoc createNCLDoc(Boolean isForHTMLExport){
 		
 		NCLDoc nclDoc = new NCLDoc();
 		
@@ -150,25 +154,35 @@ public class NCLExportEventHandler implements EventHandler<ActionEvent>{
             NCLDescriptorBase nclDescBase = new NCLDescriptorBase();
             
             NCLConnectorBase nclConBase = new NCLConnectorBase();
+            
+            NCLDoc importedNCLCausalConnectorBase = new NCLDoc();
+            importedNCLCausalConnectorBase.loadXML(causalConnectorBaseFile);
             NCLImportBase nclImportBase = new NCLImportBase<>();
             nclImportBase.setDocumentURI(new SrcType("causalConnectorBase.ncl"));
             nclImportBase.setBaseId("causalConnectorBase");
             nclImportBase.setAlias("connectorBase");
-            NCLDoc importedNCLCausalConnectorBase = new NCLDoc();
-            importedNCLCausalConnectorBase.loadXML(causalConnectorBaseFile);
             nclImportBase.setImportedDoc(importedNCLCausalConnectorBase);
-            nclConBase.addImportBase(nclImportBase);
+            
+            if(!isForHTMLExport){
 
+                 nclConBase.addImportBase(nclImportBase);
+            	
+            }else {
+            	
+        		createConnectors(nclConBase, nclImportBase);
+	
+            }
+           
             nclHead.addRegionBase(nclRegBaseList.get(0));
             nclHead.setDescriptorBase(nclDescBase);
             nclHead.setConnectorBase(nclConBase);
             
-            for(TemporalChain temporalChain : temporalView.getTemporalChainList()){
+            for(TemporalChain temporalChain : spatialTemporalView.getTemporalChainList()){
             	
             	createNCLPort(nclBody, nclRegBase, nclDescBase, temporalChain);	
             	createNCLMediaDescriptorRegion(nclBody, nclRegBase, nclDescBase, temporalChain);
-            	createNCLLinks(nclBody, nclImportBase, temporalChain);
-            	createStartNCLLinks(nclBody, nclImportBase, temporalChain);
+            	createNCLLinks(nclBody, nclImportBase, temporalChain, isForHTMLExport);
+            	createStartNCLLinks(nclBody, nclImportBase, temporalChain, isForHTMLExport);
             	
             }
             
@@ -183,6 +197,50 @@ public class NCLExportEventHandler implements EventHandler<ActionEvent>{
         }
 		
 		return nclDoc;
+		
+	}
+
+	private void createConnectors(NCLConnectorBase nclConBase, NCLImportBase nclImportBase) throws XMLException {
+		
+		NCLDoc casualConnectorBaseNCLDoc = nclImportBase.getImportedDoc();
+		NCLHead connectorBaseNCLHead = casualConnectorBaseNCLDoc.getHead();
+		NCLConnectorBase nclConnectorBaseOfImportedBase = connectorBaseNCLHead.getConnectorBase();
+		
+		NCLCausalConnector onBeginStartConnector = nclConnectorBaseOfImportedBase.getCausalConnector(ImportedNCLCausalConnectorType.ONBEGIN_START.getDescription());
+		NCLCausalConnector onBeginStartDelayConnector = nclConnectorBaseOfImportedBase.getCausalConnector(ImportedNCLCausalConnectorType.ONBEGIN_START_DELAY.getDescription());
+		NCLCausalConnector onEndStopConnector = nclConnectorBaseOfImportedBase.getCausalConnector(ImportedNCLCausalConnectorType.ONEND_STOP.getDescription());
+		NCLCausalConnector onEndAbortConnector = nclConnectorBaseOfImportedBase.getCausalConnector(ImportedNCLCausalConnectorType.ONEND_ABORT.getDescription());
+		NCLCausalConnector onEndStopDelayConnector = nclConnectorBaseOfImportedBase.getCausalConnector(ImportedNCLCausalConnectorType.ONEND_STOP_DELAY.getDescription());
+		NCLCausalConnector onEndStartConnector = nclConnectorBaseOfImportedBase.getCausalConnector(ImportedNCLCausalConnectorType.ONEND_START.getDescription());
+		NCLCausalConnector onEndStartDelayConnector = nclConnectorBaseOfImportedBase.getCausalConnector(ImportedNCLCausalConnectorType.ONEND_START_DELAY.getDescription());
+		NCLCausalConnector onBeginStopConnector = nclConnectorBaseOfImportedBase.getCausalConnector(ImportedNCLCausalConnectorType.ONBEGIN_STOP.getDescription());
+		NCLCausalConnector onBeginStopDelayConnector = nclConnectorBaseOfImportedBase.getCausalConnector(ImportedNCLCausalConnectorType.ONBEGIN_STOP_DELAY.getDescription());
+		NCLCausalConnector onSelectionStartStopConnector = nclConnectorBaseOfImportedBase.getCausalConnector(ImportedNCLCausalConnectorType.ONSELECTION_START_STOP.getDescription());
+		NCLCausalConnector onSelectionStartStopDelayConnector = nclConnectorBaseOfImportedBase.getCausalConnector(ImportedNCLCausalConnectorType.ONSELECTION_START_STOP_DELAY.getDescription());
+		
+		onBeginStartConnector.setParent(null);
+		onBeginStartDelayConnector.setParent(null);
+		onEndStopConnector.setParent(null);
+		onEndAbortConnector.setParent(null);
+		onEndStopDelayConnector.setParent(null);
+		onEndStartConnector.setParent(null);
+		onEndStartDelayConnector.setParent(null);
+		onBeginStopConnector.setParent(null);
+		onBeginStopDelayConnector.setParent(null);
+		onSelectionStartStopConnector.setParent(null);
+		onSelectionStartStopDelayConnector.setParent(null);
+		
+		nclConBase.addCausalConnector(onBeginStartConnector);
+		nclConBase.addCausalConnector(onBeginStartDelayConnector);
+		nclConBase.addCausalConnector(onEndStopConnector);
+		nclConBase.addCausalConnector(onEndAbortConnector);
+		nclConBase.addCausalConnector(onEndStopDelayConnector);
+		nclConBase.addCausalConnector(onEndStartConnector);
+		nclConBase.addCausalConnector(onEndStartDelayConnector);
+		nclConBase.addCausalConnector(onBeginStopConnector);
+		nclConBase.addCausalConnector(onBeginStopDelayConnector);
+		nclConBase.addCausalConnector(onSelectionStartStopConnector);
+		nclConBase.addCausalConnector(onSelectionStartStopDelayConnector);
 		
 	}
 
@@ -222,7 +280,7 @@ public class NCLExportEventHandler implements EventHandler<ActionEvent>{
 		}
 	}
 
-	private void createNCLLinks(NCLBody nclBody, NCLImportBase nclImportBase, TemporalChain temporalChain) throws XMLException {
+	private void createNCLLinks(NCLBody nclBody, NCLImportBase nclImportBase, TemporalChain temporalChain, Boolean isForHTMLExport) throws XMLException {
 		
 		NCLDoc casualConnectorBaseNCLDoc = nclImportBase.getImportedDoc();
 		NCLHead connectorBaseNCLHead = casualConnectorBaseNCLDoc.getHead();
@@ -247,8 +305,13 @@ public class NCLExportEventHandler implements EventHandler<ActionEvent>{
 					case STARTS:
 						
 						importedNCLCausalConnector = nclConnectorBaseOfImportedBase.getCausalConnector(ImportedNCLCausalConnectorType.ONBEGIN_START.getDescription());
-						externalReferenceType = new ExternalReferenceType<>(nclImportBase, importedNCLCausalConnector);
-						nclLink.setXconnector(externalReferenceType);
+						
+						if(!isForHTMLExport){
+							externalReferenceType = new ExternalReferenceType<>(nclImportBase, importedNCLCausalConnector);
+							nclLink.setXconnector(externalReferenceType);
+						}else {
+							nclLink.setXconnector(importedNCLCausalConnector);
+						}
 						
 						conditionNCLBind = new NCLBind();
 						conditionNCLBind.setRole(importedNCLCausalConnector.findRole(NCLDefaultConditionRole.ONBEGIN.toString()));
@@ -269,8 +332,13 @@ public class NCLExportEventHandler implements EventHandler<ActionEvent>{
 					case STARTS_DELAY:
 						
 						importedNCLCausalConnector = nclConnectorBaseOfImportedBase.getCausalConnector(ImportedNCLCausalConnectorType.ONBEGIN_START_DELAY.getDescription());
-						externalReferenceType = new ExternalReferenceType<>(nclImportBase, importedNCLCausalConnector);
-						nclLink.setXconnector(externalReferenceType);
+						
+						if(!isForHTMLExport){
+							externalReferenceType = new ExternalReferenceType<>(nclImportBase, importedNCLCausalConnector);
+							nclLink.setXconnector(externalReferenceType);
+						}else {
+							nclLink.setXconnector(importedNCLCausalConnector);
+						}
 						
 						conditionNCLBind = new NCLBind();
 						conditionNCLBind.setRole(importedNCLCausalConnector.findRole(NCLDefaultConditionRole.ONBEGIN.toString()));
@@ -296,8 +364,13 @@ public class NCLExportEventHandler implements EventHandler<ActionEvent>{
 					case FINISHES:
 						
 						importedNCLCausalConnector = nclConnectorBaseOfImportedBase.getCausalConnector(ImportedNCLCausalConnectorType.ONEND_STOP.getDescription());
-						externalReferenceType = new ExternalReferenceType<>(nclImportBase, importedNCLCausalConnector);
-						nclLink.setXconnector(externalReferenceType);
+
+						if(!isForHTMLExport){
+							externalReferenceType = new ExternalReferenceType<>(nclImportBase, importedNCLCausalConnector);
+							nclLink.setXconnector(externalReferenceType);
+						}else {
+							nclLink.setXconnector(importedNCLCausalConnector);
+						}
 						
 						conditionNCLBind = new NCLBind();
 						conditionNCLBind.setRole(importedNCLCausalConnector.findRole(NCLDefaultConditionRole.ONEND.toString()));
@@ -318,8 +391,13 @@ public class NCLExportEventHandler implements EventHandler<ActionEvent>{
 					case FINISHES_DELAY:
 
 						importedNCLCausalConnector = nclConnectorBaseOfImportedBase.getCausalConnector(ImportedNCLCausalConnectorType.ONEND_STOP_DELAY.getDescription());
-						externalReferenceType = new ExternalReferenceType<>(nclImportBase, importedNCLCausalConnector);
-						nclLink.setXconnector(externalReferenceType);
+
+						if(!isForHTMLExport){
+							externalReferenceType = new ExternalReferenceType<>(nclImportBase, importedNCLCausalConnector);
+							nclLink.setXconnector(externalReferenceType);
+						}else {
+							nclLink.setXconnector(importedNCLCausalConnector);
+						}
 						
 						conditionNCLBind = new NCLBind();
 						conditionNCLBind.setRole(importedNCLCausalConnector.findRole(NCLDefaultConditionRole.ONEND.toString()));
@@ -345,8 +423,13 @@ public class NCLExportEventHandler implements EventHandler<ActionEvent>{
 					case MEETS:
 						
 						importedNCLCausalConnector = nclConnectorBaseOfImportedBase.getCausalConnector(ImportedNCLCausalConnectorType.ONEND_START.getDescription());
-						externalReferenceType = new ExternalReferenceType<>(nclImportBase, importedNCLCausalConnector);
-						nclLink.setXconnector(externalReferenceType);
+
+						if(!isForHTMLExport){
+							externalReferenceType = new ExternalReferenceType<>(nclImportBase, importedNCLCausalConnector);
+							nclLink.setXconnector(externalReferenceType);
+						}else {
+							nclLink.setXconnector(importedNCLCausalConnector);
+						}
 						
 						conditionNCLBind = new NCLBind();
 						conditionNCLBind.setRole(importedNCLCausalConnector.findRole(NCLDefaultConditionRole.ONEND.toString()));
@@ -367,8 +450,13 @@ public class NCLExportEventHandler implements EventHandler<ActionEvent>{
 					case MEETS_DELAY:
 			
 						importedNCLCausalConnector = nclConnectorBaseOfImportedBase.getCausalConnector(ImportedNCLCausalConnectorType.ONEND_START_DELAY.getDescription());
-						externalReferenceType = new ExternalReferenceType<>(nclImportBase, importedNCLCausalConnector);
-						nclLink.setXconnector(externalReferenceType);
+
+						if(!isForHTMLExport){
+							externalReferenceType = new ExternalReferenceType<>(nclImportBase, importedNCLCausalConnector);
+							nclLink.setXconnector(externalReferenceType);
+						}else {
+							nclLink.setXconnector(importedNCLCausalConnector);
+						}
 						
 						conditionNCLBind = new NCLBind();
 						conditionNCLBind.setRole(importedNCLCausalConnector.findRole(NCLDefaultConditionRole.ONEND.toString()));
@@ -395,7 +483,13 @@ public class NCLExportEventHandler implements EventHandler<ActionEvent>{
 						
 						importedNCLCausalConnector = nclConnectorBaseOfImportedBase.getCausalConnector(ImportedNCLCausalConnectorType.ONBEGIN_STOP.getDescription());
 						externalReferenceType = new ExternalReferenceType<>(nclImportBase, importedNCLCausalConnector);
-						nclLink.setXconnector(externalReferenceType);
+
+						if(!isForHTMLExport){
+							externalReferenceType = new ExternalReferenceType<>(nclImportBase, importedNCLCausalConnector);
+							nclLink.setXconnector(externalReferenceType);
+						}else {
+							nclLink.setXconnector(importedNCLCausalConnector);
+						}
 						
 						conditionNCLBind = new NCLBind();
 						conditionNCLBind.setRole(importedNCLCausalConnector.findRole(NCLDefaultConditionRole.ONBEGIN.toString()));
@@ -417,7 +511,13 @@ public class NCLExportEventHandler implements EventHandler<ActionEvent>{
 					
 						importedNCLCausalConnector = nclConnectorBaseOfImportedBase.getCausalConnector(ImportedNCLCausalConnectorType.ONBEGIN_STOP_DELAY.getDescription());
 						externalReferenceType = new ExternalReferenceType<>(nclImportBase, importedNCLCausalConnector);
-						nclLink.setXconnector(externalReferenceType);
+
+						if(!isForHTMLExport){
+							externalReferenceType = new ExternalReferenceType<>(nclImportBase, importedNCLCausalConnector);
+							nclLink.setXconnector(externalReferenceType);
+						}else {
+							nclLink.setXconnector(importedNCLCausalConnector);
+						}
 						
 						conditionNCLBind = new NCLBind();
 						conditionNCLBind.setRole(importedNCLCausalConnector.findRole(NCLDefaultConditionRole.ONBEGIN.toString()));
@@ -450,8 +550,13 @@ public class NCLExportEventHandler implements EventHandler<ActionEvent>{
 							Media slaveMedia = synchronousRelation.getSlaveMediaList().get(i);
 			
 							importedNCLCausalConnector = nclConnectorBaseOfImportedBase.getCausalConnector(ImportedNCLCausalConnectorType.ONEND_START_DELAY.getDescription());
-							externalReferenceType = new ExternalReferenceType<>(nclImportBase, importedNCLCausalConnector);
-							beforeNCLLink.setXconnector(externalReferenceType);
+
+							if(!isForHTMLExport){
+								externalReferenceType = new ExternalReferenceType<>(nclImportBase, importedNCLCausalConnector);
+								nclLink.setXconnector(externalReferenceType);
+							}else {
+								nclLink.setXconnector(importedNCLCausalConnector);
+							}
 							
 							conditionNCLBind = new NCLBind();
 							conditionNCLBind.setRole(importedNCLCausalConnector.findRole(NCLDefaultConditionRole.ONEND.toString()));
@@ -492,8 +597,13 @@ public class NCLExportEventHandler implements EventHandler<ActionEvent>{
 				if(interactivityRelation.getStartDelay() == 0.0 && interactivityRelation.getStopDelay() == 0.0){
 					
 					importedNCLCausalConnector = nclConnectorBaseOfImportedBase.getCausalConnector(ImportedNCLCausalConnectorType.ONSELECTION_START_STOP.getDescription());
-					externalReferenceType = new ExternalReferenceType<>(nclImportBase, importedNCLCausalConnector);
-					nclLink.setXconnector(externalReferenceType);
+
+					if(!isForHTMLExport){
+						externalReferenceType = new ExternalReferenceType<>(nclImportBase, importedNCLCausalConnector);
+						nclLink.setXconnector(externalReferenceType);
+					}else {
+						nclLink.setXconnector(importedNCLCausalConnector);
+					}
 					
 					conditionNCLBind = new NCLBind();
 					conditionNCLBind.setRole(importedNCLCausalConnector.findRole(NCLDefaultConditionRole.ONSELECTION.toString()));
@@ -517,8 +627,13 @@ public class NCLExportEventHandler implements EventHandler<ActionEvent>{
 				}else {
 					
 					importedNCLCausalConnector = nclConnectorBaseOfImportedBase.getCausalConnector(ImportedNCLCausalConnectorType.ONSELECTION_START_STOP_DELAY.getDescription());
-					externalReferenceType = new ExternalReferenceType<>(nclImportBase, importedNCLCausalConnector);
-					nclLink.setXconnector(externalReferenceType);
+
+					if(!isForHTMLExport){
+						externalReferenceType = new ExternalReferenceType<>(nclImportBase, importedNCLCausalConnector);
+						nclLink.setXconnector(externalReferenceType);
+					}else {
+						nclLink.setXconnector(importedNCLCausalConnector);
+					}
 					
 					conditionNCLBind = new NCLBind();
 					conditionNCLBind.setRole(importedNCLCausalConnector.findRole(NCLDefaultConditionRole.ONSELECTION.toString()));
@@ -559,7 +674,7 @@ public class NCLExportEventHandler implements EventHandler<ActionEvent>{
 		}
 	}
 
-	private void createStartNCLLinks(NCLBody nclBody, NCLImportBase nclImportBase, TemporalChain temporalChain) throws XMLException {
+	private void createStartNCLLinks(NCLBody nclBody, NCLImportBase nclImportBase, TemporalChain temporalChain, Boolean isForHTMLExport) throws XMLException {
 		
 		NCLDoc casualConnectorBaseNCLDoc = nclImportBase.getImportedDoc();
 		NCLHead connectorBaseNCLHead = casualConnectorBaseNCLDoc.getHead();
@@ -580,8 +695,13 @@ public class NCLExportEventHandler implements EventHandler<ActionEvent>{
 				nclLink.setId("link_" + relationNumber++);
 				
 				importedNCLCausalConnector = nclConnectorBaseOfImportedBase.getCausalConnector(ImportedNCLCausalConnectorType.ONBEGIN_START_DELAY.getDescription());
-				externalReferenceType = new ExternalReferenceType<>(nclImportBase, importedNCLCausalConnector);
-				nclLink.setXconnector(externalReferenceType);
+
+				if(!isForHTMLExport){
+					externalReferenceType = new ExternalReferenceType<>(nclImportBase, importedNCLCausalConnector);
+					nclLink.setXconnector(externalReferenceType);
+				}else {
+					nclLink.setXconnector(importedNCLCausalConnector);
+				}
 				
 				conditionNCLBind = new NCLBind();
 				conditionNCLBind.setRole(importedNCLCausalConnector.findRole(NCLDefaultConditionRole.ONBEGIN.toString()));
@@ -799,9 +919,9 @@ public class NCLExportEventHandler implements EventHandler<ActionEvent>{
 
 	}
 
-	private void copyMediaFiles(String mediaDir) throws FileNotFoundException, IOException {
+	public void copyMediaFiles(String mediaDir) throws FileNotFoundException, IOException {
 		
-		for(TemporalChain temporalChain : temporalView.getTemporalChainList()){
+		for(TemporalChain temporalChain : spatialTemporalView.getTemporalChainList()){
 			
 			for(Media media :  temporalChain.getMediaAllList()){
 
