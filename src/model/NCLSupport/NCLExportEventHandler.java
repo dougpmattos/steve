@@ -910,7 +910,7 @@ public class NCLExportEventHandler implements EventHandler<ActionEvent>{
 				
 				logger.error(e.getMessage());
 				MessageDialog messageDialog = new MessageDialog(Language.translate("error.during.the.export"), 
-						Language.translate("could.not.find.the.ncl.document.directory") + ": " + e.getMessage(), "OK", 150);
+						Language.translate("could.not.find.the.ncl.document.directory") + ": " + e.getMessage(), "OK", 250);
 		        messageDialog.showAndWait();
 		        
 			}

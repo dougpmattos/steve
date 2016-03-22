@@ -6,6 +6,7 @@ import java.io.IOException;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.stage.FileChooser;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -57,6 +58,7 @@ public class HTMLExportEventHandler implements EventHandler<ActionEvent>{
         //factory.setValidating(true);
         	
         File stylesheet = new File("src/model/HTMLSupport/XSLFile/ncl4web.xsl");
+        String tempNCLDocumentDir = "";
         
         try {
         	
@@ -66,15 +68,17 @@ public class HTMLExportEventHandler implements EventHandler<ActionEvent>{
 		
         	if(nclCode != null){
         	
-        		File file = new File(System.getProperty("user.home"));
+        		FileChooser fileChooser = new FileChooser();
+                fileChooser.setTitle(Language.translate("export.ncl.document"));
+                File file = fileChooser.showSaveDialog(null);
  
-            		if(file != null){
-				
-						String tempNCLDocumentDir = file.getAbsolutePath();
-						tempNCLDocumentFile = new File(tempNCLDocumentDir + "/" + TEMP_NCL_DOCUMENT + ".ncl");
-						FileWriter fileWriter = new FileWriter(tempNCLDocumentFile);
-						fileWriter.write(nclCode);
-	                    fileWriter.close();
+        		if(file != null){
+			
+					tempNCLDocumentDir = file.getAbsolutePath();
+					tempNCLDocumentFile = new File(tempNCLDocumentDir + ".ncl");
+					FileWriter fileWriter = new FileWriter(tempNCLDocumentFile);
+					fileWriter.write(nclCode);
+                    fileWriter.close();
 
         		}
         		
@@ -84,7 +88,7 @@ public class HTMLExportEventHandler implements EventHandler<ActionEvent>{
 			
 			logger.error(e.getMessage());
 			MessageDialog messageDialog = new MessageDialog(Language.translate("error.during.the.temp.ncl.document.creation"), 
-					Language.translate("could.not.find.the.temp.ncl.document.directory") + ": " + e.getMessage(), "OK", 150);
+					Language.translate("could.not.find.the.temp.ncl.document.directory") + ": " + e.getMessage(), "OK", 250);
 	        messageDialog.showAndWait();
 	        
 	        return;
@@ -105,11 +109,11 @@ public class HTMLExportEventHandler implements EventHandler<ActionEvent>{
 
                 DOMSource source = new DOMSource(document);
                 
-                String exportedHTMLDocumentDir = System.getProperty("user.home") + "/" + EXPORTED_HTML_DOCUMENT;
+                String exportedHTMLDocumentDir = tempNCLDocumentDir + "/" + EXPORTED_HTML_DOCUMENT;
 				String mediaDir = exportedHTMLDocumentDir + "/media";
 				Boolean mediaDirCreated = (new File(mediaDir)).mkdirs();
 				
-				if (mediaDirCreated) {
+				if (mediaDirCreated || (new File(mediaDir)).exists()) {
 					nclExportEventHandler.copyMediaFiles(mediaDir);
 				}
 				
@@ -125,9 +129,7 @@ public class HTMLExportEventHandler implements EventHandler<ActionEvent>{
                 ReturnMessage returnMessage = new ReturnMessage(Language.translate("html.export.is.ready"), 300);
                 returnMessage.show();
                 AnimationUtil.applyFadeInOut(returnMessage);
-                
-                //TODO apagar temp ncl e colocar o nome do pojeto no doc HTML
-            	
+  
             }
         
         } catch (TransformerConfigurationException tce) {
