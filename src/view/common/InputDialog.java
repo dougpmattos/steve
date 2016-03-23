@@ -18,7 +18,7 @@ import javafx.stage.StageStyle;
 public class InputDialog extends Stage {
 
 	private static final int HEIGHT = 200;
-	private static final int WIDTH = 350;
+	private static final int WIDTH = 450;
 	private static final int LEFT_BUTTON = 0;
 	private static final int RIGHT_BUTTON = 1;
 	private static final int CLOSE_BUTTON = 2;

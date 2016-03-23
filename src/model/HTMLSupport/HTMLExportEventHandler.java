@@ -117,7 +117,7 @@ public class HTMLExportEventHandler implements EventHandler<ActionEvent>{
 					nclExportEventHandler.copyMediaFiles(mediaDir);
 				}
 				
-				File auxFile = new File(exportedHTMLDocumentDir + "/" + "HTMLExportado" + ".ncl");
+				File auxFile = new File(exportedHTMLDocumentDir + "/" + "HTMLExportado" + ".html");
 				FileWriter fileWriter = new FileWriter(auxFile);
                 StreamResult result = new StreamResult();
                 result.setWriter(fileWriter);

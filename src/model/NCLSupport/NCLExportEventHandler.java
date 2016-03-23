@@ -553,9 +553,9 @@ public class NCLExportEventHandler implements EventHandler<ActionEvent>{
 
 							if(!isForHTMLExport){
 								externalReferenceType = new ExternalReferenceType<>(nclImportBase, importedNCLCausalConnector);
-								nclLink.setXconnector(externalReferenceType);
+								beforeNCLLink.setXconnector(externalReferenceType);
 							}else {
-								nclLink.setXconnector(importedNCLCausalConnector);
+								beforeNCLLink.setXconnector(importedNCLCausalConnector);
 							}
 							
 							conditionNCLBind = new NCLBind();
