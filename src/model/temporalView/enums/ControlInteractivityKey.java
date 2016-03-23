@@ -4,7 +4,7 @@ import view.common.Language;
 
 public enum ControlInteractivityKey {
 
-	BACK, EXIT, POWER, REWIND, STOP, EJECT, PLAY, RECORD, PAUSE, OK;
+	BACK, EXIT, POWER, REWIND, STOP, EJECT, PLAY, RECORD, PAUSE, ENTER;
 	
 	public String toString(){
 		

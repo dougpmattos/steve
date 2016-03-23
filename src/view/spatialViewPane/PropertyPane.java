@@ -48,7 +48,7 @@ public class PropertyPane extends ScrollPane implements Observer{
 		    
 		    container.getChildren().add(positionPane);
 		    container.getChildren().add(sizePane);
-		    container.getChildren().add(cropPane);
+		    //container.getChildren().add(cropPane);
 		    container.getChildren().add(stylePane);
 		    
 	    }

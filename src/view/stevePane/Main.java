@@ -18,7 +18,7 @@ import controller.Controller;
 
 public class Main extends Application{
 
-	final Logger logger = LoggerFactory.getLogger(NCLExportEventHandler.class);
+	final Logger logger = LoggerFactory.getLogger(Main.class);
 	
 	public static void main(String[] args) {
 		launch();

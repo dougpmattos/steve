@@ -55,6 +55,12 @@ public class TemporalMediaInfoPane extends ScrollPane{
 		startTime.setId("info-pane-field");
 		endTime.setId("info-pane-field");
 		duration.setId("info-pane-field");
+		name.setEditable(false);
+		type.setEditable(false);
+		startTime.setEditable(false);
+		endTime.setEditable(false);
+		duration.setEditable(false);
+		interactive.setDisable(false);
 		
 		infoPropertyGridPane = new GridPane();
 		infoPropertyGridPane.setId("info-property-grid-pane");

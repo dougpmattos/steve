@@ -231,6 +231,63 @@ public class TimeLineXYChartData implements Observer {
 		mediaImageClip.setArcWidth(16);
 		imageView = media.generateMediaIcon();
 		imageView.setClip(mediaImageClip);
+		
+		if(media.isInteractive()){
+			iButton = new Button();
+    		iButton.setId("i-button");
+    		
+    		iButton.setOnAction(new EventHandler<ActionEvent>() {
+
+				@Override
+				public void handle(ActionEvent event) {
+					
+					Interactivity<Media, ?> interactivityRelation = null;
+					
+					for(TemporalRelation relation : temporalChainModel.getRelationList()){
+						
+						if(relation instanceof Interactivity){
+							
+							interactivityRelation = (Interactivity) relation;
+							if(interactivityRelation.getMasterMedia() == media){
+								controller.removeInteractivityRelation(temporalChainModel, interactivityRelation);
+								break;
+							}
+							
+						}
+						
+					}
+			
+					for(XYChart.Data<Number, String> xyChartData : temporalChainPane.getSerie().getData()){
+						
+						HBox containerNode = (HBox) xyChartData.getNode();
+						VBox nameInteractiveIconContainer = (VBox) containerNode.getChildren().get(1);
+						Label mediaLabel = (Label) nameInteractiveIconContainer.getChildren().get(0);
+						
+						for(Media media : interactivityRelation.getSlaveMediaList()){
+							
+							if(mediaLabel.getText().equalsIgnoreCase(media.getName())){
+								
+								if(!containerNode.getStylesheets().contains("view/temporalViewPane/styles/borderOfMediaToBeStopped.css")){
+									
+									containerNode.getStylesheets().add("view/temporalViewPane/styles/borderOfMediaToBeStopped.css");
+									ImageView imageView = (ImageView) containerNode.getChildren().get(0);
+									Rectangle mediaImageClip = (Rectangle) imageView.getClip();
+									mediaImageClip.setHeight(mediaImageClip.getHeight()-5);
+									
+								}
+								
+							}
+							
+						}
+						
+					}
+					
+					
+				}
+				
+			});
+			nameInteractiveIconContainer.getChildren().add(iButton);
+		}
 
 		containerNode.heightProperty().addListener(new ChangeListener(){
 			@Override 
@@ -325,7 +382,8 @@ public class TimeLineXYChartData implements Observer {
 				for(Tab temporalTab : temporalViewPane.getTemporalChainTabPane().getTabs()){
 					
 					TemporalChainPane temporalChainPane = (TemporalChainPane) temporalTab.getContent();
-
+					temporalChainPane.getParentTab().setStyle(null);
+					
 					for(ArrayList<TimeLineXYChartData> timeLineXYChartDataList : temporalChainPane.getTimeLineXYChartDataLineList()){
 						for(TimeLineXYChartData timeLineXYChartData : timeLineXYChartDataList){
 							if(!temporalViewPane.getSelectedMediaList().contains(timeLineXYChartData.getMedia())){

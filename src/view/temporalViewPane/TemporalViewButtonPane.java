@@ -133,6 +133,8 @@ public class TemporalViewButtonPane extends BorderPane {
         otherButtonPane.getChildren().add(interactivityButton);
         otherButtonPane.getChildren().add(zoomButton);
         otherButtonPane.getChildren().add(showAnchorsLinksButton);
+        zoomButton.setDisable(true);
+        showAnchorsLinksButton.setDisable(true);
 	       
         alignmentButtonPane = new HBox();
         alignmentButtonPane.setId("alignment-pane");
@@ -617,12 +619,20 @@ public class TemporalViewButtonPane extends BorderPane {
 		    	
 		    	if(firstSelectedMedia != null){
 		    		
-		    		InteractiveMediaWindow interactiveMediaWindow;
-		    		ArrayList<Media> mediaListDuringInteractivityTime = temporalViewPane.getMediaListDuringInteractivityTime();
-		    
-			    	interactiveMediaWindow = new InteractiveMediaWindow(controller, temporalViewPane, firstSelectedMedia, mediaListDuringInteractivityTime);
-		    		
-			    	interactiveMediaWindow.showAndWait();
+		    		if(!firstSelectedMedia.isInteractive()){
+		    			
+		    			InteractiveMediaWindow interactiveMediaWindow;
+			    		ArrayList<Media> mediaListDuringInteractivityTime = temporalViewPane.getMediaListDuringInteractivityTime();
+			    
+				    	interactiveMediaWindow = new InteractiveMediaWindow(controller, temporalViewPane, firstSelectedMedia, mediaListDuringInteractivityTime);
+			    		
+				    	interactiveMediaWindow.showAndWait();
+				    	
+		    		}else {//TODO remover quando suportar diversas relações de interatividade
+		    			MessageDialog messageDialog = new MessageDialog(Language.translate("interactivity.relation.has.already.been.defined.for.this.media"), 
+								Language.translate("please.select.another.media.in.the.timeline.to.define.a.new.interactivity"), "OK", 190);
+						messageDialog.showAndWait();
+		    		}
 			    	
 		    	}else{
 		    		

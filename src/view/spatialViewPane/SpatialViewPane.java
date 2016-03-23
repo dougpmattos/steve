@@ -57,7 +57,8 @@ public class SpatialViewPane extends SplitPane implements view.common.Observer, 
 		Label label = new Label(Language.translate("no.selected.media"));
 		labelContainer.getChildren().add(label);
     	
-    	getItems().addAll(labelContainer, displayPane);
+    	//getItems().addAll(labelContainer, displayPane);
+    	getItems().addAll(labelContainer);
     	
     	temporalViewPane.addObserver(this);
     	repositoryPane.getRepositoryMediaItemContainerListPane().addObserver(this);
@@ -108,7 +109,8 @@ public class SpatialViewPane extends SplitPane implements view.common.Observer, 
 				case CLEAR_SELECTION_TEMPORAL_MEDIA:
 					
 					getItems().clear();
-			    	getItems().addAll(labelContainer, displayPane);
+//			    	getItems().addAll(labelContainer, displayPane);
+			    	getItems().addAll(labelContainer);
 			    	
 					break;
 					
@@ -141,7 +143,8 @@ public class SpatialViewPane extends SplitPane implements view.common.Observer, 
     	propertyInfoTabPane.getTabs().add(infoTab);
     	
     	getItems().clear();
-    	getItems().addAll(propertyInfoTabPane, displayPane);
+    	//getItems().addAll(propertyInfoTabPane, displayPane);
+    	getItems().addAll(propertyInfoTabPane);
     	
 	}
 	
@@ -158,7 +161,8 @@ public class SpatialViewPane extends SplitPane implements view.common.Observer, 
     	propertyInfoTabPane.getTabs().add(infoTab);
     	
     	getItems().clear();
-    	getItems().addAll(propertyInfoTabPane, displayPane);
+//    	getItems().addAll(propertyInfoTabPane, displayPane);
+    	getItems().addAll(propertyInfoTabPane);
     	
 	}
 
@@ -175,14 +179,16 @@ public class SpatialViewPane extends SplitPane implements view.common.Observer, 
 				case CLEAR_SELECTION_REPOSITORY_MEDIA:
 					
 					getItems().clear();
-			    	getItems().addAll(labelContainer, displayPane);
+//			    	getItems().addAll(labelContainer, displayPane);
+			    	getItems().addAll(labelContainer);
 			    	
 					break;
 					
 	    		case REMOVE_REPOSITORY_MEDIA:
 					
 					getItems().clear();
-			    	getItems().addAll(labelContainer, displayPane);
+//			    	getItems().addAll(labelContainer, displayPane);
+			    	getItems().addAll(labelContainer);
 			    	
 					break;
 		        	

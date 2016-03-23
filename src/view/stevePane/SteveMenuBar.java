@@ -1,5 +1,6 @@
 package view.stevePane;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 import javafx.event.ActionEvent;
@@ -12,6 +13,7 @@ import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.Tab;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.shape.Rectangle;
+import javafx.stage.Stage;
 import model.HTMLSupport.HTMLExportEventHandler;
 import model.NCLSupport.NCLExportEventHandler;
 import model.NCLSupport.NCLImportEventHandler;
@@ -21,6 +23,7 @@ import model.repository.RepositoryMediaList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import br.uff.midiacom.ana.util.exception.XMLException;
 import view.common.Language;
 import view.common.MessageDialog;
 import view.temporalViewPane.TemporalChainPane;
@@ -37,6 +40,7 @@ public class SteveMenuBar extends MenuBar{
 	private SpatialTemporalView spatialTemporalView;
 	private RepositoryMediaList repositoryMediaList;
 	private TemporalViewPane temporalViewPane;
+	private Stage stage;
 	
 	private Menu menuFile;
 	private Menu menuEdit;
@@ -68,12 +72,13 @@ public class SteveMenuBar extends MenuBar{
 	private  CheckMenuItem checkMenuItemSpatialView; 
 	private CheckMenuItem checkMenuItemShowRelations;
 	
-	public SteveMenuBar(Controller controller, SpatialTemporalView spatialTemporalView, RepositoryMediaList repositoryMediaList, TemporalViewPane temporalViewPane){
+	public SteveMenuBar(Controller controller, SpatialTemporalView spatialTemporalView, RepositoryMediaList repositoryMediaList, TemporalViewPane temporalViewPane, Stage stage){
 		
 		this.controller = controller;
 		this.spatialTemporalView = spatialTemporalView;
 		this.repositoryMediaList = repositoryMediaList;
 		this.temporalViewPane = temporalViewPane;
+		this.stage = stage;
 		
 		createMenu();
 		
@@ -89,15 +94,17 @@ public class SteveMenuBar extends MenuBar{
 		createToolMenuItemActions();
 		createHelpMenuItemActions();
 		
-		menuFile.getItems().addAll(menuItemNew, menuItemOpen, new SeparatorMenuItem(), menuItemClose, new SeparatorMenuItem(), 
-								   menuItemSave, new SeparatorMenuItem(), menuItemImportNCL, menuItemExportNCL, new SeparatorMenuItem(), menuItemExportHTML5, new SeparatorMenuItem(), menuItemExit);
-		menuEdit.getItems().addAll(menuItemUndo, menuItemRedo, new SeparatorMenuItem(), menuItemCut, menuItemCopy, menuItemPaste, new SeparatorMenuItem(), 
-								   menuItemDelete, menuItemSelectAll);
+		//menuFile.getItems().addAll(menuItemNew, menuItemOpen, new SeparatorMenuItem(), menuItemClose, new SeparatorMenuItem(), 
+		menuFile.getItems().addAll(menuItemExportNCL, new SeparatorMenuItem(), menuItemExportHTML5, new SeparatorMenuItem(), menuItemExit);
+//		menuEdit.getItems().addAll(menuItemUndo, menuItemRedo, new SeparatorMenuItem(), menuItemCut, menuItemCopy, menuItemPaste, new SeparatorMenuItem(), 
+		menuEdit.getItems().addAll(menuItemSelectAll);
 		menuView.getItems().addAll(checkMenuItemMediaView, checkMenuItemTemporalView, checkMenuItemSpatialView, checkMenuItemShowRelations);
 		menuTools.getItems().addAll(menuItemSimulation);
-		menuHelp.getItems().addAll(menuItemHelpContents, new SeparatorMenuItem(), menuItemAbout);
+//		menuHelp.getItems().addAll(menuItemHelpContents, new SeparatorMenuItem(), menuItemAbout);
+		menuHelp.getItems().addAll(menuItemAbout);
 		    
-		getMenus().addAll(menuFile, menuEdit, menuView, menuTools, menuHelp);
+//		getMenus().addAll(menuFile, menuEdit, menuView, menuTools, menuHelp);
+		getMenus().addAll(menuFile, menuEdit, menuHelp);
 		
 		
 	}
@@ -249,6 +256,19 @@ public class SteveMenuBar extends MenuBar{
 		    }
 		});
 		
+		menuItemNew.setOnAction(new EventHandler<ActionEvent>() {
+		    public void handle(ActionEvent t) {
+			   try {
+				new Controller(new RepositoryMediaList(), new SpatialTemporalView(), stage);
+			} catch (XMLException | IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		    }
+		});
+		
+		
+		
 		menuItemSave.setOnAction(new SaveEventHandler(spatialTemporalView, repositoryMediaList));
 		
 		menuItemImportNCL.setOnAction(new NCLImportEventHandler());
@@ -259,7 +279,7 @@ public class SteveMenuBar extends MenuBar{
 		
 		menuItemExit.setOnAction(new EventHandler<ActionEvent>() {
 		    public void handle(ActionEvent t) {
-			   //TODO
+			   stage.close();
 		    }
 		});
 		

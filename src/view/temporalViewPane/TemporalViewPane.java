@@ -88,7 +88,7 @@ public class TemporalViewPane extends BorderPane implements Observer, view.commo
 			@Override
 			public void handle(ActionEvent event) {
 				
-				controller.addTemporalChain(new TemporalChain("TEMPORAL CHAIN " + (temporalChainTabPane.getTabs().size() + 1)));
+				controller.addTemporalChain(new TemporalChain(Language.translate("temporal.chain") + " " + (temporalChainTabPane.getTabs().size() + 1)));
 				
 			}
 			
