@@ -20,7 +20,7 @@ import javafx.stage.StageStyle;
 public class MessageDialog extends Stage {
  
     private static final int HEIGHT = 200;
-	private static final int WIDTH = 350;
+	private static final int WIDTH = 380;
     
     private Scene scene;
     private String title;

@@ -1,6 +1,5 @@
 package view.spatialViewPane;
 
-import view.common.Language;
 import javafx.collections.FXCollections;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
@@ -14,6 +13,7 @@ import javafx.scene.text.Text;
 import model.common.Media;
 import model.spatialView.PositionProperty;
 import model.spatialView.enums.Size;
+import view.common.Language;
 import controller.Controller;
 
 public class PositionPane extends VBox {
@@ -25,7 +25,7 @@ public class PositionPane extends VBox {
 	private TextField right;
 	private TextField top;
 	private TextField bottom;
-	private TextField rotation;
+//	private TextField rotation;
 	private TextField zOrder;
 	private ChoiceBox<Size> leftUnit;
 	private ChoiceBox<Size> rightUnit;
@@ -54,13 +54,13 @@ public class PositionPane extends VBox {
 		Label rightLabel = new Label(Language.translate("right"));
 		Label topLabel = new Label(Language.translate("top"));
 		Label bottomLabel = new Label(Language.translate("bottom"));
-		Label rotationLabel = new Label(Language.translate("rotation"));
+//		Label rotationLabel = new Label(Language.translate("rotation"));
 		Label zOrderLabel = new Label(Language.translate("z.order"));
 		leftLabel.setId("spatial-view-label");
 		rightLabel.setId("spatial-view-label");
 		topLabel.setId("spatial-view-label");
 		bottomLabel.setId("spatial-view-label");
-		rotationLabel.setId("spatial-view-label");
+//		rotationLabel.setId("spatial-view-label");
 		zOrderLabel.setId("spatial-view-label");
 
 		left = new TextField();
@@ -71,7 +71,7 @@ public class PositionPane extends VBox {
 		topUnit = new ChoiceBox<Size>(FXCollections.observableArrayList(Size.PX, Size.PERCENTAGE));
 		bottom = new TextField();
 		bottomUnit = new ChoiceBox<Size>(FXCollections.observableArrayList(Size.PX, Size.PERCENTAGE));
-		rotation = new TextField();
+//		rotation = new TextField();
 		zOrder = new TextField();
 		
 		titleButtonBorderPane = new BorderPane();
@@ -93,8 +93,8 @@ public class PositionPane extends VBox {
 		positionPropertyGridPane.add(bottomLabel, 7, 2);
 		positionPropertyGridPane.add(bottom, 8, 2);
 		positionPropertyGridPane.add(bottomUnit, 9, 2);
-		positionPropertyGridPane.add(rotationLabel, 0, 4);
-		positionPropertyGridPane.add(rotation, 1, 4);
+//		positionPropertyGridPane.add(rotationLabel, 0, 4);
+//		positionPropertyGridPane.add(rotation, 1, 4);
 		positionPropertyGridPane.add(zOrderLabel, 7, 4);
 		positionPropertyGridPane.add(zOrder, 8, 4);
 		
@@ -169,13 +169,13 @@ public class PositionPane extends VBox {
 		return bottom.getText() + bottomUnit.getValue().toString();
 	}
 	
-	public void setRotationValue(String value){
-		this.rotation.setText(value);
-	}
-	
-	public String getRotationValue(){
-		return rotation.getText();
-	}
+//	public void setRotationValue(String value){
+//		this.rotation.setText(value);
+//	}
+//	
+//	public String getRotationValue(){
+//		return rotation.getText();
+//	}
 	
 	public void setZOrderValue(String value){
 		this.zOrder.setText(value);
@@ -193,7 +193,7 @@ public class PositionPane extends VBox {
 		setRightValue(positionProperty.getRight());
 		setTopValue(positionProperty.getTop());
 		setBottomValue(positionProperty.getBottom());
-		setRotationValue(positionProperty.getRotation());
+//		setRotationValue(positionProperty.getRotation());
 		setZOrderValue(String.valueOf(positionProperty.getOrderZ()));
 		
 	}

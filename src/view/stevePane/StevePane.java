@@ -62,8 +62,8 @@ public class StevePane extends Scene{
 
 	public void createView(Stage stage) {
 		
-		defaultLocale = new Locale("pt","BR");
-//		defaultLocale = new Locale("en","US");
+//		defaultLocale = new Locale("pt","BR");
+		defaultLocale = new Locale("en","US");
 		Language.setLocale(defaultLocale);
 		
     	repositoryPane = new RepositoryPane(controller, repositoryMediaList);
@@ -75,8 +75,8 @@ public class StevePane extends Scene{
     	
     	repositorySpatialViewSplitPane = new SplitPane();
     	repositorySpatialViewSplitPane.setOrientation(Orientation.HORIZONTAL);
-//    	repositorySpatialViewSplitPane.setDividerPositions(0.3); XXX com o displayPane, esta é a divisão
-    	repositorySpatialViewSplitPane.setDividerPositions(0.5);
+    	repositorySpatialViewSplitPane.setDividerPositions(0.3); //XXX com o displayPane, esta é a divisão
+//    	repositorySpatialViewSplitPane.setDividerPositions(0.5);
     	repositorySpatialViewSplitPane.getItems().addAll(repositoryPane, spatialViewPane);
 	   
     	containerSplitPane = new SplitPane();

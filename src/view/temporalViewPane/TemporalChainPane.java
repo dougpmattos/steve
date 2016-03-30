@@ -151,7 +151,7 @@ public class TemporalChainPane extends StackPane implements Observer{
 //				while(){ enquanto nao chega na ultima midia, ir andando com a linha
 //					
 //				}
-				playhead.setTranslateX(500);
+				//playhead.setTranslateX(500);
 	
 			}
 			
@@ -166,9 +166,9 @@ public class TemporalChainPane extends StackPane implements Observer{
 			@Override
 			public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
 				
-				System.out.println(newValue);
-				DisplayPane displayPane = stevePane.getSpatialViewPane().getDisplayPane();
-				StackPane screen = displayPane.getScreen();
+//				System.out.println(newValue);
+//				DisplayPane displayPane = stevePane.getSpatialViewPane().getDisplayPane();
+//				StackPane screen = displayPane.getScreen();
 				
 				//TODO listener para a linha de play quando ela mudar de posicao. Para cada mudanca de posicao 
 				//pegar as midias que estao sobre a linha e exibir na tel conforme suas propriedades	

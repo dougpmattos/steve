@@ -80,7 +80,7 @@ public class PresentationProperty implements Serializable{
 		positionProperty.setRight(positionPane.getRightValue());
 		positionProperty.setTop(positionPane.getTopValue());
 		positionProperty.setBottom(positionPane.getBottomValue());
-		positionProperty.setRotation(positionPane.getRotationValue());
+//		positionProperty.setRotation(positionPane.getRotationValue());
 		positionProperty.setOrderZ(Integer.parseInt(positionPane.getZOrderValue()));
 	
 	}

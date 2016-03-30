@@ -677,7 +677,7 @@ public class TemporalViewButtonPane extends BorderPane {
 	
 	private Double showDelayInputDialog() {
 		
-		InputDialog inputDialog = new InputDialog(Language.translate("type.delay"),null, Language.translate("cancel"),"ok", Language.translate("type.first.delay") + ": ", 210);
+		InputDialog inputDialog = new InputDialog(Language.translate("type.delay"),null, Language.translate("cancel"),"ok", Language.translate("delay.in.seconds") + ": ", 210);
     	String input = inputDialog.showAndWaitAndReturn();
     	Double delay;
     	

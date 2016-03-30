@@ -20,8 +20,8 @@
 		<mkdir dir="externalLibs" />
 	
 		<copy todir="externalLibs">
-			<fileset dir="/Applications/Eclipse Luna/plugins/org.junit_4.11.0.v201303080030">
-				<filename name="junit.jar"/>
+			<fileset dir="/Users/Douglas/Applications/Eclipse Luna/plugins">
+				<filename name="org.hamcrest.core_1.3.0.v201303031735.jar"/>
 			</fileset>
 		</copy>
 		<copy todir="externalLibs">
@@ -35,8 +35,8 @@
 			</fileset>
 		</copy>
 		<copy todir="externalLibs">
-			<fileset dir="/Applications/Eclipse Luna/plugins">
-				<filename name="org.hamcrest.core_1.3.0.v201303031735.jar"/>
+			<fileset dir="/Users/Douglas/Applications/Eclipse Luna/plugins/org.junit_4.11.0.v201303080030">
+				<filename name="junit.jar"/>
 			</fileset>
 		</copy>
 		<copy todir="externalLibs">
@@ -57,19 +57,19 @@
 	
 		<mkdir dir="project" />
 		<copy todir="project">
-			<fileset dir="/Users/douglas/Workspace/steve">
+			<fileset dir="/Users/Douglas/Workspace/steve">
 				<include name="src/**" />
 			</fileset>
 		</copy>
 	
 		<mkdir dir="projectRefs" />
 		<copy todir="projectRefs">
-			<fileset dir="/Users/douglas/Workspace">
+			<fileset dir="/Users/Douglas/Workspace">
 				<include name="aNa/src/**" />
 			</fileset>
 		</copy>
 		<copy todir="projectRefs">
-			<fileset dir="/Users/douglas/Workspace">
+			<fileset dir="/Users/Douglas/Workspace">
 				<include name="aNa/test/**" />
 			</fileset>
 		</copy>

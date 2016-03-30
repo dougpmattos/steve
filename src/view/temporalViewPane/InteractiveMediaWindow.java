@@ -64,6 +64,7 @@ public class InteractiveMediaWindow extends Stage {
     private ChoiceBox<InteractivityKeyType> interactivityKeyTypeField;
 	private ChoiceBox interactivityKeyField;
 	private CheckBox interactiveMediaWillBeStopped;
+	private CheckBox endApplication;
     private ChoiceBox<Media> mediaToBeStoppedField;
     private ChoiceBox timelineToBeStartedField;
     private TextField stopDelayField;
@@ -382,6 +383,7 @@ public class InteractiveMediaWindow extends Stage {
         interactivityKeyTypeField = new ChoiceBox<InteractivityKeyType>(FXCollections.observableArrayList(InteractivityKeyType.values()));
         interactivityKeyField = new ChoiceBox();
         interactiveMediaWillBeStopped  =new CheckBox(Language.translate("interactive.media.will.be.stopped"));
+        endApplication  =new CheckBox(Language.translate("end.application"));
         mediaToBeStoppedField = new ChoiceBox<Media>(FXCollections.observableArrayList(mediaListDuringInteractivityTime));
         stopDelayField = new TextField();
         startDelayField = new TextField();
@@ -401,6 +403,7 @@ public class InteractiveMediaWindow extends Stage {
         interactivityKeyTypeField.setId("new-interactive-media-field");
         interactivityKeyField.setId("new-interactive-media-field");
         interactiveMediaWillBeStopped.setId("new-interactive-media-field");
+        endApplication.setId("new-interactive-media-field");
         mediaToBeStoppedField.setId("new-interactive-media-field"); 
         timelineToBeStartedField.setId("new-interactive-media-field");
         stopDelayField.setId("input-field");
@@ -456,6 +459,7 @@ public class InteractiveMediaWindow extends Stage {
         
         formGridPane.add(stopActionSubtitleSeparatorContainer, 0, 5, 5, 1);
         formGridPane.add(interactiveMediaWillBeStopped, 0, 6);
+        formGridPane.add(endApplication, 1, 6);
         formGridPane.add(mediaToBeStoppedLabel, 0, 7);
         formGridPane.add(mediaCloseNewVBoxContainer, 1, 7);
         formGridPane.add(stopDelayLabel, 0, 8);
