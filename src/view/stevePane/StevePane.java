@@ -46,11 +46,12 @@ public class StevePane extends Scene{
     private Locale defaultLocale;
     private Boolean isMetaDown = false;
     
-    private static BorderPane containerBorderPane = new BorderPane();
+    private BorderPane containerBorderPane = new BorderPane();
     
     public StevePane(Controller controller, RepositoryMediaList repositoryMediaList, SpatialTemporalView temporalView) throws XMLException, IOException  {
     	
-    	super(containerBorderPane);
+    	super(new BorderPane());
+    	setRoot(containerBorderPane);
     	getStylesheets().add("view/stevePane/styles/stevePane.css");
     	containerBorderPane.setPrefSize(STEVE_WITDH, STEVE_HEIGHT);
     	

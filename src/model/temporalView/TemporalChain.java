@@ -486,7 +486,7 @@ public class TemporalChain extends Observable implements Serializable {
 		if(!atLeastOneSlaveMediaWasDefined){
 			
 			MessageDialog messageDialog = new MessageDialog(Language.translate("it.is.not.possible.to.define.alignment"), 
-					Language.translate("no.selected.media.could.be.slave.for.the.relation"), "OK", 190);
+					Language.translate("no.selected.media.could.be.slave.for.the.relation"), "OK", 140);
 			messageDialog.showAndWait();
 			
 		}else {

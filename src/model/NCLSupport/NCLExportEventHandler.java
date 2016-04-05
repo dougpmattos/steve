@@ -84,28 +84,49 @@ public class NCLExportEventHandler implements EventHandler<ActionEvent>{
 	@Override
 	public void handle(ActionEvent actionEvent) {
 
-		String temporalChains = chainMasterMediaStartsInInstantDifferentOfZero();
-		
-		if(!temporalChains.isEmpty()){
+		if(isThereNoApplication()){
 			
-			InputDialog showContinueQuestionInputDialog = new InputDialog(Language.translate("master.media.of.the.following.temporal.chain.will.be.moved.to.instant.0s.in.the.ncl.document"), 
-					temporalChains + "\n" + Language.translate("would.you.like.to.continue.exporting.to.NCL"), "yes","no", null, 250);
+			MessageDialog messageDialog = new MessageDialog(Language.translate("no.multimedia.application.to.be.exported"), "OK", 150);
+            messageDialog.showAndWait();
+            
+		} else{
 			
-			String answer = showContinueQuestionInputDialog.showAndWaitAndReturn();
+			String temporalChains = chainMasterMediaStartsInInstantDifferentOfZero();
 			
-			if(answer.equalsIgnoreCase("left")){
+			if(!temporalChains.isEmpty()){
+				
+				InputDialog showContinueQuestionInputDialog = new InputDialog(Language.translate("master.media.of.the.following.temporal.chain.will.be.moved.to.instant.0s.in.the.ncl.document"), 
+						temporalChains + "\n" + Language.translate("would.you.like.to.continue.exporting.to.NCL"), "yes","no", null, 250);
+				
+				String answer = showContinueQuestionInputDialog.showAndWaitAndReturn();
+				
+				if(answer.equalsIgnoreCase("left")){
+					
+					exportToNCL(false);
+					
+		    	}
+				
+			} else{
 				
 				exportToNCL(false);
 				
-	    	}
-			
-		} else{
-			
-			exportToNCL(false);
+			}
 			
 		}
 
     }
+	
+	public boolean isThereNoApplication(){
+		
+		ArrayList<TemporalChain> temporalChainList = spatialTemporalView.getTemporalChainList();
+		
+		if(temporalChainList.size() == 1 && temporalChainList.get(0).getMediaAllList().isEmpty()){
+			return true;
+		} else{
+			return false;
+		}
+		
+	}
 
 	public NCLDoc exportToNCL(Boolean isForHTMLExport) {
 		
@@ -125,7 +146,7 @@ public class NCLExportEventHandler implements EventHandler<ActionEvent>{
 		
 		for(TemporalChain temporalChain : spatialTemporalView.getTemporalChainList()){
 			
-			if(temporalChain.getMasterMedia().getBegin() > 0){
+			if(temporalChain.getMasterMedia() != null && temporalChain.getMasterMedia().getBegin() > 0){
 				temporalChains.append(temporalChain.getName() + "\n");
 			}
 			
