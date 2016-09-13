@@ -30,6 +30,7 @@ public class TemporalChain extends Observable implements Serializable {
 	private ArrayList<Media> mediaAllList = new ArrayList<Media>();
 	private ArrayList<TemporalRelation> relationList = new ArrayList<TemporalRelation>();
 	private ArrayList<ArrayList<Media>> mediaLineList = new ArrayList<ArrayList<Media>>();
+	
 
 	public TemporalChain(String name) {
 		
@@ -1231,6 +1232,17 @@ public class TemporalChain extends Observable implements Serializable {
 		setChanged();
 		Operation<TemporalViewOperator> operation = new Operation<TemporalViewOperator>(TemporalViewOperator.EDIT_INTERACTIVITY_RELATION, interactivityRelation, this);
         notifyObservers(operation);
+		
+	}
+	
+	//bruno modifying
+	public Media getMediaUnderThePlayLineList(Number newValue){
+		int listSize = mediaAllList.size();
+		int currentMediaIndex = 0;
+		int index = (int) (((Double) newValue / 27.5)/5);
+		System.out.println(index);
+		
+		return mediaAllList.get(index); 
 		
 	}
 	
