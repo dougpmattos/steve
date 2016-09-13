@@ -166,19 +166,21 @@ public class TemporalChainPane extends StackPane implements Observer{
 			@Override
 			public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
 				
-//				System.out.println(newValue);
-//				DisplayPane displayPane = stevePane.getSpatialViewPane().getDisplayPane();
-//				StackPane screen = displayPane.getScreen();
+				System.out.println(newValue);
+				DisplayPane displayPane = stevePane.getSpatialViewPane().getDisplayPane();
+				StackPane screen = displayPane.getScreen();
 				
 				//TODO listener para a linha de play quando ela mudar de posicao. Para cada mudanca de posicao 
 				//pegar as midias que estao sobre a linha e exibir na tel conforme suas propriedades	
-//				for(Media media : temporalChainModel.getMediaUnderThePlayLineList()){
-//					
-//					ImageView imageMedia = media.generateMediaIcon();
-//					imageMedia.setFitWidth(300);
-//					screen.getChildren().add(imageMedia);
-//					
-//				}
+				//for(Media media : temporalChainModel.getMediaUnderThePlayLineList(newValue)){//allmedia
+					screen.getChildren().clear();
+					//ImageView imageMedia = media.generateMediaIcon();
+					//temporalChainModel.getMasterMedia();
+					ImageView imageMedia = temporalChainModel.getMediaUnderThePlayLineList(newValue).generateMediaIcon();
+					imageMedia.setFitWidth(300);					
+					screen.getChildren().add(imageMedia);
+					
+				//}
 
 			}
 			
