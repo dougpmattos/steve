@@ -23,12 +23,13 @@ import model.repository.RepositoryMediaList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import br.uff.midiacom.ana.util.exception.XMLException;
+import view.HTMLSupport.RunWindow;
 import view.common.Language;
 import view.common.MessageDialog;
 import view.temporalViewPane.TemporalChainPane;
 import view.temporalViewPane.TemporalViewPane;
 import view.temporalViewPane.TimeLineXYChartData;
+import br.uff.midiacom.ana.util.exception.XMLException;
 import controller.Controller;
 
 @SuppressWarnings({"rawtypes","unchecked"})
@@ -55,6 +56,7 @@ public class SteveMenuBar extends MenuBar{
 	private  MenuItem menuItemImportNCL;
 	private  MenuItem menuItemExportNCL;
 	private  MenuItem menuItemExportHTML5;
+	private  MenuItem menuItemRun; 
 	private  MenuItem menuItemExit;
 	private  MenuItem menuItemUndo;
 	private  MenuItem menuItemRedo;
@@ -94,8 +96,8 @@ public class SteveMenuBar extends MenuBar{
 		createToolMenuItemActions();
 		createHelpMenuItemActions();
 		
-		menuFile.getItems().addAll(menuItemNew, menuItemOpen, new SeparatorMenuItem(), menuItemClose, new SeparatorMenuItem(), menuItemExportNCL, new SeparatorMenuItem(), menuItemExportHTML5, new SeparatorMenuItem(), menuItemExit); 
-//		menuFile.getItems().addAll(menuItemExportNCL, new SeparatorMenuItem(), menuItemExportHTML5, new SeparatorMenuItem(), menuItemExit);
+		menuFile.getItems().addAll(menuItemNew, menuItemOpen, new SeparatorMenuItem(), menuItemClose, new SeparatorMenuItem(), menuItemExportNCL, new SeparatorMenuItem(), menuItemExportHTML5, new SeparatorMenuItem(), menuItemRun, new SeparatorMenuItem(), menuItemExit); 
+		//menuFile.getItems().addAll(menuItemExportNCL, new SeparatorMenuItem(), menuItemExportHTML5, new SeparatorMenuItem(), menuItemExit);
 //		menuEdit.getItems().addAll(menuItemUndo, menuItemRedo, new SeparatorMenuItem(), menuItemCut, menuItemCopy, menuItemPaste, new SeparatorMenuItem(), 
 		menuEdit.getItems().addAll(menuItemSelectAll);
 		menuView.getItems().addAll(checkMenuItemMediaView, checkMenuItemTemporalView, checkMenuItemSpatialView, checkMenuItemShowRelations);
@@ -277,6 +279,18 @@ public class SteveMenuBar extends MenuBar{
 		
 		menuItemExportHTML5.setOnAction(new HTMLExportEventHandler(spatialTemporalView));
 		
+		menuItemRun.setOnAction(new EventHandler<ActionEvent>() {
+		    public void handle(ActionEvent t) {
+		    	RunWindow a = new RunWindow();
+			    //GERAR HTML
+			    //CHAMAR O RUN WINDOW
+		    	//PASSAR O HTML GERADO NESSA CHAMADA
+		    	//DENTRO DA CLASSE RUN WINDOW QUE VAI ESTENDER STAGE 
+		    	//CRIAR CENA E INSTANCIAR O BROWSER CRIADO EM OUTRA CLASSE NELA
+		    	//WebViewSample a = new WebViewSample();
+		    }
+		});
+		
 		menuItemExit.setOnAction(new EventHandler<ActionEvent>() {
 		    public void handle(ActionEvent t) {
 			   stage.close();
@@ -361,6 +375,9 @@ public class SteveMenuBar extends MenuBar{
 		
 		menuItemExportHTML5 = new MenuItem (Language.translate("export.html5.document"));
 		menuItemExportHTML5.setAccelerator(KeyCombination.keyCombination("Ctrl+H"));
+		
+		menuItemRun = new MenuItem (Language.translate("run.application"));
+		menuItemRun.setAccelerator(KeyCombination.keyCombination("Ctrl+R"));
 		
 		menuItemExit = new MenuItem (Language.translate("exit"));
 		menuItemExit.setAccelerator(KeyCombination.keyCombination("Ctrl+Q"));

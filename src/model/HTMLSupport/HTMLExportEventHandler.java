@@ -6,6 +6,8 @@ import java.io.IOException;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.scene.web.WebEngine;
+import javafx.scene.web.WebView;
 import javafx.stage.FileChooser;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -123,6 +125,10 @@ public class HTMLExportEventHandler implements EventHandler<ActionEvent>{
                 result.setWriter(fileWriter);
                 transformer.transform(source, result);
                 fileWriter.close();
+                
+                WebView browser = new WebView();
+                WebEngine webEngine = browser.getEngine();
+                webEngine.load("http://google.com");
                 
                 tempNCLDocumentFile.delete();
                 
