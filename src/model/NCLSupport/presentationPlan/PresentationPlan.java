@@ -21,6 +21,12 @@ import br.uff.midiacom.ana.util.enums.NCLEventType;
 /**
  *
  * @author Douglas
+ * 
+ *  O vértice é uma tripla composta por uma âncora, tipo de evento e estado do evento.
+ 	Estes vértices correspondem aos vértices do HTG.
+	O presentation plan é criado a partir dessa estrutura HTG na importação de documento NCL.
+	Mas iremos criar o presentation plan sem passar pelo HTG
+	
  */
 public class PresentationPlan {
     

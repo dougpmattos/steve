@@ -6,6 +6,7 @@ import java.util.Observer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javafx.animation.*;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -172,19 +173,25 @@ public class TemporalChainPane extends StackPane implements Observer{
 				
 				//TODO listener para a linha de play quando ela mudar de posicao. Para cada mudanca de posicao 
 				//pegar as midias que estao sobre a linha e exibir na tel conforme suas propriedades	
-				//for(Media media : temporalChainModel.getMediaUnderThePlayLineList(newValue)){//allmedia
-					screen.getChildren().clear();
-					//ImageView imageMedia = media.generateMediaIcon();
-					//temporalChainModel.getMasterMedia();
-					ImageView imageMedia = temporalChainModel.getMediaUnderThePlayLineList(newValue).generateMediaIcon();
-					imageMedia.setFitWidth(300);					
-					screen.getChildren().add(imageMedia);
+				//for(Media media : temporalChainModel.getMediaAllList()){
 					
+					screen.getChildren().clear();
+					//ArrayList<Media> media = temporalChainModel.getMediaAllList();
+					//Double d=media.getDuration();
+					//ImageView imageMedia = media.generateMediaIcon();
+
+					//temporalChainModel.getMasterMedia();				
+					ImageView imageMedia = temporalChainModel.getMediaUnderThePlayLineList(newValue).generateMediaIcon();
+					//playhead.computeAreaInScreen();
+					imageMedia.setFitWidth(300);	
+					screen.getChildren().add(imageMedia);
+					//System.out.println(d);
 				//}
 
 			}
 			
 		});
+		
 		
 	}
 	
@@ -474,11 +481,11 @@ public class TemporalChainPane extends StackPane implements Observer{
 						arrow.setId("relation-arrow");
 						//getChildren().add(arrow);
 				    	
-				    	//INFO tamanho doo caonteiner node:  BoundingBox [minX:0.0, minY:0.0, minZ:0.0, width:134.8, height:51.0, depth:0.0, maxX:134.8, maxY:51.0, maxZ:0.0]
+				    	//INFO tamanho do caonteiner node:  BoundingBox [minX:0.0, minY:0.0, minZ:0.0, width:134.8, height:51.0, depth:0.0, maxX:134.8, maxY:51.0, maxZ:0.0]
 				    	System.out.println("Posicao da midia (X): " + timeLineChart.getXAxis().getDisplayPosition(xyChartData.getXValue()));
 				    	
 				    	//INFO tamanho do temporal chain = 1366 326 (BoundingBox [minX:0.0, minY:0.0, minZ:0.0, width:1366.0, height:326.0, depth:0.0, maxX:1366.0, maxY:326.0, maxZ:0.0])
-				    	//System.out.println("Tamanho do Temporal Cahin Pane (X/Y): " + getLayoutBounds());
+				    	//System.out.println("Tamanho do Temporal Chain Pane (X/Y): " + getLayoutBounds());
 				    	
 					}
 					

@@ -126,10 +126,7 @@ public class HTMLExportEventHandler implements EventHandler<ActionEvent>{
                 transformer.transform(source, result);
                 fileWriter.close();
                 
-                WebView browser = new WebView();
-                WebEngine webEngine = browser.getEngine();
-                webEngine.load("http://google.com");
-                
+
                 tempNCLDocumentFile.delete();
                 
                 ReturnMessage returnMessage = new ReturnMessage(Language.translate("html.export.is.ready"), 300);
