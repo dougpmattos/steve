@@ -281,7 +281,11 @@ public class SteveMenuBar extends MenuBar{
 		
 		menuItemRun.setOnAction(new EventHandler<ActionEvent>() {
 		    public void handle(ActionEvent t) {
-		    	RunWindow a = new RunWindow();
+		    	//HTMLExportEventHandler runFileHandler = new HTMLExportEventHandler(spatialTemporalView);
+		    	//runFileHandler.handle(t);
+		    	RunWindow runWindow = new RunWindow();
+		    	runWindow.showAndWait();
+		    	
 			    //GERAR HTML
 			    //CHAMAR O RUN WINDOW
 		    	//PASSAR O HTML GERADO NESSA CHAMADA

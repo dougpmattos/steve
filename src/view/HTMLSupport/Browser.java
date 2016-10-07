@@ -1,8 +1,5 @@
 package view.HTMLSupport;
 
-import java.io.File;
-
-import javafx.application.Platform;
 import javafx.scene.layout.Region;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
@@ -15,9 +12,12 @@ class Browser extends Region {
     public Browser(/*File htmlFile*/) {
         //apply the styles
         getStyleClass().add("browser");
-
         
-        String url2 = WebView.class.getResource("HTMLExportado.html").toExternalForm();  
+        ///Users/bruno/git/steve/src/view/HTMLSupport
+
+        //File file = new File("HTMLExportado.html");
+        String url2 = Browser.class.getResource("HTMLExportado.html").toExternalForm(); 
+        //String url2 = "/Users/bruno/git/steve/src/view/HTMLSupport/HTMLExportado.html";
         webEngine.load(url2);
         
         getChildren().add(browser);

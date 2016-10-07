@@ -25,23 +25,10 @@ public class RunWindow extends Stage {
 
         setResizable(false);
         initModality(Modality.APPLICATION_MODAL);
-        initStyle(StageStyle.UNDECORATED);
-        
-        BorderPane containerBorderPane = new BorderPane();
-        containerBorderPane.setId("container-border-pane");
-        containerBorderPane.getStylesheets().add("view/temporalViewPane/styles/interactivityMediaWindow.css");
-        
-        //formGridPane = createForm();
-        ScrollPane scrollPaneContainer = new ScrollPane();
-        scrollPaneContainer.setContent(formGridPane);
-        scrollPaneContainer.setId("scroll-pane-container");
-        
-        //containerBorderPane.setTop(createToolBar());
-        containerBorderPane.setCenter(scrollPaneContainer);
-        
-        Browser a = new Browser();
 
-        scene = new Scene(a, WIDTH, HEIGHT);
+        Browser browser = new Browser();
+
+        scene = new Scene(browser, WIDTH, HEIGHT);
         scene.setFill(Color.TRANSPARENT);
         setScene(scene);
 
