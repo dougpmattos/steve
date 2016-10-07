@@ -23,22 +23,3 @@ class Browser extends Region {
         getChildren().add(browser);
     }
 }
-/*
-    // JavaScript interface object
-    public class JavaApp {
-
-        public void exit() {
-            Platform.exit();
-        }
-    }
-    
-    @Override
-    protected double computePrefWidth(double height) {
-        return 750;
-    }
-
-    @Override
-    protected double computePrefHeight(double width) {
-        return 600;
-    }
-}*/
