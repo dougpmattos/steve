@@ -21,12 +21,12 @@ public class RunWindow extends Stage {
     private GridPane formGridPane;
 
 
-    public RunWindow(/*File htmlFile*/) {
+    public RunWindow(File htmlFile) {
 
         setResizable(false);
         initModality(Modality.APPLICATION_MODAL);
 
-        Browser browser = new Browser();
+        Browser browser = new Browser(htmlFile);
 
         scene = new Scene(browser, WIDTH, HEIGHT);
         scene.setFill(Color.TRANSPARENT);
