@@ -31,6 +31,7 @@ public class RunWindow extends Stage {
         scene = new Scene(browser, WIDTH, HEIGHT);
         scene.setFill(Color.TRANSPARENT);
         setScene(scene);
-
+        
+        
     }
 }

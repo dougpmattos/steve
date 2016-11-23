@@ -307,15 +307,9 @@ public class SteveMenuBar extends MenuBar{
 		
 		menuItemRun.setOnAction(new EventHandler<ActionEvent>() {
 		    public void handle(ActionEvent t) {
-		    	//HTMLExportEventHandler runFileHandler = new HTMLExportEventHandler(spatialTemporalView);
-		    	//runFileHandler.handle(t);
 		    	
-		    	//GERAR HTML NO STEVE MENU BAR 
-		    	//(MODIFICACAO DO HTMLEXPORT HANDLER 
-		    	//MAS COM A PARTE DE SALVAR ARQUIVOS E DELETAR INVISIVEIS
 		    	String htmlPath = "";
-		    	/*File f = null;
-				*/				
+		    					
 				RunWindow runWindow = null;
 				try {
 					runWindow = new RunWindow(createTempHTML());
@@ -324,17 +318,27 @@ public class SteveMenuBar extends MenuBar{
 					e.printStackTrace();
 				}
 		    	runWindow.showAndWait();
-		    	/*File file = null;
-		    	file = new File(htmlPath);
-		    	file.delete();*/
-			     
-			    //CHAMAR O RUN WINDOW
-		    	//PASSAR O HTML GERADO NESSA CHAMADA
-		    	//DENTRO DA CLASSE RUN WINDOW QUE VAI ESTENDER STAGE 
-		    	//CRIAR CENA E INSTANCIAR O BROWSER CRIADO EM OUTRA CLASSE NELA
-		    	//WebViewSample a = new WebViewSample();
+		    	
+		    	String mediadir = "src/view/HTMLSupport/media";
+		    	String htmlexportado = "src/view/HTMLSupport/HTMLExportado.html";
+		    	File m = new File (mediadir);
+		    	File h = new File (htmlexportado);
+		    	
+		    	System.out.println(m.exists());
+		    	System.out.println(h.exists());
+		    	
+		    	String[] entries = m.list();
+		    	for(String s: entries){
+		    	    File currentFile = new File(m.getPath(),s);
+		    	    currentFile.delete();
+		    	}
+		    	
+		    	System.out.println(m.delete());
+		    	System.out.println(h.delete());
 		    }
 		});
+				
+		
 		
 		menuItemExit.setOnAction(new EventHandler<ActionEvent>() {
 		    public void handle(ActionEvent t) {
@@ -468,11 +472,9 @@ public class SteveMenuBar extends MenuBar{
         		//FileChooser fileChooser = new FileChooser();
                 //fileChooser.setTitle(Language.translate("export.ncl.document"));
                 //File file = fileChooser.showSaveDialog(null);
-        		System.out.println("oi");
+        		
         		File file = new File("src/view/HTMLSupport/");
         		
-        		System.out.println(file.getAbsolutePath());
-        		System.out.println("Me chamou?");
  
         		if(file != null){
 			
@@ -533,7 +535,7 @@ public class SteveMenuBar extends MenuBar{
                 fileWriter.close();
                 
 
-                //tempNCLDocumentFile.delete();
+                tempNCLDocumentFile.delete();
                 
                 ReturnMessage returnMessage = new ReturnMessage(Language.translate("html.export.is.ready"), 300);
                 returnMessage.show();
@@ -575,155 +577,7 @@ public class SteveMenuBar extends MenuBar{
             ioe.printStackTrace();
         }
 			
-        System.out.println("Aux File Path: "+ auxF.getAbsolutePath());
         return auxF;
 	}
 }
 
-
-	
-/*	private String createTempHTML() throws org.xml.sax.SAXException{
-
-		final Logger logger = LoggerFactory.getLogger(HTMLExportEventHandler.class);
-		
-		final String EXPORTED_HTML_DOCUMENT = "Exported_HTML_Document";
-		final String TEMP_NCL_DOCUMENT = "tempNCLDocument";
-		String HTMLExportado = "";
-		Document document;
-		NCLExportEventHandler nclExportEventHandler;
-		String auxFilePath = "";
-		//public HTMLExportEventHandler(SpatialTemporalView spatialTemporalView){
-
-			nclExportEventHandler = new NCLExportEventHandler(spatialTemporalView);
-		//}
-		
-		File tempNCLDocumentFile = null;
-		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-
-        //factory.setNamespaceAware(true);
-        //factory.setValidating(true);
-        	
-        File stylesheet = new File("src/model/HTMLSupport/XSLFile/ncl4web.xsl");
-        String tempNCLDocumentDir = "";
-        
-        try {
-        	
-        	NCLDoc nclDoc = nclExportEventHandler.exportToNCL(true);
-        
-        	String nclCode = nclDoc.parse(0);
-		
-        	if(nclCode != null){
-        	
-        		FileChooser fileChooser = new FileChooser();
-                fileChooser.setTitle(Language.translate("export.ncl.document"));
-                File file = fileChooser.showSaveDialog(null);
-                System.out.println(file.getAbsolutePath());
-                //File file = new File ("/");
- 
-        		if(file != null){
-			
-					tempNCLDocumentDir = file.getAbsolutePath();
-					tempNCLDocumentFile = new File(tempNCLDocumentDir + ".ncl");
-					FileWriter fileWriter = new FileWriter(tempNCLDocumentFile);
-					fileWriter.write(nclCode);
-                    fileWriter.close();
-
-        		}
-        		
-			}
-				
-		} catch (Exception e) {
-			
-			logger.error(e.getMessage());
-			MessageDialog messageDialog = new MessageDialog(Language.translate("error.during.the.temp.ncl.document.creation"), 
-					Language.translate("could.not.find.the.temp.ncl.document.directory") + ": " + e.getMessage(), "OK", 250);
-	        messageDialog.showAndWait();
-	        
-	        return tempNCLDocumentFile.getAbsolutePath();
-	        
-		}
-        
-        try {
-        	
-            if(tempNCLDocumentFile != null){
-            	
-            	DocumentBuilder builder = factory.newDocumentBuilder();
-                document = builder.parse(tempNCLDocumentFile);
-
-                // Use a Transformer for output
-                TransformerFactory tFactory = TransformerFactory.newInstance();
-                StreamSource stylesource = new StreamSource(stylesheet);
-                Transformer transformer = tFactory.newTransformer(stylesource);
-
-                DOMSource source = new DOMSource(document);
-                
-//                String exportedHTMLDocumentDir = tempNCLDocumentDir + "/" + EXPORTED_HTML_DOCUMENT;
-                String exportedHTMLDocumentDir = tempNCLDocumentDir;
-				String mediaDir = exportedHTMLDocumentDir + "/media";
-				Boolean mediaDirCreated = (new File(mediaDir)).mkdirs();
-				
-				if (mediaDirCreated || (new File(mediaDir)).exists()) {
-					nclExportEventHandler.copyMediaFiles(mediaDir);
-				}
-				
-				//File auxFile = new File("HTMLExportado" + ".html");
-				File auxFile = new File(exportedHTMLDocumentDir + "/" + "HTMLExportado" + ".html");
-				FileWriter fileWriter = new FileWriter(auxFile);				
-                StreamResult result = new StreamResult();
-                result.setWriter(fileWriter);
-                transformer.transform(source, result);
-                fileWriter.close();
-                auxFilePath = auxFile.getPath();
-
-                //tempNCLDocumentFile.delete();
-                
-                ReturnMessage returnMessage = new ReturnMessage(Language.translate("html.export.is.ready"), 300);
-                returnMessage.show();
-                AnimationUtil.applyFadeInOut(returnMessage);
-  
-            }
-        
-        } catch (TransformerConfigurationException tce) {
-            // Error generated by the parser
-            System.out.println("\n** Transformer Factory error");
-            System.out.println("   " + tce.getMessage());
-
-            // Use the contained exception, if any
-            Throwable x = tce;
-
-            if (tce.getException() != null) {
-                x = tce.getException();
-            }
-
-            x.printStackTrace();
-        } catch (TransformerException te) {
-            // Error generated by the parser
-            System.out.println("\n** Transformation error");
-            System.out.println("   " + te.getMessage());
-
-            // Use the contained exception, if any
-            Throwable x = te;
-
-            if (te.getException() != null) {
-                x = te.getException();
-            }
-
-            x.printStackTrace();
-        } catch (ParserConfigurationException pce) {
-            // Parser with specified options can't be built
-            pce.printStackTrace();
-        } catch (IOException ioe) {
-            // I/O error
-            ioe.printStackTrace();
-        }
-			
-
-
-
-		//File f = new File (auxFilePath);
-//		return auxFilePath;
-		return "HTMLExportado.html";
-		
-	}
-	
-}*/
