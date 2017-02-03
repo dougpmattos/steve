@@ -24,6 +24,7 @@ import model.temporalView.Interactivity;
 import model.temporalView.Synchronous;
 import model.temporalView.TemporalChain;
 import model.temporalView.TemporalRelation;
+import model.temporalView.enums.InteractivityKeyType;
 import model.temporalView.enums.TemporalRelationType;
 
 import org.slf4j.Logger;
@@ -44,6 +45,7 @@ import br.uff.midiacom.ana.descriptor.NCLDescriptorBase;
 import br.uff.midiacom.ana.descriptor.NCLDescriptorParam;
 import br.uff.midiacom.ana.interfaces.NCLPort;
 import br.uff.midiacom.ana.link.NCLBind;
+import br.uff.midiacom.ana.link.NCLBindParam;
 import br.uff.midiacom.ana.link.NCLLink;
 import br.uff.midiacom.ana.link.NCLLinkParam;
 import br.uff.midiacom.ana.node.NCLMedia;
@@ -629,6 +631,10 @@ public class NCLExportEventHandler implements EventHandler<ActionEvent>{
 					conditionNCLBind = new NCLBind();
 					conditionNCLBind.setRole(importedNCLCausalConnector.findRole(NCLDefaultConditionRole.ONSELECTION.toString()));
 					conditionNCLBind.setComponent(nclBody.findNode(interactivityRelation.getMasterMedia().getNCLName()));
+					NCLBindParam nclBindParam = new NCLBindParam();
+					nclBindParam.setName(importedNCLCausalConnector.getConnectorParam("interactivityKey"));
+					nclBindParam.setValue(interactivityRelation.getInteractivityKey());
+					conditionNCLBind.addBindParam(nclBindParam);			
 					nclLink.addBind(conditionNCLBind);
 					
 					for(TemporalChain temporalChainToBeStarted : interactivityRelation.getTemporalChainList()){
@@ -659,6 +665,11 @@ public class NCLExportEventHandler implements EventHandler<ActionEvent>{
 					conditionNCLBind = new NCLBind();
 					conditionNCLBind.setRole(importedNCLCausalConnector.findRole(NCLDefaultConditionRole.ONSELECTION.toString()));
 					conditionNCLBind.setComponent(nclBody.findNode(interactivityRelation.getMasterMedia().getNCLName()));
+					
+					NCLBindParam nclBindParam = new NCLBindParam();
+					nclBindParam.setName(importedNCLCausalConnector.getConnectorParam("interactivityKey"));
+					nclBindParam.setValue(interactivityRelation.getInteractivityKey());
+					conditionNCLBind.addBindParam(nclBindParam);
 					nclLink.addBind(conditionNCLBind);
 					
 					for(TemporalChain temporalChainToBeStarted : interactivityRelation.getTemporalChainList()){

@@ -5,11 +5,12 @@
 	<head>
 
 		<connectorBase id="causalConnectorBase">
-
+			
+			
 			<causalConnector id="onBeginStart">
 				<simpleCondition role="onBegin"/>
 				<simpleAction role="start" max="unbounded"/>
-			</causalConnector>
+			</causalConnector>			
 
 			<causalConnector id="onBeginStartDelay">
 				<connectorParam name="delay"/>
@@ -55,19 +56,23 @@
 				<simpleAction role="stop" delay="$delay" max="unbounded"/>
 			</causalConnector>
 			
-			<causalConnector id="onSelectionStartStop">
-				<simpleCondition role="onSelection"/>
+			<causalConnector id="onSelectionStartStop"> 
+				<connectorParam name="interactivityKey"/>
+				<simpleCondition role="onSelection" key="$interactivityKey"/>
 				<compoundAction operator="par">
 					<simpleAction role="start" max="unbounded"/>
 					<simpleAction role="stop" max="unbounded"/>
 				</compoundAction>
 			</causalConnector>
+						
 
 			<causalConnector id="onSelectionStartStopDelay">
+				<connectorParam name="interactivityKey"/>
 				<connectorParam name="stopDelay"/>
 				<connectorParam name="startDelay"/>
-				<simpleCondition role="onSelection"/>
+				<simpleCondition role="onSelection" key="$interactivityKey"/>
 				<compoundAction operator="par">
+				
 					<simpleAction role="stop" delay="$stopDelay" max="unbounded"/>
 					<simpleAction role="start" delay="$startDelay" max="unbounded"/>
 				</compoundAction>

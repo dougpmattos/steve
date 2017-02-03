@@ -21,8 +21,9 @@ class Browser extends Region {
         getStyleClass().add("browser");
                         
         browser.getEngine().load("file:///" + filePath.getAbsolutePath());
+        System.out.println(filePath.getAbsolutePath());
         getChildren().add(browser);
-        
+                
     }    
 
 }

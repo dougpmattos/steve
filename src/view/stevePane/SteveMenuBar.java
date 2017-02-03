@@ -7,15 +7,29 @@ import java.util.ArrayList;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.scene.Group;
+import javafx.scene.Scene;
 import javafx.scene.control.CheckMenuItem;
+import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.Tab;
+import javafx.scene.effect.BlendMode;
+import javafx.scene.effect.Effect;
+import javafx.scene.effect.Glow;
+import javafx.scene.effect.Light;
+import javafx.scene.effect.Lighting;
+import javafx.scene.effect.Reflection;
 import javafx.scene.input.KeyCombination;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
-import javafx.stage.FileChooser;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -29,7 +43,6 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
-import jdk.internal.org.xml.sax.SAXException;
 import model.HTMLSupport.HTMLExportEventHandler;
 import model.NCLSupport.NCLExportEventHandler;
 import model.NCLSupport.NCLImportEventHandler;
@@ -49,14 +62,22 @@ import view.temporalViewPane.TimeLineXYChartData;
 import view.utility.AnimationUtil;
 import br.uff.midiacom.ana.NCLDoc;
 import br.uff.midiacom.ana.util.exception.XMLException;
+import controller.Controller;
+
+
+
+
+
+
+
+
+
+
+
+
 
 //import com.sun.xml.internal.txw2.Document;
-
-
-
 import org.w3c.dom.Document;
-
-import controller.Controller;
 
 @SuppressWarnings({"rawtypes","unchecked"})
 public class SteveMenuBar extends MenuBar{
@@ -90,10 +111,12 @@ public class SteveMenuBar extends MenuBar{
 	private  MenuItem menuItemCopy;
 	private  MenuItem menuItemPaste; 
 	private  MenuItem menuItemDelete; 
+	private  MenuItem menuItemPreferences;
 	private  MenuItem menuItemSelectAll;
 	private  MenuItem menuItemSimulation;
 	private  MenuItem menuItemHelpContents;
 	private  MenuItem menuItemAbout;
+	
 	
 	private  CheckMenuItem checkMenuItemMediaView;  
 	private  CheckMenuItem checkMenuItemTemporalView;       
@@ -125,7 +148,7 @@ public class SteveMenuBar extends MenuBar{
 		menuFile.getItems().addAll(menuItemNew, menuItemOpen, new SeparatorMenuItem(), menuItemClose, new SeparatorMenuItem(), menuItemExportNCL, new SeparatorMenuItem(), menuItemExportHTML5, new SeparatorMenuItem(), menuItemRun, new SeparatorMenuItem(), menuItemExit); 
 		//menuFile.getItems().addAll(menuItemExportNCL, new SeparatorMenuItem(), menuItemExportHTML5, new SeparatorMenuItem(), menuItemExit);
 //		menuEdit.getItems().addAll(menuItemUndo, menuItemRedo, new SeparatorMenuItem(), menuItemCut, menuItemCopy, menuItemPaste, new SeparatorMenuItem(), 
-		menuEdit.getItems().addAll(menuItemSelectAll);
+		menuEdit.getItems().addAll(menuItemPreferences, new SeparatorMenuItem(), menuItemSelectAll);
 		menuView.getItems().addAll(checkMenuItemMediaView, checkMenuItemTemporalView, checkMenuItemSpatialView, checkMenuItemShowRelations);
 		menuTools.getItems().addAll(menuItemSimulation);
 //		menuHelp.getItems().addAll(menuItemHelpContents, new SeparatorMenuItem(), menuItemAbout);
@@ -234,6 +257,122 @@ public class SteveMenuBar extends MenuBar{
 		    }
 		});
 		
+		menuItemPreferences.setOnAction(new EventHandler<ActionEvent>() {
+			public void handle(ActionEvent t){
+				
+				/*
+				 * private BorderPane containerBorderPane = new BorderPane();
+    
+					public StevePane(Controller controller, RepositoryMediaList repositoryMediaList, SpatialTemporalView temporalView) throws XMLException, IOException  {
+						
+						super(new BorderPane());
+						setRoot(containerBorderPane);
+						getStylesheets().add("view/stevePane/styles/stevePane.css");
+						containerBorderPane.setPrefSize(STEVE_WITDH, STEVE_HEIGHT);
+				 */
+				//TODO EXIBIR JANELA DE PREFERENCIAS PARA MAPEAR AS TECLAS
+				final Group rootGroup = new Group();
+				
+				Stage stage = new Stage();
+		        //Fill stage with content
+				StackPane root = new StackPane();
+		        
+		        Scene scene = new Scene(rootGroup, 250, 320); //width x height
+		        scene.getStylesheets().add("view/common/styles/preferencesWindow.css");
+				stage.setTitle(Language.translate("preferences"));
+				//root.setId("pane");
+				//rootGroup.setId("pane");
+
+		        stage.setScene(scene);
+		       
+		        final Text title = new Text(25, 25, "Controle de teclas");
+		        title.setFill(Color.BLACK);
+		        //title.setId("pane");
+		        rootGroup.getChildren().add(title);
+		        
+		        
+		        final Text larr = new Text(25,50,"←");
+		        larr.setFill(Color.BLACK);
+		        rootGroup.getChildren().add(larr);
+		        
+		        final Text input_larr = new Text(100,50,"◄");
+		        input_larr.setFill(Color.BLACK);
+		        rootGroup.getChildren().add(input_larr);
+		        
+		        final Text rarr = new Text(25, 75, "→");
+		        larr.setFill(Color.BLACK);
+		        rootGroup.getChildren().add(rarr);
+		        
+		        final Text input_rarr = new Text(100,75,"►");
+		        input_rarr.setFill(Color.BLACK);
+		        rootGroup.getChildren().add(input_rarr);
+		        
+		        final Text darr = new Text(25, 100, "↓");
+		        darr.setFill(Color.BLACK);
+		        rootGroup.getChildren().add(darr);
+		        
+		        final Text input_darr = new Text(100, 100, "▼");
+		        input_darr.setFill(Color.BLACK);
+		        rootGroup.getChildren().add(input_darr);
+		        
+		        final Text uarr = new Text(25, 125, "↑");
+		        uarr.setFill(Color.BLACK);
+		        rootGroup.getChildren().add(uarr);
+		        
+		        final Text input_uarr = new Text(100, 125, "▲");
+		        input_uarr.setFill(Color.BLACK);
+		        rootGroup.getChildren().add(input_uarr);
+		        
+		        final Text enter = new Text(25, 150, "ENTER");
+		        enter.setFill(Color.BLACK);
+		        rootGroup.getChildren().add(enter);
+		        
+		        final Text input_enter = new Text(100, 150, "ENTER");
+		        input_enter.setFill(Color.BLACK);
+		        rootGroup.getChildren().add(input_enter);//
+		        
+		        final Text red = new Text(25, 175, "RED");
+		        red.setFill(Color.RED);
+		        rootGroup.getChildren().add(red);
+		        
+		        final Text input_red = new Text(100, 175, "0");
+		        input_red.setFill(Color.RED);
+		        rootGroup.getChildren().add(input_red);
+		        
+		        final Text green = new Text(25, 200, "GREEN");
+		        green.setFill(Color.GREEN);
+		        rootGroup.getChildren().add(green);
+		        
+		        final Text input_green = new Text(100, 200, "1");
+		        input_green.setFill(Color.GREEN);
+		        rootGroup.getChildren().add(input_green);
+		        
+		        final Text blue = new Text(25, 225, "BLUE");
+		        blue.setFill(Color.BLUE);
+		        rootGroup.getChildren().add(blue);
+		        
+		        final Text input_blue = new Text(100, 225, "2");
+		        input_blue.setFill(Color.BLUE);
+		        rootGroup.getChildren().add(input_blue);
+		        
+		        final Text yellow = new Text(25, 250, "YELLOW");
+		        yellow.setFill(Color.YELLOW);
+		        rootGroup.getChildren().add(yellow);
+		        
+		        final Text input_yellow = new Text(100, 250, "3");
+		        input_yellow.setFill(Color.YELLOW);
+		        rootGroup.getChildren().add(input_yellow);
+		        
+		        
+		        
+		        //text1.setFont(Font.font(java.awt.Font.SERIF, 18));
+
+		        
+		        stage.show();
+		        
+
+			}
+		});
 		menuItemSelectAll.setOnAction(new EventHandler<ActionEvent>() {
 			
 		    public void handle(ActionEvent t) {
@@ -323,18 +462,16 @@ public class SteveMenuBar extends MenuBar{
 		    	String htmlexportado = "src/view/HTMLSupport/HTMLExportado.html";
 		    	File m = new File (mediadir);
 		    	File h = new File (htmlexportado);
-		    	
-		    	System.out.println(m.exists());
-		    	System.out.println(h.exists());
+		    			    	
 		    	
 		    	String[] entries = m.list();
 		    	for(String s: entries){
 		    	    File currentFile = new File(m.getPath(),s);
 		    	    currentFile.delete();
 		    	}
-		    	
-		    	System.out.println(m.delete());
-		    	System.out.println(h.delete());
+		    			    	
+		    	m.delete();		    	
+		    	h.delete();
 		    }
 		});
 				
@@ -396,6 +533,9 @@ public class SteveMenuBar extends MenuBar{
 		
 		menuItemDelete = new MenuItem (Language.translate("delete"));
 		menuItemDelete.setAccelerator(KeyCombination.keyCombination("Delete"));
+		
+		menuItemPreferences = new MenuItem (Language.translate("preferences"));
+		menuItemPreferences.setAccelerator(KeyCombination.keyCombination("⌘,"));
 		
 		menuItemSelectAll = new MenuItem (Language.translate("select.all"));
 		menuItemSelectAll.setAccelerator(KeyCombination.keyCombination("Ctrl+A"));
@@ -467,14 +607,9 @@ public class SteveMenuBar extends MenuBar{
         
         	String nclCode = nclDoc.parse(0);
 		
-        	if(nclCode != null){
-        	
-        		//FileChooser fileChooser = new FileChooser();
-                //fileChooser.setTitle(Language.translate("export.ncl.document"));
-                //File file = fileChooser.showSaveDialog(null);
+        	if(nclCode != null){        	        	
         		
-        		File file = new File("src/view/HTMLSupport/");
-        		
+        		File file = new File("src/view/HTMLSupport/");        		
  
         		if(file != null){
 			
@@ -515,7 +650,6 @@ public class SteveMenuBar extends MenuBar{
 
                 DOMSource source = new DOMSource(document);
                 
-                //String exportedHTMLDocumentDir = tempNCLDocumentDir + "/" + EXPORTED_HTML_DOCUMENT;
                 String exportedHTMLDocumentDir = tempNCLDocumentDir;
                 
 				String mediaDir = exportedHTMLDocumentDir + "/media";
@@ -525,7 +659,6 @@ public class SteveMenuBar extends MenuBar{
 					nclExportEventHandler.copyMediaFiles(mediaDir);
 				}
 				
-				//File auxFile = new File(exportedHTMLDocumentDir + "/" + "HTMLExportado" + ".html");
 				File auxFile = new File("src/view/HTMLSupport/HTMLExportado.html");
 				auxF= new File (auxFile.getAbsolutePath());
 				FileWriter fileWriter = new FileWriter(auxFile);

@@ -120,6 +120,7 @@ public class HTMLExportEventHandler implements EventHandler<ActionEvent>{
 				}
 				
 				File auxFile = new File(exportedHTMLDocumentDir + "/" + "HTMLExportado" + ".html");
+				System.out.println(auxFile.getAbsolutePath());
 				FileWriter fileWriter = new FileWriter(auxFile);
                 StreamResult result = new StreamResult();
                 result.setWriter(fileWriter);

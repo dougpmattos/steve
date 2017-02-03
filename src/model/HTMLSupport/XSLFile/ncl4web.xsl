@@ -33,14 +33,11 @@
 					border-style: solid;
 				}
 			</style>
-			<!--script src="/home/caleb/tvd/ncl4web/jquery.min.js">
+			<script src="jquery.min.js">
 			</script>
-			<script src="/home/caleb/tvd/ncl4web/ncl-complements.js">
-			</script-->
-			<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.1/jquery.min.js">
+			<script src="ncl-complements.js">
 			</script>
-			<script src="http://www.midiacom.uff.br/~caleb/ncl4web/ncl-complements.js">
-			</script>
+			
 			<script>
 				<xsl:if test="count(//transitionBase|//e:transitionBase)>0" >
 					var transicoes = {};
