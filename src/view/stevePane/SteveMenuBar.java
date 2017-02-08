@@ -10,25 +10,15 @@ import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.CheckMenuItem;
-import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.Tab;
-import javafx.scene.effect.BlendMode;
-import javafx.scene.effect.Effect;
-import javafx.scene.effect.Glow;
-import javafx.scene.effect.Light;
-import javafx.scene.effect.Lighting;
-import javafx.scene.effect.Reflection;
 import javafx.scene.input.KeyCombination;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
@@ -51,11 +41,14 @@ import model.repository.RepositoryMediaList;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+//import com.sun.xml.internal.txw2.Document;
+import org.w3c.dom.Document;
 
 import view.HTMLSupport.RunWindow;
 import view.common.Language;
 import view.common.MessageDialog;
 import view.common.ReturnMessage;
+import view.temporalViewPane.InteractiveMediaWindow;
 import view.temporalViewPane.TemporalChainPane;
 import view.temporalViewPane.TemporalViewPane;
 import view.temporalViewPane.TimeLineXYChartData;
@@ -63,21 +56,6 @@ import view.utility.AnimationUtil;
 import br.uff.midiacom.ana.NCLDoc;
 import br.uff.midiacom.ana.util.exception.XMLException;
 import controller.Controller;
-
-
-
-
-
-
-
-
-
-
-
-
-
-//import com.sun.xml.internal.txw2.Document;
-import org.w3c.dom.Document;
 
 @SuppressWarnings({"rawtypes","unchecked"})
 public class SteveMenuBar extends MenuBar{
@@ -271,105 +249,11 @@ public class SteveMenuBar extends MenuBar{
 						containerBorderPane.setPrefSize(STEVE_WITDH, STEVE_HEIGHT);
 				 */
 				//TODO EXIBIR JANELA DE PREFERENCIAS PARA MAPEAR AS TECLAS
-				final Group rootGroup = new Group();
-				
-				Stage stage = new Stage();
-		        //Fill stage with content
-				StackPane root = new StackPane();
-		        
-		        Scene scene = new Scene(rootGroup, 250, 320); //width x height
-		        scene.getStylesheets().add("view/common/styles/preferencesWindow.css");
-				stage.setTitle(Language.translate("preferences"));
-				//root.setId("pane");
-				//rootGroup.setId("pane");
-
-		        stage.setScene(scene);
-		       
-		        final Text title = new Text(25, 25, "Controle de teclas");
-		        title.setFill(Color.BLACK);
-		        //title.setId("pane");
-		        rootGroup.getChildren().add(title);
-		        
-		        
-		        final Text larr = new Text(25,50,"←");
-		        larr.setFill(Color.BLACK);
-		        rootGroup.getChildren().add(larr);
-		        
-		        final Text input_larr = new Text(100,50,"◄");
-		        input_larr.setFill(Color.BLACK);
-		        rootGroup.getChildren().add(input_larr);
-		        
-		        final Text rarr = new Text(25, 75, "→");
-		        larr.setFill(Color.BLACK);
-		        rootGroup.getChildren().add(rarr);
-		        
-		        final Text input_rarr = new Text(100,75,"►");
-		        input_rarr.setFill(Color.BLACK);
-		        rootGroup.getChildren().add(input_rarr);
-		        
-		        final Text darr = new Text(25, 100, "↓");
-		        darr.setFill(Color.BLACK);
-		        rootGroup.getChildren().add(darr);
-		        
-		        final Text input_darr = new Text(100, 100, "▼");
-		        input_darr.setFill(Color.BLACK);
-		        rootGroup.getChildren().add(input_darr);
-		        
-		        final Text uarr = new Text(25, 125, "↑");
-		        uarr.setFill(Color.BLACK);
-		        rootGroup.getChildren().add(uarr);
-		        
-		        final Text input_uarr = new Text(100, 125, "▲");
-		        input_uarr.setFill(Color.BLACK);
-		        rootGroup.getChildren().add(input_uarr);
-		        
-		        final Text enter = new Text(25, 150, "ENTER");
-		        enter.setFill(Color.BLACK);
-		        rootGroup.getChildren().add(enter);
-		        
-		        final Text input_enter = new Text(100, 150, "ENTER");
-		        input_enter.setFill(Color.BLACK);
-		        rootGroup.getChildren().add(input_enter);//
-		        
-		        final Text red = new Text(25, 175, "RED");
-		        red.setFill(Color.RED);
-		        rootGroup.getChildren().add(red);
-		        
-		        final Text input_red = new Text(100, 175, "0");
-		        input_red.setFill(Color.RED);
-		        rootGroup.getChildren().add(input_red);
-		        
-		        final Text green = new Text(25, 200, "GREEN");
-		        green.setFill(Color.GREEN);
-		        rootGroup.getChildren().add(green);
-		        
-		        final Text input_green = new Text(100, 200, "1");
-		        input_green.setFill(Color.GREEN);
-		        rootGroup.getChildren().add(input_green);
-		        
-		        final Text blue = new Text(25, 225, "BLUE");
-		        blue.setFill(Color.BLUE);
-		        rootGroup.getChildren().add(blue);
-		        
-		        final Text input_blue = new Text(100, 225, "2");
-		        input_blue.setFill(Color.BLUE);
-		        rootGroup.getChildren().add(input_blue);
-		        
-		        final Text yellow = new Text(25, 250, "YELLOW");
-		        yellow.setFill(Color.YELLOW);
-		        rootGroup.getChildren().add(yellow);
-		        
-		        final Text input_yellow = new Text(100, 250, "3");
-		        input_yellow.setFill(Color.YELLOW);
-		        rootGroup.getChildren().add(input_yellow);
-		        
-		        
-		        
-		        //text1.setFont(Font.font(java.awt.Font.SERIF, 18));
-
-		        
-		        stage.show();
-		        
+				PreferencesWindow preferencesWindow = new PreferencesWindow();
+	    		
+		    	preferencesWindow.showAndWait();
+		    	
+						        
 
 			}
 		});
