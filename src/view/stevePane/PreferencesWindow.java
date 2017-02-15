@@ -144,10 +144,7 @@ public class PreferencesWindow extends Stage {
     				return;
     				
     			}
-    			
-    			/*****************************
-    			//TODO SAVE PREFERENCE CHOICES//
-    			 *****************************/
+    			    			
     			
 				PreferencesWindow.this.close();
 				
