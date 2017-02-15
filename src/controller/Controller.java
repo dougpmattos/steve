@@ -1,8 +1,10 @@
 package controller;
 
 import java.io.IOException;
+import java.util.prefs.*;
 
 import javafx.stage.Stage;
+import model.common.InteractivityKeyMapping;
 import model.common.Media;
 import model.common.SpatialTemporalView;
 import model.repository.RepositoryMediaList;
@@ -25,13 +27,26 @@ public class Controller {
 	
 	private RepositoryMediaList repositoryMediaList;
 	private SpatialTemporalView temporalView;
+	private InteractivityKeyMapping interactivityKeyMapping; 
+	private Preferences preferences;
 	
 	private StevePane stevePane;
 	
 	public Controller(RepositoryMediaList repositoryMediaList, SpatialTemporalView temporalView, Stage stage) throws XMLException, IOException{
+		this.preferences = Preferences.userRoot();
+		
+		
+		this.interactivityKeyMapping = new InteractivityKeyMapping();
+		this.interactivityKeyMapping.setInteractivityKeyMapping(
+				this.preferences.get("red", "0")
+				,this.preferences.get("green","1")
+				,this.preferences.get("blue", "2")
+				,this.preferences.get("yellow", "3"));
+		
 		
 		this.repositoryMediaList = repositoryMediaList;
 		this.temporalView = temporalView;
+		
 
 		stevePane = new StevePane(this, repositoryMediaList, temporalView);
 		stevePane.createView(stage);
@@ -39,6 +54,35 @@ public class Controller {
 		TemporalChain temporalChain = new TemporalChain(Language.translate("main.temporal.chain"));
 		addTemporalChain(temporalChain);
 		
+		
+	}
+	
+	public Preferences getPreferences(){
+		return this.preferences;
+	}
+	
+	public void setPreferences(String key, String value){
+		if(key.equals("red")) this.preferences.put("red", value);
+		if(key.equals("green")) this.preferences.put("green", value);
+		if(key.equals("blue")) this.preferences.put("blue", value);
+		if(key.equals("yellow")) this.preferences.put("yellow", value);
+		
+	}
+	
+	public void setPreferences(String r, String g, String b, String y){
+		this.preferences.put("red", r);
+		this.preferences.put("green", g);
+		this.preferences.put("blue", b);
+		this.preferences.put("yellow", y);
+		
+	}
+	
+	public InteractivityKeyMapping getInteractivityKeyMapping(){
+		return this.interactivityKeyMapping;
+	}
+	
+	public void setInteractivityKeyMapping(InteractivityKeyMapping interactivityKeyMapping){
+		this.interactivityKeyMapping =  interactivityKeyMapping;
 	}
 	
 	public void addTemporalChain(TemporalChain temporalChain){

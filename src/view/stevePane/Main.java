@@ -7,6 +7,7 @@ import javafx.event.EventHandler;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import model.NCLSupport.NCLExportEventHandler;
+import model.common.InteractivityKeyMapping;
 import model.common.SpatialTemporalView;
 import model.repository.RepositoryMediaList;
 

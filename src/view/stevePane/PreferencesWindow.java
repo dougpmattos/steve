@@ -2,13 +2,29 @@ package view.stevePane;
 
 import java.util.ArrayList;
 
+
 import view.common.InputDialog;
 import view.common.Language;
+import view.common.MessageDialog;
+import view.common.ReturnMessage;
 import view.temporalViewPane.InteractiveMediaWindow;
+import view.temporalViewPane.TemporalChainPane;
 import view.temporalViewPane.TemporalViewPane;
+import view.utility.AnimationUtil;
 import controller.Controller;
+import model.common.InteractivityKeyMapping;
 import model.common.Media;
+import model.temporalView.Interactivity;
+import model.temporalView.TemporalChain;
+import model.temporalView.enums.AlphabeticalInteractivityKey;
+import model.temporalView.enums.ArrowInteractivityKey;
+import model.temporalView.enums.ChannelChangeInteractivityKey;
+import model.temporalView.enums.ColorInteractivityKey;
+import model.temporalView.enums.ControlInteractivityKey;
 import model.temporalView.enums.InteractivityKeyType;
+import model.temporalView.enums.NumericInteractivityKey;
+import model.temporalView.enums.ProgrammingGuideInteractivityKey;
+import model.temporalView.enums.VolumeChangeInteractivityKey;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -20,6 +36,7 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.Tab;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
@@ -47,7 +64,7 @@ public class PreferencesWindow extends Stage {
     private TextField blueKeyField;      
 
     
-    public PreferencesWindow() {
+    public PreferencesWindow(Controller controller) {
 
         setResizable(false);
         initModality(Modality.APPLICATION_MODAL);
@@ -58,12 +75,12 @@ public class PreferencesWindow extends Stage {
         containerBorderPane.setId("container-border-pane");
         containerBorderPane.getStylesheets().add("view/common/styles/preferencesWindow.css");
         
-        formGridPane = createForm();
+        formGridPane = createForm(controller);  
         ScrollPane scrollPaneContainer = new ScrollPane();
         scrollPaneContainer.setContent(formGridPane);
         scrollPaneContainer.setId("scroll-pane-container");
         
-        containerBorderPane.setTop(createToolBar());
+        containerBorderPane.setTop(createToolBar(controller));
         containerBorderPane.setCenter(scrollPaneContainer);
 
         scene = new Scene(containerBorderPane, WIDTH, HEIGHT);
@@ -72,25 +89,86 @@ public class PreferencesWindow extends Stage {
 
     }
     
-	private void createToolBarButtonActions(Button closeButton, Button saveButton) {
-			
-	    	closeButton.setOnAction(new EventHandler<ActionEvent>(){
-	    		@Override
-	            public void handle(ActionEvent arg0) {
-	    			
-	    			Window window = getScene().getWindow();   
+    private void createToolBarButtonActions(Button closeButton, Button saveButton, Controller controller) {
+		
+    	closeButton.setOnAction(new EventHandler<ActionEvent>(){
+    		@Override
+            public void handle(ActionEvent arg0) {
+    			
+    			InputDialog showContinueQuestionInputDialog;
+    			    			
+    			showContinueQuestionInputDialog = new InputDialog(Language.translate("discard.preference.changes"), null, Language.translate("no"), Language.translate("discard"), null, 140);
+    			
+    			String answer = showContinueQuestionInputDialog.showAndWaitAndReturn();
+    			
+    			if(answer.equalsIgnoreCase("right")){
+    				PreferencesWindow.this.close();
+    	    	}
 
-	    	        if (window instanceof Stage){
-	    	            ((Stage) window).close();
-	    	        }
+    		}
+    	});
+    	saveButton.setOnAction(new EventHandler<ActionEvent>(){
+    		@Override
+            public void handle(ActionEvent arg0) {    
+    			StringBuilder errorMessage = new StringBuilder();
+    			int high = 190;
+    			int count = 0;    			
 
-	
-	    		}
-	    	});
-	}
+    			if( //Verifica se uma tecla foi mapeada mais de uma vez
+    					
+    					redKeyField.getText().equals(greenKeyField.getText())||
+    					redKeyField.getText().equals(blueKeyField.getText())||
+    					redKeyField.getText().equals(yellowKeyField.getText())||
+    					blueKeyField.getText().equals(greenKeyField.getText())||
+    					blueKeyField.getText().equals(yellowKeyField.getText())||
+    					greenKeyField.getText().equals(yellowKeyField.getText())
+    					){
+    				
+    				errorMessage.append(Language.translate("it.is.not.allowed.to.have.same.key.more.than.once") +"\n \n");
+    				count++;
+    			}
+    			
+    			if(errorMessage.length() != 0){
+    				
+    				if(count == 1){
+    					high = 190;
+    				}else if(count == 2) {
+    					high = 250;
+    				} else if(count == 3){
+    					high = 300;
+    				}
+    				
+    				MessageDialog messageDialog = new MessageDialog(Language.translate("it.is.not.possible.to.save.preferences"), errorMessage.toString(), "OK", high);
+    				messageDialog.showAndWait();
+    				
+    				return;
+    				
+    			}
+    			
+    			/*****************************
+    			//TODO SAVE PREFERENCE CHOICES//
+    			 *****************************/
+    			
+				PreferencesWindow.this.close();
+				
+				ReturnMessage returnMessage = new ReturnMessage(Language.translate("preference.changes.saved.successfully"), 350);
+				returnMessage.show();
+				AnimationUtil.applyFadeInOut(returnMessage);
+				InteractivityKeyMapping ikm = new InteractivityKeyMapping();
+				ikm.setInteractivityKeyMapping(redKeyField.getText(), greenKeyField.getText(), blueKeyField.getText(), yellowKeyField.getText());
+								
+				controller.setInteractivityKeyMapping(ikm);
+				
+				controller.setPreferences(redKeyField.getText(), greenKeyField.getText(), blueKeyField.getText(), yellowKeyField.getText());
+
+			}
+    		
+    	});
+		
+    }
 
     
-	private BorderPane createToolBar(){
+	private BorderPane createToolBar(Controller controller){
 	    	
     	BorderPane toolBarBorderPane = new BorderPane();
     	toolBarBorderPane.setId("tool-bar-pane");
@@ -99,11 +177,10 @@ public class PreferencesWindow extends Stage {
     	Button saveButton = new Button(Language.translate("save").toUpperCase());
     	saveButton.setId("save-button");
     	closeButton.setId("close-button");
-    	createToolBarButtonActions(closeButton, saveButton);
+    	createToolBarButtonActions(closeButton, saveButton, controller);
     	
     	Label titleLabe;
-    	
-    	
+    	    	
     	titleLabe = new Label(Language.translate("preferences"));
     	titleLabe.setId("title-label");
     	titleLabe.setWrapText(true);
@@ -121,9 +198,8 @@ public class PreferencesWindow extends Stage {
     }
 
     
-    private GridPane createForm(){
-    	
-                
+    private GridPane createForm(Controller controller){
+    	              
         Label interactivityKeySubtitle = new Label(Language.translate("interactivity.key.mapping").toUpperCase());
         
         Label remoteControlColumnLabel = new Label(Language.translate("remote.control").toUpperCase());
@@ -149,10 +225,11 @@ public class PreferencesWindow extends Stage {
         blueKeyField = new TextField();
         yellowKeyField = new TextField();
                 
-        redKeyField.setText("0");
-        greenKeyField.setText("1");
-        blueKeyField.setText("2");
-        yellowKeyField.setText("3");
+        
+        redKeyField.setText(controller.getInteractivityKeyMapping().getInteractivityKeyMapping("red"));
+        greenKeyField.setText(controller.getInteractivityKeyMapping().getInteractivityKeyMapping("green"));
+        blueKeyField.setText(controller.getInteractivityKeyMapping().getInteractivityKeyMapping("blue"));
+        yellowKeyField.setText(controller.getInteractivityKeyMapping().getInteractivityKeyMapping("yellow"));
         
         redKeyField.setId("red-key-field");
         greenKeyField.setId("green-key-field");
@@ -187,10 +264,8 @@ public class PreferencesWindow extends Stage {
         formGridPane.add(blueKeyField, 1, 5);
         formGridPane.add(interactivityKeyYellowLabel, 0, 6);
         formGridPane.add(yellowKeyField, 1, 6);
-
         
         return formGridPane;
-
     	
     }
     

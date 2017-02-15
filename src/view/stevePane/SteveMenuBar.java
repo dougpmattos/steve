@@ -249,7 +249,7 @@ public class SteveMenuBar extends MenuBar{
 						containerBorderPane.setPrefSize(STEVE_WITDH, STEVE_HEIGHT);
 				 */
 				//TODO EXIBIR JANELA DE PREFERENCIAS PARA MAPEAR AS TECLAS
-				PreferencesWindow preferencesWindow = new PreferencesWindow();
+				PreferencesWindow preferencesWindow = new PreferencesWindow(controller);
 	    		
 		    	preferencesWindow.showAndWait();
 		    	
