@@ -61,7 +61,7 @@ public class PreferencesWindow extends Stage {
     private TextField redKeyField;
     private TextField greenKeyField;
     private TextField yellowKeyField;
-    private TextField blueKeyField;      
+    private TextField blueKeyField;     
 
     
     public PreferencesWindow(Controller controller) {
@@ -157,7 +157,7 @@ public class PreferencesWindow extends Stage {
 				controller.setInteractivityKeyMapping(ikm);
 				
 				controller.setPreferences(redKeyField.getText(), greenKeyField.getText(), blueKeyField.getText(), yellowKeyField.getText());
-
+				
 			}
     		
     	});

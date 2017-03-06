@@ -9,7 +9,6 @@ var zIndex = 0;
 var currentContext = 'body';
 var winW, winH;
 
-
 function keyPressedNCL(e){
 	var test = nclKeys[e.keyCode];
 	if(test)
@@ -920,6 +919,25 @@ function startContext(id,Inter){
 	}
 }
 
+function readTextFile(file)
+{
+    var rawFile = new XMLHttpRequest();
+    rawFile.open("GET", file, false);
+    rawFile.onreadystatechange = function ()
+    {
+        if(rawFile.readyState === 4)
+        {
+            if(rawFile.status === 200 || rawFile.status == 0)
+            {
+                var allText = rawFile.responseText;
+                console.log(allText);
+            }
+        }
+    }
+    rawFile.send(null);
+}
+
+
 function iniciaDocumentoNCL(){
 	$(document).keydown(keyPressedNCL);
 	//linha de codigo para pegar o tamanho da janela
@@ -927,6 +945,11 @@ function iniciaDocumentoNCL(){
 		  carregaTela();
 	});
 	carregaTela();
+
+	var c = "file:///Users/bruno/git/steve/saida.json";
+	
+	readTextFile(c);
+
 	//fim da linha de codigo
 	$('img,vide,iframe').each(function(){$(this).addClass("stoped")});
 	$('video,audio').each(function(index){
