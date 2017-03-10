@@ -1,7 +1,11 @@
 package controller;
 
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.prefs.*;
+
+import org.json.simple.JSONObject;
 
 import javafx.stage.Stage;
 import model.common.InteractivityKeyMapping;
@@ -29,6 +33,8 @@ public class Controller {
 	private SpatialTemporalView temporalView;
 	private InteractivityKeyMapping interactivityKeyMapping; 
 	private Preferences preferences;
+	private JSONObject interactiveKeyMappingJSON;
+	
 	
 	private StevePane stevePane;
 	
@@ -38,11 +44,11 @@ public class Controller {
 		
 		this.interactivityKeyMapping = new InteractivityKeyMapping();
 		this.interactivityKeyMapping.setInteractivityKeyMapping(
-				this.preferences.get("red", "0")
-				,this.preferences.get("green","1")
-				,this.preferences.get("blue", "2")
-				,this.preferences.get("yellow", "3"));
-		
+				this.preferences.get("red", "0"),
+				this.preferences.get("green","1"),
+				this.preferences.get("blue", "2"),
+				this.preferences.get("yellow", "3"));
+		this.setJson();
 		
 		this.repositoryMediaList = repositoryMediaList;
 		this.temporalView = temporalView;
@@ -57,6 +63,28 @@ public class Controller {
 		
 	}
 	
+	@SuppressWarnings("unchecked")
+	private void setJson(){
+		JSONObject jObj= new JSONObject();
+		
+		jObj.put("red", this.interactivityKeyMapping.getInteractivityKeyMapping("red"));
+		jObj.put("green", this.interactivityKeyMapping.getInteractivityKeyMapping("green"));
+		jObj.put("blue", this.interactivityKeyMapping.getInteractivityKeyMapping("blue"));
+		jObj.put("yellow", this.interactivityKeyMapping.getInteractivityKeyMapping("yellow"));
+		
+		this.interactiveKeyMappingJSON = jObj;		
+		try{
+			File saida = new File("saida.json");
+			FileWriter fw = new FileWriter("src/view/HTMLSupport/saida.json"); // Vai sobrescrever o aquivo
+			//FileWriter fw = new FileWriter("saida.json", true); // Nao vai sobrescrever o aquivo
+			fw.write(this.interactiveKeyMappingJSON.toString());			
+			fw.close();
+		}catch(IOException e){
+			e.printStackTrace();
+		}
+
+	}
+	
 	public Preferences getPreferences(){
 		return this.preferences;
 	}
@@ -66,7 +94,7 @@ public class Controller {
 		if(key.equals("green")) this.preferences.put("green", value);
 		if(key.equals("blue")) this.preferences.put("blue", value);
 		if(key.equals("yellow")) this.preferences.put("yellow", value);
-		
+		this.setJson();
 	}
 	
 	public void setPreferences(String r, String g, String b, String y){
@@ -74,8 +102,11 @@ public class Controller {
 		this.preferences.put("green", g);
 		this.preferences.put("blue", b);
 		this.preferences.put("yellow", y);
+		this.setJson();
 		
 	}
+	
+	
 	
 	public InteractivityKeyMapping getInteractivityKeyMapping(){
 		return this.interactivityKeyMapping;

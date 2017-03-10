@@ -222,6 +222,10 @@ public class PreferencesWindow extends Stage {
         blueKeyField = new TextField();
         yellowKeyField = new TextField();
                 
+        redKeyField.setMinWidth(70);
+        greenKeyField.setMinWidth(70);
+        yellowKeyField.setMinWidth(70);
+        blueKeyField.setMinWidth(70);
         
         redKeyField.setText(controller.getInteractivityKeyMapping().getInteractivityKeyMapping("red"));
         greenKeyField.setText(controller.getInteractivityKeyMapping().getInteractivityKeyMapping("green"));

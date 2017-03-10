@@ -1,8 +1,12 @@
 package model.HTMLSupport;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -24,6 +28,7 @@ import javax.xml.transform.stream.StreamSource;
 import model.NCLSupport.NCLExportEventHandler;
 import model.common.SpatialTemporalView;
 
+import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -39,6 +44,8 @@ public class HTMLExportEventHandler implements EventHandler<ActionEvent>{
 
 	final Logger logger = LoggerFactory.getLogger(HTMLExportEventHandler.class);
 	
+	private static final String EXPORTED_JSON = "saida.json";
+	private static final String EXPORTED_NCL_COMPLEMENTS = "ncl-complements.js";
 	private static final String EXPORTED_HTML_DOCUMENT = " Exported HTML Document";
 	private static final String TEMP_NCL_DOCUMENT = "tempNCLDocument";
 	
@@ -125,6 +132,26 @@ public class HTMLExportEventHandler implements EventHandler<ActionEvent>{
                 StreamResult result = new StreamResult();
                 result.setWriter(fileWriter);
                 transformer.transform(source, result);
+                
+                
+                File jsonSource = new File("src/view/HTMLSupport/saida.json");
+                
+                File dest = new File(exportedHTMLDocumentDir);
+                
+                File jsSource = new File("src/view/HTMLSupport/ncl-complements.js");
+                                
+                File jQuerySource = new File("src/view/HTMLSupport/jquery.min.js");
+                
+                try {
+                	FileUtils.copyFileToDirectory(jsonSource, dest);
+                	FileUtils.copyFileToDirectory(jsSource, dest);
+                	FileUtils.copyFileToDirectory(jQuerySource, dest);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                
+
+                
                 fileWriter.close();
                 
 
@@ -178,8 +205,12 @@ public class HTMLExportEventHandler implements EventHandler<ActionEvent>{
         } catch (IOException ioe) {
             // I/O error
             ioe.printStackTrace();
-        }
+        } catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 			
 	}
+
 
 }

@@ -975,7 +975,7 @@ $(document).ready(function(){
 	// Chamada assincrona le o arquivo JSON com as teclas definidas na preferences do Steve
     var objJson = $.ajax({
       type: "GET",
-      url: "../../../saida.json",
+      url: "saida.json",
       async: false,
       dataType: "json"
  	});
