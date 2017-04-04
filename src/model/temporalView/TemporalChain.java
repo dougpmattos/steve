@@ -254,6 +254,28 @@ public class TemporalChain extends Observable implements Serializable {
 		return mediaWithLowestBegin;
 		
 	}
+	public Media getMediaWithHighestEnd() {
+		
+		Media mediaWithHighestEnd = null;
+		
+		if(!mediaAllList.isEmpty()){
+			mediaWithHighestEnd = mediaAllList.get(mediaAllList.size()-1);
+		}
+		
+		for(int i=1; i < mediaAllList.size(); i++){
+			
+			Media media = mediaAllList.get(i);
+			
+			if(media.getEnd() > mediaWithHighestEnd.getEnd()){
+				mediaWithHighestEnd = media;
+			}
+			
+		}
+		
+		return mediaWithHighestEnd;
+		
+	}
+
 
 	private void removeMediaOfRelations(Media media) {
 		

@@ -467,8 +467,9 @@ public class SteveMenuBar extends MenuBar{
 		
 	}	
 	
-	private File createTempHTML() throws org.xml.sax.SAXException{
+	public File createTempHTML() throws org.xml.sax.SAXException{
 		final Logger logger = LoggerFactory.getLogger(HTMLExportEventHandler.class);
+		System.out.println("Chega aqui????????");
 		
 		final String EXPORTED_HTML_DOCUMENT = "Exported HTML Document";
 		final String TEMP_NCL_DOCUMENT = "tempNCLDocument";
@@ -506,7 +507,7 @@ public class SteveMenuBar extends MenuBar{
                     fileWriter.close();
 
         		}
-        		
+        		        		
 			}
 				
 		} catch (Exception e) {

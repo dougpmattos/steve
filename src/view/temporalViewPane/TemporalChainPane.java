@@ -1,10 +1,16 @@
 package view.temporalViewPane;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import org.xml.sax.SAXException;
 
 import javafx.animation.*;
 import javafx.beans.value.ChangeListener;
@@ -37,6 +43,8 @@ import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.Path;
 import javafx.scene.shape.PathElement;
 import javafx.scene.shape.VLineTo;
+import javafx.scene.web.WebEngine;
+import javafx.scene.web.WebView;
 import model.common.Media;
 import model.common.SpatialTemporalView;
 import model.temporalView.Interactivity;
@@ -75,6 +83,7 @@ public class TemporalChainPane extends StackPane implements Observer{
 	private ArrayList<ArrayList<TimeLineXYChartData>> timeLineXYChartDataLineList = new ArrayList<ArrayList<TimeLineXYChartData>>();
 	private StevePane stevePane;
 	private Tab parentTab;
+	private float playheadPosition = 0;
 	
 	NumberAxis xAxis;
 	CategoryAxis yAxis;
@@ -137,28 +146,50 @@ public class TemporalChainPane extends StackPane implements Observer{
     	
      }
 	
+//	private static void myTask() {
+//	    System.out.println("Running");
+//	}
+//	
 	private void createDisplayPaneButtonActions(){
 		
 		DisplayPane displayPane = stevePane.getSpatialViewPane().getDisplayPane();
 		ControlButtonPane controlButtonPane = displayPane.getControlButtonPane();
+		StackPane screen = displayPane.getScreen();
+		
 		
 		
 		controlButtonPane.getPlayButton().setOnAction(new EventHandler<ActionEvent>() {
 			
 			@Override
-			public void handle(ActionEvent event) {
+			public void handle(ActionEvent event) {				
 				
-				//TODO iniciar o movimento de translateX da linha play
-//				while(){ enquanto nao chega na ultima midia, ir andando com a linha
-//					
-//				}
-				//playhead.setTranslateX(500);
-	
+				controlButtonPane.runPreviewScreen(); // Roda as midias na tela 
+				final ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor(); // Anda com o Playhead
+				
+				executorService.scheduleAtFixedRate(new Runnable() {
+		        @Override
+		        	public void run() {
+		        	
+			        	playheadPosition+=2.7;
+						playhead.setTranslateX(playheadPosition);
+						Media lastMedia = temporalChainModel.getMediaWithHighestEnd();
+						System.out.println("PlayheadPosition = "+playheadPosition/135 +" > "+lastMedia.getEnd()/5+" last media end");
+						if(playheadPosition/135 > lastMedia.getEnd()/5){
+							System.out.println("PlayheadPosition = "+playheadPosition/135 +" > "+lastMedia.getEnd()/5+" last media end");
+							executorService.shutdownNow();
+							controlButtonPane.hideWebView();
+							playheadPosition = 0;
+							
+							playhead.setTranslateX(playheadPosition);
+						}
+			        }
+				}, 0, 100, TimeUnit.MILLISECONDS);
+								
 			}
 			
-		});
-		
+		});		
 	}
+		
 	
 	private void createListeners(){
 		
@@ -596,5 +627,6 @@ public class TemporalChainPane extends StackPane implements Observer{
 	public Tab getParentTab(){
 		return parentTab;
 	}
+	
 	
 }

@@ -131,13 +131,14 @@ public class NCLExportEventHandler implements EventHandler<ActionEvent>{
 	}
 
 	public NCLDoc exportToNCL(Boolean isForHTMLExport) {
-		
+		System.out.println("UEEEEEEEEEEEE");
 		NCLDoc nclDoc = createNCLDoc(isForHTMLExport);
-		
+		System.out.println("aqui entra po, pq eu sei");
 		if(nclDoc != null && !isForHTMLExport){
 			saveNCLDoc(nclDoc);
+			System.out.println("aqui eu sei que nao entra");
 		}
-		
+		System.out.println("FILE NAME = "+nclDoc.getFileName());
 		return nclDoc;
 		
 	}
@@ -163,7 +164,7 @@ public class NCLExportEventHandler implements EventHandler<ActionEvent>{
 		NCLDoc nclDoc = new NCLDoc();
 		
 		try {
-			
+			System.out.println(nclDoc.toString());
 			NCLBody nclBody = new NCLBody();
             nclDoc.setBody(nclBody);
 			
@@ -185,9 +186,9 @@ public class NCLExportEventHandler implements EventHandler<ActionEvent>{
             nclImportBase.setBaseId("causalConnectorBase");
             nclImportBase.setAlias("connectorBase");
             nclImportBase.setImportedDoc(importedNCLCausalConnectorBase);
-            
+            System.out.println("Deu erro msm??");
             if(!isForHTMLExport){
-
+            	System.out.println("E pra exportar sim");
                  nclConBase.addImportBase(nclImportBase);
             	
             }else {
@@ -210,7 +211,6 @@ public class NCLExportEventHandler implements EventHandler<ActionEvent>{
             }
             
         } catch (XMLException ex) {
-        	
         	logger.error(ex.getMessage());
         	MessageDialog messageDialog = new MessageDialog(Language.translate("error"), 
 					Language.translate("error.during.the.export") + ": " + ex.getMessage(), "OK", 150);
@@ -218,7 +218,7 @@ public class NCLExportEventHandler implements EventHandler<ActionEvent>{
             return null;
         	
         }
-		
+		System.out.println("Deu erro?");
 		return nclDoc;
 		
 	}
