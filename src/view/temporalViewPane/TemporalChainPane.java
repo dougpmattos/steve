@@ -84,6 +84,7 @@ public class TemporalChainPane extends StackPane implements Observer{
 	private StevePane stevePane;
 	private Tab parentTab;
 	private float playheadPosition = 0;
+	private boolean stopped = false;
 	
 	NumberAxis xAxis;
 	CategoryAxis yAxis;
@@ -174,12 +175,12 @@ public class TemporalChainPane extends StackPane implements Observer{
 						playhead.setTranslateX(playheadPosition);
 						Media lastMedia = temporalChainModel.getMediaWithHighestEnd();
 						System.out.println("PlayheadPosition = "+playheadPosition/135 +" > "+lastMedia.getEnd()/5+" last media end");
-						if(playheadPosition/135 > lastMedia.getEnd()/5){
+						if((playheadPosition/135 > lastMedia.getEnd()/5)||(stopped==true)){
 							System.out.println("PlayheadPosition = "+playheadPosition/135 +" > "+lastMedia.getEnd()/5+" last media end");
 							executorService.shutdownNow();
 							controlButtonPane.hideWebView();
 							playheadPosition = 0;
-							
+							stopped = false;
 							playhead.setTranslateX(playheadPosition);
 						}
 			        }
@@ -626,6 +627,12 @@ public class TemporalChainPane extends StackPane implements Observer{
 	
 	public Tab getParentTab(){
 		return parentTab;
+	}
+	
+	public void resetPlayheadPosition(){
+		playhead.setTranslateX(0);
+		playheadPosition = 0;
+		stopped = true;
 	}
 	
 	

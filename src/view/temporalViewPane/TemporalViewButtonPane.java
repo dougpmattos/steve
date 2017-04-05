@@ -131,8 +131,8 @@ public class TemporalViewButtonPane extends BorderPane {
         otherButtonPane.setId("other-button-pane");
         otherButtonPane.setFillHeight(false);
         otherButtonPane.getChildren().add(interactivityButton);
-        otherButtonPane.getChildren().add(zoomButton);
-        otherButtonPane.getChildren().add(showAnchorsLinksButton);
+        //otherButtonPane.getChildren().add(zoomButton);
+        //otherButtonPane.getChildren().add(showAnchorsLinksButton);
         zoomButton.setDisable(true);
         showAnchorsLinksButton.setDisable(true);
 	       

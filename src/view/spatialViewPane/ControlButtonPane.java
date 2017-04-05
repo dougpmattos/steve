@@ -233,7 +233,8 @@ public class ControlButtonPane extends BorderPane{
 		
 		stop.setOnAction(new EventHandler<ActionEvent>() {			
 		    @Override public void handle(ActionEvent t) {		    	
-		    	webView.setVisible(false);		    	
+		    	webView.setVisible(false);	
+		    	selectedTemporalChainPane.resetPlayheadPosition();		    	
 		    }
 		});
 
