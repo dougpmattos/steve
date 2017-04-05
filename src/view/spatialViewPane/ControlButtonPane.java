@@ -8,10 +8,12 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.scene.Scene;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Tab;
 import javafx.scene.control.Tooltip;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
@@ -39,13 +41,15 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
+import java.lang.reflect.Field;
+import com.sun.webkit.*;
+
 import view.common.Language;
 import view.common.MessageDialog;
 import view.common.ReturnMessage;
 import view.stevePane.SteveMenuBar;
 import view.temporalViewPane.TemporalChainPane;
 import view.temporalViewPane.TemporalViewPane;
-import view.utility.AnimationUtil;
 import br.uff.midiacom.ana.NCLDoc;
 
 public class ControlButtonPane extends BorderPane{
@@ -172,7 +176,17 @@ public class ControlButtonPane extends BorderPane{
 	        }
 	        webView.requestFocus();
 			System.out.println("Foco? "+webView.focusedProperty());
+
 			
+			
+			try { // Set the background color of the page to be transparent. 
+	            Field field = webEngine.getClass().getDeclaredField("page"); 
+	            field.setAccessible(true); 
+	            WebPage page = (WebPage) field.get(webEngine);  
+	            page.setBackgroundColor((new java.awt.Color(0, 0, 0, 0)).getRGB()); 
+	        } catch (Exception e) { 
+	            System.out.println("Error: " + e);
+	        } 
 //			
 //			Scene scene = new Scene(screen);
 //			
@@ -188,6 +202,7 @@ public class ControlButtonPane extends BorderPane{
     	File h = new File (htmlexportado);
 
 	}
+	
 
 	public void createButtonActions(StackPane screen, TemporalViewPane temporalViewPane){			
 		
@@ -243,6 +258,7 @@ public class ControlButtonPane extends BorderPane{
 	}
 	public void hideWebView(){
 		webView.setVisible(false);
+		webView.disableProperty();
 	}
 	public Button getPlayButton(){
 		return play;

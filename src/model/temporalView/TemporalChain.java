@@ -3,7 +3,12 @@ package model.temporalView;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Observable;
+import java.util.logging.Level;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import model.HTMLSupport.HTMLExportEventHandler;
 import model.common.Media;
 import model.temporalView.enums.AllenRelation;
 import model.temporalView.enums.ConflictType;
@@ -20,6 +25,7 @@ import view.temporalViewPane.TimeLineXYChartData;
 public class TemporalChain extends Observable implements Serializable {
 
 	private static final long serialVersionUID = -6154510036093880684L;
+	final Logger logger = LoggerFactory.getLogger(TemporalChain.class);
 	
 	private static int temporalChainNumber = 0;
 	private static int temporalViewMediaNumber = 0;
@@ -1263,9 +1269,16 @@ public class TemporalChain extends Observable implements Serializable {
 		int currentMediaIndex = 0;
 		int index = (int) (((Double) newValue / 27.5)/5);
 		System.out.println(index);
-		
-		return mediaAllList.get(index); 
-		
+	
+		try{
+			return mediaAllList.get(index);
+		}
+		catch (Exception e) {
+			logger.error(e.getMessage());
+			return null;
+		}
+		 
+	
 	}
 	
 }

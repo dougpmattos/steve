@@ -50,17 +50,17 @@ public class TemporalMediaInfoPane extends ScrollPane{
 		endTime = new TextField();
 		duration = new TextField();
 		interactive  =new CheckBox(Language.translate("interactive"));
-		name.setId("info-pane-field");
-		type.setId("info-pane-field");
-		startTime.setId("info-pane-field");
-		endTime.setId("info-pane-field");
-		duration.setId("info-pane-field");
+		name.setId("name-text-field");
+		type.setId("type-text-field");
+		startTime.setId("start-text-field");
+		endTime.setId("end-text-field");
+		duration.setId("duration-text-field");
 		name.setEditable(false);
 		type.setEditable(false);
 		startTime.setEditable(false);
 		endTime.setEditable(false);
 		duration.setEditable(false);
-		interactive.setDisable(false);
+		interactive.setDisable(true);
 		
 		infoPropertyGridPane = new GridPane();
 		infoPropertyGridPane.setId("info-property-grid-pane");
