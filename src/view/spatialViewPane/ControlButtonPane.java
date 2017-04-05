@@ -178,7 +178,7 @@ public class ControlButtonPane extends BorderPane{
 			System.out.println("Foco? "+webView.focusedProperty());
 
 			
-			
+
 			try { // Set the background color of the page to be transparent. 
 	            Field field = webEngine.getClass().getDeclaredField("page"); 
 	            field.setAccessible(true); 
