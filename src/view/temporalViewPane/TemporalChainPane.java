@@ -31,6 +31,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.DataFormat;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.HBox;
@@ -151,13 +152,34 @@ public class TemporalChainPane extends StackPane implements Observer{
 //	    System.out.println("Running");
 //	}
 //	
+	private void installEventHandler(final Node keyNode) {
+	    // handler for enter key press / release events, other keys are
+	    // handled by the parent (keyboard) node handler
+	    final EventHandler<KeyEvent> keyEventHandler =
+	        new EventHandler<KeyEvent>() {
+	            public void handle(final KeyEvent keyEvent) {
+//	                if (keyEvent.getCode() == KeyCode.ENTER) {
+//	                    setPressed(keyEvent.getEventType()
+//	                        == KeyEvent.KEY_PRESSED);
+//	 
+//	                    keyEvent.consume();
+//	                }
+	            	//System.out.println("KEY PRESSED\nKEY PRESSED\nKEY PRESSED\nKEY PRESSED\nKEY PRESSED\nKEY PRESSED\nKEY PRESSED\n");
+	            	playhead.setVisible(false);
+	            }
+	        };
+	 
+	    keyNode.setOnKeyPressed(keyEventHandler);
+	    keyNode.setOnKeyReleased(keyEventHandler);
+	}
+
 	private void createDisplayPaneButtonActions(){
 		
 		DisplayPane displayPane = stevePane.getSpatialViewPane().getDisplayPane();
 		ControlButtonPane controlButtonPane = displayPane.getControlButtonPane();
 		StackPane screen = displayPane.getScreen();
 		
-		
+		installEventHandler(screen);
 		
 		controlButtonPane.getPlayButton().setOnAction(new EventHandler<ActionEvent>() {
 			
@@ -182,6 +204,7 @@ public class TemporalChainPane extends StackPane implements Observer{
 							playheadPosition = 0;
 							stopped = false;
 							playhead.setTranslateX(playheadPosition);
+							playhead.setVisible(true);
 						}
 			        }
 				}, 0, 100, TimeUnit.MILLISECONDS);
