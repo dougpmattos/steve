@@ -170,7 +170,8 @@ public class ControlButtonPane extends BorderPane{
 	        } else {
 	        	webView.setVisible(true);
 	        }
-	        
+	        webView.requestFocus();
+			System.out.println("Foco? "+webView.focusedProperty());
 			
 //			
 //			Scene scene = new Scene(screen);
@@ -190,7 +191,7 @@ public class ControlButtonPane extends BorderPane{
 
 	public void createButtonActions(StackPane screen, TemporalViewPane temporalViewPane){			
 		
-		play.setOnAction(new EventHandler<ActionEvent>() {			
+		/*play.setOnAction(new EventHandler<ActionEvent>() {			
 		    @Override public void handle(ActionEvent t) {
 		    	String htmlPath = "";
 		    	webView.setVisible(true);
@@ -205,7 +206,8 @@ public class ControlButtonPane extends BorderPane{
 			        //webEngine.load("http://www.google.com");
 
 					screen.getChildren().add(webView);
-//					
+					webView.requestFocus();
+					System.out.println("Foco? "+webView.focusedProperty());
 //					Scene scene = new Scene(screen);
 //					
 				} catch (SAXException e) {
@@ -229,7 +231,7 @@ public class ControlButtonPane extends BorderPane{
 		    	//m.delete();		    	
 		    	//h.delete();
 		    }
-		});
+		});*/
 		
 		stop.setOnAction(new EventHandler<ActionEvent>() {			
 		    @Override public void handle(ActionEvent t) {		    	
