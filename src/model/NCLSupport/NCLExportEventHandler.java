@@ -131,14 +131,11 @@ public class NCLExportEventHandler implements EventHandler<ActionEvent>{
 	}
 
 	public NCLDoc exportToNCL(Boolean isForHTMLExport) {
-		System.out.println("UEEEEEEEEEEEE");
+	
 		NCLDoc nclDoc = createNCLDoc(isForHTMLExport);
-		System.out.println("aqui entra po, pq eu sei");
 		if(nclDoc != null && !isForHTMLExport){
 			saveNCLDoc(nclDoc);
-			System.out.println("aqui eu sei que nao entra");
 		}
-		System.out.println("FILE NAME = "+nclDoc.getFileName());
 		return nclDoc;
 		
 	}
@@ -186,9 +183,9 @@ public class NCLExportEventHandler implements EventHandler<ActionEvent>{
             nclImportBase.setBaseId("causalConnectorBase");
             nclImportBase.setAlias("connectorBase");
             nclImportBase.setImportedDoc(importedNCLCausalConnectorBase);
-            System.out.println("Deu erro msm??");
+       
             if(!isForHTMLExport){
-            	System.out.println("E pra exportar sim");
+          
                  nclConBase.addImportBase(nclImportBase);
             	
             }else {

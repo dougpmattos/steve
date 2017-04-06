@@ -142,7 +142,7 @@ public class ControlButtonPane extends BorderPane{
 		
 		fullButtonPane = new HBox();
 	    fullButtonPane.setId("full-pane");
-	    fullButtonPane.getChildren().add(fullScreen);
+	    //fullButtonPane.getChildren().add(fullScreen);
 		
 		centerButtonPane = new HBox();
 		centerButtonPane.setId("center-button-pane");
