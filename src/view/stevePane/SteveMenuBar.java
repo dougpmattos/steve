@@ -124,7 +124,7 @@ public class SteveMenuBar extends MenuBar{
 		createHelpMenuItemActions();
 		
 		//menuFile.getItems().addAll(menuItemNew, menuItemOpen, new SeparatorMenuItem(), menuItemClose, new SeparatorMenuItem(), menuItemExportNCL, new SeparatorMenuItem(), menuItemExportHTML5, new SeparatorMenuItem(), menuItemRun, new SeparatorMenuItem(), menuItemExit); 
-		menuFile.getItems().addAll(menuItemNew, menuItemOpen, new SeparatorMenuItem(), menuItemExportNCL, new SeparatorMenuItem(), menuItemExportHTML5, new SeparatorMenuItem(), menuItemExit);
+		menuFile.getItems().addAll(menuItemNew, menuItemOpen, new SeparatorMenuItem(), menuItemExportNCL, new SeparatorMenuItem(), menuItemExportHTML5, new SeparatorMenuItem(), menuItemRun, new SeparatorMenuItem(), menuItemExit);
 //		menuEdit.getItems().addAll(menuItemUndo, menuItemRedo, new SeparatorMenuItem(), menuItemCut, menuItemCopy, menuItemPaste, new SeparatorMenuItem(), 
 		menuEdit.getItems().addAll(menuItemPreferences, new SeparatorMenuItem(), menuItemSelectAll);
 		menuView.getItems().addAll(checkMenuItemMediaView, checkMenuItemTemporalView, checkMenuItemSpatialView, checkMenuItemShowRelations);
@@ -149,9 +149,12 @@ public class SteveMenuBar extends MenuBar{
 		menuItemAbout.setOnAction(new EventHandler<ActionEvent>() {
 		    public void handle(ActionEvent t) {
 		    	
-		    	MessageDialog messageDialog = new MessageDialog("STEVE", "Spatio-Temporal View Editor              Version 1.0-0                   "
-		    			+ "Copyright 2015 Douglas Paulo de Mattos. MidiaCom Lab. UFF. All rights reserved.                     "
-		    			+ "This product includes software developed by other MidiaCom Lab projects including aNa and NCL4WEB, https://www.aNa.com.br, https://www.NCL4WEB.com.br", "OK", 300);
+		    	MessageDialog messageDialog = new MessageDialog("STEVE", "Spatio-Temporal View Editor - Version 2.1-0" + "\n"
+		    			+ "Copyright 2017 Douglas Paulo de Mattos. MidiaCom Lab. UFF." + "\n"
+		    			+ "All rights reserved." + "\n"
+		    			+ "This product includes software developed by other MidiaCom Lab projects. This projects are aNa and NCL4WEB." + "\n"
+		    			+ "https://www.aNa.com.br" + "\n"
+		    			+ "https://www.NCL4WEB.com.br", "OK", 300);
 	            messageDialog.showAndWait();
 	            
 		    }
