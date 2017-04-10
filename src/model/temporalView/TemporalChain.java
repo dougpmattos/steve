@@ -1263,22 +1263,4 @@ public class TemporalChain extends Observable implements Serializable {
 		
 	}
 	
-	//bruno modifying
-	public Media getMediaUnderThePlayLineList(Number newValue){
-		int listSize = mediaAllList.size();
-		int currentMediaIndex = 0;
-		int index = (int) (((Double) newValue / 27.5)/5);
-		System.out.println(index);
-	
-		try{
-			return mediaAllList.get(index);
-		}
-		catch (Exception e) {
-			logger.error(e.getMessage());
-			return null;
-		}
-		 
-	
-	}
-	
 }
