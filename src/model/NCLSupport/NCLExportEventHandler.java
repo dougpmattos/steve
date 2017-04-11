@@ -200,8 +200,13 @@ public class NCLExportEventHandler implements EventHandler<ActionEvent>{
             
             for(TemporalChain temporalChain : spatialTemporalView.getTemporalChainList()){
             	
-            	createNCLPort(nclBody, nclRegBase, nclDescBase, temporalChain);	
             	createNCLMediaDescriptorRegion(nclBody, nclRegBase, nclDescBase, temporalChain);
+
+            }
+            
+            for(TemporalChain temporalChain : spatialTemporalView.getTemporalChainList()){
+            	
+            	createNCLPort(nclBody, nclRegBase, nclDescBase, temporalChain);
             	createNCLLinks(nclBody, nclImportBase, temporalChain, isForHTMLExport);
             	createStartNCLLinks(nclBody, nclImportBase, temporalChain, isForHTMLExport);
             	
@@ -215,7 +220,7 @@ public class NCLExportEventHandler implements EventHandler<ActionEvent>{
             return null;
         	
         }
-		System.out.println("Deu erro?");
+
 		return nclDoc;
 		
 	}
@@ -865,13 +870,6 @@ public class NCLExportEventHandler implements EventHandler<ActionEvent>{
 						 return true;
 					}
 					
-				}
-				
-			} else if(relation instanceof Asynchronous){
-				
-				Asynchronous asynchronousRelation = (Asynchronous) relation;
-				if(asynchronousRelation.getSlaveMediaList().contains(media)){
-					return true;
 				}
 				
 			}

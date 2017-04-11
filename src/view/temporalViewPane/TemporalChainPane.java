@@ -13,6 +13,7 @@ import java.util.logging.Logger;
 import org.xml.sax.SAXException;
 
 import javafx.animation.*;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -207,9 +208,26 @@ public class TemporalChainPane extends StackPane implements Observer{
 				controlButtonPane.getStopButton().setDisable(false);
 				controlButtonPane.getPauseButton().setDisable(false);
 				controlButtonPane.getPlayButton().setDisable(true);
+				
+//				---TESTE
+				Runnable task = new Runnable()
+        		{
+        			public void run()
+        			{
+        				runTask();
+        			}
+        		};
+        		
+        		// Run the task in a background thread
+        		Thread backgroundThread = new Thread(task);
+        		// Terminate the running thread if the application exits
+        		backgroundThread.setDaemon(true);
+        		// Start the thread
+        		backgroundThread.start();
+//				----FIM TESTE
 		
-				//controlButtonPane.runPreviewScreen(); // Roda as midias na tela 
-				ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor(); // Anda com o Playhead
+				/*//controlButtonPane.runPreviewScreen(); // Roda as midias na tela 
+				ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
 				
 				executorService.scheduleAtFixedRate(new Runnable() {
 		        @Override
@@ -227,17 +245,25 @@ public class TemporalChainPane extends StackPane implements Observer{
 						screen.getChildren().clear();
 					}
 			
-					for(Media media : temporalChainModel.getMediaAllList()){
-		
-						if(media.getBegin() <= currentTime && currentTime <= media.getEnd()){
-//							//TODO problema esta qui muito pesado a cada milisegindp atualizar: dimiuir a txa do execeute ou pesquisar sobre treah paralelas e desempenho
-							//ImageView mediaContent = getMediaContent(media);
-							//setPresentationProperties(mediaContent);	
-							//screen.getChildren().add(mediaContent);
+//					for(Media media : temporalChainModel.getMediaAllList()){
+//		
+//						if(media.getBegin() <= currentTime && currentTime <= media.getEnd()){
+////							//TODO problema esta qui muito pesado a cada milisegindp atualizar: dimiuir a txa do execeute ou pesquisar sobre treah paralelas e desempenho
+//							Platform.runLater(new Runnable(){
+//
+//								@Override
+//								public void run() {
+//									ImageView mediaContent = getMediaContent(media);
+//									//setPresentationProperties(mediaContent);	
+//									screen.getChildren().add(mediaContent);
+//									
+//								}
 //								
-						}
-				
-					}
+//							});
+//								
+//						}
+//				
+//					}
 					
 					//INFO quando chega em 10s, para
 //					if(currentTime >= 10){
@@ -261,11 +287,59 @@ public class TemporalChainPane extends StackPane implements Observer{
 //							playhead.setVisible(true);
 //						}
 			        }
-				}, 0, 10, TimeUnit.MILLISECONDS);
+			}, 0, 10, TimeUnit.MILLISECONDS);*/	
 								
 			}
 			
 		});		
+	}
+	
+	public void runTask() 
+	{
+		while(true){
+			try 
+			{
+				
+				//INFO Dado o tempo, obtenho pixel para transladar com o playhead
+		    	playheadPixelPosition = timeLineChart.getXAxis().getDisplayPosition(currentTime); 
+		    	playhead.setTranslateX(playheadPixelPosition);
+		    	currentTime = currentTime + 0.01;
+		    	System.out.println(currentTime);
+		 
+				DisplayPane displayPane = stevePane.getSpatialViewPane().getDisplayPane();
+				StackPane screen = displayPane.getScreen();
+//				if(!screen.getChildren().isEmpty()){
+//					screen.getChildren().clear();
+//				}
+
+				for(Media media : temporalChainModel.getMediaAllList()){
+
+					if(media.getBegin() <= currentTime && currentTime <= media.getEnd()){
+//						//TODO problema esta qui muito pesado a cada milisegindp atualizar: dimiuir a txa do execeute ou pesquisar sobre treah paralelas e desempenho
+						Platform.runLater(new Runnable(){
+
+							@Override
+							public void run() {
+								ImageView mediaContent = getMediaContent(media);
+								//setPresentationProperties(mediaContent);	
+								screen.getChildren().add(mediaContent);
+								
+							}
+							
+						});
+							
+					}
+			
+				}
+				Thread.sleep(10);
+				
+			}
+			catch (InterruptedException e) 
+			{
+				e.printStackTrace();
+			}
+		}
+
 	}
 		
 	
@@ -346,8 +420,9 @@ public class TemporalChainPane extends StackPane implements Observer{
 		switch(media.getMediaType()) {
 		   
    		case IMAGE:
-   		   mediaContent = media.generateMediaIcon();	
-           break;
+//   			mediaContent = new ImageView(new Image("view/temporalViewPane/images/interactivity-button-hover.png"));
+   		mediaContent = media.generateMediaIcon();
+   			break;
            
 		case VIDEO:
 			//TODO pegar o frame do instante do playhead no vídeo
