@@ -51,7 +51,7 @@ import view.utility.AnimationUtil;
 @SuppressWarnings({"unchecked","rawtypes"})
 public class InteractiveMediaWindow extends Stage {
      
-	private static final int HEIGHT = 600;
+	private static final int HEIGHT = 610;
 	private static final int WIDTH = 650;
     
 	private Controller controller;
@@ -65,6 +65,7 @@ public class InteractiveMediaWindow extends Stage {
 	private ChoiceBox interactivityKeyField;
 	private CheckBox interactiveMediaWillBeStopped;
 	private CheckBox endApplication;
+	private CheckBox endTemporalChain;
     private ChoiceBox<Media> mediaToBeStoppedField;
     private ChoiceBox timelineToBeStartedField;
     private TextField stopDelayField;
@@ -384,6 +385,7 @@ public class InteractiveMediaWindow extends Stage {
         interactivityKeyField = new ChoiceBox();
         interactiveMediaWillBeStopped  =new CheckBox(Language.translate("interactive.media.will.be.stopped"));
         endApplication  =new CheckBox(Language.translate("end.application"));
+        endTemporalChain = new CheckBox(Language.translate("end.temporal.chain"));
         mediaToBeStoppedField = new ChoiceBox<Media>(FXCollections.observableArrayList(mediaListDuringInteractivityTime));
         stopDelayField = new TextField();
         startDelayField = new TextField();
@@ -404,6 +406,7 @@ public class InteractiveMediaWindow extends Stage {
         interactivityKeyField.setId("new-interactive-media-field");
         interactiveMediaWillBeStopped.setId("new-interactive-media-field");
         endApplication.setId("new-interactive-media-field");
+        endTemporalChain.setId("end-temporal-chain");
         mediaToBeStoppedField.setId("new-interactive-media-field"); 
         timelineToBeStartedField.setId("new-interactive-media-field");
         stopDelayField.setId("input-field");
@@ -460,10 +463,11 @@ public class InteractiveMediaWindow extends Stage {
         formGridPane.add(stopActionSubtitleSeparatorContainer, 0, 5, 5, 1);
         formGridPane.add(interactiveMediaWillBeStopped, 0, 6);
         formGridPane.add(endApplication, 1, 6);
-        formGridPane.add(mediaToBeStoppedLabel, 0, 7);
-        formGridPane.add(mediaCloseNewVBoxContainer, 1, 7);
-        formGridPane.add(stopDelayLabel, 0, 8);
-        formGridPane.add(stopDelayField, 1, 8);
+        formGridPane.add(endTemporalChain, 0, 7);
+        formGridPane.add(mediaToBeStoppedLabel, 0, 8);
+        formGridPane.add(mediaCloseNewVBoxContainer, 1, 8);
+        formGridPane.add(stopDelayLabel, 0, 9);
+        formGridPane.add(stopDelayField, 1, 9);
         
         formGridPane.add(startActionSubtitleSeparatorContainer, 0, 10, 5, 1);
         formGridPane.add(timelineToBeStartedLabel, 0, 11);
@@ -843,6 +847,14 @@ public class InteractiveMediaWindow extends Stage {
 				
 				if(interactiveMediaWillBeStopped.isSelected()){
 					interactivityRelation.addSlaveMedia(interactiveMedia);
+				}
+				
+				if(endTemporalChain.isSelected()){
+					/*Caso esteja marcado, na hora de gerar o NCL, 
+					 * vamos criar onAbort pra todas as mídias da cadeia onde
+					 *  a relação de interatividade foi criada./*
+					 */					
+				
 				}
 				
 				for(int i=0; i < mediaCloseNewVBoxContainer.getChildren().size(); i++){
