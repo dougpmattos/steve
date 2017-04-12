@@ -5,12 +5,13 @@ import java.awt.event.ActionListener;
 import java.io.File;
 
 import javafx.scene.layout.Region;
+import javafx.scene.layout.StackPane;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 
 import javax.swing.JOptionPane;
 
-class Browser extends Region {
+class Browser extends StackPane {
 
     final WebView browser = new WebView();
     final WebEngine webEngine = browser.getEngine();
@@ -23,6 +24,7 @@ class Browser extends Region {
         browser.getEngine().load("file:///" + filePath.getAbsolutePath());
         //System.out.println(filePath.getAbsolutePath());
         getChildren().add(browser);
+        
                 
     }    
 
