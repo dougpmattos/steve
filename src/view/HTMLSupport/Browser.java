@@ -12,7 +12,7 @@ import javafx.scene.web.WebView;
 
 import javax.swing.JOptionPane;
 
-class Browser extends StackPane {
+public class Browser extends StackPane {
 
 
     final WebView browser = new WebView();
