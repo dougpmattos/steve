@@ -1,5 +1,6 @@
 package view.temporalViewPane;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
@@ -39,6 +40,8 @@ import javafx.scene.shape.PathElement;
 import javafx.scene.shape.VLineTo;
 import model.common.Media;
 import model.common.SpatialTemporalView;
+import model.common.enums.MediaType;
+import model.spatialView.enums.AspectRatio;
 import model.temporalView.Interactivity;
 import model.temporalView.Synchronous;
 import model.temporalView.TemporalChain;
@@ -253,7 +256,7 @@ public class TemporalChainPane extends StackPane implements Observer{
 							@Override
 							public void run() {
 								ImageView mediaContent = getMediaContent(media);
-								//setPresentationProperties(mediaContent);	
+								setPresentationProperties(mediaContent, media);	
 								screen.getChildren().add(mediaContent);
 								
 							}
@@ -271,7 +274,7 @@ public class TemporalChainPane extends StackPane implements Observer{
 				e.printStackTrace();
 			}
 		}
-
+		
 	}
 		
 	
@@ -326,7 +329,7 @@ public class TemporalChainPane extends StackPane implements Observer{
 					if(media.getBegin() <= indicativeLine && indicativeLine <= media.getEnd()){
 						
 						ImageView mediaContent = getMediaContent(media);
-						setPresentationProperties(mediaContent);	
+						setPresentationProperties(mediaContent, media);	
 						screen.getChildren().add(mediaContent);
 						
 					}
@@ -340,24 +343,72 @@ public class TemporalChainPane extends StackPane implements Observer{
 		
 	}
 	
-	private void setPresentationProperties(ImageView mediaContent){
+	public void setPresentationProperties(ImageView mediaContent, Media media){
 		//TODO formtar conteuco da midia de acordo com as propriedade de apresentação.
-		mediaContent.setFitWidth(300);
+		
+		if(media.getMediaType()==MediaType.IMAGE ){//|| media.getMediaType()==MediaType.VIDEO){
+			DisplayPane displayPane = stevePane.getSpatialViewPane().getDisplayPane();
+			ControlButtonPane controlButtonPane = displayPane.getControlButtonPane();
+			StackPane screen = displayPane.getScreen();
+			
+			double percentageHeight, percentageWidth, width, height; 
+			String temp;
+			String path = media.getFile().getAbsolutePath();
+   			File imageFile = new File(path);
+   			Image image = new Image(imageFile.toURI().toString());   		
+   			
+	    
+		    if(media.getPresentationProperty().getSizeProperty().getAspectRatio()==AspectRatio.SLICE){
+		    	mediaContent.setPreserveRatio(true);
+		    } else {
+		    	mediaContent.setPreserveRatio(false);
+		    }
+		    
+   			width = mediaContent.getFitWidth();
+			height = mediaContent.getFitHeight();			
+			
+			temp = media.getPresentationProperty().getSizeProperty().getHeight().replace("%", "");
+			
+			percentageHeight = Double.parseDouble(temp);
+			
+			double screenHeight = screen.getHeight()*(percentageHeight/100);
+			mediaContent.setFitHeight(screenHeight);
+			
+		
+			temp = media.getPresentationProperty().getSizeProperty().getWidth().replace("%", "");			
+			percentageWidth = Double.parseDouble(temp);
+			double screenWidth = screen.getWidth()*(percentageWidth/100);
+			mediaContent.setFitWidth(screenWidth);
+		    
+			 
+			
+		}
+		
 	}
 	
 	private ImageView getMediaContent(Media media){
+		DisplayPane displayPane = stevePane.getSpatialViewPane().getDisplayPane();
+		ControlButtonPane controlButtonPane = displayPane.getControlButtonPane();
+		StackPane screen = displayPane.getScreen();
 		
 		ImageView mediaContent = null;
 		
 		switch(media.getMediaType()) {
 		   
    		case IMAGE:
-   			mediaContent = new ImageView(new Image("view/temporalViewPane/images/interactivity-button-hover.png"));
-   			mediaContent = media.generateMediaIcon();
+
+   			String path = media.getFile().getAbsolutePath();
+   			File imageFile = new File(path);
+   			ImageView image = new ImageView(new Image(imageFile.toURI().toString()));
+   			Image img = new Image(imageFile.toURI().toString());
+   			image.setFitWidth(screen.getWidth());
+   			image.setFitHeight(screen.getHeight());
+   			mediaContent = image;	
    			break;
            
 		case VIDEO:
 			//TODO pegar o frame do instante do playhead no vídeo
+			mediaContent = media.generateMediaIcon();
 			break;
            
 		case AUDIO:

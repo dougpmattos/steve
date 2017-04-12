@@ -823,9 +823,9 @@ public class NCLExportEventHandler implements EventHandler<ActionEvent>{
 		NCLDescriptorParam fitParam = new NCLDescriptorParam();
 		fitParam.setName(NCLAttributes.FIT);
 		AspectRatio aspectRatio = media.getPresentationProperty().getSizeProperty().getAspectRatio();
-		if(aspectRatio != AspectRatio.NONE){
-			fitParam.setValue(media.getPresentationProperty().getSizeProperty().getAspectRatio().toString().toLowerCase());
-		}
+		//if(aspectRatio != AspectRatio.NONE){
+		fitParam.setValue(media.getPresentationProperty().getSizeProperty().getAspectRatio().toString().toLowerCase());
+		//}
 		
 		nclDescriptor.addDescriptorParam(transparencyParam);
 		nclDescriptor.addDescriptorParam(fitParam);

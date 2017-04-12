@@ -4,6 +4,7 @@ import java.io.File;
 
 import javafx.scene.Scene;
 import javafx.scene.paint.Color;
+import javafx.scene.transform.Scale;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
@@ -22,6 +23,18 @@ public class RunWindow extends Stage {
 
         scene = new Scene(browser, WIDTH, HEIGHT);
         scene.setFill(Color.BLACK);
+/*        
+        double scaleFactor =
+                browser.getWidth() / browser.getHeight() > browser.get
+                    ? newHeight / initHeight
+                    : newWidth / initWidth;
+
+
+        Scale scale = new Scale(browser.getScaleX(), browser.getScaleY());
+        scale.setPivotX(0);
+        scale.setPivotY(0);
+        scene.getRoot().getTransforms().setAll(scale);
+*/
         setScene(scene);
         
         
