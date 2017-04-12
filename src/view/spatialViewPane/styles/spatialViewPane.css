@@ -79,7 +79,25 @@
     -fx-background-color: transparent;
     -fx-padding: 0;
 }
+#run-button {
+    -fx-graphic: url("../images/run.png");
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+}
+#pause-button {
+    -fx-graphic: url("../images/pause.png");
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+}
 #play-button:hover {
+    -fx-background-color: #00BFA5;
+    -fx-background-radius: 0;
+}
+#run-button:hover {
+    -fx-background-color: #00BFA5;
+    -fx-background-radius: 0;
+}
+#pause-button:hover {
     -fx-background-color: #00BFA5;
     -fx-background-radius: 0;
 }

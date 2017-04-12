@@ -42,8 +42,10 @@ import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
 import java.lang.reflect.Field;
+
 import com.sun.webkit.*;
 
+import view.common.CommonMethods;
 import view.common.Language;
 import view.common.MessageDialog;
 import view.common.ReturnMessage;
@@ -56,6 +58,8 @@ public class ControlButtonPane extends BorderPane{
 	
 	private Button fullScreen;
 	private Button play;
+	private Button pause;
+	private Button run;
 	private Button stop;
 	private Button previousScene;
 	private Button nextScene;
@@ -119,12 +123,23 @@ public class ControlButtonPane extends BorderPane{
 		fullScreen.setId("full-button");
 		fullScreen.setTooltip(new Tooltip(Language.translate("full.screen")));
 		
+		run = new Button();
+		run.setDisable(true);
+		run.setId("run-button");
+		run.setTooltip(new Tooltip(Language.translate("run")));
+		
 		play = new Button();
+		play.setDisable(true);
 		play.setId("play-button");
 		play.setTooltip(new Tooltip(Language.translate("play")));
 		
+		pause = new Button();
+		pause.setDisable(true);
+		pause.setId("pause-button");
+		pause.setTooltip(new Tooltip(Language.translate("pause")));
+		
 		stop = new Button();
-		//stop.setDisable(true);
+		stop.setDisable(true);
 		stop.setId("stop-button");
 		stop.setTooltip(new Tooltip(Language.translate("stop")));
 		
@@ -146,7 +161,9 @@ public class ControlButtonPane extends BorderPane{
 		
 		centerButtonPane = new HBox();
 		centerButtonPane.setId("center-button-pane");
+		centerButtonPane.getChildren().add(run);
 		centerButtonPane.getChildren().add(play);
+		centerButtonPane.getChildren().add(pause);
 		centerButtonPane.getChildren().add(stop);
 		//centerButtonPane.getChildren().add(previousScene);
 		//centerButtonPane.getChildren().add(nextScene);
@@ -249,9 +266,19 @@ public class ControlButtonPane extends BorderPane{
 		});*/
 		
 		stop.setOnAction(new EventHandler<ActionEvent>() {			
-		    @Override public void handle(ActionEvent t) {		    	
+		    @Override public void handle(ActionEvent t) {
+		    	play.setDisable(false);
+		    	pause.setDisable(true);
+		    	stop.setDisable(true);
+		    	
 		    	webView.setVisible(false);	
 		    	selectedTemporalChainPane.resetPlayheadPosition();		    	
+		    }
+		});
+		
+		run.setOnAction(new EventHandler<ActionEvent>() {
+			@Override public void handle(ActionEvent t) {
+				CommonMethods.runApplication(spatialTemporalView);
 		    }
 		});
 
@@ -262,6 +289,15 @@ public class ControlButtonPane extends BorderPane{
 	}
 	public Button getPlayButton(){
 		return play;
+	}
+	public Button getRunButton(){
+		return run;
+	}
+	public Button getPauseButton(){
+		return pause;
+	}
+	public Button getStopButton(){
+		return stop;
 	}
 	public StackPane getScreen(){
 		return screen;

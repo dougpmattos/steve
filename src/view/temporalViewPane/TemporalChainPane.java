@@ -13,6 +13,7 @@ import java.util.logging.Logger;
 import org.xml.sax.SAXException;
 
 import javafx.animation.*;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -27,6 +28,7 @@ import javafx.scene.chart.XYChart;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.DataFormat;
 import javafx.scene.input.DragEvent;
@@ -84,7 +86,9 @@ public class TemporalChainPane extends StackPane implements Observer{
 	private ArrayList<ArrayList<TimeLineXYChartData>> timeLineXYChartDataLineList = new ArrayList<ArrayList<TimeLineXYChartData>>();
 	private StevePane stevePane;
 	private Tab parentTab;
-	private float playheadPosition = 0;
+	private boolean isPlaying = false;
+	private Double playheadPixelPosition = 0.0;
+	private Double currentTime = 0.0;
 	private boolean stopped = false;
 	
 	NumberAxis xAxis;
@@ -181,72 +185,265 @@ public class TemporalChainPane extends StackPane implements Observer{
 		
 		installEventHandler(screen);
 		
+		controlButtonPane.getPauseButton().setOnAction(new EventHandler<ActionEvent>() {
+			
+			@Override
+			public void handle(ActionEvent event) {	
+				
+				controlButtonPane.getStopButton().setDisable(false);
+				controlButtonPane.getPauseButton().setDisable(true);
+				controlButtonPane.getPlayButton().setDisable(false);
+				
+			}
+			
+		});
+		
 		controlButtonPane.getPlayButton().setOnAction(new EventHandler<ActionEvent>() {
 			
 			@Override
-			public void handle(ActionEvent event) {				
+			public void handle(ActionEvent event) {	
 				
-				controlButtonPane.runPreviewScreen(); // Roda as midias na tela 
-				final ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor(); // Anda com o Playhead
+				isPlaying = true;
+				currentTime = 0.0;
+				controlButtonPane.getStopButton().setDisable(false);
+				controlButtonPane.getPauseButton().setDisable(false);
+				controlButtonPane.getPlayButton().setDisable(true);
+				
+//				---TESTE
+				Runnable task = new Runnable()
+        		{
+        			public void run()
+        			{
+        				runTask();
+        			}
+        		};
+        		
+        		// Run the task in a background thread
+        		Thread backgroundThread = new Thread(task);
+        		// Terminate the running thread if the application exits
+        		backgroundThread.setDaemon(true);
+        		// Start the thread
+        		backgroundThread.start();
+//				----FIM TESTE
+		
+				/*//controlButtonPane.runPreviewScreen(); // Roda as midias na tela 
+				ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
 				
 				executorService.scheduleAtFixedRate(new Runnable() {
 		        @Override
 		        	public void run() {
+		        
+		        	//INFO Dado o tempo, obtenho pixel para transladar com o playhead
+		        	playheadPixelPosition = timeLineChart.getXAxis().getDisplayPosition(currentTime); 
+		        	playhead.setTranslateX(playheadPixelPosition);
+		        	currentTime = currentTime + 0.01;
+		        	System.out.println(currentTime);
+		     
+					DisplayPane displayPane = stevePane.getSpatialViewPane().getDisplayPane();
+					StackPane screen = displayPane.getScreen();
+					if(!screen.getChildren().isEmpty()){
+						screen.getChildren().clear();
+					}
+			
+//					for(Media media : temporalChainModel.getMediaAllList()){
+//		
+//						if(media.getBegin() <= currentTime && currentTime <= media.getEnd()){
+////							//TODO problema esta qui muito pesado a cada milisegindp atualizar: dimiuir a txa do execeute ou pesquisar sobre treah paralelas e desempenho
+//							Platform.runLater(new Runnable(){
+//
+//								@Override
+//								public void run() {
+//									ImageView mediaContent = getMediaContent(media);
+//									//setPresentationProperties(mediaContent);	
+//									screen.getChildren().add(mediaContent);
+//									
+//								}
+//								
+//							});
+//								
+//						}
+//				
+//					}
+					
+					//INFO quando chega em 10s, para
+//					if(currentTime >= 10){
+//		        		executorService.shutdownNow();
+//		        	}
+						
+//					----BRUNO-----
+		        	//Double playheadTime = timeLineChart.getXAxis().getValueForDisplay(newValue.doubleValue()).doubleValue();
 		        	
-			        	playheadPosition+=2.7;
-						playhead.setTranslateX(playheadPosition);
-						Media lastMedia = temporalChainModel.getMediaWithHighestEnd();
-						System.out.println("PlayheadPosition = "+playheadPosition/135 +" > "+lastMedia.getEnd()/5+" last media end");
-						if((playheadPosition/135 > lastMedia.getEnd()/5)||(stopped==true)){
-							System.out.println("PlayheadPosition = "+playheadPosition/135 +" > "+lastMedia.getEnd()/5+" last media end");
-							executorService.shutdownNow();
-							controlButtonPane.hideWebView();
-							playheadPosition = 0;
-							stopped = false;
-							playhead.setTranslateX(playheadPosition);
-							playhead.setVisible(true);
-						}
+//			        	playheadPosition+=0.27;
+//						playhead.setTranslateX(playheadPosition);
+//						Media lastMedia = temporalChainModel.getMediaWithHighestEnd();
+//						System.out.println("PlayheadPosition = "+playheadPosition/135 +" > "+lastMedia.getEnd()/5+" last media end");
+//						if((playheadPosition/13.5 > lastMedia.getEnd()/0.5)||(stopped==true)){
+//							System.out.println("PlayheadPosition = "+playheadPosition/135 +" > "+lastMedia.getEnd()/5+" last media end");
+//							executorService.shutdownNow();
+//							//controlButtonPane.hideWebView();
+//							playheadPosition = 0;
+//							stopped = false;
+//							playhead.setTranslateX(playheadPosition);
+//							playhead.setVisible(true);
+//						}
 			        }
-				}, 0, 100, TimeUnit.MILLISECONDS);
+			}, 0, 10, TimeUnit.MILLISECONDS);*/	
 								
 			}
 			
 		});		
 	}
+	
+	public void runTask() 
+	{
+		while(true){
+			try 
+			{
+				
+				//INFO Dado o tempo, obtenho pixel para transladar com o playhead
+		    	playheadPixelPosition = timeLineChart.getXAxis().getDisplayPosition(currentTime); 
+		    	playhead.setTranslateX(playheadPixelPosition);
+		    	currentTime = currentTime + 0.01;
+		    	System.out.println(currentTime);
+		 
+				DisplayPane displayPane = stevePane.getSpatialViewPane().getDisplayPane();
+				StackPane screen = displayPane.getScreen();
+//				if(!screen.getChildren().isEmpty()){
+//					screen.getChildren().clear();
+//				}
+
+				for(Media media : temporalChainModel.getMediaAllList()){
+
+					if(media.getBegin() <= currentTime && currentTime <= media.getEnd()){
+//						//TODO problema esta qui muito pesado a cada milisegindp atualizar: dimiuir a txa do execeute ou pesquisar sobre treah paralelas e desempenho
+						Platform.runLater(new Runnable(){
+
+							@Override
+							public void run() {
+								ImageView mediaContent = getMediaContent(media);
+								//setPresentationProperties(mediaContent);	
+								screen.getChildren().add(mediaContent);
+								
+							}
+							
+						});
+							
+					}
+			
+				}
+				Thread.sleep(10);
+				
+			}
+			catch (InterruptedException e) 
+			{
+				e.printStackTrace();
+			}
+		}
+
+	}
 		
 	
 	private void createListeners(){
 		
-		playhead.translateXProperty().addListener(new ChangeListener<Number>(){
+//		playhead.translateXProperty().addListener(new ChangeListener<Number>(){
+//
+//			@Override
+//			public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+////				
+////				if(isPlaying){
+////				
+////					DisplayPane displayPane = stevePane.getSpatialViewPane().getDisplayPane();
+////					StackPane screen = displayPane.getScreen();
+//////					if(!screen.getChildren().isEmpty()){
+//////						screen.getChildren().clear();
+//////					}
+////					
+////					Double playheadTime = timeLineChart.getXAxis().getValueForDisplay(newValue.doubleValue()).doubleValue();
+////			
+////					for(Media media : temporalChainModel.getMediaAllList()){
+////		
+////						if(media.getBegin() <= playheadTime && playheadTime <= media.getEnd()){
+////							
+////							ImageView mediaContent = getMediaContent(media);
+////							setPresentationProperties(mediaContent);	
+////							screen.getChildren().add(mediaContent);
+////							
+////						}
+////				
+////					}
+////					
+////				}
+//				
+//			}
+//			
+//		});
+		
+		indicativeLine.translateXProperty().addListener(new ChangeListener<Number>(){
 
 			@Override
 			public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
 				
-//				System.out.println(newValue);
-//				DisplayPane displayPane = stevePane.getSpatialViewPane().getDisplayPane();
-//				StackPane screen = displayPane.getScreen();
+				DisplayPane displayPane = stevePane.getSpatialViewPane().getDisplayPane();
+				StackPane screen = displayPane.getScreen();
+				screen.getChildren().clear();
 				
-				//TODO listener para a linha de play quando ela mudar de posicao. Para cada mudanca de posicao 
-				//pegar as midias que estao sobre a linha e exibir na tel conforme suas propriedades	
-				//for(Media media : temporalChainModel.getMediaAllList()){
-					
-//					screen.getChildren().clear();
-					//ArrayList<Media> media = temporalChainModel.getMediaAllList();
-					//Double d=media.getDuration();
-					//ImageView imageMedia = media.generateMediaIcon();
-
-					//temporalChainModel.getMasterMedia();				
-//					ImageView imageMedia = temporalChainModel.getMediaUnderThePlayLineList(newValue).generateMediaIcon();
-					//playhead.computeAreaInScreen();
-//					imageMedia.setFitWidth(300);	
-//					screen.getChildren().add(imageMedia);
-					//System.out.println(d);
-				//}
+				Double indicativeLine = timeLineChart.getXAxis().getValueForDisplay(newValue.doubleValue()).doubleValue();
+		
+				for(Media media : temporalChainModel.getMediaAllList()){
+	
+					if(media.getBegin() <= indicativeLine && indicativeLine <= media.getEnd()){
+						
+						ImageView mediaContent = getMediaContent(media);
+						setPresentationProperties(mediaContent);	
+						screen.getChildren().add(mediaContent);
+						
+					}
+			
+				}
 
 			}
 			
 		});
 		
+		
+	}
+	
+	private void setPresentationProperties(ImageView mediaContent){
+		//TODO formtar conteuco da midia de acordo com as propriedade de apresentação.
+		mediaContent.setFitWidth(300);
+	}
+	
+	private ImageView getMediaContent(Media media){
+		
+		ImageView mediaContent = null;
+		
+		switch(media.getMediaType()) {
+		   
+   		case IMAGE:
+//   			mediaContent = new ImageView(new Image("view/temporalViewPane/images/interactivity-button-hover.png"));
+   		mediaContent = media.generateMediaIcon();
+   			break;
+           
+		case VIDEO:
+			//TODO pegar o frame do instante do playhead no vídeo
+			break;
+           
+		case AUDIO:
+			//INFO símbolo de áudio apenas. Não tocar.
+			mediaContent = media.generateMediaIcon(); 
+			break; 
+       
+		case TEXT:
+			//TODO pegar o texto.
+			break;
+               
+		case APPLICATION:
+			mediaContent = media.generateMediaIcon();
+			break;                
+		}
+		
+		
+		return mediaContent; 
 		
 	}
 	
@@ -413,10 +610,15 @@ public class TemporalChainPane extends StackPane implements Observer{
 		Synchronous<Media> syncRelation;
 		Interactivity<Media, ?> interactivityRelation;
 		TemporalChain temporalChainModel;
+		DisplayPane displayPane = stevePane.getSpatialViewPane().getDisplayPane();
+		ControlButtonPane controlButtonPane = displayPane.getControlButtonPane();
 		
 		switch(operation.getOperator()){
 		
 			case ADD_TEMPORAL_CHAIN_MEDIA:
+				
+				controlButtonPane.getPlayButton().setDisable(false);
+				controlButtonPane.getRunButton().setDisable(false);
 				
 				media = (Media) operation.getOperating();
 				line = (int) operation.getArg();
@@ -429,6 +631,11 @@ public class TemporalChainPane extends StackPane implements Observer{
 				media = (Media) operation.getOperating();
 				line = (int) operation.getArg();
 	            removeTemporalChainMedia(media, line);
+	            
+	            if(serie.getData().isEmpty()){
+	            	controlButtonPane.getPlayButton().setDisable(true);
+	            	controlButtonPane.getRunButton().setDisable(true);
+	            }
 	            
 	            break;
 	            
@@ -653,9 +860,10 @@ public class TemporalChainPane extends StackPane implements Observer{
 	}
 	
 	public void resetPlayheadPosition(){
-		playhead.setTranslateX(0);
-		playheadPosition = 0;
 		stopped = true;
+		isPlaying = false;
+		playheadPixelPosition = 0.0;
+		playhead.setTranslateX(playheadPixelPosition);
 	}
 	
 	
