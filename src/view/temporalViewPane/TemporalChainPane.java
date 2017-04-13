@@ -23,6 +23,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.image.WritableImage;
 import javafx.scene.input.DataFormat;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
@@ -32,12 +33,15 @@ import javafx.scene.input.TransferMode;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.media.MediaPlayer;
+import javafx.scene.media.MediaView;
 import javafx.scene.shape.ClosePath;
 import javafx.scene.shape.LineTo;
 import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.Path;
 import javafx.scene.shape.PathElement;
 import javafx.scene.shape.VLineTo;
+import javafx.util.Duration;
 import model.common.Media;
 import model.common.SpatialTemporalView;
 import model.common.enums.MediaType;
@@ -82,6 +86,8 @@ public class TemporalChainPane extends StackPane implements Observer{
 	private Double playheadPixelPosition = 0.0;
 	private Double currentTime = 0.0;
 	private boolean stopped = false;
+	private boolean itHasMediaView = false;
+	private ImageView mediaContent;
 	
 	NumberAxis xAxis;
 	CategoryAxis yAxis;
@@ -255,9 +261,10 @@ public class TemporalChainPane extends StackPane implements Observer{
 
 							@Override
 							public void run() {
-								ImageView mediaContent = getMediaContent(media);
-								setPresentationProperties(mediaContent, media);	
-								screen.getChildren().add(mediaContent);
+								//ImageView mediaContent = getMediaContent(media);
+								getMediaContent(media);
+								//setPresentationProperties(mediaContent, media);	
+								//screen.getChildren().add(mediaContent);
 								
 							}
 							
@@ -323,18 +330,20 @@ public class TemporalChainPane extends StackPane implements Observer{
 				screen.getChildren().clear();
 				
 				Double indicativeLine = timeLineChart.getXAxis().getValueForDisplay(newValue.doubleValue()).doubleValue();
-		
-				for(Media media : temporalChainModel.getMediaAllList()){
-	
-					if(media.getBegin() <= indicativeLine && indicativeLine <= media.getEnd()){
+				if(!isPlaying){
+					for(Media media : temporalChainModel.getMediaAllList()){
 						
-						ImageView mediaContent = getMediaContent(media);
-						setPresentationProperties(mediaContent, media);	
-						screen.getChildren().add(mediaContent);
-						
+						if(media.getBegin() <= indicativeLine && indicativeLine <= media.getEnd()){
+							
+							getMediaContent(media);
+							//setPresentationProperties(mediaContent, media);	
+							//screen.getChildren().add(mediaContent);
+							
+						}
+				
 					}
-			
 				}
+				
 
 			}
 			
@@ -385,13 +394,14 @@ public class TemporalChainPane extends StackPane implements Observer{
 		}
 		
 	}
-	
-	private ImageView getMediaContent(Media media){
+
+
+	private void getMediaContent(Media media){
 		DisplayPane displayPane = stevePane.getSpatialViewPane().getDisplayPane();
 		ControlButtonPane controlButtonPane = displayPane.getControlButtonPane();
 		StackPane screen = displayPane.getScreen();
 		
-		ImageView mediaContent = null;
+		mediaContent = null;
 		
 		switch(media.getMediaType()) {
 		   
@@ -404,11 +414,102 @@ public class TemporalChainPane extends StackPane implements Observer{
    			image.setFitWidth(screen.getWidth());
    			image.setFitHeight(screen.getHeight());
    			mediaContent = image;	
+   			setPresentationProperties(mediaContent, media);	
+   			screen.getChildren().add(mediaContent);
    			break;
            
 		case VIDEO:
 			//TODO pegar o frame do instante do playhead no vídeo
-			mediaContent = media.generateMediaIcon();
+			//mediaContent = media.generateMediaIcon();
+			 
+			//Create a Media Player									
+//			URL mediaUrl = getClass().getResource(media.getFile().getAbsolutePath());		
+//			String mediaStringUrl = mediaUrl.toExternalForm();
+			
+			// Create a Media
+			String videoPath = media.getFile().getAbsolutePath();
+			String formatedPath = "file://" + videoPath.replace(" ", "%20");			
+			//URL mediaUrl = getClass().getResource(videoPath);
+			
+			javafx.scene.media.Media m = new javafx.scene.media.Media(formatedPath);
+			final MediaPlayer player = new MediaPlayer(m);
+			player.setAutoPlay(false);
+			MediaView mediaView = new MediaView(player);			
+			mediaView.setFitWidth(screen.getWidth());
+			mediaView.setFitHeight(screen.getHeight()); 
+			mediaView.setSmooth(true);					
+			//screen.getChildren().add(mediaView);
+		    
+		    //player.play();
+	    
+        	//player.play();
+		    
+        	Duration duration = new Duration(timeLineChart.getXAxis().getDisplayPosition(indicativeLine.translateXProperty().doubleValue()));
+        	player.seek(duration);
+        	
+        	int width = (int) screen.getWidth();
+            int height = (int) screen.getHeight();
+            WritableImage wim = new WritableImage(width, height);
+           
+            Runnable task = new Runnable()
+    		{
+    			public void run()
+    			{
+    				try {
+						Thread.sleep(1);
+						
+                        //player.stop();
+                        
+						Platform.runLater(new Runnable(){
+				    		@Override
+							public void run() {
+				    			mediaView.snapshot(null, wim);
+				    			mediaContent = new ImageView(wim);
+				    			
+				       			screen.getChildren().add(mediaContent);
+
+				    		}});
+                        
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+    				
+    			}
+    		};
+    		
+    		// Run the task in a background thread
+    		Thread backgroundThread = new Thread(task);
+    		// Terminate the running thread if the application exits
+    		backgroundThread.setDaemon(true);
+    		// Start the thread
+    		backgroundThread.start();
+
+//			player.setAutoPlay(false);
+//			player.setStartTime(new Duration(0));
+////			player.stop
+////			player.play();
+////			player.pause();
+//			//posicao de tempo que video comeca t0
+//			//posicao do tempo que estou no video t0 + (posicao do mouse - t0)
+//			Double t0 = media.getBegin();
+//			Double posMouse = timeLineChart.getXAxis().getDisplayPosition(indicativeLine.translateXProperty().doubleValue());
+//			Duration d = new Duration(posMouse);		
+//			
+////			System.out.println("Start = "+ player.startTimeProperty()+", Stop = "+player.stopTimeProperty());
+//			String status = player.statusProperty().toString();
+////			player.startTimeProperty();
+////			player.stopTimeProperty();
+//			System.out.println("Seek time= "+d+" , status = "+status);
+//			if(d.lessThan(player.startTimeProperty().getValue())){
+//				System.out.println("d = "+d.toString() +" < "+player.startTimeProperty().toString());
+//			}
+//			else {
+//				System.out.println("d = "+d.toString() +" > "+player.startTimeProperty().toString());
+//			}
+//			player.seek(d);
+			
+
 			break;
            
 		case AUDIO:
@@ -426,7 +527,7 @@ public class TemporalChainPane extends StackPane implements Observer{
 		}
 		
 		
-		return mediaContent; 
+//		return mediaContent; 
 		
 	}
 	
