@@ -1,19 +1,25 @@
 package view.temporalViewPane;
 
-import java.io.File;
+import java.awt.image.BufferedImage;
+import java.net.URL;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.imageio.ImageIO;
+
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Bounds;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.chart.CategoryAxis;
@@ -23,24 +29,26 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.image.WritableImage;
 import javafx.scene.input.DataFormat;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.media.MediaPlayer;
+import javafx.scene.media.MediaView;
 import javafx.scene.shape.ClosePath;
 import javafx.scene.shape.LineTo;
 import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.Path;
 import javafx.scene.shape.PathElement;
 import javafx.scene.shape.VLineTo;
+import javafx.util.Duration;
 import model.common.Media;
 import model.common.SpatialTemporalView;
-import model.common.enums.MediaType;
 import model.spatialView.enums.AspectRatio;
 import model.temporalView.Interactivity;
 import model.temporalView.Synchronous;
@@ -59,6 +67,7 @@ import controller.Controller;
 public class TemporalChainPane extends StackPane implements Observer{
 
 	private static final int DIFF_INDICATIVE_LINE_AND_TEMPORAL_NODE = 7;
+	private final int ICON_WIDTH = 40;
 
 	private static final double ARROW_DIFF = 7.5;
 
@@ -82,6 +91,8 @@ public class TemporalChainPane extends StackPane implements Observer{
 	private Double playheadPixelPosition = 0.0;
 	private Double currentTime = 0.0;
 	private boolean stopped = false;
+	private boolean itHasMediaView = false;
+	private Object mediaContent;
 	
 	NumberAxis xAxis;
 	CategoryAxis yAxis;
@@ -143,39 +154,11 @@ public class TemporalChainPane extends StackPane implements Observer{
     	this.controller = controller;
     	
      }
-	
-//	private static void myTask() {
-//	    System.out.println("Running");
-//	}
-//	
-	private void installEventHandler(final Node keyNode) {
-	    // handler for enter key press / release events, other keys are
-	    // handled by the parent (keyboard) node handler
-	    final EventHandler<KeyEvent> keyEventHandler =
-	        new EventHandler<KeyEvent>() {
-	            public void handle(final KeyEvent keyEvent) {
-//	                if (keyEvent.getCode() == KeyCode.ENTER) {
-//	                    setPressed(keyEvent.getEventType()
-//	                        == KeyEvent.KEY_PRESSED);
-//	 
-//	                    keyEvent.consume();
-//	                }
-	            	//System.out.println("KEY PRESSED\nKEY PRESSED\nKEY PRESSED\nKEY PRESSED\nKEY PRESSED\nKEY PRESSED\nKEY PRESSED\n");
-	            	playhead.setVisible(false);
-	            }
-	        };
-	 
-	    keyNode.setOnKeyPressed(keyEventHandler);
-	    keyNode.setOnKeyReleased(keyEventHandler);
-	}
 
 	private void createDisplayPaneButtonActions(){
 		
 		DisplayPane displayPane = stevePane.getSpatialViewPane().getDisplayPane();
 		ControlButtonPane controlButtonPane = displayPane.getControlButtonPane();
-		StackPane screen = displayPane.getScreen();
-		
-		installEventHandler(screen);
 		
 		controlButtonPane.getPauseButton().setOnAction(new EventHandler<ActionEvent>() {
 			
@@ -209,11 +192,8 @@ public class TemporalChainPane extends StackPane implements Observer{
         			}
         		};
         		
-        		// Run the task in a background thread
         		Thread backgroundThread = new Thread(task);
-        		// Terminate the running thread if the application exits
         		backgroundThread.setDaemon(true);
-        		// Start the thread
         		backgroundThread.start();
 								
 			}
@@ -221,60 +201,76 @@ public class TemporalChainPane extends StackPane implements Observer{
 		});		
 	}
 	
-	public void runTask() 
-	{
-		while(true){
-			try 
-			{
+	public void runTask() {
+		
+		while(true) {
+			
+			try {
 				
-				//INFO Dado o tempo, obtenho pixel para transladar com o playhead
 		    	playheadPixelPosition = timeLineChart.getXAxis().getDisplayPosition(currentTime); 
 		    	playhead.setTranslateX(playheadPixelPosition);
-//		    	currentTime = currentTime + 0.01;
 		    	currentTime = currentTime + 0.1;
 		    	System.out.println(currentTime);
 		 
 		    	DisplayPane displayPane = stevePane.getSpatialViewPane().getDisplayPane();
 				StackPane screen = displayPane.getScreen();
 				
-		    	Platform.runLater(new Runnable(){
-		    		@Override
-					public void run() {
-						if(!screen.getChildren().isEmpty()){
-							screen.getChildren().clear();
-						}
-		    		}
-		    	});
-		    	
-
 				for(Media media : temporalChainModel.getMediaAllList()){
 
 					if(media.getBegin() <= currentTime && currentTime <= media.getEnd()){
-//						//TODO problema esta qui muito pesado a cada milisegindp atualizar: dimiuir a txa do execeute ou pesquisar sobre treah paralelas e desempenho
-						Platform.runLater(new Runnable(){
+					
+						if(!media.getIsPLayingInPreview()){
+							
+							Platform.runLater(new Runnable(){
 
-							@Override
-							public void run() {
-								ImageView mediaContent = getMediaContent(media);
-								setPresentationProperties(mediaContent, media);	
-								screen.getChildren().add(mediaContent);
+								@Override
+								public void run() {
+									
+									media.setIsPLayingInPreview(true);
+									mediaContent = getMediaContent(media);
+									
+									if(mediaContent instanceof MediaView){
+										//setVideoPresentationProperties((MediaView) mediaContent, media);
+										screen.getChildren().add((MediaView) mediaContent);
+									} else if(mediaContent instanceof ImageView){
+										setImagePresentationProperties((ImageView) mediaContent, media);
+										screen.getChildren().add((ImageView) mediaContent);
+									}
 								
-							}
+								}
+								
+							});
 							
-						});
+						}
 							
+					} else{
+						
+						if(media.getIsPLayingInPreview()){
+							
+							Platform.runLater(new Runnable(){
+					    		@Override
+								public void run() {
+									
+					    			if(!screen.getChildren().isEmpty()){
+					    				screen.getChildren().remove(media.getExecutionObject());
+										media.setIsPLayingInPreview(false);
+					    			}
+	
+					    		}
+					    	});
+						}
+						
 					}
 			
 				}
 				Thread.sleep(100);
 				
 			}
-			catch (InterruptedException e) 
-			{
+			catch (InterruptedException e) {
 				e.printStackTrace();
 			}
 		}
-		
+
 	}
 		
 	
@@ -318,24 +314,45 @@ public class TemporalChainPane extends StackPane implements Observer{
 			@Override
 			public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
 				
-				DisplayPane displayPane = stevePane.getSpatialViewPane().getDisplayPane();
-				StackPane screen = displayPane.getScreen();
-				screen.getChildren().clear();
-				
-				Double indicativeLine = timeLineChart.getXAxis().getValueForDisplay(newValue.doubleValue()).doubleValue();
-		
-				for(Media media : temporalChainModel.getMediaAllList()){
-	
-					if(media.getBegin() <= indicativeLine && indicativeLine <= media.getEnd()){
-						
-						ImageView mediaContent = getMediaContent(media);
-						setPresentationProperties(mediaContent, media);	
-						screen.getChildren().add(mediaContent);
-						
-					}
-			
-				}
+				if(!isPlaying){
+					
+					Double indicativeLine = timeLineChart.getXAxis().getValueForDisplay(newValue.doubleValue()).doubleValue();
+					
+					DisplayPane displayPane = stevePane.getSpatialViewPane().getDisplayPane();
+					StackPane screen = displayPane.getScreen();
 
+					for(Media media : temporalChainModel.getMediaAllList()){
+						
+						if(media.getBegin() <= indicativeLine && indicativeLine <= media.getEnd()){
+							
+							if(!media.getIsPLayingInPreview()){
+				
+								media.setIsPLayingInPreview(true);
+								mediaContent = getMediaContent(media);
+								
+								if(mediaContent instanceof MediaView){
+									//setVideoPresentationProperties((MediaView) mediaContent, media);
+									screen.getChildren().add((MediaView) mediaContent);
+								} else if(mediaContent instanceof ImageView){
+									setImagePresentationProperties((ImageView) mediaContent, media);
+									screen.getChildren().add((ImageView) mediaContent);
+								}
+								
+							} 
+
+						}else {
+							
+							if(media.getIsPLayingInPreview()){
+									
+				    			if(!screen.getChildren().isEmpty()){
+				    				screen.getChildren().remove(media.getExecutionObject());
+									media.setIsPLayingInPreview(false);
+				    			}
+		
+							}	
+						}
+					}
+				}
 			}
 			
 		});
@@ -343,76 +360,160 @@ public class TemporalChainPane extends StackPane implements Observer{
 		
 	}
 	
-	public void setPresentationProperties(ImageView mediaContent, Media media){
-		//TODO formtar conteuco da midia de acordo com as propriedade de apresentação.
+	public void setImagePresentationProperties(ImageView mediaContent, Media media){
+	
+		DisplayPane displayPane = stevePane.getSpatialViewPane().getDisplayPane();
+		StackPane screen = displayPane.getScreen();
 		
-		if(media.getMediaType()==MediaType.IMAGE ){//|| media.getMediaType()==MediaType.VIDEO){
-			DisplayPane displayPane = stevePane.getSpatialViewPane().getDisplayPane();
-			ControlButtonPane controlButtonPane = displayPane.getControlButtonPane();
-			StackPane screen = displayPane.getScreen();
-			
-			double percentageHeight, percentageWidth, width, height; 
-			String temp;
-			String path = media.getFile().getAbsolutePath();
-   			File imageFile = new File(path);
-   			Image image = new Image(imageFile.toURI().toString());   		
-   			
+		double percentageHeight, percentageWidth, width, height; 
+		String temp;
+
+	    if(media.getPresentationProperty().getSizeProperty().getAspectRatio()==AspectRatio.SLICE){
+	    	mediaContent.setPreserveRatio(true);
+	    } else {
+	    	mediaContent.setPreserveRatio(false);
+	    }
 	    
-		    if(media.getPresentationProperty().getSizeProperty().getAspectRatio()==AspectRatio.SLICE){
-		    	mediaContent.setPreserveRatio(true);
-		    } else {
-		    	mediaContent.setPreserveRatio(false);
-		    }
-		    
-   			width = mediaContent.getFitWidth();
-			height = mediaContent.getFitHeight();			
-			
-			temp = media.getPresentationProperty().getSizeProperty().getHeight().replace("%", "");
-			
-			percentageHeight = Double.parseDouble(temp);
-			
-			double screenHeight = screen.getHeight()*(percentageHeight/100);
-			mediaContent.setFitHeight(screenHeight);
-			
+		width = mediaContent.getFitWidth();
+		height = mediaContent.getFitHeight();			
 		
-			temp = media.getPresentationProperty().getSizeProperty().getWidth().replace("%", "");			
-			percentageWidth = Double.parseDouble(temp);
-			double screenWidth = screen.getWidth()*(percentageWidth/100);
-			mediaContent.setFitWidth(screenWidth);
-		    
-			 
+		double left = Double.parseDouble(media.getPresentationProperty().getPositionProperty().getLeft().replace("%", ""));
+		double right = Double.parseDouble(media.getPresentationProperty().getPositionProperty().getRight().replace("%", ""));
+		double top = Double.parseDouble(media.getPresentationProperty().getPositionProperty().getTop().replace("%", ""));
+		double bottom = Double.parseDouble(media.getPresentationProperty().getPositionProperty().getBottom().replace("%", ""));		
+		
+		temp = media.getPresentationProperty().getSizeProperty().getHeight().replace("%", "");
+		if (Double.parseDouble(temp)!=0){
+			if(left==0){
+				left=0.1;
+				top=0.1;
+			}
+		}
+		percentageHeight = Double.parseDouble(temp);
+		double screenHeight = screen.getHeight()*(percentageHeight/100);
+		mediaContent.setFitHeight(screenHeight);
+		
+		temp = media.getPresentationProperty().getSizeProperty().getWidth().replace("%", "");			
+		if (Double.parseDouble(temp)!=0){
+			if(left==0){
+				left=0.1;
+				top=0.1;
+			}
+		}
+		percentageWidth = Double.parseDouble(temp);
+		double screenWidth = screen.getWidth()*(percentageWidth/100);
+		mediaContent.setFitWidth(screenWidth);
+	
+		//double borderLeft = mediaContent.prefHeight()/2;
+		//double borderDown = mediaContent.getFitHeight()/2;
+		int boundWidth = (int)mediaContent.getBoundsInParent().getWidth();
+        int boundHeight = (int)mediaContent.getBoundsInParent().getHeight();
+        	        	        
+        screenWidth = screen.getWidth();
+        screenHeight = screen.getHeight();
+        double xZero = (+screenWidth/2)-boundWidth/2;
+        
+		double dXRight = 0; //como definir?
+		if(right!=0){
+			dXRight = (right/100)*screenWidth; 
 			
+			mediaContent.setTranslateX(xZero-dXRight);
+		}
+        
+        xZero = (-screenWidth/2)+boundWidth/2;
+		double dXLeft = 0; //como definir?
+		if(left!=0){
+			dXLeft = (left/100)*screenWidth; 
+			
+			mediaContent.setTranslateX(xZero+dXLeft);
 		}
 		
+		double yZero = (screenHeight/2)-boundHeight/2;		
+		
+		double dYDown = 0; //como definir?
+		if(bottom!=0){
+			dYDown = (bottom/100)*screenHeight; 
+			
+			mediaContent.setTranslateY(yZero-dYDown);
+		}
+		
+		yZero = (-screenHeight/2)+boundHeight/2;
+		
+		double dXTop = 0; //como definir?
+		if(top!=0){
+			dXTop = (top/100)*screenHeight; 
+			
+			mediaContent.setTranslateY(yZero+dXTop);
+		}
+		
+		mediaContent.setTranslateZ(media.getPresentationProperty().getPositionProperty().getOrderZ());
+		double opacity = 1-(media.getPresentationProperty().getStyleProperty().getTransparency()/100);
+		mediaContent.setOpacity(opacity);
+		
 	}
-	
-	private ImageView getMediaContent(Media media){
+
+
+	private Object getMediaContent(Media media){
+
 		DisplayPane displayPane = stevePane.getSpatialViewPane().getDisplayPane();
 		ControlButtonPane controlButtonPane = displayPane.getControlButtonPane();
 		StackPane screen = displayPane.getScreen();
 		
-		ImageView mediaContent = null;
+		mediaContent = null;
 		
 		switch(media.getMediaType()) {
 		   
    		case IMAGE:
-
-   			String path = media.getFile().getAbsolutePath();
-   			File imageFile = new File(path);
-   			ImageView image = new ImageView(new Image(imageFile.toURI().toString()));
-   			Image img = new Image(imageFile.toURI().toString());
+   			
+   			ImageView image = new ImageView(new Image(media.getFile().toURI().toString()));
    			image.setFitWidth(screen.getWidth());
    			image.setFitHeight(screen.getHeight());
-   			mediaContent = image;	
+   			image.setSmooth(false);
+   			mediaContent = image;
+   			media.setExecutionObject(mediaContent);
    			break;
            
 		case VIDEO:
-			//TODO pegar o frame do instante do playhead no vídeo
-			mediaContent = media.generateMediaIcon();
+
+			URL mediaUrl = getClass().getResource("Test.mp4");
+//			URL mediaUrl = getClass().getResource(media.getFile().getAbsolutePath());
+			String mediaStringUrl = mediaUrl.toExternalForm();
+			final javafx.scene.media.Media m = new javafx.scene.media.Media(mediaStringUrl);
+			final MediaPlayer player = new MediaPlayer(m);
+			MediaView mediaView = new MediaView(player);
+			mediaView.setFitWidth(screen.getWidth());
+			mediaView.setFitHeight(screen.getHeight()); 
+			mediaView.setSmooth(true);
+			
+			if(isPlaying){
+				player.play();
+				mediaContent = mediaView;
+			} else {
+				mediaContent = mediaView;
+				
+				player.statusProperty().addListener(new ChangeListener<MediaPlayer.Status>() {
+							
+				    public void changed(ObservableValue<? extends MediaPlayer.Status> ov,
+				            final MediaPlayer.Status oldStatus, final MediaPlayer.Status newStatus) {
+				    	
+				    	Double frameMillisTime = (media.getDuration()/2)*1000;
+						System.out.println(frameMillisTime.intValue());
+				    	Duration duration = new Duration(frameMillisTime.intValue()); 
+				    	player.seek(duration);
+				    	
+				    }
+				});
+			}
+			media.setExecutionObject(mediaContent);
+			
 			break;
            
 		case AUDIO:
 			//INFO símbolo de áudio apenas. Não tocar.
+			ImageView imageAudio = new ImageView(new Image(getClass().getResourceAsStream("/view/repositoryPane/images/audioNode.png")));
+			imageAudio.setPreserveRatio(true);
+			imageAudio.setSmooth(true);
+			imageAudio.setFitWidth(ICON_WIDTH);
 			mediaContent = media.generateMediaIcon(); 
 			break; 
        
