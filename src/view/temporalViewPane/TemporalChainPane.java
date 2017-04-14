@@ -1,19 +1,25 @@
 package view.temporalViewPane;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.imageio.ImageIO;
+
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Bounds;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.chart.CategoryAxis;
@@ -87,7 +93,7 @@ public class TemporalChainPane extends StackPane implements Observer{
 	private Double currentTime = 0.0;
 	private boolean stopped = false;
 	private boolean itHasMediaView = false;
-	private ImageView mediaContent;
+	private ImageView mediaContent= new ImageView();
 	
 	NumberAxis xAxis;
 	CategoryAxis yAxis;
@@ -377,9 +383,7 @@ public class TemporalChainPane extends StackPane implements Observer{
 			height = mediaContent.getFitHeight();			
 			
 			temp = media.getPresentationProperty().getSizeProperty().getHeight().replace("%", "");
-			
 			percentageHeight = Double.parseDouble(temp);
-			
 			double screenHeight = screen.getHeight()*(percentageHeight/100);
 			mediaContent.setFitHeight(screenHeight);
 			
@@ -388,12 +392,70 @@ public class TemporalChainPane extends StackPane implements Observer{
 			percentageWidth = Double.parseDouble(temp);
 			double screenWidth = screen.getWidth()*(percentageWidth/100);
 			mediaContent.setFitWidth(screenWidth);
-		    
-			 
+						
+			double left = Double.parseDouble(media.getPresentationProperty().getPositionProperty().getLeft().replace("%", ""));
+			double right = Double.parseDouble(media.getPresentationProperty().getPositionProperty().getRight().replace("%", ""));
+			double top = Double.parseDouble(media.getPresentationProperty().getPositionProperty().getTop().replace("%", ""));
+			double bottom = Double.parseDouble(media.getPresentationProperty().getPositionProperty().getBottom().replace("%", ""));		
+			
+			//double borderLeft = mediaContent.prefHeight()/2;
+			//double borderDown = mediaContent.getFitHeight()/2;
+			int boundWidth = (int)mediaContent.getBoundsInParent().getWidth();
+	        int boundHeight = (int)mediaContent.getBoundsInParent().getHeight();
+	        	        	        
+	        screenWidth = screen.getWidth();
+	        screenHeight = screen.getHeight();
+	        double xZero = (+screenWidth/2)-boundWidth/2;
+	        
+			double dXRight = 0; //como definir?
+			if(right!=0){
+				dXRight = (right/100)*screenWidth; 
+				
+				mediaContent.setTranslateX(xZero-dXRight);
+			}
+	        
+	        xZero = (-screenWidth/2)+boundWidth/2;
+			double dXLeft = 0; //como definir?
+			if(left!=0){
+				dXLeft = (left/100)*screenWidth; 
+				
+				mediaContent.setTranslateX(xZero+dXLeft);
+			}
+			
+			double yZero = (screenHeight/2)-boundHeight/2;		
+			
+			double dYDown = 0; //como definir?
+			if(bottom!=0){
+				dYDown = (bottom/100)*screenHeight; 
+				
+				mediaContent.setTranslateY(yZero-dYDown);
+			}
+			
+			yZero = (-screenHeight/2)+boundHeight/2;
+			
+			double dXTop = 0; //como definir?
+			if(top!=0){
+				dXTop = (top/100)*screenHeight; 
+				
+				mediaContent.setTranslateY(yZero+dXTop);
+			}
+			
+			mediaContent.setTranslateZ(media.getPresentationProperty().getPositionProperty().getOrderZ());
+			double opacity = 1-(media.getPresentationProperty().getStyleProperty().getTransparency()/100);
+			mediaContent.setOpacity(opacity);
 			
 		}
 		
 	}
+	public static void saveToFile(Image image) {
+	    File outputFile = new File("test");
+	    BufferedImage bImage = SwingFXUtils.fromFXImage(image, null);
+	    try {
+	      ImageIO.write(bImage, "png", outputFile);
+	    } catch (IOException e) {
+	      throw new RuntimeException(e);
+	    }
+	  }
 
 
 	private void getMediaContent(Media media){
@@ -444,12 +506,9 @@ public class TemporalChainPane extends StackPane implements Observer{
 	    
         	//player.play();
 		    
-        	Duration duration = new Duration(timeLineChart.getXAxis().getDisplayPosition(indicativeLine.translateXProperty().doubleValue()));
-        	player.seek(duration);
         	
-        	int width = (int) screen.getWidth();
-            int height = (int) screen.getHeight();
-            WritableImage wim = new WritableImage(width, height);
+        	
+        	
            
             Runnable task = new Runnable()
     		{
@@ -463,8 +522,19 @@ public class TemporalChainPane extends StackPane implements Observer{
 						Platform.runLater(new Runnable(){
 				    		@Override
 							public void run() {
+				    			Duration duration = new Duration(timeLineChart.getXAxis().getDisplayPosition(indicativeLine.translateXProperty().doubleValue()));
+				            	System.out.println(duration);
+				            	player.seek(duration);
+				            	player.getMedia().getHeight();
+				    			int width = player.getMedia().getWidth();
+				                int height =player.getMedia().getHeight();
+				                
+				                WritableImage wim = new WritableImage(width, height);
 				    			mediaView.snapshot(null, wim);
-				    			mediaContent = new ImageView(wim);
+				    			saveToFile(wim);
+
+				    			mediaContent = new ImageView();
+				    			mediaContent.setImage(wim);
 				    			
 				       			screen.getChildren().add(mediaContent);
 
