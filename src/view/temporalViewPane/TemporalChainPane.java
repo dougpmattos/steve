@@ -1,25 +1,19 @@
 package view.temporalViewPane;
 
-import java.awt.image.BufferedImage;
 import java.net.URL;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.imageio.ImageIO;
-
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.geometry.Bounds;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.chart.CategoryAxis;
@@ -29,7 +23,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.image.WritableImage;
 import javafx.scene.input.DataFormat;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
@@ -93,7 +86,7 @@ public class TemporalChainPane extends StackPane implements Observer{
 	private boolean stopped = false;
 	private boolean itHasMediaView = false;
 	private Object mediaContent;
-	
+
 	NumberAxis xAxis;
 	CategoryAxis yAxis;
 	
@@ -218,7 +211,7 @@ public class TemporalChainPane extends StackPane implements Observer{
 				for(Media media : temporalChainModel.getMediaAllList()){
 
 					if(media.getBegin() <= currentTime && currentTime <= media.getEnd()){
-					
+						
 						if(!media.getIsPLayingInPreview()){
 							
 							Platform.runLater(new Runnable(){
@@ -235,8 +228,7 @@ public class TemporalChainPane extends StackPane implements Observer{
 									} else if(mediaContent instanceof ImageView){
 										setImagePresentationProperties((ImageView) mediaContent, media);
 										screen.getChildren().add((ImageView) mediaContent);
-									}
-								
+									}								
 								}
 								
 							});
@@ -269,8 +261,8 @@ public class TemporalChainPane extends StackPane implements Observer{
 			catch (InterruptedException e) {
 				e.printStackTrace();
 			}
+		
 		}
-
 	}
 		
 	
@@ -353,6 +345,7 @@ public class TemporalChainPane extends StackPane implements Observer{
 						}
 					}
 				}
+
 			}
 			
 		});
@@ -433,12 +426,11 @@ public class TemporalChainPane extends StackPane implements Observer{
 		double dYDown = 0; //como definir?
 		if(bottom!=0){
 			dYDown = (bottom/100)*screenHeight; 
-			
 			mediaContent.setTranslateY(yZero-dYDown);
 		}
 		
 		yZero = (-screenHeight/2)+boundHeight/2;
-		
+
 		double dXTop = 0; //como definir?
 		if(top!=0){
 			dXTop = (top/100)*screenHeight; 
@@ -449,9 +441,8 @@ public class TemporalChainPane extends StackPane implements Observer{
 		mediaContent.setTranslateZ(media.getPresentationProperty().getPositionProperty().getOrderZ());
 		double opacity = 1-(media.getPresentationProperty().getStyleProperty().getTransparency()/100);
 		mediaContent.setOpacity(opacity);
-		
+	
 	}
-
 
 	private Object getMediaContent(Media media){
 
@@ -505,9 +496,8 @@ public class TemporalChainPane extends StackPane implements Observer{
 				});
 			}
 			media.setExecutionObject(mediaContent);
-			
-			break;
-           
+   			break;
+
 		case AUDIO:
 			//INFO símbolo de áudio apenas. Não tocar.
 			ImageView imageAudio = new ImageView(new Image(getClass().getResourceAsStream("/view/repositoryPane/images/audioNode.png")));
