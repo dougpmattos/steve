@@ -380,23 +380,37 @@ public class TemporalChainPane extends StackPane implements Observer{
 		    }
 		    
    			width = mediaContent.getFitWidth();
-			height = mediaContent.getFitHeight();			
+			height = mediaContent.getFitHeight();		
+			
+			double left = Double.parseDouble(media.getPresentationProperty().getPositionProperty().getLeft().replace("%", ""));
+			double right = Double.parseDouble(media.getPresentationProperty().getPositionProperty().getRight().replace("%", ""));
+			double top = Double.parseDouble(media.getPresentationProperty().getPositionProperty().getTop().replace("%", ""));
+			double bottom = Double.parseDouble(media.getPresentationProperty().getPositionProperty().getBottom().replace("%", ""));		
+			
 			
 			temp = media.getPresentationProperty().getSizeProperty().getHeight().replace("%", "");
+			if (Double.parseDouble(temp)!=0){
+				if(left==0){
+					left=0.1;
+					top=0.1;
+				}
+			}
 			percentageHeight = Double.parseDouble(temp);
 			double screenHeight = screen.getHeight()*(percentageHeight/100);
 			mediaContent.setFitHeight(screenHeight);
 			
 		
-			temp = media.getPresentationProperty().getSizeProperty().getWidth().replace("%", "");			
+			temp = media.getPresentationProperty().getSizeProperty().getWidth().replace("%", "");		
+			if (Double.parseDouble(temp)!=0){
+				if(left==0){
+					left=0.1;
+					top=0.1;
+				}
+			}
 			percentageWidth = Double.parseDouble(temp);
 			double screenWidth = screen.getWidth()*(percentageWidth/100);
 			mediaContent.setFitWidth(screenWidth);
 						
-			double left = Double.parseDouble(media.getPresentationProperty().getPositionProperty().getLeft().replace("%", ""));
-			double right = Double.parseDouble(media.getPresentationProperty().getPositionProperty().getRight().replace("%", ""));
-			double top = Double.parseDouble(media.getPresentationProperty().getPositionProperty().getTop().replace("%", ""));
-			double bottom = Double.parseDouble(media.getPresentationProperty().getPositionProperty().getBottom().replace("%", ""));		
 			
 			//double borderLeft = mediaContent.prefHeight()/2;
 			//double borderDown = mediaContent.getFitHeight()/2;
