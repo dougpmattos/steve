@@ -19,7 +19,6 @@ import javafx.scene.Node;
 import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
-import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -28,9 +27,7 @@ import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
 import javafx.scene.shape.ClosePath;
@@ -82,11 +79,14 @@ public class TemporalChainPane extends StackPane implements Observer{
 	private Tab parentTab;
 	private boolean isPlaying = false;
 	private Double playheadPixelPosition = 0.0;
-	private Double currentTime = 0.0;
-	private boolean stopped = false;
+	private Double currentTime;
 	private boolean itHasMediaView = false;
+	private Boolean hasStopped = false;
+	private Boolean hasPaused = false;
 	private Object mediaContent;
-
+	private DisplayPane displayPane;
+	private ControlButtonPane controlButtonPane;
+	private StackPane screen;
 	NumberAxis xAxis;
 	CategoryAxis yAxis;
 	
@@ -133,6 +133,10 @@ public class TemporalChainPane extends StackPane implements Observer{
 				}
 			}
 	    });
+    	
+    	displayPane = stevePane.getSpatialViewPane().getDisplayPane();
+		controlButtonPane = displayPane.getControlButtonPane();
+		screen = displayPane.getScreen();
 
     	createDragAndDropEvent();
     	createMouseEvent();
@@ -153,6 +157,35 @@ public class TemporalChainPane extends StackPane implements Observer{
 		DisplayPane displayPane = stevePane.getSpatialViewPane().getDisplayPane();
 		ControlButtonPane controlButtonPane = displayPane.getControlButtonPane();
 		
+		controlButtonPane.getStopButton().setOnAction(new EventHandler<ActionEvent>() {
+			
+			@Override
+			public void handle(ActionEvent event) {	
+				
+				controlButtonPane.getStopButton().setDisable(true);
+				controlButtonPane.getPauseButton().setDisable(true);
+				controlButtonPane.getPlayButton().setDisable(false);
+
+	    		playhead.setTranslateX(timeLineChart.getXAxis().getDisplayPosition(0));
+	    		hasStopped = true;
+	    		hasPaused = false;
+	    		isPlaying = false;
+	    		for(Media media : temporalChainModel.getMediaAllList()){
+	    			media.setIsPLayingInPreview(false);
+	    		}
+	    		
+	    		Platform.runLater(new Runnable() {
+					@Override
+					public void run() {
+						screen.getChildren().clear();
+					}
+				});
+
+			}
+			
+		});
+		
+
 		controlButtonPane.getPauseButton().setOnAction(new EventHandler<ActionEvent>() {
 			
 			@Override
@@ -162,6 +195,16 @@ public class TemporalChainPane extends StackPane implements Observer{
 				controlButtonPane.getPauseButton().setDisable(true);
 				controlButtonPane.getPlayButton().setDisable(false);
 				
+	    		hasPaused = true;
+	    		isPlaying = false;
+	    		
+	    		for(Node executionObject : screen.getChildren()){
+	    			if(executionObject instanceof MediaView){
+	    				MediaView currentMediaView = (MediaView) executionObject;
+	    				currentMediaView.getMediaPlayer().pause();
+	    			}
+	    		}
+	    	
 			}
 			
 		});
@@ -172,7 +215,20 @@ public class TemporalChainPane extends StackPane implements Observer{
 			public void handle(ActionEvent event) {	
 				
 				isPlaying = true;
-				currentTime = 0.0;
+				hasStopped = false;
+				currentTime = timeLineChart.getXAxis().getValueForDisplay(playhead.getTranslateX()).doubleValue();
+				if(hasPaused) {
+					for(Node executionObject : screen.getChildren()){
+		    			if(executionObject instanceof MediaView){
+		    				MediaView currentMediaView = (MediaView) executionObject;
+		    				Duration currentMillisDuration = new Duration(currentTime*1000);
+		    				currentMediaView.getMediaPlayer().seek(currentMillisDuration);
+		    				currentMediaView.getMediaPlayer().play();
+		    			}
+		    		}
+				}
+				hasPaused = false;
+
 				controlButtonPane.getStopButton().setDisable(false);
 				controlButtonPane.getPauseButton().setDisable(false);
 				controlButtonPane.getPlayButton().setDisable(true);
@@ -196,7 +252,7 @@ public class TemporalChainPane extends StackPane implements Observer{
 	
 	public void runTask() {
 		
-		while(true) {
+		while(true && !hasStopped && !hasPaused) {
 			
 			try {
 				
@@ -205,6 +261,15 @@ public class TemporalChainPane extends StackPane implements Observer{
 		    	currentTime = currentTime + 0.1;
 		    	System.out.println(currentTime);
 		 
+		    	if(currentTime > temporalChainModel.getMediaWithHighestEnd().getEnd()){
+		    		controlButtonPane.getStopButton().fire();
+		    		hasStopped = true;
+		    		isPlaying = false;
+		    		for(Media media : temporalChainModel.getMediaAllList()){
+		    			media.setIsPLayingInPreview(false);
+		    		}
+		    	}
+		    	
 		    	DisplayPane displayPane = stevePane.getSpatialViewPane().getDisplayPane();
 				StackPane screen = displayPane.getScreen();
 				
@@ -306,7 +371,7 @@ public class TemporalChainPane extends StackPane implements Observer{
 			@Override
 			public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
 				
-				if(!isPlaying){
+				if(!isPlaying && !hasPaused) {
 					
 					Double indicativeLine = timeLineChart.getXAxis().getValueForDisplay(newValue.doubleValue()).doubleValue();
 					
@@ -446,10 +511,6 @@ public class TemporalChainPane extends StackPane implements Observer{
 
 	private Object getMediaContent(Media media){
 
-		DisplayPane displayPane = stevePane.getSpatialViewPane().getDisplayPane();
-		ControlButtonPane controlButtonPane = displayPane.getControlButtonPane();
-		StackPane screen = displayPane.getScreen();
-		
 		mediaContent = null;
 		
 		switch(media.getMediaType()) {
@@ -647,7 +708,19 @@ public class TemporalChainPane extends StackPane implements Observer{
 		setOnMouseExited(new EventHandler<MouseEvent>() {
 			
 			public void handle(MouseEvent mouseEvent) {
+				
 				getChildren().remove(indicativeLine);
+				
+				if(hasStopped){
+					for(Media media : temporalChainModel.getMediaAllList()){
+		    			media.setIsPLayingInPreview(false);
+		    		}
+				}
+				
+				if(!isPlaying && !hasPaused){
+					screen.getChildren().clear();
+				}
+
 			}
 	    });
 		
@@ -800,7 +873,7 @@ public class TemporalChainPane extends StackPane implements Observer{
 		
 			case STARTS:
 	
-				for(XYChart.Data<Number, String> xyChartData : getSerie().getData()){
+				/*for(XYChart.Data<Number, String> xyChartData : getSerie().getData()){
 					
 					HBox containerNode = (HBox) xyChartData.getNode();
 					VBox nameInteractiveIconContainer = (VBox) containerNode.getChildren().get(1);
@@ -843,7 +916,7 @@ public class TemporalChainPane extends StackPane implements Observer{
 //						
 //					}
 					
-				}
+				}*/
 				
 				break;
 				
@@ -932,13 +1005,5 @@ public class TemporalChainPane extends StackPane implements Observer{
 	public Tab getParentTab(){
 		return parentTab;
 	}
-	
-	public void resetPlayheadPosition(){
-		stopped = true;
-		isPlaying = false;
-		playheadPixelPosition = 0.0;
-		playhead.setTranslateX(playheadPixelPosition);
-	}
-	
 	
 }
