@@ -15,6 +15,7 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
+import javafx.scene.DepthTest;
 import javafx.scene.Node;
 import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.NumberAxis;
@@ -392,7 +393,7 @@ public class TemporalChainPane extends StackPane implements Observer{
 									screen.getChildren().add((MediaView) mediaContent);
 								} else if(mediaContent instanceof ImageView){
 									setImagePresentationProperties((ImageView) mediaContent, media);
-									screen.getChildren().add((ImageView) mediaContent);
+									screen.getChildren().add((int) ((ImageView) mediaContent).getTranslateZ(),(ImageView) mediaContent);
 								}
 								
 							} 
@@ -423,7 +424,7 @@ public class TemporalChainPane extends StackPane implements Observer{
 		DisplayPane displayPane = stevePane.getSpatialViewPane().getDisplayPane();
 		StackPane screen = displayPane.getScreen();
 		
-		double percentageHeight, percentageWidth, width, height; 
+		double percentageHeight, percentageWidth; 
 		String temp;
 
 	    if(media.getPresentationProperty().getSizeProperty().getAspectRatio()==AspectRatio.SLICE){
@@ -431,18 +432,15 @@ public class TemporalChainPane extends StackPane implements Observer{
 	    } else {
 	    	mediaContent.setPreserveRatio(false);
 	    }
-	    
-		width = mediaContent.getFitWidth();
-		height = mediaContent.getFitHeight();			
-		
+	    		
 		double left = Double.parseDouble(media.getPresentationProperty().getPositionProperty().getLeft().replace("%", ""));
 		double right = Double.parseDouble(media.getPresentationProperty().getPositionProperty().getRight().replace("%", ""));
 		double top = Double.parseDouble(media.getPresentationProperty().getPositionProperty().getTop().replace("%", ""));
 		double bottom = Double.parseDouble(media.getPresentationProperty().getPositionProperty().getBottom().replace("%", ""));		
 		
 		temp = media.getPresentationProperty().getSizeProperty().getHeight().replace("%", "");
-		if (Double.parseDouble(temp)!=0){
-			if(left==0){
+		if (Double.parseDouble(temp)!=100){
+			if(((left==0)&&(top==0))&&((right==0)&&(bottom==0))){
 				left=0.1;
 				top=0.1;
 			}
@@ -452,8 +450,8 @@ public class TemporalChainPane extends StackPane implements Observer{
 		mediaContent.setFitHeight(screenHeight);
 		
 		temp = media.getPresentationProperty().getSizeProperty().getWidth().replace("%", "");			
-		if (Double.parseDouble(temp)!=0){
-			if(left==0){
+		if (Double.parseDouble(temp)!=100){
+			if(((left==0)&&(top==0))&&((right==0)&&(bottom==0))){
 				left=0.1;
 				top=0.1;
 			}
@@ -474,7 +472,7 @@ public class TemporalChainPane extends StackPane implements Observer{
 		double dXRight = 0; //como definir?
 		if(right!=0){
 			dXRight = (right/100)*screenWidth; 
-			
+			//System.out.println("xZero+dXRight = "+(xZero-dXRight));
 			mediaContent.setTranslateX(xZero-dXRight);
 		}
         
@@ -482,7 +480,7 @@ public class TemporalChainPane extends StackPane implements Observer{
 		double dXLeft = 0; //como definir?
 		if(left!=0){
 			dXLeft = (left/100)*screenWidth; 
-			
+			//System.out.println("xZero+dXLeft = "+(xZero+dXLeft));
 			mediaContent.setTranslateX(xZero+dXLeft);
 		}
 		
@@ -491,21 +489,29 @@ public class TemporalChainPane extends StackPane implements Observer{
 		double dYDown = 0; //como definir?
 		if(bottom!=0){
 			dYDown = (bottom/100)*screenHeight; 
+			//System.out.println("yZero-dYDown = "+(yZero-dYDown));
 			mediaContent.setTranslateY(yZero-dYDown);
 		}
 		
 		yZero = (-screenHeight/2)+boundHeight/2;
 
-		double dXTop = 0; //como definir?
+		double dYTop = 0; //como definir?
 		if(top!=0){
-			dXTop = (top/100)*screenHeight; 
+			dYTop = (top/100)*screenHeight; 
+			//System.out.println("yZero+dYTop = "+(yZero+dYTop));
+			mediaContent.setTranslateY(yZero+dYTop);
 			
-			mediaContent.setTranslateY(yZero+dXTop);
 		}
-		
+
+//		System.out.println(media.getPresentationProperty().getPositionProperty().getOrderZ());
+//				System.out.println(mediaContent.getTranslateZ());
+		mediaContent.setDepthTest(DepthTest.ENABLE);
 		mediaContent.setTranslateZ(media.getPresentationProperty().getPositionProperty().getOrderZ());
+		
+		
 		double opacity = 1-(media.getPresentationProperty().getStyleProperty().getTransparency()/100);
 		mediaContent.setOpacity(opacity);
+		
 	
 	}
 
