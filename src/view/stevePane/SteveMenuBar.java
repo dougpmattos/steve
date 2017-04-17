@@ -150,10 +150,10 @@ public class SteveMenuBar extends MenuBar{
 		menuItemAbout.setOnAction(new EventHandler<ActionEvent>() {
 		    public void handle(ActionEvent t) {
 		    	
-		    	MessageDialog messageDialog = new MessageDialog("STEVE", "Spatio-Temporal View Editor - Version 2.1-0" + "\n"
+		    	MessageDialog messageDialog = new MessageDialog("STEVE", "Spatio-Temporal View Editor - Version 3.0-0" + "\n"
 		    			+ "Copyright 2017 Douglas Paulo de Mattos. MidiaCom Lab. UFF." + "\n"
 		    			+ "All rights reserved." + "\n"
-		    			+ "This product includes software developed by other MidiaCom Lab projects. This projects are aNa and NCL4WEB." + "\n"
+		    			+ "This product includes software developed by other MidiaCom Lab projects (aNa and NCL4WEB)." + "\n"
 		    			+ "https://www.aNa.com.br" + "\n"
 		    			+ "https://www.NCL4WEB.com.br", "OK", 300);
 	            messageDialog.showAndWait();

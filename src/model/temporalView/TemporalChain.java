@@ -3,19 +3,17 @@ package model.temporalView;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Observable;
-import java.util.logging.Level;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import model.HTMLSupport.HTMLExportEventHandler;
 import model.common.Media;
 import model.temporalView.enums.AllenRelation;
 import model.temporalView.enums.ConflictType;
 import model.temporalView.enums.TemporalRelationType;
 import model.temporalView.enums.TemporalViewOperator;
 import model.utility.Operation;
-import view.common.InputDialog;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import view.common.Language;
 import view.common.MessageDialog;
 import view.temporalViewPane.TemporalChainPane;
@@ -219,26 +217,6 @@ public class TemporalChain extends Observable implements Serializable {
 		
 	}
 	
-	private int getMediaLine(Media media){
-		
-		int line = 0;
-    	Boolean removed = false;
-		
-    	while(line < mediaLineList.size()){
-    		
-    		ArrayList<Media> mediaList = mediaLineList.get(line);
-    		
-    		if(mediaList.contains(media)){
-    			return line;
-    		}
-    		line++;
-    		
-    	}
-    	
-    	return -1;
-		
-	}
-	
 	private Media getMediaWithLowestBegin() {
 		
 		Media mediaWithLowestBegin = null;
@@ -268,9 +246,7 @@ public class TemporalChain extends Observable implements Serializable {
 			mediaWithHighestEnd = mediaAllList.get(mediaAllList.size()-1);
 		}
 		
-		for(int i=1; i < mediaAllList.size(); i++){
-			
-			Media media = mediaAllList.get(i);
+		for(Media media : mediaAllList){
 			
 			if(media.getEnd() > mediaWithHighestEnd.getEnd()){
 				mediaWithHighestEnd = media;

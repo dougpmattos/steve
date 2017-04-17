@@ -635,7 +635,7 @@ public class NCLExportEventHandler implements EventHandler<ActionEvent>{
 					conditionNCLBind.setComponent(nclBody.findNode(interactivityRelation.getMasterMedia().getNCLName()));
 					NCLBindParam nclBindParam = new NCLBindParam();
 					nclBindParam.setName(importedNCLCausalConnector.getConnectorParam("interactivityKey"));
-					nclBindParam.setValue(interactivityRelation.getInteractivityKey());
+					nclBindParam.setValue(interactivityRelation.getInteractivityKey().toString().toUpperCase());
 					conditionNCLBind.addBindParam(nclBindParam);			
 					nclLink.addBind(conditionNCLBind);
 					

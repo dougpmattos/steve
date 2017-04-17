@@ -84,13 +84,22 @@ public class RepositoryMediaItemContainer extends BorderPane implements view.com
 	        	for(Tab temporalTab : temporalViewPane.getTemporalChainTabPane().getTabs()){
 	        		
 	        		TemporalChainPane temporalChainPane = (TemporalChainPane) temporalTab.getContent();
+	        		temporalChainPane.getParentTab().setStyle(null);
+	        		
 					for(ArrayList<TimeLineXYChartData> timeLineXYChartDataList : temporalChainPane.getTimeLineXYChartDataLineList()){
 						for(TimeLineXYChartData timeLineXYChartData : timeLineXYChartDataList){
-							if(timeLineXYChartData.getContainerNode().getStylesheets().remove("view/temporalViewPane/styles/mousePressedSlaveTemporalMediaNode.css") ||
-							   timeLineXYChartData.getContainerNode().getStylesheets().remove("view/temporalViewPane/styles/mousePressedTemporalMediaNode.css")){
-								
+							boolean styleRemoved = false;
+							if(timeLineXYChartData.getContainerNode().getStylesheets().remove("view/temporalViewPane/styles/mousePressedSlaveTemporalMediaNode.css")){
+								styleRemoved = true;
+							}
+							if(timeLineXYChartData.getContainerNode().getStylesheets().remove("view/temporalViewPane/styles/mousePressedTemporalMediaNode.css")){
+								styleRemoved = true;
+							}
+							if(timeLineXYChartData.getContainerNode().getStylesheets().remove("view/temporalViewPane/styles/borderOfMediaToBeStopped.css")){
+								styleRemoved = true;
+							}
+							if(styleRemoved){
 								timeLineXYChartData.getMediaImageClip().setHeight(timeLineXYChartData.getMediaImageClip().getHeight()+5);
-						
 							}
 						}
 					}	
