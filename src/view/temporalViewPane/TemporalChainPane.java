@@ -390,10 +390,21 @@ public class TemporalChainPane extends StackPane implements Observer{
 								
 								if(mediaContent instanceof MediaView){
 									//setVideoPresentationProperties((MediaView) mediaContent, media);
-									screen.getChildren().add((MediaView) mediaContent);
+									if((int) ((MediaView) mediaContent).getTranslateZ()>screen.getChildren().size()){
+										screen.getChildren().add(screen.getChildren().size(),(MediaView) mediaContent);
+									}
+									else {
+										screen.getChildren().add((int) ((MediaView) mediaContent).getTranslateZ(),(MediaView) mediaContent);
+									}
+									
 								} else if(mediaContent instanceof ImageView){
 									setImagePresentationProperties((ImageView) mediaContent, media);
-									screen.getChildren().add((int) ((ImageView) mediaContent).getTranslateZ(),(ImageView) mediaContent);
+									if((int) ((ImageView) mediaContent).getTranslateZ()>screen.getChildren().size()){
+										screen.getChildren().add(screen.getChildren().size(),(ImageView) mediaContent);
+									}
+									else {
+										screen.getChildren().add((int) ((ImageView) mediaContent).getTranslateZ(),(ImageView) mediaContent);
+									}
 								}
 								
 							} 
