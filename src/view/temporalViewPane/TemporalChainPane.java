@@ -1,27 +1,22 @@
 package view.temporalViewPane;
 
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
-import javafx.scene.DepthTest;
 import javafx.scene.Node;
 import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Tab;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.DataFormat;
 import javafx.scene.input.DragEvent;
@@ -29,7 +24,6 @@ import javafx.scene.input.Dragboard;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.StackPane;
-import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
 import javafx.scene.shape.ClosePath;
 import javafx.scene.shape.LineTo;
@@ -37,10 +31,8 @@ import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.Path;
 import javafx.scene.shape.PathElement;
 import javafx.scene.shape.VLineTo;
-import javafx.util.Duration;
 import model.common.Media;
 import model.common.SpatialTemporalView;
-import model.spatialView.enums.AspectRatio;
 import model.temporalView.Interactivity;
 import model.temporalView.Synchronous;
 import model.temporalView.TemporalChain;
@@ -78,13 +70,7 @@ public class TemporalChainPane extends StackPane implements Observer{
 	private ArrayList<ArrayList<TimeLineXYChartData>> timeLineXYChartDataLineList = new ArrayList<ArrayList<TimeLineXYChartData>>();
 	private StevePane stevePane;
 	private Tab parentTab;
-	private boolean isPlaying = false;
-	private Double playheadPixelPosition = 0.0;
-	private Double currentTime;
-	private boolean itHasMediaView = false;
-	private Boolean hasStopped = false;
-	private Boolean hasPaused = false;
-	private Object mediaContent;
+	private Boolean hasClickedPlayhead = false;
 	private DisplayPane displayPane;
 	private ControlButtonPane controlButtonPane;
 	private StackPane screen;
@@ -141,7 +127,6 @@ public class TemporalChainPane extends StackPane implements Observer{
 
     	createDragAndDropEvent();
     	createMouseEvent();
-    	createDisplayPaneButtonActions();
     	createListeners();
     	
     	temporalChainModel.addObserver(this);
@@ -153,232 +138,17 @@ public class TemporalChainPane extends StackPane implements Observer{
     	
      }
 
-	private void createDisplayPaneButtonActions(){
-		
-		DisplayPane displayPane = stevePane.getSpatialViewPane().getDisplayPane();
-		ControlButtonPane controlButtonPane = displayPane.getControlButtonPane();
-		
-		controlButtonPane.getStopButton().setOnAction(new EventHandler<ActionEvent>() {
-			
-			@Override
-			public void handle(ActionEvent event) {	
-				
-				controlButtonPane.getStopButton().setDisable(true);
-				controlButtonPane.getPauseButton().setDisable(true);
-				controlButtonPane.getPlayButton().setDisable(false);
-
-	    		playhead.setTranslateX(timeLineChart.getXAxis().getDisplayPosition(0));
-	    		hasStopped = true;
-	    		hasPaused = false;
-	    		isPlaying = false;
-	    		for(Media media : temporalChainModel.getMediaAllList()){
-	    			media.setIsPLayingInPreview(false);
-	    		}
-	    		
-	    		Platform.runLater(new Runnable() {
-					@Override
-					public void run() {
-						screen.getChildren().clear();
-					}
-				});
-
-			}
-			
-		});
-		
-
-		controlButtonPane.getPauseButton().setOnAction(new EventHandler<ActionEvent>() {
-			
-			@Override
-			public void handle(ActionEvent event) {	
-				
-				controlButtonPane.getStopButton().setDisable(false);
-				controlButtonPane.getPauseButton().setDisable(true);
-				controlButtonPane.getPlayButton().setDisable(false);
-				
-	    		hasPaused = true;
-	    		isPlaying = false;
-	    		
-	    		for(Node executionObject : screen.getChildren()){
-	    			if(executionObject instanceof MediaView){
-	    				MediaView currentMediaView = (MediaView) executionObject;
-	    				currentMediaView.getMediaPlayer().pause();
-	    			}
-	    		}
-	    	
-			}
-			
-		});
-		
-		controlButtonPane.getPlayButton().setOnAction(new EventHandler<ActionEvent>() {
-			
-			@Override
-			public void handle(ActionEvent event) {	
-				
-				isPlaying = true;
-				hasStopped = false;
-				currentTime = timeLineChart.getXAxis().getValueForDisplay(playhead.getTranslateX()).doubleValue();
-				if(hasPaused) {
-					for(Node executionObject : screen.getChildren()){
-		    			if(executionObject instanceof MediaView){
-		    				MediaView currentMediaView = (MediaView) executionObject;
-		    				Duration currentMillisDuration = new Duration(currentTime*1000);
-		    				currentMediaView.getMediaPlayer().seek(currentMillisDuration);
-		    				currentMediaView.getMediaPlayer().play();
-		    			}
-		    		}
-				}
-				hasPaused = false;
-
-				controlButtonPane.getStopButton().setDisable(false);
-				controlButtonPane.getPauseButton().setDisable(false);
-				controlButtonPane.getPlayButton().setDisable(true);
-				
-				Runnable task = new Runnable()
-        		{
-        			public void run()
-        			{
-        				runTask();
-        			}
-        		};
-        		
-        		Thread backgroundThread = new Thread(task);
-        		backgroundThread.setDaemon(true);
-        		backgroundThread.start();
-								
-			}
-			
-		});		
-	}
-	
-	public void runTask() {
-		
-		while(true && !hasStopped && !hasPaused) {
-			
-			try {
-				
-		    	playheadPixelPosition = timeLineChart.getXAxis().getDisplayPosition(currentTime); 
-		    	playhead.setTranslateX(playheadPixelPosition);
-		    	currentTime = currentTime + 0.1;
-		    	System.out.println(currentTime);
-		 
-		    	if(currentTime > temporalChainModel.getMediaWithHighestEnd().getEnd()){
-		    		controlButtonPane.getStopButton().fire();
-		    		hasStopped = true;
-		    		isPlaying = false;
-		    		for(Media media : temporalChainModel.getMediaAllList()){
-		    			media.setIsPLayingInPreview(false);
-		    		}
-		    	}
-		    	
-		    	DisplayPane displayPane = stevePane.getSpatialViewPane().getDisplayPane();
-				StackPane screen = displayPane.getScreen();
-				
-				for(Media media : temporalChainModel.getMediaAllList()){
-
-					if(media.getBegin() <= currentTime && currentTime <= media.getEnd()){
-						
-						if(!media.getIsPLayingInPreview()){
-							
-							Platform.runLater(new Runnable(){
-
-								@Override
-								public void run() {
-									
-									media.setIsPLayingInPreview(true);
-									mediaContent = getMediaContent(media);
-									
-									if(mediaContent instanceof MediaView){
-										//setVideoPresentationProperties((MediaView) mediaContent, media);
-										screen.getChildren().add((MediaView) mediaContent);
-									} else if(mediaContent instanceof ImageView){
-										setImagePresentationProperties((ImageView) mediaContent, media);
-										screen.getChildren().add((ImageView) mediaContent);
-									}								
-								}
-								
-							});
-							
-						}
-							
-					} else{
-						
-						if(media.getIsPLayingInPreview()){
-							
-							Platform.runLater(new Runnable(){
-					    		@Override
-								public void run() {
-									
-					    			if(!screen.getChildren().isEmpty()){
-					    				screen.getChildren().remove(media.getExecutionObject());
-										media.setIsPLayingInPreview(false);
-					    			}
-	
-					    		}
-					    	});
-						}
-						
-					}
-			
-				}
-				Thread.sleep(100);
-				
-			}
-			catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		
-		}
-	}
-		
-	
 	private void createListeners(){
-		
-//		playhead.translateXProperty().addListener(new ChangeListener<Number>(){
-//
-//			@Override
-//			public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-////				
-////				if(isPlaying){
-////				
-////					DisplayPane displayPane = stevePane.getSpatialViewPane().getDisplayPane();
-////					StackPane screen = displayPane.getScreen();
-//////					if(!screen.getChildren().isEmpty()){
-//////						screen.getChildren().clear();
-//////					}
-////					
-////					Double playheadTime = timeLineChart.getXAxis().getValueForDisplay(newValue.doubleValue()).doubleValue();
-////			
-////					for(Media media : temporalChainModel.getMediaAllList()){
-////		
-////						if(media.getBegin() <= playheadTime && playheadTime <= media.getEnd()){
-////							
-////							ImageView mediaContent = getMediaContent(media);
-////							setPresentationProperties(mediaContent);	
-////							screen.getChildren().add(mediaContent);
-////							
-////						}
-////				
-////					}
-////					
-////				}
-//				
-//			}
-//			
-//		});
 		
 		indicativeLine.translateXProperty().addListener(new ChangeListener<Number>(){
 
 			@Override
 			public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
 				
-				if(!isPlaying && !hasPaused) {
+				if(!controlButtonPane.getIsPlaying() && !controlButtonPane.getHasPaused()) {
 					
 					Double indicativeLine = timeLineChart.getXAxis().getValueForDisplay(newValue.doubleValue()).doubleValue();
 					
-					DisplayPane displayPane = stevePane.getSpatialViewPane().getDisplayPane();
-					StackPane screen = displayPane.getScreen();
-
 					for(Media media : temporalChainModel.getMediaAllList()){
 						
 						if(media.getBegin() <= indicativeLine && indicativeLine <= media.getEnd()){
@@ -386,25 +156,37 @@ public class TemporalChainPane extends StackPane implements Observer{
 							if(!media.getIsPLayingInPreview()){
 				
 								media.setIsPLayingInPreview(true);
-								mediaContent = getMediaContent(media);
+								Object mediaContent = controlButtonPane.getMediaContent(media);
 								
 								if(mediaContent instanceof MediaView){
-									//setVideoPresentationProperties((MediaView) mediaContent, media);
-									if((int) ((MediaView) mediaContent).getTranslateZ()>screen.getChildren().size()){
-										screen.getChildren().add(screen.getChildren().size(),(MediaView) mediaContent);
-									}
-									else {
-										screen.getChildren().add((int) ((MediaView) mediaContent).getTranslateZ(),(MediaView) mediaContent);
-									}
+									
+									controlButtonPane.setVideoPresentationProperties((MediaView) mediaContent, media);
+									screen.getChildren().add((MediaView) mediaContent);
 									
 								} else if(mediaContent instanceof ImageView){
-									setImagePresentationProperties((ImageView) mediaContent, media);
-									if((int) ((ImageView) mediaContent).getTranslateZ()>screen.getChildren().size()){
-										screen.getChildren().add(screen.getChildren().size(),(ImageView) mediaContent);
+									
+									controlButtonPane.setImagePresentationProperties((ImageView) mediaContent, media);
+									if(screen.getChildren().isEmpty()){
+										
+										screen.getChildren().add((ImageView) mediaContent);
+										
+									} else{
+										boolean inserted = false;
+										for(Node executionObject : screen.getChildren()){
+							    			
+											if(((ImageView) mediaContent).getTranslateZ() < executionObject.getTranslateZ()){
+												screen.getChildren().add(screen.getChildren().indexOf(executionObject), (ImageView) mediaContent);
+												inserted = true;
+												break;
+											}
+											
+							    		}
+										if(!inserted){
+											screen.getChildren().add((ImageView) mediaContent);
+										}
 									}
-									else {
-										screen.getChildren().add((int) ((ImageView) mediaContent).getTranslateZ(),(ImageView) mediaContent);
-									}
+
+
 								}
 								
 							} 
@@ -426,176 +208,6 @@ public class TemporalChainPane extends StackPane implements Observer{
 			}
 			
 		});
-		
-		
-	}
-	
-	public void setImagePresentationProperties(ImageView mediaContent, Media media){
-	
-		DisplayPane displayPane = stevePane.getSpatialViewPane().getDisplayPane();
-		StackPane screen = displayPane.getScreen();
-		
-		double percentageHeight, percentageWidth; 
-		String temp;
-
-	    if(media.getPresentationProperty().getSizeProperty().getAspectRatio()==AspectRatio.SLICE){
-	    	mediaContent.setPreserveRatio(true);
-	    } else {
-	    	mediaContent.setPreserveRatio(false);
-	    }
-	    		
-		double left = Double.parseDouble(media.getPresentationProperty().getPositionProperty().getLeft().replace("%", ""));
-		double right = Double.parseDouble(media.getPresentationProperty().getPositionProperty().getRight().replace("%", ""));
-		double top = Double.parseDouble(media.getPresentationProperty().getPositionProperty().getTop().replace("%", ""));
-		double bottom = Double.parseDouble(media.getPresentationProperty().getPositionProperty().getBottom().replace("%", ""));		
-		
-		temp = media.getPresentationProperty().getSizeProperty().getHeight().replace("%", "");
-		if (Double.parseDouble(temp)!=100){
-			if(((left==0)&&(top==0))&&((right==0)&&(bottom==0))){
-				left=0.1;
-				top=0.1;
-			}
-		}
-		percentageHeight = Double.parseDouble(temp);
-		double screenHeight = screen.getHeight()*(percentageHeight/100);
-		mediaContent.setFitHeight(screenHeight);
-		
-		temp = media.getPresentationProperty().getSizeProperty().getWidth().replace("%", "");			
-		if (Double.parseDouble(temp)!=100){
-			if(((left==0)&&(top==0))&&((right==0)&&(bottom==0))){
-				left=0.1;
-				top=0.1;
-			}
-		}
-		percentageWidth = Double.parseDouble(temp);
-		double screenWidth = screen.getWidth()*(percentageWidth/100);
-		mediaContent.setFitWidth(screenWidth);
-	
-		//double borderLeft = mediaContent.prefHeight()/2;
-		//double borderDown = mediaContent.getFitHeight()/2;
-		int boundWidth = (int)mediaContent.getBoundsInParent().getWidth();
-        int boundHeight = (int)mediaContent.getBoundsInParent().getHeight();
-        	        	        
-        screenWidth = screen.getWidth();
-        screenHeight = screen.getHeight();
-        double xZero = (+screenWidth/2)-boundWidth/2;
-        
-		double dXRight = 0; //como definir?
-		if(right!=0){
-			dXRight = (right/100)*screenWidth; 
-			//System.out.println("xZero+dXRight = "+(xZero-dXRight));
-			mediaContent.setTranslateX(xZero-dXRight);
-		}
-        
-        xZero = (-screenWidth/2)+boundWidth/2;
-		double dXLeft = 0; //como definir?
-		if(left!=0){
-			dXLeft = (left/100)*screenWidth; 
-			//System.out.println("xZero+dXLeft = "+(xZero+dXLeft));
-			mediaContent.setTranslateX(xZero+dXLeft);
-		}
-		
-		double yZero = (screenHeight/2)-boundHeight/2;		
-		
-		double dYDown = 0; //como definir?
-		if(bottom!=0){
-			dYDown = (bottom/100)*screenHeight; 
-			//System.out.println("yZero-dYDown = "+(yZero-dYDown));
-			mediaContent.setTranslateY(yZero-dYDown);
-		}
-		
-		yZero = (-screenHeight/2)+boundHeight/2;
-
-		double dYTop = 0; //como definir?
-		if(top!=0){
-			dYTop = (top/100)*screenHeight; 
-			//System.out.println("yZero+dYTop = "+(yZero+dYTop));
-			mediaContent.setTranslateY(yZero+dYTop);
-			
-		}
-
-//		System.out.println(media.getPresentationProperty().getPositionProperty().getOrderZ());
-//				System.out.println(mediaContent.getTranslateZ());
-		mediaContent.setDepthTest(DepthTest.ENABLE);
-		mediaContent.setTranslateZ(media.getPresentationProperty().getPositionProperty().getOrderZ());
-		
-		
-		double opacity = 1-(media.getPresentationProperty().getStyleProperty().getTransparency()/100);
-		mediaContent.setOpacity(opacity);
-		
-	
-	}
-
-	private Object getMediaContent(Media media){
-
-		mediaContent = null;
-		
-		switch(media.getMediaType()) {
-		   
-   		case IMAGE:
-   			
-   			ImageView image = new ImageView(new Image(media.getFile().toURI().toString()));
-   			image.setFitWidth(screen.getWidth());
-   			image.setFitHeight(screen.getHeight());
-   			image.setSmooth(false);
-   			mediaContent = image;
-   			media.setExecutionObject(mediaContent);
-   			break;
-           
-		case VIDEO:
-
-			URL mediaUrl = getClass().getResource("Test.mp4");
-//			URL mediaUrl = getClass().getResource(media.getFile().getAbsolutePath());
-			String mediaStringUrl = mediaUrl.toExternalForm();
-			final javafx.scene.media.Media m = new javafx.scene.media.Media(mediaStringUrl);
-			final MediaPlayer player = new MediaPlayer(m);
-			MediaView mediaView = new MediaView(player);
-			mediaView.setFitWidth(screen.getWidth());
-			mediaView.setFitHeight(screen.getHeight()); 
-			mediaView.setSmooth(true);
-			
-			if(isPlaying){
-				player.play();
-				mediaContent = mediaView;
-			} else {
-				mediaContent = mediaView;
-				
-				player.statusProperty().addListener(new ChangeListener<MediaPlayer.Status>() {
-							
-				    public void changed(ObservableValue<? extends MediaPlayer.Status> ov,
-				            final MediaPlayer.Status oldStatus, final MediaPlayer.Status newStatus) {
-				    	
-				    	Double frameMillisTime = (media.getDuration()/2)*1000;
-						System.out.println(frameMillisTime.intValue());
-				    	Duration duration = new Duration(frameMillisTime.intValue()); 
-				    	player.seek(duration);
-				    	
-				    }
-				});
-			}
-			media.setExecutionObject(mediaContent);
-   			break;
-
-		case AUDIO:
-			//INFO símbolo de áudio apenas. Não tocar.
-			ImageView imageAudio = new ImageView(new Image(getClass().getResourceAsStream("/view/repositoryPane/images/audioNode.png")));
-			imageAudio.setPreserveRatio(true);
-			imageAudio.setSmooth(true);
-			imageAudio.setFitWidth(ICON_WIDTH);
-			mediaContent = media.generateMediaIcon(); 
-			break; 
-       
-		case TEXT:
-			//TODO pegar o texto.
-			break;
-               
-		case APPLICATION:
-			mediaContent = media.generateMediaIcon();
-			break;                
-		}
-		
-		
-		return mediaContent; 
 		
 	}
 	
@@ -728,14 +340,11 @@ public class TemporalChainPane extends StackPane implements Observer{
 				
 				getChildren().remove(indicativeLine);
 				
-				if(hasStopped){
+				if(!controlButtonPane.getIsPlaying() && !controlButtonPane.getHasPaused()){
+					screen.getChildren().clear();
 					for(Media media : temporalChainModel.getMediaAllList()){
 		    			media.setIsPLayingInPreview(false);
 		    		}
-				}
-				
-				if(!isPlaying && !hasPaused){
-					screen.getChildren().clear();
 				}
 
 			}
@@ -759,6 +368,7 @@ public class TemporalChainPane extends StackPane implements Observer{
 			
 			public void handle(MouseEvent mouseEvent) {
 				playhead.setTranslateX(mouseEvent.getX() - ARROW_DIFF);
+				hasClickedPlayhead = true;
 	        }  
 	    });
 		
@@ -1015,6 +625,18 @@ public class TemporalChainPane extends StackPane implements Observer{
 		
 	}
 
+	public TimeLineChart<Number, String> getTimeLineChart(){
+		return this.timeLineChart;
+	}
+	public Path getPlayhead(){
+		return this.playhead;
+	}
+	public Boolean getHasClickedPlayhead(){
+		return this.hasClickedPlayhead;
+	}
+	public void setHasClickedPlayhead(Boolean value){
+		this.hasClickedPlayhead = value;
+	}
 	public void setParentTab(Tab temporalChainTab) {
 		parentTab = temporalChainTab;
 	}

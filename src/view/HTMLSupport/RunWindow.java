@@ -4,14 +4,13 @@ import java.io.File;
 
 import javafx.scene.Scene;
 import javafx.scene.paint.Color;
-import javafx.scene.transform.Scale;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 public class RunWindow extends Stage {
 	
-	private static final int HEIGHT = 768;
-	private static final int WIDTH = 1024;
+	private static final int HEIGHT = 720;
+	private static final int WIDTH = 1280;
 	
     private Scene scene;
 

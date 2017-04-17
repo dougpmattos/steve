@@ -16,10 +16,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import model.common.Media;
 import model.repository.RepositoryMediaList;
-import model.temporalView.Interactivity;
-import model.temporalView.TemporalRelation;
 import model.temporalView.Synchronous;
-import model.temporalView.TemporalChain;
 import model.temporalView.enums.TemporalRelationType;
 import view.common.InputDialog;
 import view.common.Language;
@@ -170,7 +167,7 @@ public class TemporalViewButtonPane extends BorderPane {
 		if((temporalViewPane.getFirstSelectedMedia() == null) && (selectedSlaveMediaList.isEmpty())){
 			
 			MessageDialog messageDialog = new MessageDialog(Language.translate("it.is.not.possible.to.define.alignment"), 
-					Language.translate("please.select.a.media.to.be.the.master.and.at.least.one.to.be.slave"), "OK", 190);
+					Language.translate("please.select.a.media.to.be.the.master.and.at.least.one.to.be.slave"), "OK", 250);
 			messageDialog.showAndWait();
 			
 			return false;
@@ -178,7 +175,7 @@ public class TemporalViewButtonPane extends BorderPane {
     	}else if(temporalViewPane.getFirstSelectedMedia() == null){
     		
     		MessageDialog messageDialog = new MessageDialog(Language.translate("it.is.not.possible.to.define.alignment"), 
-					Language.translate("please.select.a.media.to.be.the.master"), "OK", 190);
+					Language.translate("please.select.a.media.to.be.the.master"), "OK", 220);
 			messageDialog.showAndWait();
 			
 			return false;
@@ -186,7 +183,7 @@ public class TemporalViewButtonPane extends BorderPane {
     	}else if(selectedSlaveMediaList.isEmpty()){
     		
     		MessageDialog messageDialog = new MessageDialog(Language.translate("it.is.not.possible.to.define.alignment"), 
-					Language.translate("please.select.at.least.one.media.to.be.slave"), "OK", 190);
+					Language.translate("please.select.at.least.one.media.to.be.slave"), "OK", 220);
 			messageDialog.showAndWait();
 			
     		return false;
@@ -204,12 +201,48 @@ public class TemporalViewButtonPane extends BorderPane {
 			@Override
 			public void handle(ActionEvent event) {
 
-				if(masterAndSlaveHaveBeenDefined()){
-					
-					startsButton.fire();
-					finishesButton.fire();
-					
-				}
+				/*if(masterAndSlaveHaveBeenDefined()){
+		    		
+		    		Media relationMasterMedia = temporalViewPane.getFirstSelectedMedia();
+			    	
+			    	Synchronous<Media> startSynchronousRelation = new Synchronous<Media>();
+			    	startSynchronousRelation.setType(TemporalRelationType.STARTS);
+			    	startSynchronousRelation.setMasterMedia(relationMasterMedia);
+			    	startSynchronousRelation.setExplicit(true);
+		
+			    	for(Media media : temporalViewPane.getSelectedMediaList()){
+			    		
+			    		if(media != relationMasterMedia){
+			    			
+			    			startSynchronousRelation.addSlaveMedia(media);
+
+			    		}
+			    		
+			    	}
+			    	
+			    	addSynchronousRelationToModel(startSynchronousRelation);
+
+			    	Synchronous<Media> finishesSynchronousRelation = new Synchronous<Media>();
+			    	finishesSynchronousRelation.setType(TemporalRelationType.FINISHES);
+			    	finishesSynchronousRelation.setMasterMedia(relationMasterMedia);
+			    	finishesSynchronousRelation.setExplicit(true);
+		
+			    	for(Media media : temporalViewPane.getSelectedMediaList()){
+			    		
+			    		if(media != relationMasterMedia){
+			    			
+			    			finishesSynchronousRelation.addSlaveMedia(media);
+			    			
+			    		}
+			    		
+			    	}
+			    	
+			    	addSynchronousRelationToModel(finishesSynchronousRelation);
+			    	
+		    	}*/
+				
+				startsButton.fire();
+				finishesButton.fire();
 
 			}
 			

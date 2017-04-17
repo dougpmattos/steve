@@ -17,6 +17,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.Tab;
+import javafx.scene.control.Tooltip;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -28,8 +29,8 @@ import javafx.scene.shape.Rectangle;
 import model.common.Media;
 import model.repository.RepositoryMediaList;
 import model.temporalView.Interactivity;
-import model.temporalView.TemporalRelation;
 import model.temporalView.TemporalChain;
+import model.temporalView.TemporalRelation;
 import model.temporalView.enums.TemporalViewOperator;
 import model.utility.MediaUtil;
 import model.utility.Operation;
@@ -388,12 +389,18 @@ public class TimeLineXYChartData implements Observer {
 						for(TimeLineXYChartData timeLineXYChartData : timeLineXYChartDataList){
 							if(!temporalViewPane.getSelectedMediaList().contains(timeLineXYChartData.getMedia())){
 
-								if(timeLineXYChartData.getContainerNode().getStylesheets().remove("view/temporalViewPane/styles/mousePressedSlaveTemporalMediaNode.css")||
-								   timeLineXYChartData.getContainerNode().getStylesheets().remove("view/temporalViewPane/styles/mousePressedTemporalMediaNode.css") ||
-								   timeLineXYChartData.getContainerNode().getStylesheets().remove("view/temporalViewPane/styles/borderOfMediaToBeStopped.css")){
-									
+								boolean styleRemoved = false;
+								if(timeLineXYChartData.getContainerNode().getStylesheets().remove("view/temporalViewPane/styles/mousePressedSlaveTemporalMediaNode.css")){
+									styleRemoved = true;
+								}
+								if(timeLineXYChartData.getContainerNode().getStylesheets().remove("view/temporalViewPane/styles/mousePressedTemporalMediaNode.css")){
+									styleRemoved = true;
+								}
+								if(timeLineXYChartData.getContainerNode().getStylesheets().remove("view/temporalViewPane/styles/borderOfMediaToBeStopped.css")){
+									styleRemoved = true;
+								}
+								if(styleRemoved){
 									timeLineXYChartData.getMediaImageClip().setHeight(timeLineXYChartData.getMediaImageClip().getHeight()+5);
-									
 								}
 
 							}
@@ -522,20 +529,27 @@ public class TimeLineXYChartData implements Observer {
 		        		
 		        		iButton = new Button();
 		        		iButton.setId("i-button");
+		        		iButton.setTooltip(new Tooltip(Language.translate("edit.interactivity")));
 		        		
 		        		iButton.setOnAction(new EventHandler<ActionEvent>() {
 
 							@Override
 							public void handle(ActionEvent event) {
+								menuItemEditInteractivity.fire();
 								
-								for(XYChart.Data<Number, String> xyChartData : temporalChainPane.getSerie().getData()){
+								//INFO caso decida por mostrar as bordas da interatividade na interface e remover a opcao de editar por essa botao
+								/*for(XYChart.Data<Number, String> xyChartData : temporalChainPane.getSerie().getData()){
 									
 									HBox containerNode = (HBox) xyChartData.getNode();
 									VBox nameInteractiveIconContainer = (VBox) containerNode.getChildren().get(1);
 									Label mediaLabel = (Label) nameInteractiveIconContainer.getChildren().get(0);
 									
 									for(Media media : interactivityRelation.getSlaveMediaList()){
-										
+									
+						        		if(interactivityRelation.getTemporalChainList().contains(temporalChainPane.getTemporalChainModel())){
+						        			temporalChainPane.getParentTab().setStyle("-fx-border-color: #00BFA5;-fx-border-width: 2; -fx-border-radius: 8; -fx-padding: -5, -5, -5, -5;");
+						        		}
+							        	
 										if(mediaLabel.getText().equalsIgnoreCase(media.getName())){
 											
 											if(!containerNode.getStylesheets().contains("view/temporalViewPane/styles/borderOfMediaToBeStopped.css")){
@@ -551,7 +565,7 @@ public class TimeLineXYChartData implements Observer {
 										
 									}
 									
-								}
+								}*/
 								
 								
 							}
