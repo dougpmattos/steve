@@ -39,7 +39,9 @@ public class Media implements Serializable{
     private transient ImageView icon;
     private Double begin;
     private Double end;
+    private Boolean isPLayingInPreview = false;
     private Boolean interactive = false;
+    private transient Object executionObject;
     private PresentationProperty presentationProperty = new PresentationProperty();
     private ArrayList<TimeSegment> timeSegmentList = new ArrayList<TimeSegment>();
     
@@ -54,13 +56,21 @@ public class Media implements Serializable{
 	    this.path = mediaFile.getAbsolutePath();
 	    this.mediaType = getMediaType(mediaFile);
 	    this.mimeType = getMimeType(mediaFile);
-	    
+
 	    if((mediaType == MediaType.AUDIO)||(mediaType == MediaType.VIDEO)){
 	    	   setImplicitDuration();
 	    }
 	    
 	}
-
+	
+	public void setIsPLayingInPreview(Boolean value){
+		this.isPLayingInPreview = value;
+	}
+	
+	public Boolean getIsPLayingInPreview(){
+		return this.isPLayingInPreview;
+	}
+	
 	public void setName(String name){
 		this.name = name;
 	}
@@ -74,6 +84,14 @@ public class Media implements Serializable{
 	
 	public File getFile(){
 		return mediaFile;
+	}
+	
+	public Object getExecutionObject(){
+		return this.executionObject;
+	}
+	
+	public void setExecutionObject(Object executionObject){
+		this.executionObject = executionObject;
 	}
 	
 	public String getPath() {

@@ -6,20 +6,16 @@ import java.util.Observer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javafx.animation.*;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
-import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.DataFormat;
@@ -27,10 +23,8 @@ import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.media.MediaView;
 import javafx.scene.shape.ClosePath;
 import javafx.scene.shape.LineTo;
 import javafx.scene.shape.MoveTo;
@@ -40,9 +34,9 @@ import javafx.scene.shape.VLineTo;
 import model.common.Media;
 import model.common.SpatialTemporalView;
 import model.temporalView.Interactivity;
-import model.temporalView.TemporalRelation;
 import model.temporalView.Synchronous;
 import model.temporalView.TemporalChain;
+import model.temporalView.TemporalRelation;
 import model.temporalView.enums.TemporalViewOperator;
 import model.utility.MediaUtil;
 import model.utility.Operation;
@@ -56,6 +50,7 @@ import controller.Controller;
 public class TemporalChainPane extends StackPane implements Observer{
 
 	private static final int DIFF_INDICATIVE_LINE_AND_TEMPORAL_NODE = 7;
+	private final int ICON_WIDTH = 40;
 
 	private static final double ARROW_DIFF = 7.5;
 
@@ -75,7 +70,10 @@ public class TemporalChainPane extends StackPane implements Observer{
 	private ArrayList<ArrayList<TimeLineXYChartData>> timeLineXYChartDataLineList = new ArrayList<ArrayList<TimeLineXYChartData>>();
 	private StevePane stevePane;
 	private Tab parentTab;
-	
+	private Boolean hasClickedPlayhead = false;
+	private DisplayPane displayPane;
+	private ControlButtonPane controlButtonPane;
+	private StackPane screen;
 	NumberAxis xAxis;
 	CategoryAxis yAxis;
 	
@@ -122,10 +120,13 @@ public class TemporalChainPane extends StackPane implements Observer{
 				}
 			}
 	    });
+    	
+    	displayPane = stevePane.getSpatialViewPane().getDisplayPane();
+		controlButtonPane = displayPane.getControlButtonPane();
+		screen = displayPane.getScreen();
 
     	createDragAndDropEvent();
     	createMouseEvent();
-    	createDisplayPaneButtonActions();
     	createListeners();
     	
     	temporalChainModel.addObserver(this);
@@ -136,62 +137,77 @@ public class TemporalChainPane extends StackPane implements Observer{
     	this.controller = controller;
     	
      }
-	
-	private void createDisplayPaneButtonActions(){
-		
-		DisplayPane displayPane = stevePane.getSpatialViewPane().getDisplayPane();
-		ControlButtonPane controlButtonPane = displayPane.getControlButtonPane();
-		
-		
-		controlButtonPane.getPlayButton().setOnAction(new EventHandler<ActionEvent>() {
-			
-			@Override
-			public void handle(ActionEvent event) {
-				
-				//TODO iniciar o movimento de translateX da linha play
-//				while(){ enquanto nao chega na ultima midia, ir andando com a linha
-//					
-//				}
-				//playhead.setTranslateX(500);
-	
-			}
-			
-		});
-		
-	}
-	
+
 	private void createListeners(){
 		
-		playhead.translateXProperty().addListener(new ChangeListener<Number>(){
+		indicativeLine.translateXProperty().addListener(new ChangeListener<Number>(){
 
 			@Override
 			public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
 				
-				System.out.println(newValue);
-				DisplayPane displayPane = stevePane.getSpatialViewPane().getDisplayPane();
-				StackPane screen = displayPane.getScreen();
-				
-				//TODO listener para a linha de play quando ela mudar de posicao. Para cada mudanca de posicao 
-				//pegar as midias que estao sobre a linha e exibir na tel conforme suas propriedades	
-				//for(Media media : temporalChainModel.getMediaAllList()){
+				if(!controlButtonPane.getIsPlaying() && !controlButtonPane.getHasPaused()) {
 					
-					screen.getChildren().clear();
-					//ArrayList<Media> media = temporalChainModel.getMediaAllList();
-					//Double d=media.getDuration();
-					//ImageView imageMedia = media.generateMediaIcon();
+					Double indicativeLine = timeLineChart.getXAxis().getValueForDisplay(newValue.doubleValue()).doubleValue();
+					
+					for(Media media : temporalChainModel.getMediaAllList()){
+						
+						if(media.getBegin() <= indicativeLine && indicativeLine <= media.getEnd()){
+							
+							if(!media.getIsPLayingInPreview()){
+				
+								media.setIsPLayingInPreview(true);
+								Object mediaContent = controlButtonPane.getMediaContent(media);
+								
+								if(mediaContent instanceof MediaView){
+									
+									controlButtonPane.setVideoPresentationProperties((MediaView) mediaContent, media);
+									screen.getChildren().add((MediaView) mediaContent);
+									
+								} else if(mediaContent instanceof ImageView){
+									
+									controlButtonPane.setImagePresentationProperties((ImageView) mediaContent, media);
+									if(screen.getChildren().isEmpty()){
+										
+										screen.getChildren().add((ImageView) mediaContent);
+										
+									} else{
+										boolean inserted = false;
+										for(Node executionObject : screen.getChildren()){
+							    			
+											if(((ImageView) mediaContent).getTranslateZ() < executionObject.getTranslateZ()){
+												screen.getChildren().add(screen.getChildren().indexOf(executionObject), (ImageView) mediaContent);
+												inserted = true;
+												break;
+											}
+											
+							    		}
+										if(!inserted){
+											screen.getChildren().add((ImageView) mediaContent);
+										}
+									}
 
-					//temporalChainModel.getMasterMedia();				
-					ImageView imageMedia = temporalChainModel.getMediaUnderThePlayLineList(newValue).generateMediaIcon();
-					//playhead.computeAreaInScreen();
-					imageMedia.setFitWidth(300);	
-					screen.getChildren().add(imageMedia);
-					//System.out.println(d);
-				//}
+
+								}
+								
+							} 
+
+						}else {
+							
+							if(media.getIsPLayingInPreview()){
+									
+				    			if(!screen.getChildren().isEmpty()){
+				    				screen.getChildren().remove(media.getExecutionObject());
+									media.setIsPLayingInPreview(false);
+				    			}
+		
+							}	
+						}
+					}
+				}
 
 			}
 			
 		});
-		
 		
 	}
 	
@@ -321,7 +337,16 @@ public class TemporalChainPane extends StackPane implements Observer{
 		setOnMouseExited(new EventHandler<MouseEvent>() {
 			
 			public void handle(MouseEvent mouseEvent) {
+				
 				getChildren().remove(indicativeLine);
+				
+				if(!controlButtonPane.getIsPlaying() && !controlButtonPane.getHasPaused()){
+					screen.getChildren().clear();
+					for(Media media : temporalChainModel.getMediaAllList()){
+		    			media.setIsPLayingInPreview(false);
+		    		}
+				}
+
 			}
 	    });
 		
@@ -343,6 +368,7 @@ public class TemporalChainPane extends StackPane implements Observer{
 			
 			public void handle(MouseEvent mouseEvent) {
 				playhead.setTranslateX(mouseEvent.getX() - ARROW_DIFF);
+				hasClickedPlayhead = true;
 	        }  
 	    });
 		
@@ -358,10 +384,15 @@ public class TemporalChainPane extends StackPane implements Observer{
 		Synchronous<Media> syncRelation;
 		Interactivity<Media, ?> interactivityRelation;
 		TemporalChain temporalChainModel;
+		DisplayPane displayPane = stevePane.getSpatialViewPane().getDisplayPane();
+		ControlButtonPane controlButtonPane = displayPane.getControlButtonPane();
 		
 		switch(operation.getOperator()){
 		
 			case ADD_TEMPORAL_CHAIN_MEDIA:
+				
+				controlButtonPane.getPlayButton().setDisable(false);
+				controlButtonPane.getRunButton().setDisable(false);
 				
 				media = (Media) operation.getOperating();
 				line = (int) operation.getArg();
@@ -374,6 +405,11 @@ public class TemporalChainPane extends StackPane implements Observer{
 				media = (Media) operation.getOperating();
 				line = (int) operation.getArg();
 	            removeTemporalChainMedia(media, line);
+	            
+	            if(serie.getData().isEmpty()){
+	            	controlButtonPane.getPlayButton().setDisable(true);
+	            	controlButtonPane.getRunButton().setDisable(true);
+	            }
 	            
 	            break;
 	            
@@ -464,7 +500,7 @@ public class TemporalChainPane extends StackPane implements Observer{
 		
 			case STARTS:
 	
-				for(XYChart.Data<Number, String> xyChartData : getSerie().getData()){
+				/*for(XYChart.Data<Number, String> xyChartData : getSerie().getData()){
 					
 					HBox containerNode = (HBox) xyChartData.getNode();
 					VBox nameInteractiveIconContainer = (VBox) containerNode.getChildren().get(1);
@@ -507,7 +543,7 @@ public class TemporalChainPane extends StackPane implements Observer{
 //						
 //					}
 					
-				}
+				}*/
 				
 				break;
 				
@@ -589,6 +625,18 @@ public class TemporalChainPane extends StackPane implements Observer{
 		
 	}
 
+	public TimeLineChart<Number, String> getTimeLineChart(){
+		return this.timeLineChart;
+	}
+	public Path getPlayhead(){
+		return this.playhead;
+	}
+	public Boolean getHasClickedPlayhead(){
+		return this.hasClickedPlayhead;
+	}
+	public void setHasClickedPlayhead(Boolean value){
+		this.hasClickedPlayhead = value;
+	}
 	public void setParentTab(Tab temporalChainTab) {
 		parentTab = temporalChainTab;
 	}

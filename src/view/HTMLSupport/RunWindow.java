@@ -3,33 +3,37 @@ package view.HTMLSupport;
 import java.io.File;
 
 import javafx.scene.Scene;
-
-import javafx.scene.control.ScrollPane;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 
 public class RunWindow extends Stage {
-	private static final int HEIGHT = 600;
-	private static final int WIDTH = 650;
+	
+	private static final int HEIGHT = 720;
+	private static final int WIDTH = 1280;
 	
     private Scene scene;
-        
-    private GridPane formGridPane;
-
 
     public RunWindow(File htmlFile) {
 
-        setResizable(false);
         initModality(Modality.APPLICATION_MODAL);
 
         Browser browser = new Browser(htmlFile);
 
         scene = new Scene(browser, WIDTH, HEIGHT);
-        scene.setFill(Color.TRANSPARENT);
+        scene.setFill(Color.BLACK);
+/*        
+        double scaleFactor =
+                browser.getWidth() / browser.getHeight() > browser.get
+                    ? newHeight / initHeight
+                    : newWidth / initWidth;
+
+
+        Scale scale = new Scale(browser.getScaleX(), browser.getScaleY());
+        scale.setPivotX(0);
+        scale.setPivotY(0);
+        scene.getRoot().getTransforms().setAll(scale);
+*/
         setScene(scene);
         
         

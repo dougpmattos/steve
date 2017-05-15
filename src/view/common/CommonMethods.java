@@ -1,18 +1,8 @@
-package model.HTMLSupport;
+package view.common;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-import javafx.scene.web.WebEngine;
-import javafx.scene.web.WebView;
-import javafx.stage.FileChooser;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -25,49 +15,65 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
+import model.HTMLSupport.HTMLExportEventHandler;
 import model.NCLSupport.NCLExportEventHandler;
 import model.common.SpatialTemporalView;
 
-import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
-import org.xml.sax.SAXException;
 
-import view.common.Language;
-import view.common.MessageDialog;
-import view.common.ReturnMessage;
-import view.utility.AnimationUtil;
 import br.uff.midiacom.ana.NCLDoc;
+import view.HTMLSupport.RunWindow;
+import view.utility.AnimationUtil;
 
-public class HTMLExportEventHandler implements EventHandler<ActionEvent>{
+public class CommonMethods {
 
-	final Logger logger = LoggerFactory.getLogger(HTMLExportEventHandler.class);
-	
-	private static final String EXPORTED_JSON = "saida.json";
-	private static final String EXPORTED_NCL_COMPLEMENTS = "ncl-complements.js";
-	private static final String EXPORTED_HTML_DOCUMENT = " Exported HTML Document";
-	private static final String TEMP_NCL_DOCUMENT = "tempNCLDocument";
-	
-	static Document document;
-	private NCLExportEventHandler nclExportEventHandler;
-	
-	public HTMLExportEventHandler(SpatialTemporalView spatialTemporalView){
-
-		nclExportEventHandler = new NCLExportEventHandler(spatialTemporalView);
+	public static void runApplication(SpatialTemporalView spatialTemporalView){
+		
+	 	String htmlPath = "";
+		
+		RunWindow runWindow = null;
+		try {
+			runWindow = new RunWindow(createTempHTML(spatialTemporalView));
+		} catch (org.xml.sax.SAXException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	runWindow.showAndWait();
+    	
+    	String mediadir = "src/view/HTMLSupport/media";
+    	String htmlexportado = "src/view/HTMLSupport/HTMLExportado.html";
+    	File m = new File (mediadir);
+    	File h = new File (htmlexportado);
+    			    	
+    	
+    	String[] entries = m.list();
+    	for(String s: entries){
+    	    File currentFile = new File(m.getPath(),s);
+    	    currentFile.delete();
+    	}
+    			    	
+    	m.delete();		    	
+    	h.delete();
+		
 	}
-
-	@Override
-	public void handle(ActionEvent event) {
+	
+	private static File createTempHTML(SpatialTemporalView spatialTemporalView) throws org.xml.sax.SAXException{
+		
+		final Logger logger = LoggerFactory.getLogger(HTMLExportEventHandler.class);
+		
+		final Document document;
+		final NCLExportEventHandler nclExportEventHandler;
+		
+		nclExportEventHandler = new NCLExportEventHandler(spatialTemporalView);
 		
 		File tempNCLDocumentFile = null;
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-
-        //factory.setNamespaceAware(true);
-        //factory.setValidating(true);
-        	
+                
         File stylesheet = new File("src/model/HTMLSupport/XSLFile/ncl4web.xsl");
         String tempNCLDocumentDir = "";
+        File auxF = null;
         
         try {
         	
@@ -75,22 +81,22 @@ public class HTMLExportEventHandler implements EventHandler<ActionEvent>{
         
         	String nclCode = nclDoc.parse(0);
 		
-        	if(nclCode != null){
-        	
-        		FileChooser fileChooser = new FileChooser();
-                fileChooser.setTitle(Language.translate("export.html5.document"));
-                File file = fileChooser.showSaveDialog(null);
+        	if(nclCode != null){        	        	
+        		
+        		File file = new File("src/view/HTMLSupport/");        		
  
         		if(file != null){
 			
 					tempNCLDocumentDir = file.getAbsolutePath();
+					System.out.println("tempNCLDocumentDir: "+tempNCLDocumentDir);
 					tempNCLDocumentFile = new File(tempNCLDocumentDir + ".ncl");
+					System.out.println(tempNCLDocumentFile.getAbsolutePath());			
 					FileWriter fileWriter = new FileWriter(tempNCLDocumentFile);
 					fileWriter.write(nclCode);
                     fileWriter.close();
 
         		}
-        		
+        		        		
 			}
 				
 		} catch (Exception e) {
@@ -100,7 +106,7 @@ public class HTMLExportEventHandler implements EventHandler<ActionEvent>{
 					Language.translate("could.not.find.the.temp.ncl.document.directory") + ": " + e.getMessage(), "OK", 250);
 	        messageDialog.showAndWait();
 	        
-	        return;
+	        return  auxF;
 	        
 		}
         
@@ -118,7 +124,8 @@ public class HTMLExportEventHandler implements EventHandler<ActionEvent>{
 
                 DOMSource source = new DOMSource(document);
                 
-                String exportedHTMLDocumentDir = tempNCLDocumentDir + "/" + EXPORTED_HTML_DOCUMENT;
+                String exportedHTMLDocumentDir = tempNCLDocumentDir;
+                
 				String mediaDir = exportedHTMLDocumentDir + "/media";
 				Boolean mediaDirCreated = (new File(mediaDir)).mkdirs();
 				
@@ -126,32 +133,12 @@ public class HTMLExportEventHandler implements EventHandler<ActionEvent>{
 					nclExportEventHandler.copyMediaFiles(mediaDir);
 				}
 				
-				File auxFile = new File(exportedHTMLDocumentDir + "/" + "HTMLExportado" + ".html");
-				System.out.println(auxFile.getAbsolutePath());
+				File auxFile = new File("src/view/HTMLSupport/HTMLExportado.html");
+				auxF= new File (auxFile.getAbsolutePath());
 				FileWriter fileWriter = new FileWriter(auxFile);
                 StreamResult result = new StreamResult();
                 result.setWriter(fileWriter);
                 transformer.transform(source, result);
-                
-                
-                File jsonSource = new File("src/view/HTMLSupport/saida.json");
-                
-                File dest = new File(exportedHTMLDocumentDir);
-                
-                File jsSource = new File("src/view/HTMLSupport/ncl-complements.js");
-                                
-                File jQuerySource = new File("src/view/HTMLSupport/jquery.min.js");
-                
-                try {
-                	FileUtils.copyFileToDirectory(jsonSource, dest);
-                	FileUtils.copyFileToDirectory(jsSource, dest);
-                	FileUtils.copyFileToDirectory(jQuerySource, dest);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                
-
-                
                 fileWriter.close();
                 
 
@@ -189,28 +176,15 @@ public class HTMLExportEventHandler implements EventHandler<ActionEvent>{
             }
 
             x.printStackTrace();
-        } catch (SAXException sxe) {
-            // Error generated by this application
-            // (or a parser-initialization error)
-            Exception x = sxe;
-
-            if (sxe.getException() != null) {
-                x = sxe.getException();
-            }
-
-            x.printStackTrace();
         } catch (ParserConfigurationException pce) {
             // Parser with specified options can't be built
             pce.printStackTrace();
         } catch (IOException ioe) {
             // I/O error
             ioe.printStackTrace();
-        } catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+        }
 			
+        return auxF;
 	}
-
 
 }

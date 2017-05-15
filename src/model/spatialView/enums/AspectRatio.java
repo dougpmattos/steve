@@ -3,8 +3,7 @@ package model.spatialView.enums;
 public enum AspectRatio {
 
 	FILL,
-	SLICE,
-	NONE;
+	SLICE;
 	
 	@Override
 	public String toString(){
@@ -17,8 +16,6 @@ public enum AspectRatio {
 			case SLICE:
 				return "Slice";
 				
-			case NONE:
-				return "None";
 				
 		}
 		

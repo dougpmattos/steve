@@ -37,7 +37,7 @@ public class StevePane extends Scene{
 	
 	private Controller controller;
 	
-    private SteveMenuBar stveMenuBar;
+    private SteveMenuBar steveMenuBar;
     private RepositoryPane repositoryPane;
     private SpatialViewPane spatialViewPane;
     private TemporalViewPane temporalViewPane;
@@ -69,8 +69,8 @@ public class StevePane extends Scene{
 		
     	repositoryPane = new RepositoryPane(controller, repositoryMediaList);
     	temporalViewPane = new TemporalViewPane(controller, temporalView, repositoryPane, this, repositoryMediaList);
-    	spatialViewPane = new SpatialViewPane(controller, temporalView, temporalViewPane, repositoryPane, repositoryMediaList);
-    	stveMenuBar = new SteveMenuBar(controller, temporalView, repositoryMediaList, temporalViewPane, stage);
+    	spatialViewPane = new SpatialViewPane(controller, temporalView, temporalViewPane, repositoryPane, repositoryMediaList, steveMenuBar);
+    	steveMenuBar = new SteveMenuBar(controller, temporalView, repositoryMediaList, temporalViewPane, stage);
 	   
     	repositoryPane.setTemporalViewPane(temporalViewPane);
     	
@@ -85,7 +85,7 @@ public class StevePane extends Scene{
     	containerSplitPane.setDividerPositions(0.44); 
     	containerSplitPane.getItems().addAll(repositorySpatialViewSplitPane, temporalViewPane);
 
-    	containerBorderPane.setTop(stveMenuBar);
+    	containerBorderPane.setTop(steveMenuBar);
     	containerBorderPane.setCenter(containerSplitPane);
 		
     	setEventHandlers();
