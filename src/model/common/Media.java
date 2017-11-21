@@ -185,6 +185,10 @@ public class Media implements Serializable{
 	   return presentationProperty;
    }
    
+   public void setPresentationProperty(){
+	   
+   }
+   
    public void addTimeSegment(TimeSegment timeSegment){
 	   timeSegmentList.add(timeSegment);
 	}

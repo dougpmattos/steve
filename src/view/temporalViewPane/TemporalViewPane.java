@@ -306,5 +306,6 @@ public class TemporalViewPane extends BorderPane implements Observer, view.commo
 	public SpatialTemporalView getTemporalViewModel() {
 		return temporalViewModel;
 	}
+	
 
 }

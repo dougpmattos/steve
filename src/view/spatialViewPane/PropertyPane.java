@@ -39,7 +39,26 @@ public class PropertyPane extends ScrollPane implements Observer{
 	    	
 	    	container.getChildren().add(levelPane);
 	    	
-	    }else {
+	    }
+	    
+	    if(media.getMediaType().equals(MediaType.VIDEO)){
+	    	levelPane = new LevelPane(controller, media);
+	    	
+	    	container.getChildren().add(levelPane);
+	    	
+	    	positionPane = new PositionPane(controller, media);
+		    sizePane = new SizePane(controller, media);
+		    cropPane = new CropPane(controller, media);
+		    stylePane = new StylePane(controller, media);
+		    
+		    container.getChildren().add(positionPane);
+		    container.getChildren().add(sizePane);
+		    //container.getChildren().add(cropPane);
+		    container.getChildren().add(stylePane);
+		    
+	    }
+	    
+	    else {
 	    	
 	    	positionPane = new PositionPane(controller, media);
 		    sizePane = new SizePane(controller, media);
@@ -75,8 +94,14 @@ public class PropertyPane extends ScrollPane implements Observer{
 				if(media.getMediaType().equals(MediaType.AUDIO)){
 			    	
 			    	levelPane.populateLevelPropertyJavaBean();
-			    	
-			    }else {
+				}
+				
+				if(media.getMediaType().equals(MediaType.VIDEO)){
+				
+					levelPane.populateLevelPropertyJavaBean();
+					
+				}
+				else {
 			    	
 			    	positionPane.populatePositionPropertyJavaBean();
 				    sizePane.populateSizePropertyJavaBean();
@@ -116,6 +141,8 @@ public class PropertyPane extends ScrollPane implements Observer{
 	public LevelPane getLevelPane() {
 		return levelPane;
 	}
+	
+	
 	
 	
 

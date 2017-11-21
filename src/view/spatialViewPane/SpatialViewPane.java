@@ -133,6 +133,7 @@ public class SpatialViewPane extends SplitPane implements view.common.Observer, 
     	propertyTab = new Tab();
     	propertyTab.setText(Language.translate("PROPERTIES"));
     	propertyTab.setClosable(false); 
+    	
     	propertyTab.setContent(propertyPane);
     	infoTab = new Tab();
     	infoTab.setText(Language.translate("INFO"));
@@ -206,6 +207,10 @@ public class SpatialViewPane extends SplitPane implements view.common.Observer, 
 	
 	public DisplayPane getDisplayPane(){
 		return displayPane;
+	}
+	
+	public PropertyPane getPropertyPane(){
+		return propertyPane;
 	}
     
 }

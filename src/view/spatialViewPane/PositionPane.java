@@ -1,19 +1,32 @@
 package view.spatialViewPane;
 
+import java.awt.event.MouseListener;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
+
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
+import javafx.concurrent.Task;
+import javafx.event.EventHandler;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import model.common.Media;
 import model.spatialView.PositionProperty;
 import model.spatialView.enums.Size;
 import view.common.Language;
+import view.temporalViewPane.TemporalChainPane;
 import controller.Controller;
 
 public class PositionPane extends VBox {
@@ -31,17 +44,24 @@ public class PositionPane extends VBox {
 	private ChoiceBox<Size> rightUnit;
 	private ChoiceBox<Size> topUnit;
 	private ChoiceBox<Size> bottomUnit;
-	private Button positionButton;
+	private Button positionButton;	 
 	
 	private BorderPane titleButtonBorderPane;
 	private GridPane positionPropertyGridPane;
 	
+	private StackPane screen;
+	private ControlButtonPane controlButtonPane;
+	private ImageView imageView;
+	
 	public PositionPane(Controller controller, Media media){
 		
 		setId("position-vbox");
-		
+				
 		this.controller = controller;
 		this.media = media;
+		this.controlButtonPane = controller.getStevePane().getSpatialViewPane().getDisplayPane().getControlButtonPane();
+		this.imageView = new ImageView(new Image(media.getFile().toURI().toString()));
+		this.screen = controlButtonPane.getScreen();
 		
 		Text title = new Text(Language.translate("position"));
 		title.setId("position-title");
@@ -62,7 +82,9 @@ public class PositionPane extends VBox {
 		bottomLabel.setId("spatial-view-label");
 //		rotationLabel.setId("spatial-view-label");
 		zOrderLabel.setId("spatial-view-label");
-
+				
+		//populatePositionPane();
+		
 		left = new TextField();
 		leftUnit = new ChoiceBox<Size>(FXCollections.observableArrayList(Size.PX, Size.PERCENTAGE));
 		right = new TextField();
@@ -72,7 +94,9 @@ public class PositionPane extends VBox {
 		bottom = new TextField();
 		bottomUnit = new ChoiceBox<Size>(FXCollections.observableArrayList(Size.PX, Size.PERCENTAGE));
 //		rotation = new TextField();
-		zOrder = new TextField();
+		zOrder = new TextField();					
+				
+		
 		
 		titleButtonBorderPane = new BorderPane();
 		titleButtonBorderPane.setId("title-button-hbox");
@@ -97,13 +121,46 @@ public class PositionPane extends VBox {
 //		positionPropertyGridPane.add(rotation, 1, 4);
 		positionPropertyGridPane.add(zOrderLabel, 7, 4);
 		positionPropertyGridPane.add(zOrder, 8, 4);
-		
+		populatePositionPane();
 		getChildren().add(titleButtonBorderPane);
 		getChildren().add(positionPropertyGridPane);
-		
-		populatePositionPane();
-		
+												
+		left.textProperty().addListener((observable, oldValue, newValue) -> {
+			System.out.println("MUDOU O LISTENER OUVINDO CHANGES LEFT: "+left.getText());	
+			//controlButtonPane.moveMediaLeft(this.imageView, media, Double.parseDouble(left.getText()));
+			media.getPresentationProperty().getPositionProperty().setLeft(left.getText());
+			controlButtonPane.setImagePresentationProperties(this.imageView, media);
+			screen.getChildren().clear();
+			screen.getChildren().add(this.imageView);
+		});
+		right.textProperty().addListener((observable, oldValue, newValue) -> {
+			if(!(Double.parseDouble(left.getText())>0)){ //PRECEDENCIA LEFT
+				//controlButtonPane.moveMediaRight(this.imageView, media, Double.parseDouble(right.getText()));
+				media.getPresentationProperty().getPositionProperty().setRight(right.getText());
+				controlButtonPane.setImagePresentationProperties(this.imageView, media);
+				screen.getChildren().clear();
+				screen.getChildren().add(this.imageView);
+			}			
+		});
+		top.textProperty().addListener((observable, oldValue, newValue) -> {
+			media.getPresentationProperty().getPositionProperty().setTop(top.getText());
+			//controlButtonPane.moveMediaTop(this.imageView, media, Double.parseDouble(top.getText()));
+			controlButtonPane.setImagePresentationProperties(this.imageView, media);
+			screen.getChildren().clear();
+			screen.getChildren().add(this.imageView);
+		});
+		bottom.textProperty().addListener((observable, oldValue, newValue) -> {
+			if(!(Double.parseDouble(top.getText())>0)){ //PRECEDENCIA TOP
+				media.getPresentationProperty().getPositionProperty().setBottom(bottom.getText());
+				controlButtonPane.setImagePresentationProperties(this.imageView, media);
+				screen.getChildren().clear();
+				screen.getChildren().add(this.imageView);
+			}			
+		});
+
 	}
+	
+	
 
 	public void setLeftValue(String value){
 		
@@ -111,8 +168,17 @@ public class PositionPane extends VBox {
 			this.left.setText(value.substring(0, value.indexOf('p')));
 			this.leftUnit.setValue(Size.PX);
 		}else {
-			this.left.setText(value.substring(0, value.indexOf('%')));
-			this.leftUnit.setValue(Size.PERCENTAGE);
+			if (value.indexOf('%')!=-1){
+				System.out.println("Settando left = "+value+"% ");
+				this.left.setText(value.substring(0, value.indexOf('%')));			
+				this.leftUnit.setValue(Size.PERCENTAGE);
+			}
+			else {
+				System.out.println("Settando left = "+value);
+				this.left.setText(value);
+				this.leftUnit.setValue(Size.PERCENTAGE);
+			}
+	
 		}
 		
 	}
@@ -127,8 +193,15 @@ public class PositionPane extends VBox {
 			this.right.setText(value.substring(0, value.indexOf('p')));
 			this.rightUnit.setValue(Size.PX);
 		}else {
-			this.right.setText(value.substring(0, value.indexOf('%')));
-			this.rightUnit.setValue(Size.PERCENTAGE);
+			if(value.indexOf('%')!=-1){
+				this.right.setText(value.substring(0, value.indexOf('%')));			
+				this.rightUnit.setValue(Size.PERCENTAGE);
+			}
+			else{
+				this.right.setText(value);
+				this.rightUnit.setValue(Size.PERCENTAGE);
+			}
+		
 		}
 		
 	}
@@ -143,9 +216,15 @@ public class PositionPane extends VBox {
 			this.top.setText(value.substring(0, value.indexOf('p')));
 			this.topUnit.setValue(Size.PX);
 		}else {
-			this.top.setText(value.substring(0, value.indexOf('%')));
-			this.topUnit.setValue(Size.PERCENTAGE);
-		}
+			if(value.indexOf('%')==-1){
+				this.top.setText(value);
+				this.topUnit.setValue(Size.PERCENTAGE);
+			}
+			else{
+				this.top.setText(value.substring(0, value.indexOf('%')));
+				this.topUnit.setValue(Size.PERCENTAGE);
+			}			
+		}	
 		
 	}
 	
@@ -159,8 +238,15 @@ public class PositionPane extends VBox {
 			this.bottom.setText(value.substring(0, value.indexOf('p')));
 			this.bottomUnit.setValue(Size.PX);
 		}else {
-			this.bottom.setText(value.substring(0, value.indexOf('%')));
-			this.bottomUnit.setValue(Size.PERCENTAGE);
+			if(value.indexOf('%')==-1){
+				this.bottom.setText(value);
+				this.bottomUnit.setValue(Size.PERCENTAGE);
+			}
+			else{
+				this.bottom.setText(value.substring(0, value.indexOf('%')));
+				this.bottomUnit.setValue(Size.PERCENTAGE);
+			}
+			
 		}
 		
 	}
@@ -185,16 +271,18 @@ public class PositionPane extends VBox {
 		return zOrder.getText();
 	}
 	
-	private void populatePositionPane(){
+	public void populatePositionPane(){
 		
 		PositionProperty positionProperty = media.getPresentationProperty().getPositionProperty();
-		
-		setLeftValue(positionProperty.getLeft());
+
+    	setLeftValue(positionProperty.getLeft());
 		setRightValue(positionProperty.getRight());
 		setTopValue(positionProperty.getTop());
 		setBottomValue(positionProperty.getBottom());
-//		setRotationValue(positionProperty.getRotation());
+		//setRotationValue(positionProperty.getRotation());
 		setZOrderValue(String.valueOf(positionProperty.getOrderZ()));
+		
+    
 		
 	}
 	
@@ -202,6 +290,49 @@ public class PositionPane extends VBox {
 		
 		controller.populatePositionPropertyJavaBean(this, media);
 		
+	}
+	
+	public String calculateBottomMargin(Media media, ImageView imageView){
+		
+		double height = this.screen.getHeight();
+		imageView.setFitHeight(height);
+		double boundHeight = imageView.getBoundsInParent().getHeight();
+			
+		double dY = boundHeight + imageView.getTranslateY(); //coordenada da borda inferior
+		System.out.println((height - dY)/height);
+		DecimalFormat df = new DecimalFormat("#.##");
+		df.setRoundingMode(RoundingMode.CEILING);		
+		return df.format(((height - dY)/height)*100);
+		
+	}
+	public String calculateRightMargin(Media media, ImageView imageView){
+		double width = this.screen.getWidth();
+		imageView.setFitWidth(width);
+        
+		double boundWidth = imageView.getBoundsInParent().getWidth();
+		double dX = boundWidth + imageView.getTranslateX();
+		DecimalFormat df = new DecimalFormat("#.##");
+		df.setRoundingMode(RoundingMode.CEILING);		
+		return df.format(((width - dX)/width)*100);
+	}
+	public String calculateTopMargin(Media media, ImageView imageView){
+		
+		double height = this.screen.getHeight();
+		//double mediaHeight = imageView.getBoundsInParent().getHeight();		
+		double dY = imageView.getTranslateY(); //coordenada da borda superior
+		System.out.println((dY)/height);
+		DecimalFormat df = new DecimalFormat("#.##");
+		df.setRoundingMode(RoundingMode.CEILING);		
+		return df.format(((dY)/height)*100);
+		
+	}
+	
+	public String calculateLeftMargin(Media media, ImageView imageView){
+		double width = this.screen.getWidth();
+		double dX = imageView.getTranslateX();
+		DecimalFormat df = new DecimalFormat("#.##");
+		df.setRoundingMode(RoundingMode.CEILING);		
+		return df.format(((dX)/width)*100);
 	}
 	
 }

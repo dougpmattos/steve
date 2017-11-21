@@ -11,6 +11,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
+import javafx.geometry.Bounds;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.chart.CategoryAxis;
@@ -31,8 +32,10 @@ import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.Path;
 import javafx.scene.shape.PathElement;
 import javafx.scene.shape.VLineTo;
+import javafx.scene.text.Text;
 import model.common.Media;
 import model.common.SpatialTemporalView;
+import model.spatialView.PositionProperty;
 import model.temporalView.Interactivity;
 import model.temporalView.Synchronous;
 import model.temporalView.TemporalChain;
@@ -43,7 +46,9 @@ import model.utility.Operation;
 import view.repositoryPane.RepositoryPane;
 import view.spatialViewPane.ControlButtonPane;
 import view.spatialViewPane.DisplayPane;
+import view.spatialViewPane.PositionPane;
 import view.stevePane.StevePane;
+import view.spatialViewPane.DragResizerXY;
 import controller.Controller;
 
 @SuppressWarnings({ "unchecked", "rawtypes" })
@@ -76,6 +81,9 @@ public class TemporalChainPane extends StackPane implements Observer{
 	private StackPane screen;
 	NumberAxis xAxis;
 	CategoryAxis yAxis;
+	
+	double orgSceneX, orgSceneY, newSceneX, newSceneY;
+    double orgTranslateX, orgTranslateY;
 	
 	public TemporalChainPane(Controller controller, SpatialTemporalView temporalViewModel, TemporalChain temporalChainModel, TemporalViewPane temporalViewPane, RepositoryPane repositoryPane, StevePane stevePane){
     	
@@ -124,6 +132,7 @@ public class TemporalChainPane extends StackPane implements Observer{
     	displayPane = stevePane.getSpatialViewPane().getDisplayPane();
 		controlButtonPane = displayPane.getControlButtonPane();
 		screen = displayPane.getScreen();
+		
 
     	createDragAndDropEvent();
     	createMouseEvent();
@@ -140,7 +149,9 @@ public class TemporalChainPane extends StackPane implements Observer{
 
 	private void createListeners(){
 		
-		indicativeLine.translateXProperty().addListener(new ChangeListener<Number>(){
+		
+		
+		indicativeLine.translateXProperty().addListener(new ChangeListener<Number>(){		
 
 			@Override
 			public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
@@ -156,24 +167,32 @@ public class TemporalChainPane extends StackPane implements Observer{
 							if(!media.getIsPLayingInPreview()){
 				
 								media.setIsPLayingInPreview(true);
+								
 								Object mediaContent = controlButtonPane.getMediaContent(media);
 								
+																
 								if(mediaContent instanceof MediaView){
 									
 									controlButtonPane.setVideoPresentationProperties((MediaView) mediaContent, media);
 									screen.getChildren().add((MediaView) mediaContent);
+									DragResizerXY.makeResizable(screen);
 									
 								} else if(mediaContent instanceof ImageView){
 									
 									controlButtonPane.setImagePresentationProperties((ImageView) mediaContent, media);
+									
 									if(screen.getChildren().isEmpty()){
-										
+										System.out.println(((ImageView) mediaContent).getTranslateX());
+										System.out.println(((ImageView) mediaContent).getTranslateY());
 										screen.getChildren().add((ImageView) mediaContent);
+										System.out.println("Mostrou");
+										//DragResizerXY.makeResizable(screen);
 										
 									} else{
+										System.out.println("get children = "+screen.getChildren().toString());										
 										boolean inserted = false;
 										for(Node executionObject : screen.getChildren()){
-							    			
+											System.out.println("Z MC = "+((ImageView) mediaContent).getTranslateZ()+" < "+executionObject.getTranslateZ());
 											if(((ImageView) mediaContent).getTranslateZ() < executionObject.getTranslateZ()){
 												screen.getChildren().add(screen.getChildren().indexOf(executionObject), (ImageView) mediaContent);
 												inserted = true;
@@ -181,7 +200,7 @@ public class TemporalChainPane extends StackPane implements Observer{
 											}
 											
 							    		}
-										if(!inserted){
+										if(!inserted){//&&(!(screen.getChildren().contains((ImageView) mediaContent)))){
 											screen.getChildren().add((ImageView) mediaContent);
 										}
 									}
@@ -205,7 +224,7 @@ public class TemporalChainPane extends StackPane implements Observer{
 					}
 				}
 
-			}
+			}			
 			
 		});
 		
@@ -345,7 +364,94 @@ public class TemporalChainPane extends StackPane implements Observer{
 					for(Media media : temporalChainModel.getMediaAllList()){
 		    			media.setIsPLayingInPreview(false);
 		    		}
-				}
+					// temporal view pane . get selected media list
+					// temporal view pane .  get first selected media
+						
+						Media media = temporalViewPane.getFirstSelectedMedia();
+						if (media==null){}
+						
+						else {
+							
+						
+							media.setIsPLayingInPreview(true);
+							
+							Object mediaContent = controlButtonPane.getMediaContent(media);
+													
+							if(mediaContent instanceof MediaView){
+								
+								controlButtonPane.setVideoPresentationProperties((MediaView) mediaContent, media);						
+								screen.getChildren().add((MediaView) mediaContent);
+								
+							} else if(mediaContent instanceof ImageView){
+															
+								if(screen.getChildren().isEmpty()){
+																		
+									controlButtonPane.setImagePresentationProperties((ImageView) mediaContent, media);
+									ImageView i = (ImageView)mediaContent;
+									
+//									i.setOnMousePressed(imageOnMousePressedEventHandler);
+//									i.setOnMouseDragged(imageOnMouseDraggedEventHandler);
+//									i.setTranslateX(newSceneX);
+//									i.setTranslateY(newSceneY);
+//									
+//									Bounds boundsInScene = i.localToScene(i.getBoundsInLocal());
+//									double minXInScene = boundsInScene.getMinX();
+//							        double minYInScene = boundsInScene.getMinY();
+//							        double maxXInScene = boundsInScene.getMaxX();
+//							        double maxYInScene = boundsInScene.getMaxY();
+//
+//							        	
+//							        double percentageHeight, percentageWidth;							        
+//							        double temp;							        							        
+//									double screenHeight = screen.getHeight();
+//									double screenWidth = screen.getWidth();
+//									
+//									double bottomMargin = 100*(screenHeight - maxYInScene)/screenHeight; //bottom margin %
+//									double topMargin = 100*(minYInScene)/screenHeight; //top margin %
+//									double leftMargin = 100*(minXInScene)/screenWidth; //left margin %
+//									double rightMargin = 100*(screenWidth - maxXInScene)/screenWidth; //right margin %
+//									
+//									
+//
+//							        
+//									PositionProperty pp = new PositionProperty(); //FAZER A CONTA PRA CONVERTER PRA %
+//									System.out.println("Bottom: "+bottomMargin);
+//									pp.setBottom(Double.toString(bottomMargin).concat("%"));
+//									System.out.println("Top: "+topMargin);
+//									pp.setTop(Double.toString(topMargin).concat("%"));
+//									System.out.println("Left: "+leftMargin);
+//									pp.setLeft(Double.toString(leftMargin).concat("%"));
+//									System.out.println("Right: "+rightMargin);
+//									pp.setRight(Double.toString(rightMargin).concat("%"));
+//									media.getPresentationProperty().setPositionProperty(pp);
+//									
+//									PositionPane positionPane = new PositionPane(controller, media);
+//							    	controller.populatePositionPropertyJavaBean(positionPane, media);
+//									
+//							    	//update(temporalViewModel, positionPane);
+//							    	//((ImageView) mediaContent).setTranslateX(newSceneX);
+//									//((ImageView) mediaContent).setTranslateY(newSceneY);
+									screen.getChildren().clear();
+									screen.getChildren().add(i);
+									
+								} else{
+									boolean inserted = false;
+									for(Node executionObject : screen.getChildren()){
+						    		
+										if(((ImageView) mediaContent).getTranslateZ() < executionObject.getTranslateZ()){
+											screen.getChildren().add(screen.getChildren().indexOf(executionObject), (ImageView) mediaContent);
+											inserted = true;
+											break;
+										}
+										
+						    		}
+									if(!inserted){
+										screen.getChildren().add((ImageView) mediaContent);
+									}
+								}
+							}
+						}
+					}
 
 			}
 	    });
@@ -631,6 +737,9 @@ public class TemporalChainPane extends StackPane implements Observer{
 	public Path getPlayhead(){
 		return this.playhead;
 	}
+	public Path getIndicativeLine(){
+		return this.indicativeLine;
+	}
 	public Boolean getHasClickedPlayhead(){
 		return this.hasClickedPlayhead;
 	}
@@ -644,5 +753,69 @@ public class TemporalChainPane extends StackPane implements Observer{
 	public Tab getParentTab(){
 		return parentTab;
 	}
+	
+	EventHandler<MouseEvent> imageOnMousePressedEventHandler = 
+            new EventHandler<MouseEvent>() {
+     
+            @Override
+            public void handle(MouseEvent t) {
+                orgSceneX = t.getSceneX();
+                orgSceneY = t.getSceneY();
+                orgTranslateX = ((ImageView)(t.getSource())).getTranslateX();
+                orgTranslateY = ((ImageView)(t.getSource())).getTranslateY();
+                
+            }
+        };
+         
+    EventHandler<MouseEvent> imageOnMouseDraggedEventHandler = 
+        new EventHandler<MouseEvent>() {
+ 
+        @Override
+        public void handle(MouseEvent t) {
+            double offsetX = t.getSceneX() - orgSceneX;
+            double offsetY = t.getSceneY() - orgSceneY;
+            double newTranslateX = orgTranslateX + offsetX;
+            double newTranslateY = orgTranslateY + offsetY;
+             
+            ((ImageView)(t.getSource())).setTranslateX(newTranslateX);
+            ((ImageView)(t.getSource())).setTranslateY(newTranslateY);
+            
+            newSceneX = newTranslateX;
+            newSceneY = newTranslateY;            
+            
+            Bounds boundsInScene = localToScene(getBoundsInLocal());
+			double minXInScene = boundsInScene.getMinX();
+	        double minYInScene = boundsInScene.getMinY();
+	        double maxXInScene = boundsInScene.getMaxX();
+	        double maxYInScene = boundsInScene.getMaxY();
+	        		        			        							      
+			double screenHeight = screen.getHeight();
+			double screenWidth = screen.getWidth();
+			
+			double bottomMargin = 100*(screenHeight - maxYInScene)/screenHeight; //bottom margin %
+			double topMargin = 100*(minYInScene)/screenHeight; //top margin %
+			double leftMargin = 100*(minXInScene)/screenWidth; //left margin %
+			double rightMargin = 100*(screenWidth - maxXInScene)/screenWidth; //right margin %
+			
+			PositionProperty pp = new PositionProperty(); 
+			System.out.println("Bottom: "+bottomMargin);
+			pp.setBottom(Double.toString(bottomMargin).concat("%"));
+			System.out.println("Top: "+topMargin);
+			pp.setTop(Double.toString(topMargin).concat("%"));
+			System.out.println("Left: "+leftMargin);
+			pp.setLeft(Double.toString(leftMargin).concat("%"));
+			System.out.println("Right: "+rightMargin);
+			pp.setRight(Double.toString(rightMargin).concat("%"));
+			
+			Media media = temporalViewPane.getFirstSelectedMedia();
+			media.getPresentationProperty().setPositionProperty(pp);
+			
+			PositionPane positionPane = new PositionPane(controller, media);
+	    	controller.populatePositionPropertyJavaBean(positionPane, media);
+	    	
+            
+        }
+    };
+
 	
 }

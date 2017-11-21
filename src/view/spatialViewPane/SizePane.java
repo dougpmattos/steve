@@ -1,26 +1,31 @@
 package view.spatialViewPane;
 
-import view.common.Language;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import model.common.Media;
 import model.spatialView.SizeProperty;
 import model.spatialView.enums.AspectRatio;
 import model.spatialView.enums.Size;
+import view.common.Language;
 import controller.Controller;
 
 public class SizePane extends VBox {
 
 	private Controller controller;
-	private Media media;
+	private Media media;	
 	
 	private TextField width;
 	private TextField height;
@@ -31,6 +36,9 @@ public class SizePane extends VBox {
 	
 	private BorderPane titleButtonBorderPane;
 	private GridPane sizePropertyGridPane;
+	
+	private StackPane screen;
+	private ControlButtonPane controlButtonPane;
 	
 	public SizePane(Controller controller, Media media){
 		
@@ -74,11 +82,83 @@ public class SizePane extends VBox {
 		sizePropertyGridPane.add(heightUnit, 9, 0);
 		sizePropertyGridPane.add(aspectRatioLabel, 0, 2);
 		sizePropertyGridPane.add(aspectRatio, 1, 2);
+		aspectRatio.getSelectionModel().selectedIndexProperty().addListener((observable, oldValue, newValue) -> {
+			media.getPresentationProperty().getSizeProperty().setAspectRatio(aspectRatio.getItems().get((int) newValue));
+			ImageView mediaContent = new ImageView(new Image(media.getFile().toURI().toString()));
+			this.controlButtonPane.setImagePresentationProperties(mediaContent, media);
+			this.screen.getChildren().clear();
+			this.screen.getChildren().add((ImageView) mediaContent);
+//			System.out.println("ASPECT RATIO - Mudou para "+aspectRatio.getItems().get((int) newValue));
+
+		});
+		this.controlButtonPane = controller.getStevePane().getSpatialViewPane().getDisplayPane().getControlButtonPane();
+		this.screen = controlButtonPane.getScreen();
 		
 		getChildren().add(titleButtonBorderPane);
 		getChildren().add(sizePropertyGridPane);
 		
 		populateSizePane();
+		
+		width.textProperty().addListener((observable, oldValue, newValue) -> {
+			
+			ImageView mediaContent = new ImageView(new Image(media.getFile().toURI().toString()));
+			media.getPresentationProperty().getSizeProperty().setWidth(newValue);
+			this.controlButtonPane.setImagePresentationProperties(mediaContent, media);
+//			mediaContent.setPreserveRatio(false);
+//			mediaContent.setFitWidth((Double.parseDouble(newValue)/100)*screen.getWidth());
+			this.screen.getChildren().clear();
+			this.screen.getChildren().add((ImageView) mediaContent);
+		});
+		
+		height.textProperty().addListener((observable, oldValue, newValue) -> {
+			ImageView mediaContent = new ImageView(new Image(media.getFile().toURI().toString()));
+			media.getPresentationProperty().getSizeProperty().setHeight(newValue);
+			this.controlButtonPane.setImagePresentationProperties(mediaContent, media);
+//			mediaContent.setPreserveRatio(false);
+//			mediaContent.setFitHeight((Double.parseDouble(newValue)/100)*screen.getHeight());
+			this.screen.getChildren().clear();
+			this.screen.getChildren().add((ImageView) mediaContent);
+		});
+		
+		/*ChangeListener heightChanged = new ChangeListener<String>(){
+			@Override
+			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+				ImageView mediaContent = new ImageView();
+				Image image = new Image(media.getFile().toURI().toString());
+				mediaContent.setImage(image);
+				media.getPresentationProperty().getSizeProperty().setWidth(newValue);				
+				
+				if(aspectRatio.getValue()==aspectRatio.getValue().SLICE){
+					width.setText(newValue);
+					media.getPresentationProperty().getSizeProperty().setWidth(newValue);				
+				}
+				controlButtonPane.setImagePresentationProperties(mediaContent, media);
+				screen.getChildren().clear();
+				screen.getChildren().add((ImageView) mediaContent);
+			}
+		};
+		height.textProperty().addListener(heightChanged);
+		
+		ChangeListener widthChanged = new ChangeListener<String>(){
+			@Override
+			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+				ImageView mediaContent = new ImageView();
+				Image image = new Image(media.getFile().toURI().toString());
+				mediaContent.setImage(image);
+				media.getPresentationProperty().getSizeProperty().setHeight(newValue);				
+				
+				if(aspectRatio.getValue()==aspectRatio.getValue().SLICE){
+					height.textProperty().removeListener(heightChanged);
+					height.setText(newValue);
+					media.getPresentationProperty().getSizeProperty().setHeight(newValue);
+					height.textProperty().addListener(heightChanged);
+				}
+				controlButtonPane.setImagePresentationProperties(mediaContent, media);
+				screen.getChildren().clear();
+				screen.getChildren().add((ImageView) mediaContent);
+			}			
+		};
+		width.textProperty().addListener(widthChanged);*/
 		
 	}
 	
