@@ -4,3 +4,4 @@
 /.gitignore
 /build.fxbuild
 /hs_err_pid53346.log
+/target/
