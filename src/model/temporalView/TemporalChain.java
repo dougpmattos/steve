@@ -644,7 +644,7 @@ public class TemporalChain extends Observable implements Serializable {
 		
 	}
 
-	//INFO Após passar pela validação das relações, seta o início e fim das mídias de fato na cadeia utilizando inicio/fim das mídia mestre e delay conforme o tipo de relação.
+	//INFO Após passar pela validação das relações (a relação é adicionada de fato no modelo), seta o início e fim das mídias visualmente na cadeia utilizando inicio/fim das mídia mestre e delay conforme o tipo de relação.
 	private void defineRelation(Synchronous<Media> synchronousRelationToBeDefined, int i, Media slaveMedia) {
 		
 		switch(synchronousRelationToBeDefined.getType()){
