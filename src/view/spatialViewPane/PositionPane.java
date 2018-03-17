@@ -24,6 +24,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import model.common.Media;
 import model.spatialView.PositionProperty;
+import model.spatialView.enums.AspectRatio;
 import model.spatialView.enums.Size;
 import view.common.Language;
 import view.temporalViewPane.TemporalChainPane;
@@ -127,35 +128,34 @@ public class PositionPane extends VBox {
 												
 		left.textProperty().addListener((observable, oldValue, newValue) -> {
 			System.out.println("MUDOU O LISTENER OUVINDO CHANGES LEFT: "+left.getText());	
-			//controlButtonPane.moveMediaLeft(this.imageView, media, Double.parseDouble(left.getText()));
-			media.getPresentationProperty().getPositionProperty().setLeft(left.getText());
+			media.getPresentationProperty().getPositionProperty().setLeft(left.getText());			
+			controlButtonPane.setImagePresentationProperties(this.imageView, media);
+			screen.getChildren().clear();
+			screen.getChildren().add(this.imageView);			
+			
+
+		});
+		right.textProperty().addListener((observable, oldValue, newValue) -> {
+			
+			media.getPresentationProperty().getPositionProperty().setRight(right.getText());			
 			controlButtonPane.setImagePresentationProperties(this.imageView, media);
 			screen.getChildren().clear();
 			screen.getChildren().add(this.imageView);
-		});
-		right.textProperty().addListener((observable, oldValue, newValue) -> {
-			if(!(Double.parseDouble(left.getText())>0)){ //PRECEDENCIA LEFT
-				//controlButtonPane.moveMediaRight(this.imageView, media, Double.parseDouble(right.getText()));
-				media.getPresentationProperty().getPositionProperty().setRight(right.getText());
-				controlButtonPane.setImagePresentationProperties(this.imageView, media);
-				screen.getChildren().clear();
-				screen.getChildren().add(this.imageView);
-			}			
+			
 		});
 		top.textProperty().addListener((observable, oldValue, newValue) -> {
 			media.getPresentationProperty().getPositionProperty().setTop(top.getText());
-			//controlButtonPane.moveMediaTop(this.imageView, media, Double.parseDouble(top.getText()));
-			controlButtonPane.setImagePresentationProperties(this.imageView, media);
+			controlButtonPane.setImagePresentationProperties(this.imageView, media);		
 			screen.getChildren().clear();
 			screen.getChildren().add(this.imageView);
 		});
 		bottom.textProperty().addListener((observable, oldValue, newValue) -> {
-			if(!(Double.parseDouble(top.getText())>0)){ //PRECEDENCIA TOP
-				media.getPresentationProperty().getPositionProperty().setBottom(bottom.getText());
-				controlButtonPane.setImagePresentationProperties(this.imageView, media);
-				screen.getChildren().clear();
-				screen.getChildren().add(this.imageView);
-			}			
+			System.out.println("aqui mudou para "+newValue+" e o top é "+top.getText());
+			media.getPresentationProperty().getPositionProperty().setBottom(newValue);
+			controlButtonPane.setImagePresentationProperties(this.imageView, media);
+			screen.getChildren().clear();
+			screen.getChildren().add(this.imageView);
+			
 		});
 
 	}

@@ -13,6 +13,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Bounds;
 import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.DepthTest;
@@ -530,8 +531,8 @@ public class ControlButtonPane extends BorderPane{
 	
 		//double borderLeft = mediaContent.prefHeight()/2;
 		//double borderDown = mediaContent.getFitHeight()/2;
-		int boundWidth = (int)mediaContent.getBoundsInParent().getWidth();
-        int boundHeight = (int)mediaContent.getBoundsInParent().getHeight();
+		int boundWidth = (int)mediaContent.getBoundsInLocal().getWidth();
+        int boundHeight = (int)mediaContent.getBoundsInLocal().getHeight();
         	        	        
         screenWidth = screen.getWidth();
         screenHeight = screen.getHeight();
@@ -586,51 +587,130 @@ public class ControlButtonPane extends BorderPane{
 	}
 	
 	public void setImagePresentationProperties(ImageView mediaContent, Media media){
-	
-		
+
 		double percentageHeight, percentageWidth; 
 		String temp;
 
-	    if(media.getPresentationProperty().getSizeProperty().getAspectRatio()==AspectRatio.SLICE){
-	    	mediaContent.setPreserveRatio(true);
-	    } else {
-	    	mediaContent.setPreserveRatio(false);
-	    }
+//	    if(media.getPresentationProperty().getSizeProperty().getAspectRatio()==AspectRatio.SLICE){
+//	    	mediaContent.setPreserveRatio(true);
+//	    } else {
+//	    	mediaContent.setPreserveRatio(false);
+//	    }
 	    		
 		double left = Double.parseDouble(media.getPresentationProperty().getPositionProperty().getLeft().replace("%", ""));
 		double right = Double.parseDouble(media.getPresentationProperty().getPositionProperty().getRight().replace("%", ""));
 		double top = Double.parseDouble(media.getPresentationProperty().getPositionProperty().getTop().replace("%", ""));
 		double bottom = Double.parseDouble(media.getPresentationProperty().getPositionProperty().getBottom().replace("%", ""));		
 		
-
+//		Image image = new Image(media.getFile().toURI().toString());
+//		ImageView imageView = new ImageView(image);
+//		
+//		mediaContent = imageView;
+//		mediaContent.setFitHeight(screen.getHeight());
+//		mediaContent.setFitWidth(screen.getWidth());
 		
-		if(!((left==0)&&(right!=0))){			
-			moveMediaLeft(mediaContent, media, left);
-		}		
 		
-		if(!((top==0)&&(bottom!=0))){			
-			moveMediaTop(mediaContent, media, top);
-		}
+//		if(!((left==0)&&(right!=0))){			
+//			moveMediaLeft(mediaContent, media, left);
+//		}		
+//		
+//		if(!((top==0)&&(bottom!=0))){			
+//			moveMediaTop(mediaContent, media, top);
+//		}
 		
+		boolean hLock = true;
+		boolean vLock = true;
+		
+		if(left!=0) hLock = true;
+		else hLock = false;
+		
+		if(top!=0) vLock = true;
+		else vLock = false;
+		
+		String ratio = "";
 		if(media.getPresentationProperty().getSizeProperty().getAspectRatio()==AspectRatio.SLICE){
-			mediaContent = slice(mediaContent, spaceAvailable(left, right, top, bottom));
+			if((top==0)&&(bottom==0)&&(left==0)&&(right==0)){
+				System.out.println("e zero");
+				slice(mediaContent, spaceAvailable(left, right, top, bottom));
+			}
+			else {
+				slice(mediaContent, spaceAvailable(left, right, top, bottom));
+			}
+	    	if((top==0)&&(bottom==0)&&(left==0)&&(right==0)){
+	    		moveMediaLeft(mediaContent,media,left);
+	    		moveMediaTop(mediaContent,media,top);
+	    	}
+	    	ratio = "fill";
+	    	System.out.println("H Lock = "+hLock);
+	    	if(!hLock) {
+				moveMediaRight(mediaContent, media, right);
+			} else {
+				moveMediaLeft(mediaContent,media,left);
+			}
+			if(!vLock) {
+				moveMediaBottom(mediaContent, media, bottom);
+			} else {
+				moveMediaTop(mediaContent,media,top);
+			}
+			System.out.println("bottom: "+bottom+" top: "+top+" right: "+right+" left: "+left);
+			if((!vLock)&&(bottom==0)) {
+				System.out.println("e zero vertical");
+				moveMediaTop(mediaContent,media,top);
+			}
+			System.out.println(right==0);
+			if((!hLock)&&(right==0)) moveMediaLeft(mediaContent,media,left);
+
+//			slice( mediaContent, left, right, top, bottom);
+			ratio = "slice";
+			
 	    } else {
-	    	mediaContent = fill(mediaContent, spaceAvailable(left, right, top, bottom));
-	    }
+	    	fill(mediaContent, spaceAvailable(left, right, top, bottom));
+	    	if((top==0)&&(bottom==0)&&(left==0)&&(right==0)){
+	    		moveMediaLeft(mediaContent,media,left);
+	    		moveMediaTop(mediaContent,media,top);
+	    	}
+	    	ratio = "fill";
+	    	System.out.println("H Lock = "+hLock);
+	    	if(!hLock) {
+				moveMediaRight(mediaContent, media, right);
+			} else {
+				moveMediaLeft(mediaContent,media,left);
+			}
+			if(!vLock) {
+				moveMediaBottom(mediaContent, media, bottom);
+			} else {
+				moveMediaTop(mediaContent,media,top);
+			}
+			System.out.println("bottom: "+bottom+" top: "+top+" right: "+right+" left: "+left);
+			if((!vLock)&&(bottom==0)) {
+				System.out.println("e zero vertical");
+				moveMediaTop(mediaContent,media,top);
+			}
+			System.out.println(right==0);
+			if((!hLock)&&(right==0)) moveMediaLeft(mediaContent,media,left);
+			
+	    }		
 		
-		if(!(left>0)) {
-			String width = media.getPresentationProperty().getSizeProperty().getWidth().replace("%", "");
-			mediaContent.setFitWidth((Double.parseDouble(width)/100)*screen.getWidth());
-			// TO DO TESTAR ESSA MODIFICACAO
-//			if(media.getPresentationProperty().getSizeProperty().getAspectRatio()==AspectRatio.SLICE){
-//				mediaContent = fill(mediaContent, spaceAvailable(0, (100-Double.parseDouble(width)), top, bottom));
+//		
+//		if(!(left>0)) {
+//			String width = media.getPresentationProperty().getSizeProperty().getWidth().replace("%", "");
+//			mediaContent.setFitWidth((Double.parseDouble(width)/100)*screen.getWidth());
+////			 TO DO TESTAR ESSA MODIFICACAO
+//			if(media.getPresentationProperty().getSizeProperty().getAspectRatio()==AspectRatio.FILL){
+////				mediaContent = fill(mediaContent, spaceAvailable(0, (100-Double.parseDouble(width)), top, bottom));
+//				moveMediaRight(mediaContent, media, right);
+//				mediaContent.setFitWidth(screen.getWidth()-(right/100)*screen.getWidth());
 //			}
-		}		
-		
-		if(!(top>0)){
-			String height = media.getPresentationProperty().getSizeProperty().getHeight().replace("%", "");
-			mediaContent.setFitHeight((Double.parseDouble(height)/100)*screen.getHeight());
-		}		
+//		}		
+//		
+//		if(!(top>0)&&(bottom!=0)){
+//			String height = media.getPresentationProperty().getSizeProperty().getHeight().replace("%", "");
+//			mediaContent.setFitHeight((Double.parseDouble(height)/100)*screen.getHeight());
+//			if(media.getPresentationProperty().getSizeProperty().getAspectRatio()==AspectRatio.FILL){
+//				moveMediaBottom(mediaContent, media, bottom);
+//				mediaContent.setFitHeight(screen.getHeight()-(bottom/100)*screen.getHeight());
+//			}
+//		}		
 		
 //		System.out.println(media.getPresentationProperty().getPositionProperty().getOrderZ());
 //				System.out.println(mediaContent.getTranslateZ());
@@ -645,19 +725,36 @@ public class ControlButtonPane extends BorderPane{
 //		screen.getChildren().add( mediaContent);
 	}
 	//move media pra esquerda e seta margem esquerda na position property
-	public Point2D spaceAvailable(double left,double  right, double top, double bottom){
-		Point2D space =null;
+	public Point2D spaceAvailable(double left, double right, double top, double bottom){
+		Point2D space = null;
 		double x, y;
-		if(left!=0){			
-			System.out.println("Width: "+screen.getWidth()+" - left: "+left);
+		if(left!=0){ // NAO ADIANTA MEXER AQUI PORQUE ELE SO RETORNA OS PONTOS E ELE RECEBE A MEDIA			
+//			System.out.println("Width: "+screen.getWidth()+" - left: "+left);
 			x = screen.getWidth() - ((left/100)*screen.getWidth());
-			System.out.println(x);
+//			System.out.println(x);
+//			moveMediaLeft(mediaContent, media, left);
 		}
 			
-		else x = screen.getWidth() - ((right/100)*screen.getWidth());
-		if(top!=0)
+		else {
+			
+			x = screen.getWidth() - ((right/100)*screen.getWidth());
+//			moveMediaRight(mediaContent, media, right);
+			
+		}
+		if(top!=0){
+			
 			y = screen.getHeight() - ((top/100)*screen.getHeight());
-		else y = screen.getHeight() - ((bottom/100)*screen.getHeight());
+//			moveMediaTop(mediaContent, media, top);
+			
+		}
+			
+		else {
+			
+			y = screen.getHeight() - ((bottom/100)*screen.getHeight());
+//			moveMediaBottom(mediaContent, media, bottom);
+			
+		}
+		
 		space = new Point2D.Double(x,y);
 		
 		return space;
@@ -671,18 +768,23 @@ public class ControlButtonPane extends BorderPane{
 		imageView.setFitHeight(screen.getHeight());
 //		imageView.setFitWidth(space.getX());
 //		imageView.setFitHeight(space.getY());		
-		imageView.setViewport(new Rectangle2D(0, 0, space.getX(), space.getY()));
+		imageView.setViewport(new Rectangle2D(0, 0, screen.getWidth(), screen.getHeight()));
+		
+		
 		
 		
 		return imageView;
 	}
+	
+	
 		
-	public ImageView fill(ImageView oldImageView, Point2D space){ //image, available space
-		oldImageView.setPreserveRatio(false);
+	public ImageView fill(ImageView imageView, Point2D space){ //image, available space
+		imageView.setViewport(null);
+		imageView.setPreserveRatio(false);
 		System.out.println("Settando width para: "+space.getX()+" height para: "+space.getY());
-		oldImageView.setFitWidth(space.getX());
-		oldImageView.setFitHeight(space.getY());
-		return oldImageView;
+		imageView.setFitWidth(space.getX());
+		imageView.setFitHeight(space.getY());
+		return imageView;
 	}
 	
 	public void changeHeight(ImageView mediaContent, Media media, String height){
@@ -708,7 +810,7 @@ public class ControlButtonPane extends BorderPane{
 	
 	public void moveMediaLeft(ImageView mediaContent, Media media, double left){
 		
-		mediaContent.setFitHeight((Double.parseDouble(media.getPresentationProperty().getSizeProperty().getHeight().replace("%",""))/100)*screen.getHeight());
+//		mediaContent.setFitHeight((Double.parseDouble(media.getPresentationProperty().getSizeProperty().getHeight().replace("%",""))/100)*screen.getHeight());
 		
 		PositionProperty pp = media.getPresentationProperty().getPositionProperty();
 		pp.setLeft(Double.toString(left));		
@@ -717,34 +819,34 @@ public class ControlButtonPane extends BorderPane{
         	
 		double screenWidth = screen.getWidth();     
 		double dXLeft = (left/100)*screen.getWidth();
-		if(media.getPresentationProperty().getSizeProperty().getAspectRatio().compareTo(AspectRatio.FILL)==0){			   			
+//		if(media.getPresentationProperty().getSizeProperty().getAspectRatio().compareTo(AspectRatio.FILL)==0){			   			
 	        double xZero = 0; //Referencial da tela (borda esquerda)	                 			
 			mediaContent.setTranslateX(xZero+dXLeft);
-		}
-		else {
-			mediaContent.resize(screenWidth, screen.getHeight());
-			mediaContent.setFitWidth(screenWidth);
-			mediaContent.setFitHeight(screen.getHeight());
-			mediaContent.setViewport(new Rectangle2D(screenWidth-dXLeft, 0, screenWidth, screen.getHeight()));
-			mediaContent.setTranslateX(dXLeft);
-		}
+//		}
+//		else {
+//			mediaContent.resize(screenWidth, screen.getHeight());
+//			mediaContent.setFitWidth(screenWidth);
+//			mediaContent.setFitHeight(screen.getHeight());
+//			mediaContent.setViewport(new Rectangle2D(screenWidth-dXLeft, 0, screenWidth, screen.getHeight()));
+//			mediaContent.setTranslateX(dXLeft);
+//		}
 		
 	}
 	
 	public void moveMediaRight(ImageView mediaContent, Media media, double right){
-		if(media.getPresentationProperty().getSizeProperty().getAspectRatio().compareTo(AspectRatio.FILL)==0){
-			mediaContent.setPreserveRatio(false);
-			Double d = screen.getWidth()-((right/100)*screen.getWidth());			
-			mediaContent.setFitWidth(d);    
-		} else {
-			mediaContent.setPreserveRatio(true);
-			String s = media.getPresentationProperty().getSizeProperty().getHeight().replace("%","");			
-			mediaContent.setFitHeight((Double.parseDouble(s)/100)*screen.getHeight());
-			s = media.getPresentationProperty().getSizeProperty().getWidth().replace("%","");									
-			mediaContent.setFitWidth((Double.parseDouble(s)/100)*screen.getWidth());
-		}
+//		if(media.getPresentationProperty().getSizeProperty().getAspectRatio().compareTo(AspectRatio.FILL)==0){
+//			mediaContent.setPreserveRatio(false);
+//			Double d = screen.getWidth()-((right/100)*screen.getWidth());			
+//			mediaContent.setFitWidth(d);    
+//		} else {
+//			mediaContent.setPreserveRatio(true);
+//			String s = media.getPresentationProperty().getSizeProperty().getHeight().replace("%","");			
+//			mediaContent.setFitHeight((Double.parseDouble(s)/100)*screen.getHeight());
+//			s = media.getPresentationProperty().getSizeProperty().getWidth().replace("%","");									
+//			mediaContent.setFitWidth((Double.parseDouble(s)/100)*screen.getWidth());
+//		}
 
-		mediaContent.setFitHeight((Double.parseDouble(media.getPresentationProperty().getSizeProperty().getHeight().replace("%",""))/100)*screen.getHeight());
+//		mediaContent.setFitHeight((Double.parseDouble(media.getPresentationProperty().getSizeProperty().getHeight().replace("%",""))/100)*screen.getHeight());
 		
 		PositionProperty pp = media.getPresentationProperty().getPositionProperty();
 		pp.setRight(Double.toString(right));		
@@ -754,8 +856,18 @@ public class ControlButtonPane extends BorderPane{
         double screenWidth = screen.getWidth();		
 	                
 		double dXRight = ((right/100)*screenWidth);				 
-		
-		mediaContent.setTranslateX(-dXRight-mediaContent.getFitWidth()+screenWidth);	
+		if(media.getPresentationProperty().getSizeProperty().getAspectRatio()==AspectRatio.SLICE){
+			System.out.println("Size of media is: "+mediaContent.getImage().getWidth());
+			if(mediaContent.getImage().getWidth()<screenWidth){
+				mediaContent.setTranslateX(-mediaContent.getImage().getWidth()-dXRight+screenWidth);
+			} else {
+				mediaContent.setTranslateX(-dXRight);
+			}
+			
+		} else{
+			mediaContent.setTranslateX(0);			
+		}
+//		mediaContent.setTranslateX(layoutBoundsProperty().get().getMinX());	
 	}
 	
 	public void moveMediaTop(ImageView mediaContent, Media media, double top){
@@ -775,33 +887,52 @@ public class ControlButtonPane extends BorderPane{
 	}
 	
 	public void moveMediaBottom(ImageView mediaContent, Media media, double bottom){
-		if(media.getPresentationProperty().getSizeProperty().getAspectRatio().compareTo(AspectRatio.FILL)==0){
-			mediaContent.setPreserveRatio(false);
-			Double d = screen.getHeight()-((bottom/100)*screen.getHeight());			
-			mediaContent.setFitHeight(d);    
-		} else {
-			mediaContent.setPreserveRatio(true);
-			String s = media.getPresentationProperty().getSizeProperty().getWidth().replace("%","");			
-			mediaContent.setFitWidth((Double.parseDouble(s)/100)*screen.getWidth());
-			s = media.getPresentationProperty().getSizeProperty().getHeight().replace("%","");									
-			mediaContent.setFitHeight((Double.parseDouble(s)/100)*screen.getHeight());
-		}
-
+//		if(media.getPresentationProperty().getSizeProperty().getAspectRatio().compareTo(AspectRatio.FILL)==0){
+//			mediaContent.setPreserveRatio(false);
+//			Double d = screen.getHeight()-((bottom/100)*screen.getHeight());			
+//			mediaContent.setFitHeight(d);    
+//		} else {
+//			mediaContent.setPreserveRatio(true);
+//			String s = media.getPresentationProperty().getSizeProperty().getWidth().replace("%","");			
+//			mediaContent.setFitWidth((Double.parseDouble(s)/100)*screen.getWidth());
+//			s = media.getPresentationProperty().getSizeProperty().getHeight().replace("%","");									
+//			mediaContent.setFitHeight((Double.parseDouble(s)/100)*screen.getHeight());
+//		}
+//		Double d = screen.getHeight()-((bottom/100)*screen.getHeight());			
+//		mediaContent.setFitHeight(d);    
 		PositionProperty pp = media.getPresentationProperty().getPositionProperty();
 		pp.setBottom(Double.toString(bottom));		
 		
 		media.getPresentationProperty().setPositionProperty(pp);
 		
-        int boundHeight = (int)mediaContent.getBoundsInParent().getHeight();
-		
+        int boundHeight = (int)mediaContent.getBoundsInLocal().getHeight();
+        //the x or y variables of a shape, or translateX, 
+        //translateY should never be bound to boundsInParent for the purpose of positioning the node.
+		System.out.println("esse e o bound height= "+boundHeight);
 		double screenHeight = screen.getHeight();
 		
 		double yZero = (screenHeight)-boundHeight; //Referencial da tela (borda inferior)
-				
+		System.out.println("yZero: "+ yZero);		
+
 		double dYDown = (bottom/100)*screenHeight; 
 		//System.out.println("yZero-dYDown = "+(yZero-dYDown));
-		//mediaContent.setFitWidth((screen.getWidth()));	
-		mediaContent.setTranslateY(yZero-dYDown);
+//		mediaContent.setFitWidth((screen.getWidth()));	
+		if(media.getPresentationProperty().getSizeProperty().getAspectRatio()==AspectRatio.SLICE){
+
+			if(mediaContent.getImage().getHeight()<screenHeight){
+				
+				mediaContent.setTranslateY(yZero-dYDown+screenHeight-mediaContent.getImage().getHeight());
+				
+			} else{
+				mediaContent.setTranslateY(yZero-dYDown);
+	
+			}
+		} else {
+			mediaContent.setTranslateY(yZero-dYDown);
+			
+		}
+//		setImagePresentationProperties(mediaContent, media);
+
 //
 //		screen.getChildren().clear();
 //		screen.getChildren().add((ImageView) mediaContent);
@@ -835,6 +966,7 @@ public class ControlButtonPane extends BorderPane{
 	public ControlButtonPane getControlButtonPane(){
 		return this;
 	}
+	
 	
 	
 }
