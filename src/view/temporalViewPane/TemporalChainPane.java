@@ -1,15 +1,21 @@
 package view.temporalViewPane;
 
+import java.awt.image.RenderedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.imageio.ImageIO;
+
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.event.EventHandler;
 import javafx.geometry.Bounds;
 import javafx.geometry.Pos;
@@ -184,6 +190,17 @@ public class TemporalChainPane extends StackPane implements Observer{
 									if(screen.getChildren().isEmpty()){
 										System.out.println(((ImageView) mediaContent).getTranslateX());
 										System.out.println(((ImageView) mediaContent).getTranslateY());
+										File file = new File("test6.png");
+								        RenderedImage renderedImage = SwingFXUtils.fromFXImage(((ImageView) mediaContent).getImage(), null);
+								        try {
+											ImageIO.write(
+											        renderedImage, 
+											        "png",
+											        file);
+										} catch (IOException e) {
+											// TODO Auto-generated catch block
+											e.printStackTrace();
+										}
 										screen.getChildren().add((ImageView) mediaContent);
 										System.out.println("Mostrou");
 										//DragResizerXY.makeResizable(screen);
@@ -387,6 +404,19 @@ public class TemporalChainPane extends StackPane implements Observer{
 								if(screen.getChildren().isEmpty()){
 																		
 									controlButtonPane.setImagePresentationProperties((ImageView) mediaContent, media);
+									
+									File file = new File("test5.png");
+							        RenderedImage renderedImage = SwingFXUtils.fromFXImage(((ImageView) mediaContent).getImage(), null);
+							        try {
+										ImageIO.write(
+										        renderedImage, 
+										        "png",
+										        file);
+									} catch (IOException e) {
+										// TODO Auto-generated catch block
+										e.printStackTrace();
+									}
+							        
 									ImageView i = (ImageView)mediaContent;
 									
 //									i.setOnMousePressed(imageOnMousePressedEventHandler);

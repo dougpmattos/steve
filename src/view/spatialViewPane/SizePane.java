@@ -116,6 +116,7 @@ public class SizePane extends VBox {
 			this.controlButtonPane.setImagePresentationProperties(mediaContent, media);
 //			mediaContent.setPreserveRatio(false);
 //			mediaContent.setFitHeight((Double.parseDouble(newValue)/100)*screen.getHeight());
+			
 			this.screen.getChildren().clear();
 			this.screen.getChildren().add((ImageView) mediaContent);
 		});
