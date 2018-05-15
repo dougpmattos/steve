@@ -10,17 +10,24 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.Tab;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.DataFormat;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.StackPane;
@@ -40,6 +47,7 @@ import model.temporalView.TemporalRelation;
 import model.temporalView.enums.TemporalViewOperator;
 import model.utility.MediaUtil;
 import model.utility.Operation;
+import view.common.Language;
 import view.repositoryPane.RepositoryPane;
 import view.spatialViewPane.ControlButtonPane;
 import view.spatialViewPane.DisplayPane;
@@ -73,6 +81,8 @@ public class TemporalChainPane extends StackPane implements Observer{
 	private Boolean hasClickedPlayhead = false;
 	private DisplayPane displayPane;
 	private ControlButtonPane controlButtonPane;
+	private ContextMenu arrowContextMenu;
+	private MenuItem menuItemDeleteRelation;
 	private StackPane screen;
 	NumberAxis xAxis;
 	CategoryAxis yAxis;
@@ -128,6 +138,7 @@ public class TemporalChainPane extends StackPane implements Observer{
     	createDragAndDropEvent();
     	createMouseEvent();
     	createListeners();
+    	createArrowPopupMenu(controller, temporalChainModel);
     	
     	temporalChainModel.addObserver(this);
     	for(TemporalRelation relation: temporalChainModel.getRelationList()){
@@ -208,6 +219,8 @@ public class TemporalChainPane extends StackPane implements Observer{
 			}
 			
 		});
+		
+		
 		
 	}
 	
@@ -499,7 +512,29 @@ public class TemporalChainPane extends StackPane implements Observer{
 		switch(syncRelation.getType()){
 		
 			case STARTS:
-	
+				
+//	EXEMPLO DE USO PATH COM PLAYHEAD ------
+				
+//		    	heightProperty().addListener(new ChangeListener(){
+//					@Override 
+//			        public void changed(ObservableValue o,Object oldVal, Object newVal){
+//						PathElement pathElement = playhead.getElements().get(5);
+//						if(pathElement instanceof VLineTo){
+//							((VLineTo) pathElement).setY(getHeight());
+//						}
+//					}
+//			    });
+			
+//	FIM DO EXEMPLO--------------------------
+				
+				Path arrow = new Path();
+				arrow.getElements().addAll(new MoveTo(0, 100), new LineTo(10, 100), new LineTo(5, 110), new ClosePath(), 
+						new MoveTo(5, 100), new LineTo(5, 30));
+				arrow.setId("relation-arrow");
+				getChildren().add(arrow);
+				createArrowListeners(arrow);
+				
+				
 				/*for(XYChart.Data<Number, String> xyChartData : getSerie().getData()){
 					
 					HBox containerNode = (HBox) xyChartData.getNode();
@@ -600,6 +635,65 @@ public class TemporalChainPane extends StackPane implements Observer{
 	private void removeSlaveMediaOfSyncRelation(Media slaveMedia, Synchronous<Media> syncRelation){
 		
 		//TODO remover as seta que aponta para a mídia escrava removida da relação.
+
+	}
+	
+	private void createArrowListeners(Path arrow) {
+		
+		arrow.setOnKeyReleased(new EventHandler<KeyEvent>() {
+	    	
+	    	@Override
+			public void handle(KeyEvent event) {
+	    		
+	    		if(event.getCode() == KeyCode.DELETE || event.getCode() == KeyCode.BACK_SPACE){
+	    			
+	    			System.out.println("Deletar Relação");
+	    			//TODO deleta a relação selecionada
+	    	
+	    		}
+
+	    	}
+	    	
+	    });
+		arrow.setOnMouseClicked(new EventHandler<MouseEvent>(){
+
+			@Override
+			public void handle(MouseEvent mouseEvent) {
+				
+				if (mouseEvent.getButton() == MouseButton.SECONDARY && !arrowContextMenu.isShowing()) {
+
+					System.out.println("Mostra Popub");
+					
+					menuItemDeleteRelation.setDisable(false); 
+					arrowContextMenu.show(arrow, mouseEvent.getScreenX(), mouseEvent.getScreenY());
+		
+			     }
+			}
+			
+	    });
+		
+	}
+	
+	private void createArrowPopupMenu(Controller controller, TemporalChain temporalChainModel) {
+		
+		arrowContextMenu = new ContextMenu();
+		menuItemDeleteRelation = new MenuItem (Language.translate("delete.relation"));
+		arrowContextMenu.getItems().addAll(menuItemDeleteRelation);
+		createArrowMenuItemActions(controller, temporalChainModel);
+		
+	}
+	
+	private void createArrowMenuItemActions(Controller controller, TemporalChain temporalChainModel) {
+		
+		menuItemDeleteRelation.setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent event) {
+				
+				//TODO deletar relação selecionada
+				
+			}
+		});
 
 	}
 	

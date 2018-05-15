@@ -225,9 +225,10 @@
 	-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);
 }
 #relation-arrow{
-	-fx-stroke: red;
-	-fx-fill: red;
+	-fx-stroke: #00BFA5;
+	-fx-fill: #00BFA5;
 	-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);
+	-fx-stroke-width: 200% 
 }
 #i-button{
 	-fx-graphic: url("../images/interactivity-button.png");
