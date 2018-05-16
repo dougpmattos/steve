@@ -11,8 +11,8 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import model.common.Media;
-import model.spatialView.PositionProperty;
-import model.spatialView.enums.Size;
+import model.spatialView.media.MediaPositionProperty;
+import model.spatialView.media.enums.Size;
 import view.common.Language;
 import controller.Controller;
 
@@ -187,7 +187,7 @@ public class PositionPane extends VBox {
 	
 	private void populatePositionPane(){
 		
-		PositionProperty positionProperty = media.getPresentationProperty().getPositionProperty();
+		MediaPositionProperty positionProperty = media.getPresentationProperty().getPositionProperty();
 		
 		setLeftValue(positionProperty.getLeft());
 		setRightValue(positionProperty.getRight());

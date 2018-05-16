@@ -97,7 +97,7 @@ public class RepositoryButtonPane extends BorderPane{
                 		Media media = new Media();
                 		media.setFile(file);
                 		
-                		if(media.getMediaType() == null){
+                		if(media.getType() == null){
                 			
                 			MessageDialog messageDialog = new MessageDialog(Language.translate("media.type.not.supported"), "OK", 110);
                             messageDialog.showAndWait();

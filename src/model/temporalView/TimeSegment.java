@@ -3,7 +3,7 @@ package model.temporalView;
 import java.io.Serializable;
 
 import model.common.Media;
-import model.spatialView.PresentationProperty;
+import model.spatialView.media.MediaPresentationProperty;
 
 public class TimeSegment implements Serializable {
 
@@ -13,7 +13,7 @@ public class TimeSegment implements Serializable {
 	private Double begin;
 	private Double end;
 	private Media parentMedia;
-	private PresentationProperty presentationProperty;
+	private MediaPresentationProperty presentationProperty;
 	
 	public TimeSegment(){
 		
@@ -51,11 +51,11 @@ public class TimeSegment implements Serializable {
 		return parentMedia;
 	}
 
-	public void setPresentationProperty(PresentationProperty presentationProperty) {
+	public void setPresentationProperty(MediaPresentationProperty presentationProperty) {
 		this.presentationProperty = presentationProperty;
 	}
 	
-	public PresentationProperty getPresentationProperty() {
+	public MediaPresentationProperty getPresentationProperty() {
 		return presentationProperty;
 	}
 	

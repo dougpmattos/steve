@@ -16,11 +16,11 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import model.common.Media;
 import model.common.enums.MediaType;
-import model.spatialView.StyleProperty;
-import model.spatialView.TextStyleProperty;
-import model.spatialView.enums.FontFamily;
-import model.spatialView.enums.FontStyle;
-import model.spatialView.enums.FontWeight;
+import model.spatialView.media.StyleProperty;
+import model.spatialView.media.TextStyleProperty;
+import model.spatialView.media.enums.FontFamily;
+import model.spatialView.media.enums.FontStyle;
+import model.spatialView.media.enums.FontWeight;
 import controller.Controller;
 
 public class StylePane extends VBox {
@@ -78,7 +78,7 @@ public class StylePane extends VBox {
 
 	private void createFieldsTextMedia(Media media) {
 		
-		if(media.getMediaType().equals(MediaType.TEXT)){
+		if(media.getType().equals(MediaType.TEXT)){
 			
 			Label fontFamilyLabel = new Label(Language.translate("font.family"));
 			Label fontSizeLabel = new Label(Language.translate("font.size"));
@@ -166,7 +166,7 @@ public class StylePane extends VBox {
 	
 	private void populateStylePane(){
 		
-		if(media.getMediaType().equals(MediaType.TEXT)){
+		if(media.getType().equals(MediaType.TEXT)){
 			
 			TextStyleProperty textStyleProperty = media.getPresentationProperty().getTextStyleProperty();
 			
@@ -188,7 +188,7 @@ public class StylePane extends VBox {
 
 	public void populateStylePropertyJavaBean() {
 		
-		if(media.getMediaType().equals(MediaType.TEXT)){
+		if(media.getType().equals(MediaType.TEXT)){
 			
 			controller.populateTextStylePropertyJavaBean(this, media);
 			

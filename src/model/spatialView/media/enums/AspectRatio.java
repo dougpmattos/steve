@@ -1,4 +1,4 @@
-package model.spatialView.enums;
+package model.spatialView.media.enums;
 
 public enum AspectRatio {
 

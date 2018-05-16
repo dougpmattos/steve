@@ -1,9 +1,9 @@
-package model.spatialView.enums;
+package model.spatialView.media.enums;
 
-public enum FontWeight {
+public enum FontStyle {
 
 	NORMAL,
-	BOLD;
+	ITALIC;
 	
 	@Override
 	public String toString(){
@@ -13,8 +13,8 @@ public enum FontWeight {
 			case NORMAL:
 				return "Normal";
 	               
-			case BOLD:
-				return "Bold";
+			case ITALIC:
+				return "Italic";
 				
 		}
 		

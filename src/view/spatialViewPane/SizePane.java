@@ -12,9 +12,9 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import model.common.Media;
-import model.spatialView.SizeProperty;
-import model.spatialView.enums.AspectRatio;
-import model.spatialView.enums.Size;
+import model.spatialView.media.SizeProperty;
+import model.spatialView.media.enums.AspectRatio;
+import model.spatialView.media.enums.Size;
 import controller.Controller;
 
 public class SizePane extends VBox {

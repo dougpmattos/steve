@@ -118,7 +118,7 @@ public class RepositoryMediaItemContainerListPane extends ScrollPane implements 
 		
 		allTypes.getChildren().add(createRepositoryMediaItem(media));
 		
-		switch(media.getMediaType()){
+		switch(media.getType()){
 		    case IMAGE:
 		        image.getChildren().add(createRepositoryMediaItem(media));
 		        break;
@@ -156,7 +156,7 @@ public class RepositoryMediaItemContainerListPane extends ScrollPane implements 
     	}
     	allTypes.getChildren().remove(repositoryMedia);
 		
-		switch(media.getMediaType()){
+		switch(media.getType()){
 		    case IMAGE:
 		    	Iterator imageIt = image.getChildren().iterator();
 		    	Boolean mediaImageFound = false;

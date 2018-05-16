@@ -33,7 +33,7 @@ public class PropertyPane extends ScrollPane implements Observer{
 	    container = new VBox();
 	    container.setId("property-container");
 	    
-	    if(media.getMediaType().equals(MediaType.AUDIO)){
+	    if(media.getType().equals(MediaType.AUDIO)){
 	    	
 	    	levelPane = new LevelPane(controller, media);
 	    	
@@ -72,7 +72,7 @@ public class PropertyPane extends ScrollPane implements Observer{
 
 			private void populatePresentationPropertyJavaBean() {
 				
-				if(media.getMediaType().equals(MediaType.AUDIO)){
+				if(media.getType().equals(MediaType.AUDIO)){
 			    	
 			    	levelPane.populateLevelPropertyJavaBean();
 			    	

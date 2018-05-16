@@ -21,7 +21,7 @@ import javafx.scene.web.WebView;
 import javafx.util.Duration;
 import model.common.Media;
 import model.common.SpatialTemporalView;
-import model.spatialView.enums.AspectRatio;
+import model.spatialView.media.enums.AspectRatio;
 import model.temporalView.TemporalChain;
 import view.common.CommonMethods;
 import view.common.Language;
@@ -382,7 +382,7 @@ public class ControlButtonPane extends BorderPane{
 
 		mediaContent = null;
 		
-		switch(media.getMediaType()) {
+		switch(media.getType()) {
 		   
 			case IMAGE:
 				

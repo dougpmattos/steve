@@ -13,6 +13,7 @@ public class SpatialTemporalView extends Observable implements Serializable{
 	private static final long serialVersionUID = 1818548173102220176L;
 	
 	private ArrayList<TemporalChain> temporalChainList = new ArrayList<TemporalChain>();
+	private ArrayList<GlobalVariable> globalVariableList = new ArrayList<GlobalVariable>();
 	
 	public SpatialTemporalView(){
 		
@@ -50,6 +51,11 @@ public class SpatialTemporalView extends Observable implements Serializable{
 	
 	public ArrayList<TemporalChain> getTemporalChainList() {
 		return temporalChainList;
+		
+	}
+	
+	public ArrayList<GlobalVariable> getGlobalVariableList() {
+		return globalVariableList;
 		
 	}
 

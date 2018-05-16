@@ -15,10 +15,10 @@ import javafx.stage.FileChooser;
 import model.NCLSupport.enums.ImportedNCLCausalConnectorType;
 import model.common.Media;
 import model.common.SpatialTemporalView;
-import model.spatialView.PositionProperty;
-import model.spatialView.SizeProperty;
-import model.spatialView.enums.AspectRatio;
-import model.spatialView.enums.Size;
+import model.spatialView.media.MediaPositionProperty;
+import model.spatialView.media.SizeProperty;
+import model.spatialView.media.enums.AspectRatio;
+import model.spatialView.media.enums.Size;
 import model.temporalView.Asynchronous;
 import model.temporalView.Interactivity;
 import model.temporalView.Synchronous;
@@ -839,7 +839,7 @@ public class NCLExportEventHandler implements EventHandler<ActionEvent>{
 		NCLRegion nclRegion = new NCLRegion();
 		nclRegion.setId("rg_" + media.getNCLName());
 		
-		PositionProperty mediaPositionProperty= media.getPresentationProperty().getPositionProperty();
+		MediaPositionProperty mediaPositionProperty= media.getPresentationProperty().getPositionProperty();
 		SizeProperty mediaSizeProperty = media.getPresentationProperty().getSizeProperty();
 		
 		nclRegion.setLeft(treatPositionSizeValue(mediaPositionProperty.getLeft()));

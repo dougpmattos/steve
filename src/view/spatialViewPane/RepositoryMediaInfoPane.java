@@ -42,7 +42,7 @@ public class RepositoryMediaInfoPane extends ScrollPane{
 		type.setEditable(false);
 		
 		Boolean isContinousMedia = false;
-		if(media.getMediaType() == MediaType.AUDIO || media.getMediaType() == MediaType.VIDEO){
+		if(media.getType() == MediaType.AUDIO || media.getType() == MediaType.VIDEO){
 			isContinousMedia = true; 
 		}
 
@@ -107,10 +107,10 @@ public class RepositoryMediaInfoPane extends ScrollPane{
 	private void populateInfoPane(){
 		
 		setNameValue(media.getName());
-		setTypeValue(media.getMediaType().toString());
+		setTypeValue(media.getType().toString());
 		
 		Boolean isContinousMedia = false;
-		if(media.getMediaType() == MediaType.AUDIO || media.getMediaType() == MediaType.VIDEO){
+		if(media.getType() == MediaType.AUDIO || media.getType() == MediaType.VIDEO){
 			isContinousMedia = true; 
 		}
 
