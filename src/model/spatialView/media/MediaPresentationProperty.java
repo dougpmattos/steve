@@ -68,7 +68,7 @@ public class MediaPresentationProperty extends PresentationProperty<MediaPositio
 	
 	public void populatePositionPropertyJavaBean(PositionPane positionPane) {
 		
-		MediaPositionProperty positionProperty = getPositionProperty();
+		MediaPositionProperty positionProperty = this.positionProperty;
 		
 		positionProperty.setLeft(positionPane.getLeftValue());
 		positionProperty.setRight(positionPane.getRightValue());
