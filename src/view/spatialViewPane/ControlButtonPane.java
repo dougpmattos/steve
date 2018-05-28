@@ -6,6 +6,8 @@ import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
@@ -30,6 +32,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.image.PixelReader;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
@@ -80,6 +83,15 @@ public class ControlButtonPane extends BorderPane{
 	private Boolean hasStopped = false;
 	private Boolean hasPaused = false;
 	
+	double dragx = 0;
+	double dragy = 0;
+	// mouse position
+	double mousex = 0;
+	double mousey = 0;
+	
+	boolean dragging = false;
+	boolean moveToFront = true;
+	
 	public ControlButtonPane(StackPane screen, TemporalViewPane temporalViewPane,SteveMenuBar steveMenuBar, SpatialTemporalView spatialTemporalView){
 		
 		setId("control-button-pane");
@@ -99,12 +111,10 @@ public class ControlButtonPane extends BorderPane{
 		createListeners();
 		createButtonActions();
 		
-		//DragResizerXY.makeResizable(screen);
+		DragResizerXY.makeResizable(screen);
 
 	}
-	private void createMouseEvent(){
-		
-	}
+
 	private void createListeners(){
 		
 		temporalViewPane.getTemporalChainTabPane().getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Tab>() {
@@ -187,6 +197,16 @@ public class ControlButtonPane extends BorderPane{
 		refreshButtonPane.setId("refresh-pane");
 		//refreshButtonPane.getChildren().add(refresh);
 		
+	}
+	
+	public void createClickedAction(){
+		
+		screen.setOnMouseClicked(new EventHandler<MouseEvent>() {
+			
+			public void handle(MouseEvent mouseEvent) {
+				System.out.println("MOUSE CLICOU NA TELA direto da cbp");
+			}
+		});
 	}
 	
 	private void createButtonActions(){
@@ -615,6 +635,7 @@ public class ControlButtonPane extends BorderPane{
 	
 	public void setImagePresentationProperties(ImageView mediaContent, Media media){
 		
+		//media.getPresentationProperty().set Mudar apsect ratio da imagem 
 		double percentageHeight, percentageWidth; 
 		String temp;
 		boolean smlImg = false;	
@@ -697,17 +718,35 @@ public class ControlButtonPane extends BorderPane{
 		if(Double.parseDouble(h.replace("%", ""))!=100) heightLock = true;
 		else heightLock = false;
 			
+//		se right = 10% coloca a margem direita da imagem numa distancia de 10% do 0
+//		nesse caso imagem fica com 10% de largura
+		
+//		se left = 10% coloca a margem esquerda da imagem numa distancia de 10% do 0
+//		nesse caso imagem fica com 90% de largura
+		
+//		se top = 10% coloca a marge de cima da imagem numa distancia de 10% do 0
+//		nesse caso imagem fica com 90% de altura
+		
+//		se bottom = 10% coloca a marge de baixo da imagem numa distancia de 10% do 0
+//		nesse caso imagem fica com 10% de altura
+		
+//		se slice apenas uma dimensao toda cabe na tela e o resto é cortado.
+		
+//		se fill imagem é distorcida para caber no tamanho disponivel.
 		
 //		- [ ] precendencia left > width > right
 //		- [ ] -precendencia top > height > bottom
 		
 		if(media.getPresentationProperty().getSizeProperty().getAspectRatio()==AspectRatio.SLICE){
 			
-			mediaContent = slice(mediaContent, media, spaceAvailable(mediaContent, left, right, top, bottom, w, h, ratio), hLock, vLock);				    
+			mediaContent = //slice(mediaContent, media, spaceAvailable(mediaContent, left, right, top, bottom, w, h, ratio), hLock, vLock);
+					slice(mediaContent, spaceAvailable(mediaContent, left, right, top, bottom, w, h), media);
+			
 			
 	    } else {
 	    	
-	    	mediaContent = fill(mediaContent, spaceAvailable(mediaContent, left, right, top, bottom, w, h, ratio), hLock, vLock);	    	
+	    	mediaContent = //fill(mediaContent, spaceAvailable(mediaContent, left, right, top, bottom, w, h, ratio), hLock, vLock);
+	    			fill(mediaContent, spaceAvailable(mediaContent, left, right, top, bottom, w, h));
 						
 	    }		
 		if((top==0)&&(bottom==0)&&(left==0)&&(right==0)){
@@ -802,9 +841,39 @@ public class ControlButtonPane extends BorderPane{
 //		System.out.println("Height: "+media.getPresentationProperty().getSizeProperty().getHeight());
 //		screen.getChildren().clear();
 //		screen.getChildren().add( mediaContent);
+		
+	}
+	
+	public Point2D spaceAvailable(ImageView imageView, double left, double right, double top, double bottom, String w, String h){
+		Point2D space = null;
+		
+		double x=screen.getWidth(), y=screen.getHeight();	
+		if(left>100) left=100;
+		if(top>100) top=100;
+		if(right>100) right=100;
+		if(bottom>100) bottom=100;
+		
+		//testar se left + width formam uma combinacao valida
+		if(left!=0){
+			x=screen.getWidth()-((left/100)*screen.getWidth());		
+		} else { //testar se right + width formam uma combinacao valida
+			if(right!=0){
+				x=(right/100)*screen.getWidth();
+			}
+		}
+		if(top!=0){
+			y=screen.getWidth()-((top/100)*screen.getHeight());		
+		} else { //testar se right + width formam uma combinacao valida
+			if(bottom!=0){
+				y=(bottom/100)*screen.getHeight();
+			}
+		}
+		space = new Point2D.Double(x,y);
+		
+		return space;
 	}
 
-	public Point2D spaceAvailable(ImageView imageView, double left, double right, double top, double bottom, String w, String h, String ratio){
+/*	public Point2D spaceAvailable(ImageView imageView, double left, double right, double top, double bottom, String w, String h, String ratio){
 		Point2D space = null;
 		double x = 0;
 		double y = 0;
@@ -874,8 +943,8 @@ public class ControlButtonPane extends BorderPane{
 			}
 						
 		}
-		if(x>475) x=475;
-		if(y>299) y=299;
+		if(x>screen.getWidth()) x=screen.getWidth();
+		if(y>screen.getHeight()) y=screen.getHeight();
 		
 		if(((x==0)||(y==0))&&(top==0)&&(left==0)) {
 			imageView.setVisible(false);
@@ -885,110 +954,188 @@ public class ControlButtonPane extends BorderPane{
 		space = new Point2D.Double(x,y);
 		
 		return space;
-	}
+	}*/
 	
 	//chcar aonde mais muda tamanho?
 	//checar se esta lock ou nao para poder redimensionar tamanho.	
-	public ImageView slice(ImageView imageView, Point2D space, boolean hLock, boolean vLock){
-						
-		imageView.setPreserveRatio(false);
-		double x,y;
+//	public ImageView slice(ImageView imageView, Point2D space, boolean hLock, boolean vLock){
+//						
+//		imageView.setPreserveRatio(false);
+//		double x,y;
+//		
+//		if(imageView.getImage().getWidth()>=screen.getWidth()){
+//			
+//			if(space.getX()!=0) {
+//				imageView.setFitWidth(space.getX());
+//			} else {
+//				imageView.setFitWidth(space.getX());
+//		//			imageView.setFitWidth(221);
+//			}
+//		}
+//		
+//		if(imageView.getImage().getHeight()>=screen.getHeight()){
+//			if(space.getY()!=0) {
+//				imageView.setFitHeight(space.getY());
+//			} else {
+//				imageView.setFitHeight(space.getY());
+//		//			imageView.setFitHeight(222);
+//			}
+//		}
+//		
+//		if(space.getX()<screen.getWidth()) x = space.getX();
+//		else x = screen.getWidth();
+//		
+//		if(space.getY()<screen.getHeight()) y = space.getY();
+//		else y = screen.getHeight();
+//		
+//		imageView.setViewport(new Rectangle2D(0, 0, x, y));
+//		
+//		System.out.println("Compute area in screen: "+imageView.computeAreaInScreen());
+//		return imageView;
+//	}
+//	
+//	public ImageView slice(ImageView imageView, Media media, Point2D space, boolean hLock, boolean vLock){
+//		
+//		imageView.setPreserveRatio(false);
+//		double x=0,y=0;
+//		
+//		String imageFile = media.getFile().toURI().toString();
+//		    
+//		Image image = new Image(imageFile);
+//		
+//		PixelReader reader = image.getPixelReader();
+//		
+//		System.out.println("X = "+space.getX()+" >= "+image.getWidth());
+//		if(space.getX()>=image.getWidth()){
+//			x=image.getWidth();
+//		}
+//        	 
+//        else if(space.getX()==0){
+//        	x=screen.getWidth();
+//        }        	
+//		
+//        else {
+//        	x=space.getX();
+//        }
+//		
+//        if(space.getY()>=image.getHeight()){
+//        	y=image.getHeight();
+//        }
+//        	 
+//        else if(space.getY()==0){
+//        	y=screen.getHeight();
+//        }
+//        else {
+//        	y=space.getY();
+//        }
+//        	
+////        WritableImage(PixelReader reader, int x, int y, int width, int height)
+//        if((x!=0)||(y!=0)){
+//        	WritableImage newImage = new WritableImage(reader, 0,0,(int) x, (int) y);
+//        	File file = new File("test.png");
+//            RenderedImage renderedImage = SwingFXUtils.fromFXImage(newImage, null);
+//            try {
+//    			ImageIO.write(
+//    			        renderedImage, 
+//    			        "png",
+//    			        file);
+//    		} catch (IOException e) {
+//    			// TODO Auto-generated catch block
+//    			e.printStackTrace();
+//    		}
+//            imageView.setImage(newImage);
+//            
+//            imageView.setFitHeight(y);
+//    		imageView.setFitWidth(x);
+//    		
+//        }        		
+//        
+//		
+//		
+//		System.out.println("Compute area in screen: "+imageView.computeAreaInScreen());
+//		return imageView;
+//	}
+
+	public ImageView slice(ImageView imageView, Point2D space, Media media){	
 		
-		if(imageView.getImage().getWidth()>=screen.getWidth()){
-			
-			if(space.getX()!=0) {
-				imageView.setFitWidth(space.getX());
-			} else {
-				imageView.setFitWidth(space.getX());
-		//			imageView.setFitWidth(221);
-			}
-		}
-		
-		if(imageView.getImage().getHeight()>=screen.getHeight()){
-			if(space.getY()!=0) {
-				imageView.setFitHeight(space.getY());
-			} else {
-				imageView.setFitHeight(space.getY());
-		//			imageView.setFitHeight(222);
-			}
-		}
-		
-		if(space.getX()<screen.getWidth()) x = space.getX();
-		else x = screen.getWidth();
-		
-		if(space.getY()<screen.getHeight()) y = space.getY();
-		else y = screen.getHeight();
-		
-		imageView.setViewport(new Rectangle2D(0, 0, x, y));
-		
-		System.out.println("Compute area in screen: "+imageView.computeAreaInScreen());
-		return imageView;
-	}
-	
-	public ImageView slice(ImageView imageView, Media media, Point2D space, boolean hLock, boolean vLock){
-		
-		imageView.setPreserveRatio(false);
-		double x=0,y=0;
+		imageView.setPreserveRatio(true);
 		
 		String imageFile = media.getFile().toURI().toString();
-		    
-		Image image = new Image(imageFile);
 		
-		PixelReader reader = image.getPixelReader();
+		System.out.println("imageFile: "+imageFile);
+	    
+		Image image = new Image(imageFile);		
 		
-		System.out.println("X = "+space.getX()+" >= "+image.getWidth());
-		if(space.getX()>=image.getWidth()){
-			x=image.getWidth();
+		double tx=imageView.getImage().getWidth();
+		
+		double ty=imageView.getImage().getHeight();	
+		
+		if((tx<=screen.getHeight())&&(ty<=screen.getHeight())){
+			
+			if(ty>tx){
+				
+				imageView.setFitWidth(tx);													
+				
+			}
+			else {
+				
+				imageView.setFitHeight(ty);
+				
+			}
+			
+			return imageView;
+			
 		}
-        	 
-        else if(space.getX()==0){
-        	x=screen.getWidth();
-        }        	
 		
-        else {
-        	x=space.getX();
-        }
+		else {
+			
+			
+			PixelReader reader = image.getPixelReader();
+					
+			
+			WritableImage newImage = new WritableImage(reader, (int)  image.getWidth(), (int) image.getHeight());
+			
+	        SnapshotParameters parameters = new SnapshotParameters();
+	
+	        parameters.setFill(Color.TRANSPARENT);
+	        
+	        ImageView nv = new ImageView(newImage);
+	        
+	        nv.setPreserveRatio(true);
+	        
+			imageView.setImage(newImage);
+	
+			if(ty>tx){
+				
+				nv.setFitWidth(space.getX());													
+				
+			}
+			else {
+				
+				nv.setFitHeight(space.getY());
+				
+			}
+	
+			WritableImage wi = nv.snapshot(parameters, new WritableImage(reader, 0,0,(int) space.getX(),(int) space.getY()));
+	
+			newImage = nv.snapshot(parameters, wi);
+	
+			imageView.setImage(newImage);
+			
+			return imageView;
+		}
 		
-        if(space.getY()>=image.getHeight()){
-        	y=image.getHeight();
-        }
-        	 
-        else if(space.getY()==0){
-        	y=screen.getHeight();
-        }
-        else {
-        	y=space.getY();
-        }
-        	
-//        WritableImage(PixelReader reader, int x, int y, int width, int height)
-        if((x!=0)||(y!=0)){
-        	WritableImage newImage = new WritableImage(reader, 0,0,(int) x, (int) y);
-        	File file = new File("test.png");
-            RenderedImage renderedImage = SwingFXUtils.fromFXImage(newImage, null);
-            try {
-    			ImageIO.write(
-    			        renderedImage, 
-    			        "png",
-    			        file);
-    		} catch (IOException e) {
-    			// TODO Auto-generated catch block
-    			e.printStackTrace();
-    		}
-            imageView.setImage(newImage);
-            
-            imageView.setFitHeight(y);
-    		imageView.setFitWidth(x);
-    		
-        }        		
-        
-		
-		
-		System.out.println("Compute area in screen: "+imageView.computeAreaInScreen());
+	}
+	//checar se esta lock ou nao para poder redimensionar tamanho.
+	
+	public ImageView fill(ImageView imageView, Point2D space){
+		imageView.setPreserveRatio(false);
+		imageView.setFitWidth(space.getX());
+		imageView.setFitHeight(space.getY());
 		return imageView;
 	}
 	
-	//checar se esta lock ou nao para poder redimensionar tamanho.
-	public ImageView fill(ImageView imageView, Point2D space, boolean hLock, boolean vLock){ //image, available space
+	/*public ImageView fill(ImageView imageView, Point2D space, boolean hLock, boolean vLock){ //image, available space
 		
 		imageView.setViewport(null);
 		imageView.setPreserveRatio(false);
@@ -1010,7 +1157,7 @@ public class ControlButtonPane extends BorderPane{
 				
 		
 		return imageView;
-	}
+	}*/
 	
 	public void changeHeight(ImageView mediaContent, Media media, String height){
 		//mediaContent = new ImageView(new Image(media.getFile().toURI().toString()));
@@ -1111,6 +1258,23 @@ public class ControlButtonPane extends BorderPane{
 	
 	}
 	
+	// Posiciona a margem de baixo da imagem em bottom de 0
+	public void moveMediaBottom(ImageView mediaContent, Media media, double bottom, String teste){
+		PresentationProperty presentationProperty = media.getPresentationProperty();
+		PositionProperty pp = media.getPresentationProperty().getPositionProperty();
+		pp.setBottom(Double.toString(bottom));	
+		media.getPresentationProperty().setPositionProperty(pp);
+		
+		double screenWidth = screen.getWidth();
+		double screenHeight = screen.getHeight();
+			
+		double yZero = 0; //Referencial da tela (borda superior)
+		double dYBottom = (bottom/100)*screenHeight; 
+			
+		mediaContent.setTranslateY(yZero+dYBottom);	
+		
+	}
+	
 	public void moveMediaBottom(ImageView mediaContent, Media media, double bottom){
 //		if(media.getPresentationProperty().getSizeProperty().getAspectRatio().compareTo(AspectRatio.FILL)==0){
 //			mediaContent.setPreserveRatio(false);
@@ -1198,5 +1362,6 @@ public class ControlButtonPane extends BorderPane{
 	}
 	
 	
+
 	
 }
