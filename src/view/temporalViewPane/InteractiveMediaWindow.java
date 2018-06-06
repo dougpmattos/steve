@@ -26,6 +26,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import model.common.Media;
+import model.common.Node;
 import model.temporalView.Interactivity;
 import model.temporalView.TemporalChain;
 import model.temporalView.enums.AlphabeticalInteractivityKey;
@@ -66,7 +67,7 @@ public class InteractiveMediaWindow extends Stage {
 	private CheckBox interactiveMediaWillBeStopped;
 //	private CheckBox endApplication;
 //	private CheckBox endTemporalChain;
-    private ChoiceBox<Media> mediaToBeStoppedField;
+    private ChoiceBox<Node> nodeToBeStoppedField;
     private ChoiceBox timelineToBeStartedField;
     private TextField stopDelayField;
     private TextField startDelayField;
@@ -81,10 +82,10 @@ public class InteractiveMediaWindow extends Stage {
     private VBox timelineCloseNewVBoxContainer;
 
     private Media interactiveMedia;
-	private ArrayList<Media> mediaListDuringInteractivityTime;
+	private ArrayList<Node> nodeListDuringInteractivityTime;
 	private ObservableList timelineFieldOptions;
     
-    public InteractiveMediaWindow(Controller controller, TemporalViewPane temporalViewPane, Media firstSelectedMedia, ArrayList<Media> mediaListDuringInteractivityTime) {
+    public InteractiveMediaWindow(Controller controller, TemporalViewPane temporalViewPane, Media firstSelectedMedia, ArrayList<Node> nodeListDuringInteractivityTime) {
 
         setResizable(false);
         initModality(Modality.APPLICATION_MODAL);
@@ -95,7 +96,7 @@ public class InteractiveMediaWindow extends Stage {
         isEdition = false;
         
         this.interactiveMedia = firstSelectedMedia;
-        this.mediaListDuringInteractivityTime = mediaListDuringInteractivityTime;
+        this.nodeListDuringInteractivityTime = nodeListDuringInteractivityTime;
 
         BorderPane containerBorderPane = new BorderPane();
         containerBorderPane.setId("container-border-pane");
@@ -115,7 +116,7 @@ public class InteractiveMediaWindow extends Stage {
 
     }
     
-    public InteractiveMediaWindow(Controller controller, TemporalViewPane temporalViewPane, ArrayList<Media> mediaListDuringInteractivityTime, Interactivity<Media> interactivityToLoad){
+    public InteractiveMediaWindow(Controller controller, TemporalViewPane temporalViewPane, ArrayList<Node> nodeListDuringInteractivityTime, Interactivity<Media> interactivityToLoad){
     	
     	setResizable(false);
         initModality(Modality.APPLICATION_MODAL);
@@ -127,7 +128,7 @@ public class InteractiveMediaWindow extends Stage {
         this.interactivityRelation = interactivityToLoad;
         
         this.interactiveMedia = (Media) interactivityToLoad.getMasterNode();
-        this.mediaListDuringInteractivityTime = mediaListDuringInteractivityTime;
+        this.nodeListDuringInteractivityTime = nodeListDuringInteractivityTime;
         
         BorderPane containerBorderPane = new BorderPane();
         containerBorderPane.setId("container-border-pane");
@@ -197,7 +198,7 @@ public class InteractiveMediaWindow extends Stage {
         		ChoiceBox choiceBoxField;
     			HBox fieldCloseHBoxContainer = new HBox();
     
-				choiceBoxField = new ChoiceBox<Media>(FXCollections.observableArrayList(mediaListDuringInteractivityTime));
+				choiceBoxField = new ChoiceBox<Node>(FXCollections.observableArrayList(nodeListDuringInteractivityTime));
 				fieldCloseHBoxContainer.setId("media-close-button-hbox-container");
 			
     			choiceBoxField.setId("new-interactive-media-field");
@@ -386,7 +387,7 @@ public class InteractiveMediaWindow extends Stage {
         interactiveMediaWillBeStopped  =new CheckBox(Language.translate("interactive.media.will.be.stopped"));
 //        endApplication  =new CheckBox(Language.translate("end.application"));
 //        endTemporalChain = new CheckBox(Language.translate("end.temporal.chain"));
-        mediaToBeStoppedField = new ChoiceBox<Media>(FXCollections.observableArrayList(mediaListDuringInteractivityTime));
+        nodeToBeStoppedField = new ChoiceBox<Node>(FXCollections.observableArrayList(nodeListDuringInteractivityTime));
         stopDelayField = new TextField();
         startDelayField = new TextField();
         
@@ -407,7 +408,7 @@ public class InteractiveMediaWindow extends Stage {
         interactiveMediaWillBeStopped.setId("new-interactive-media-field");
 //        endApplication.setId("new-interactive-media-field");
 //        endTemporalChain.setId("end-temporal-chain");
-        mediaToBeStoppedField.setId("new-interactive-media-field"); 
+        nodeToBeStoppedField.setId("new-interactive-media-field"); 
         timelineToBeStartedField.setId("new-interactive-media-field");
         stopDelayField.setId("input-field");
         startDelayField.setId("input-field");
@@ -435,7 +436,7 @@ public class InteractiveMediaWindow extends Stage {
         
         HBox mediaCloseHBoxContainer = new HBox();
         mediaCloseHBoxContainer.setId("media-close-button-hbox-container");
-        mediaCloseHBoxContainer.getChildren().add(mediaToBeStoppedField);
+        mediaCloseHBoxContainer.getChildren().add(nodeToBeStoppedField);
         
         HBox timelineCloseHBoxContainer = new HBox();
         timelineCloseHBoxContainer.setId("timeline-close-button-hbox-container");
@@ -521,12 +522,12 @@ public class InteractiveMediaWindow extends Stage {
 			
 		});
 		
-		mediaToBeStoppedField.setOnAction(new EventHandler<ActionEvent>() {
+		nodeToBeStoppedField.setOnAction(new EventHandler<ActionEvent>() {
 
 			@Override
 			public void handle(ActionEvent event) {
 		
-				if(mediaToBeStoppedField.getProperties().get("previousValue") == null){
+				if(nodeToBeStoppedField.getProperties().get("previousValue") == null){
 					
 					removeMediaButton = new Button();
 					removeMediaButton.setId("media-to-be-stopped-close-button");
@@ -540,7 +541,7 @@ public class InteractiveMediaWindow extends Stage {
 			    	
 				}
 				
-				mediaToBeStoppedField.getProperties().put("previousValue", mediaToBeStoppedField.getValue());
+				nodeToBeStoppedField.getProperties().put("previousValue", nodeToBeStoppedField.getValue());
 		    	
 			}
 			
@@ -705,7 +706,7 @@ public class InteractiveMediaWindow extends Stage {
     			int high = 190;
     			int count = 0;
     			
-    			if(mediaToBeStoppedField.getValue() == null && timelineToBeStartedField.getValue() == null && !interactiveMediaWillBeStopped.isSelected()){
+    			if(nodeToBeStoppedField.getValue() == null && timelineToBeStartedField.getValue() == null && !interactiveMediaWillBeStopped.isSelected()){
     				errorMessage.append(Language.translate("select.at.least.one.media.to.be.stopped.or.a.timeline.to.be.started") +"\n \n");
     				count++;
     			}
@@ -938,7 +939,7 @@ public class InteractiveMediaWindow extends Stage {
     			HBox fieldCloseHBoxContainer = new HBox();
     			
     			if(isMediaField(removeMediaButton)){
-    				choiceBoxField = new ChoiceBox<Media>(FXCollections.observableArrayList(mediaListDuringInteractivityTime));
+    				choiceBoxField = new ChoiceBox<Node>(FXCollections.observableArrayList(nodeListDuringInteractivityTime));
     				fieldCloseHBoxContainer.setId("media-close-button-hbox-container");
     			}else {
     				choiceBoxField = new ChoiceBox<Media>(FXCollections.observableArrayList(timelineFieldOptions));

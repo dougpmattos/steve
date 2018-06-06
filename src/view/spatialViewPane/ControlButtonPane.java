@@ -284,7 +284,7 @@ public class ControlButtonPane extends BorderPane{
 		    	currentTime = currentTime + 0.1;
 		    	System.out.println(currentTime);
 		 
-		    	if(currentTime > temporalChainModel.getMediaWithHighestEnd().getEnd()){
+		    	if(currentTime > temporalChainModel.getNodeWithHighestEnd().getEnd()){
 		    		stop.fire();
 		    		hasStopped = true;
 		    		isPlaying = false;

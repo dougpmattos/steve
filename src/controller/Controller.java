@@ -8,6 +8,7 @@ import java.util.prefs.Preferences;
 import javafx.stage.Stage;
 import model.common.InteractivityKeyMapping;
 import model.common.Media;
+import model.common.Node;
 import model.common.SpatialTemporalView;
 import model.repository.RepositoryMediaList;
 import model.temporalView.Interactivity;
@@ -147,12 +148,12 @@ public class Controller {
 		return repositoryMediaList;
 	}
 
-	public void setMasterMedia(Media masterMedia, TemporalChain temporalChainModel) {
-		temporalChainModel.setMasterMedia(masterMedia);
+	public void setMasterNode(Node masterNode, TemporalChain temporalChainModel) {
+		temporalChainModel.setMasterNode(masterNode);
 	}
 	
-	public void addMediaTemporalChain(Media droppedMedia, TemporalChain temporalChainModel) {
-		temporalChainModel.addMedia(droppedMedia);
+	public void addNodeTemporalChain(Node droppedNode, TemporalChain temporalChainModel) {
+		temporalChainModel.addNode(droppedNode);
 	}
 
 	public void populatePositionPropertyJavaBean(PositionPane positionPane, Media media) {
@@ -187,8 +188,8 @@ public class Controller {
 		temporalChain.addSynchronousRelation(synchronousRelation);
 	}
 
-	public void removeMediaTemporalChain(Media media, TemporalChain temporalChainModel, Boolean isDeleteButton) {
-		temporalChainModel.removeMedia(media, isDeleteButton);
+	public void removeMediaTemporalChain(Node node, TemporalChain temporalChainModel, Boolean isDeleteButton) {
+		temporalChainModel.removeNode(node, isDeleteButton);
 	}
 	
 	public void removeSynchronousRelation(TemporalChain temporalChain, Synchronous synchronousRelation){
@@ -199,8 +200,8 @@ public class Controller {
 		temporalChain.removeInteractivityRelation(interactivityRelation);
 	}
 
-	public void dragMediaTemporalChain(TemporalChain temporalChain, Media media, Double droppedTime) {
-		temporalChain.dragMedia(temporalChain, media, droppedTime);
+	public void dragMediaTemporalChain(TemporalChain temporalChain, Node node, Double droppedTime) {
+		temporalChain.dragNode(temporalChain, node, droppedTime);
 	}
 
 	public void addInteractivityRelation(TemporalChain temporalChainModel, Interactivity<Media> interactivityRelation) {

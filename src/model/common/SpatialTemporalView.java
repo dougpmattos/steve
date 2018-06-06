@@ -68,8 +68,8 @@ public class SpatialTemporalView extends Observable implements Serializable{
 			TemporalChain temporalChain = new TemporalChain(existingTemporalChain.getName());
 			temporalChain.setId(existingTemporalChain.getId());
 			addTemporalChain(temporalChain);
-			if(existingTemporalChain.getMasterMedia() != null){
-				temporalChain.setMasterMedia(existingTemporalChain.getMasterMedia());
+			if(existingTemporalChain.getMasterNode() != null){
+				temporalChain.setMasterNode(existingTemporalChain.getMasterNode());
 			}
 			
 		}

@@ -1,11 +1,18 @@
 package view.sensoryEffectsPane;
 
+import javafx.event.EventHandler;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.Tooltip;
+import javafx.scene.input.ClipboardContent;
+import javafx.scene.input.DataFormat;
+import javafx.scene.input.Dragboard;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.input.TransferMode;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import model.common.enums.SensoryEffectType;
 import model.repository.RepositoryMediaList;
 import view.common.Language;
 import view.temporalViewPane.TemporalViewPane;
@@ -13,6 +20,8 @@ import controller.Controller;
 
 public class SensoryEffectsPane extends BorderPane{
 
+	private static final DataFormat dataFormat = new DataFormat("String");
+	
 	private HBox sensoyEffectsChipsPane;
 	private Button windEffectChip;
 	private Button waterSprayerEffectChip;
@@ -42,9 +51,169 @@ public class SensoryEffectsPane extends BorderPane{
 	        
 		setLeft(labelContainer);
 	    setCenter(sensoyEffectsChipsPane);
+	    
+	    createDragDropEffect();
 		
 	}
 	
+	private void createDragDropEffect() {
+		
+		windEffectChip.setOnDragDetected(new EventHandler<MouseEvent>() {
+
+			@Override
+			public void handle(MouseEvent mouseEvent) {
+			
+		        Dragboard dragBoard = startDragAndDrop(TransferMode.COPY);
+		        ClipboardContent content = new ClipboardContent();
+
+		        content.put(dataFormat, SensoryEffectType.WIND);
+		        
+		        dragBoard.setContent(content);
+		        
+		        mouseEvent.consume();
+				
+			}
+			
+       });
+		lightEffectChip.setOnDragDetected(new EventHandler<MouseEvent>() {
+
+			@Override
+			public void handle(MouseEvent mouseEvent) {
+			
+		        Dragboard dragBoard = startDragAndDrop(TransferMode.COPY);
+		        ClipboardContent content = new ClipboardContent();
+
+		        content.put(dataFormat, SensoryEffectType.LIGHT);
+		        
+		        dragBoard.setContent(content);
+		        
+		        mouseEvent.consume();
+				
+			}
+			
+       });
+		flashlightEffectChip.setOnDragDetected(new EventHandler<MouseEvent>() {
+
+			@Override
+			public void handle(MouseEvent mouseEvent) {
+			
+		        Dragboard dragBoard = startDragAndDrop(TransferMode.COPY);
+		        ClipboardContent content = new ClipboardContent();
+
+		        content.put(dataFormat, SensoryEffectType.FLASH_LIGHT);
+		        
+		        dragBoard.setContent(content);
+		        
+		        mouseEvent.consume();
+				
+			}
+			
+       });
+		scentEffectChip.setOnDragDetected(new EventHandler<MouseEvent>() {
+
+			@Override
+			public void handle(MouseEvent mouseEvent) {
+			
+		        Dragboard dragBoard = startDragAndDrop(TransferMode.COPY);
+		        ClipboardContent content = new ClipboardContent();
+
+		        content.put(dataFormat, SensoryEffectType.SCENT);
+		        
+		        dragBoard.setContent(content);
+		        
+		        mouseEvent.consume();
+				
+			}
+			
+       });
+		vibrationEffectChip.setOnDragDetected(new EventHandler<MouseEvent>() {
+
+			@Override
+			public void handle(MouseEvent mouseEvent) {
+			
+		        Dragboard dragBoard = startDragAndDrop(TransferMode.COPY);
+		        ClipboardContent content = new ClipboardContent();
+
+		        content.put(dataFormat, SensoryEffectType.VIBRATION);
+		        
+		        dragBoard.setContent(content);
+		        
+		        mouseEvent.consume();
+				
+			}
+			
+       });
+		fogEffectChip.setOnDragDetected(new EventHandler<MouseEvent>() {
+
+			@Override
+			public void handle(MouseEvent mouseEvent) {
+			
+		        Dragboard dragBoard = startDragAndDrop(TransferMode.COPY);
+		        ClipboardContent content = new ClipboardContent();
+
+		        content.put(dataFormat, SensoryEffectType.FOG);
+		        
+		        dragBoard.setContent(content);
+		        
+		        mouseEvent.consume();
+				
+			}
+			
+       });
+		rainstormEffectChip.setOnDragDetected(new EventHandler<MouseEvent>() {
+
+			@Override
+			public void handle(MouseEvent mouseEvent) {
+			
+		        Dragboard dragBoard = startDragAndDrop(TransferMode.COPY);
+		        ClipboardContent content = new ClipboardContent();
+
+		        content.put(dataFormat, SensoryEffectType.RAINSTORM);
+		        
+		        dragBoard.setContent(content);
+		        
+		        mouseEvent.consume();
+				
+			}
+			
+       });
+		temperatureEffectChip.setOnDragDetected(new EventHandler<MouseEvent>() {
+
+			@Override
+			public void handle(MouseEvent mouseEvent) {
+			
+		        Dragboard dragBoard = startDragAndDrop(TransferMode.COPY);
+		        ClipboardContent content = new ClipboardContent();
+
+		        content.put(dataFormat, SensoryEffectType.TEMPERATURE);
+		        
+		        dragBoard.setContent(content);
+		        
+		        mouseEvent.consume();
+				
+			}
+			
+       });
+		waterSprayerEffectChip.setOnDragDetected(new EventHandler<MouseEvent>() {
+
+			@Override
+			public void handle(MouseEvent mouseEvent) {
+			
+		        Dragboard dragBoard = startDragAndDrop(TransferMode.COPY);
+		        ClipboardContent content = new ClipboardContent();
+
+		        content.put(dataFormat, SensoryEffectType.WATER_SPRAYER);
+		        
+		        dragBoard.setContent(content);
+		        
+		        mouseEvent.consume();
+				
+			}
+			
+       });
+				
+	}
+
 	private void createEffectsChips(){
 		
 		windEffectChip = new Button();

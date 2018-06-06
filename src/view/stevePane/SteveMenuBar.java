@@ -283,7 +283,7 @@ public class SteveMenuBar extends MenuBar{
 		    		for(ArrayList<TimeLineXYChartData> timeLineXYChartDataList : temporalChainPane.getTimeLineXYChartDataLineList()){
 			    		for(TimeLineXYChartData timeLineXYChartData : timeLineXYChartDataList){
 							
-							temporalViewPane.addSelectedMedia(timeLineXYChartData.getMedia());
+							temporalViewPane.addSelectedNode(timeLineXYChartData.getNode());
 							if(timeLineXYChartData.getContainerNode().getStylesheets().isEmpty()){
 								timeLineXYChartData.getContainerNode().requestFocus();
 								timeLineXYChartData.getContainerNode().getStylesheets().add("view/temporalViewPane/styles/mousePressedTemporalMediaNode.css");

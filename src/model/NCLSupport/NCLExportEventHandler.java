@@ -145,7 +145,7 @@ public class NCLExportEventHandler implements EventHandler<ActionEvent>{
 		
 		for(TemporalChain temporalChain : spatialTemporalView.getTemporalChainList()){
 			
-			if(temporalChain.getMasterMedia() != null && temporalChain.getMasterMedia().getBegin() > 0){
+			if(temporalChain.getMasterNode() != null && temporalChain.getMasterNode().getBegin() > 0){
 				temporalChains.append(temporalChain.getName() + "\n");
 			}
 			
@@ -274,11 +274,11 @@ public class NCLExportEventHandler implements EventHandler<ActionEvent>{
 			
 			NCLPort nclPort = new NCLPort();
 			
-			if(temporalChain.getMasterMedia() != null){
-				nclPort.setId("port_" + temporalChain.getMasterMedia().getNCLName());
-				NCLRegion nclRegion = createNCLRegion(nclRegBase, temporalChain.getMasterMedia());
-			    NCLDescriptor nclDescriptor = createNCLDescriptor(nclDescBase, temporalChain, temporalChain.getMasterMedia(), nclRegion);
-			    NCLMedia nclMedia = createNCLMedia(temporalChain.getMasterMedia(), nclDescriptor);
+			if(temporalChain.getMasterNode() != null){
+				nclPort.setId("port_" + ((Media)temporalChain.getMasterNode()).getNCLName());
+				NCLRegion nclRegion = createNCLRegion(nclRegBase, (Media)temporalChain.getMasterNode());
+			    NCLDescriptor nclDescriptor = createNCLDescriptor(nclDescBase, temporalChain, (Media)temporalChain.getMasterNode(), nclRegion);
+			    NCLMedia nclMedia = createNCLMedia((Media)temporalChain.getMasterNode(), nclDescriptor);
 			    nclPort.setComponent(nclMedia);
 			}
 		    
@@ -641,7 +641,7 @@ public class NCLExportEventHandler implements EventHandler<ActionEvent>{
 					for(TemporalChain temporalChainToBeStarted : interactivityRelation.getTemporalChainList()){
 						NCLBind startNCLBind = new NCLBind();
 		    			startNCLBind.setRole(importedNCLCausalConnector.findRole(NCLDefaultActionRole.START.toString()));
-		    			startNCLBind.setComponent(nclBody.findNode(temporalChainToBeStarted.getMasterMedia().getNCLName()));
+		    			startNCLBind.setComponent(nclBody.findNode(((Media)temporalChainToBeStarted.getMasterNode()).getNCLName()));
 		    			nclLink.addBind(startNCLBind);
 					}
 					
@@ -676,7 +676,7 @@ public class NCLExportEventHandler implements EventHandler<ActionEvent>{
 					for(TemporalChain temporalChainToBeStarted : interactivityRelation.getTemporalChainList()){
 						NCLBind startNCLBind = new NCLBind();
 		    			startNCLBind.setRole(importedNCLCausalConnector.findRole(NCLDefaultActionRole.START.toString()));
-		    			startNCLBind.setComponent(nclBody.findNode(temporalChainToBeStarted.getMasterMedia().getNCLName()));
+		    			startNCLBind.setComponent(nclBody.findNode(((Media)temporalChainToBeStarted.getMasterNode()).getNCLName()));
 		    			nclLink.addBind(startNCLBind);
 					}
 					
@@ -722,7 +722,7 @@ public class NCLExportEventHandler implements EventHandler<ActionEvent>{
 		
 		for(Media media :  temporalChain.getMediaAllList()){
 			
-			if(!media.equals(temporalChain.getMasterMedia()) && !isThereRelationStartsMedia(media, temporalChain)){
+			if(!media.equals(temporalChain.getMasterNode()) && !isThereRelationStartsMedia(media, temporalChain)){
 				
 				NCLLink nclLink = new NCLLink<>();
 				nclLink.setId("link_" + relationNumber++);
@@ -738,7 +738,7 @@ public class NCLExportEventHandler implements EventHandler<ActionEvent>{
 				
 				conditionNCLBind = new NCLBind();
 				conditionNCLBind.setRole(importedNCLCausalConnector.findRole(NCLDefaultConditionRole.ONBEGIN.toString()));
-				conditionNCLBind.setComponent(nclBody.findNode(temporalChain.getMasterMedia().getNCLName()));
+				conditionNCLBind.setComponent(nclBody.findNode(((Media)temporalChain.getMasterNode()).getNCLName()));
 				nclLink.addBind(conditionNCLBind);
 
 				NCLBind startNCLBind = new NCLBind();
@@ -762,7 +762,7 @@ public class NCLExportEventHandler implements EventHandler<ActionEvent>{
 	private Double getDelayBetweenMasterAndSlave(Media media, TemporalChain temporalChain){
 		
 		Double mediaBegin = media.getBegin();
-		Double masterMediaBegin = temporalChain.getMasterMedia().getBegin();
+		Double masterMediaBegin = temporalChain.getMasterNode().getBegin();
 	
 		return mediaBegin - masterMediaBegin;
 		

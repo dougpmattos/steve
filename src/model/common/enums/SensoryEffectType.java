@@ -18,7 +18,8 @@ public enum SensoryEffectType {
 	COLOR_CORRECTION("Color Correction Effect"),
 	PASSIVE_KINESTHETIC_MOTION("Passive Kinesthetic Motion Effect"),
 	PASSIVE_KINESTHETIC_FORCE("Passive Kinesthetic Force Effect"),
-	ACTIVE_KINESTHETIC("Active Kinesthetic Effect");
+	ACTIVE_KINESTHETIC("Active Kinesthetic Effect"),
+	RAINSTORM("Rainstorm Effect");
 	
 	private String name;
 	
