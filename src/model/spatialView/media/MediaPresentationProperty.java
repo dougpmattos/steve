@@ -25,6 +25,14 @@ public class MediaPresentationProperty extends PresentationProperty<MediaPositio
 		this.positionProperty = new MediaPositionProperty();
 		
 	}
+	
+	public MediaPositionProperty getPositionProperty() {
+		return positionProperty;
+	}
+
+	public void setPositionProperty(MediaPositionProperty positionProperty) {
+		this.positionProperty = positionProperty;
+	}
 
 	public SizeProperty getSizeProperty() {
 		return sizeProperty;

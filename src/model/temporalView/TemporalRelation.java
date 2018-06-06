@@ -2,58 +2,51 @@ package model.temporalView;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Observable;
 
+import model.common.Node;
+import model.common.Relation;
 import model.temporalView.enums.TemporalViewOperator;
 import model.utility.Operation;
 
-public abstract class TemporalRelation<E> extends Observable implements Serializable {
+@SuppressWarnings("rawtypes")
+
+public abstract class TemporalRelation extends Relation implements Serializable {
 
 	private static final long serialVersionUID = 3044752885230388480L;
-
-	public static int relationNumber = 0;
 	
-	private int id;
-	private E masterMedia;
-	private ArrayList<E> slaveMediaList = new ArrayList<E>();
+	private Node masterNode;
+	private ArrayList<Node> slaveNodeList = new ArrayList<Node>();
 	private Boolean explicit = false;
 	
 	public TemporalRelation(){
 		
-		this.id = relationNumber; 
-		relationNumber++;
+	}
+	
+	public void setMasterNode(Node masterNode) {
+		this.masterNode = masterNode;
+	}
+	
+	public Node getMasterNode() {
+		return masterNode;
+	}
+	
+	public void addSlaveNode(Node slaveNode) {
+		slaveNodeList.add(slaveNode);
+	}
+	
+	public void removeSlaveNode(Node slaveNode) {
 		
-	}
-
-	public int getId() {
-		return id;
-	}
-	
-	public void setMasterMedia(E masterMedia) {
-		this.masterMedia = masterMedia;
-	}
-	
-	public E getMasterMedia() {
-		return masterMedia;
-	}
-	
-	public void addSlaveMedia(E slaveMedia) {
-		slaveMediaList.add(slaveMedia);
-	}
-	
-	public void removeSlaveMedia(E slaveMedia) {
-		
-		if(slaveMediaList.remove(slaveMedia)){
+		if(slaveNodeList.remove(slaveNode)){
 			
 			setChanged();
-			Operation<TemporalViewOperator> operation = new Operation<TemporalViewOperator>(TemporalViewOperator.REMOVE_SLAVE_MEDIA_OF_SYNC_RELATION, slaveMedia, this);
+			Operation<TemporalViewOperator> operation = new Operation<TemporalViewOperator>(TemporalViewOperator.REMOVE_SLAVE_NODE_OF_SYNC_RELATION, slaveNode, this);
 	        notifyObservers(operation);
 	        
 		}
 	}
 
-	public ArrayList<E> getSlaveMediaList() {
-		return slaveMediaList;
+	public ArrayList<Node> getSlaveNodeList() {
+		return slaveNodeList;
 	}
 	
 	public void setExplicit(Boolean explicit){

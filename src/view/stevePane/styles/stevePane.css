@@ -1,3 +1,13 @@
+/*******************************************************************************
+ *                                                                             
+ * Paleta de cores gerado pelo Color Tool para o STEVE                                                                    
+ *                                          
+https://material.io/tools/color/#!/?view.left=1&view.right=1&primary.color
+=37474F&secondary.color=00BFA5&primary.text.color=7a7a7a&secondary.text.color=000000
+ * 
+ *                               
+ ******************************************************************************/
+
 .root{
 	-fx-background: #37474F;
 	-fx-text-fill: #B0BEC5;
@@ -13,7 +23,7 @@
  ******************************************************************************/
  
 .menu-bar {
-    -fx-background-color: #263238;
+    -fx-background-color: #102027;
     -fx-background-insets: 0 0 4 0;
     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);
 }
@@ -28,7 +38,7 @@
  ******************************************************************************/
 
 .menu-item {
-    -fx-background-color: #263238;
+    -fx-background-color: #102027;
 }
 .menu-item:focused {
      -fx-background-color: #00BFA5;
@@ -67,15 +77,15 @@
 }
 
 .separator:horizontal > .line {
-    -fx-background-color: #607D8B;
+    -fx-background-color: #62727b;
     -fx-padding: 0;
-    -fx-border-color: #607D8B;
+    -fx-border-color: #62727b;
 }
 
 .separator:vertical > .line {
-   -fx-background-color: #607D8B;
+   -fx-background-color: #62727b;
    -fx-padding: 0;
-   -fx-border-color: #607D8B;
+   -fx-border-color: #62727b;
 }
 
 /*******************************************************************************
@@ -109,13 +119,13 @@
 
 .split-pane:horizontal > .split-pane-divider {
    -fx-border-color: transparent;
-   -fx-background-color: #607D8B;
+   -fx-background-color: #62727b;
    -fx-background-insets: 0, 0 1 0 1;
 }
 
 .split-pane:vertical > .split-pane-divider {
    -fx-border-color: transparent;
-   -fx-background-color: #607D8B;
+   -fx-background-color: #62727b;
    -fx-background-insets: 0, 0 1 0 1;
 }
 
@@ -156,13 +166,13 @@
 }
 
 .scroll-bar:horizontal > .thumb {
-    -fx-background-color: #607D8B;
+    -fx-background-color: #62727b;
     -fx-background-insets: 6;
     -fx-background-radius: 0.5em;
 }
 
 .scroll-bar:vertical > .thumb {
-    -fx-background-color: #607D8B;
+    -fx-background-color: #62727b;
     -fx-background-insets: 6;
     -fx-background-radius: 0.5em;
 }
@@ -203,7 +213,7 @@
  ******************************************************************************/
 
 .tooltip {
-    -fx-background-color: #607D8B;
+    -fx-background-color: #62727b;
 }
 
 /*******************************************************************************
@@ -217,7 +227,7 @@
 }
 
 #editable-numeric-value{
-    -fx-background-color: #607D8B;
+    -fx-background-color: #62727b;
     -fx-background-insets: 18 0 16 0;
     -fx-background-radius: 0;
     -fx-padding: 0 0 20 0;
@@ -255,7 +265,7 @@
     -fx-padding: 0.1em;
 }
 .progress-bar > .track {
-	-fx-background-color: #607D8B;
+	-fx-background-color: #62727b;
     -fx-background-insets:  0;
 }
 
@@ -270,7 +280,7 @@
 }
 
 .check-box > .box {
-    -fx-background-color: #607D8B, #263238;
+    -fx-background-color: #62727b, #102027;
     -fx-background-insets: -0.5, 1.8;
     -fx-background-radius: 1, 1;
     -fx-padding: 0.25em;
@@ -282,7 +292,7 @@
     -fx-shape: "M0,4H2L3,6L6,0H8L4,8H2Z";
 }
 .check-box:hover > .box {
-    -fx-background-color: #00BFA5, #263238;
+    -fx-background-color: #00BFA5, #102027;
     -fx-background-insets: -0.5, 2;
     -fx-background-radius: 2, 2;
     -fx-padding: 0.25em; /* 3 -- padding from the outside edge to the mark */
@@ -291,5 +301,5 @@
     -fx-background-color: #00BFA5;
 }
 .check-box:selected > .box > .mark {
-    -fx-background-color: #263238;
+    -fx-background-color: #102027;
 }

@@ -8,6 +8,8 @@ import javafx.event.EventHandler;
 import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tooltip;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.FileChooser;
@@ -27,8 +29,7 @@ public class RepositoryButtonPane extends BorderPane{
     private Button addButton;
     private Button deleteButton;
     private Button clearButton;
-    private Button gridButton;
-    private Button listButton;
+    private Button viewTypeButton;
     private HBox mediaButtonPane;
     private HBox viewButtonPane;
     private FileChooser fileChooser;
@@ -70,17 +71,14 @@ public class RepositoryButtonPane extends BorderPane{
         mediaButtonPane.setId("media-button-pane");
         mediaButtonPane.getChildren().addAll(addButton, deleteButton, clearButton);
         
-        gridButton = new Button();
-        gridButton.setId("grid-button");
-        gridButton.setTooltip(new Tooltip(Language.translate("grid.view")));
-		
-        listButton = new Button();
-        listButton.setId("list-button");
-        listButton.setTooltip(new Tooltip(Language.translate("list.view")));
+        viewTypeButton = new Button();
+        viewTypeButton.setId("view-type-button");
+        viewTypeButton.getProperties().put("viewType", "grid");
+        viewTypeButton.setTooltip(new Tooltip(Language.translate("list.view")));
         
         viewButtonPane = new HBox();
         viewButtonPane.setId("view-button-pane");
-        viewButtonPane.getChildren().addAll(gridButton, listButton);
+        viewButtonPane.getChildren().addAll(viewTypeButton);
         
 	}
 
@@ -140,15 +138,22 @@ public class RepositoryButtonPane extends BorderPane{
             }
         });
         
-        gridButton.setOnAction(new EventHandler<ActionEvent>() {
+        viewTypeButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override public void handle(ActionEvent e) {
-            	repositoryPane.setCenter(mediaListPane);
-            }
-        });
-        
-        listButton.setOnAction(new EventHandler<ActionEvent>() {
-            @Override public void handle(ActionEvent e) {
-            	repositoryPane.setCenter(scrollPaneTree);
+            
+            	String currentViewType = (String) viewTypeButton.getProperties().get("viewType");
+            	
+            	if(currentViewType.equalsIgnoreCase("grid")){ //botao é list
+            		repositoryPane.setCenter(scrollPaneTree);
+            		viewTypeButton.getProperties().put("viewType", "list");
+            		viewTypeButton.setGraphic(new ImageView(new Image(getClass().getResourceAsStream("/view/repositoryPane/images/grid.png"))));
+            		viewTypeButton.setTooltip(new Tooltip(Language.translate("grid.view")));
+            	}else{
+            		repositoryPane.setCenter(mediaListPane);
+            		viewTypeButton.getProperties().put("viewType", "grid");
+            		viewTypeButton.setGraphic(new ImageView(new Image(getClass().getResourceAsStream("/view/repositoryPane/images/list.png"))));
+            		viewTypeButton.setTooltip(new Tooltip(Language.translate("list.view")));
+            	}
             }
         });
         

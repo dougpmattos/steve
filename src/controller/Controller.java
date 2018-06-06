@@ -3,9 +3,7 @@ package controller;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.prefs.*;
-
-import org.json.simple.JSONObject;
+import java.util.prefs.Preferences;
 
 import javafx.stage.Stage;
 import model.common.InteractivityKeyMapping;
@@ -15,7 +13,9 @@ import model.repository.RepositoryMediaList;
 import model.temporalView.Interactivity;
 import model.temporalView.Synchronous;
 import model.temporalView.TemporalChain;
-import model.temporalView.enums.NumericInteractivityKey;
+
+import org.json.simple.JSONObject;
+
 import view.common.Language;
 import view.spatialViewPane.CropPane;
 import view.spatialViewPane.LevelPane;
@@ -24,7 +24,6 @@ import view.spatialViewPane.SizePane;
 import view.spatialViewPane.StylePane;
 import view.spatialViewPane.TemporalMediaInfoPane;
 import view.stevePane.StevePane;
-import view.temporalViewPane.TemporalChainPane;
 import br.uff.midiacom.ana.util.exception.XMLException;
 
 public class Controller {
@@ -184,7 +183,7 @@ public class Controller {
 		media.populateTemporalInfoPropertyJavaBean(infoPane);
 	}
 	
-	public void addSynchronousRelation(TemporalChain temporalChain, Synchronous<Media> synchronousRelation){
+	public void addSynchronousRelation(TemporalChain temporalChain, Synchronous synchronousRelation){
 		temporalChain.addSynchronousRelation(synchronousRelation);
 	}
 
@@ -192,11 +191,11 @@ public class Controller {
 		temporalChainModel.removeMedia(media, isDeleteButton);
 	}
 	
-	public void removeSynchronousRelation(TemporalChain temporalChain, Synchronous<Media> synchronousRelation){
+	public void removeSynchronousRelation(TemporalChain temporalChain, Synchronous synchronousRelation){
 		temporalChain.removeSynchronousRelation(synchronousRelation);
 	}
 	
-	public void removeInteractivityRelation(TemporalChain temporalChain, Interactivity<Media, ?> interactivityRelation){
+	public void removeInteractivityRelation(TemporalChain temporalChain, Interactivity<Media> interactivityRelation){
 		temporalChain.removeInteractivityRelation(interactivityRelation);
 	}
 
@@ -204,11 +203,11 @@ public class Controller {
 		temporalChain.dragMedia(temporalChain, media, droppedTime);
 	}
 
-	public void addInteractivityRelation(TemporalChain temporalChainModel, Interactivity<Media, ?> interactivityRelation) {
+	public void addInteractivityRelation(TemporalChain temporalChainModel, Interactivity<Media> interactivityRelation) {
 		temporalChainModel.addInteractivityRelation(interactivityRelation);
 	}
 	
-	public void updateInteractivityRelation(TemporalChain temporalChainModel, Interactivity<Media, ?> interactivityRelation) {
+	public void updateInteractivityRelation(TemporalChain temporalChainModel, Interactivity<Media> interactivityRelation) {
 		temporalChainModel.updateInteractivityRelation(interactivityRelation);
 	}
 

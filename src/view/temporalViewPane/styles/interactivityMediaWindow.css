@@ -13,7 +13,7 @@
  ******************************************************************************/
  
 .menu-bar {
-    -fx-background-color: #263238;
+    -fx-background-color: #102027;
     -fx-background-insets: 0 0 4 0;
     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);
 }
@@ -28,7 +28,7 @@
  ******************************************************************************/
 
 .menu-item {
-    -fx-background-color: #263238;
+    -fx-background-color: #102027;
 }
 .menu-item:focused {
      -fx-background-color: #00BFA5;
@@ -67,15 +67,15 @@
 }
 
 .separator:horizontal > .line {
-    -fx-background-color: #607D8B;
+    -fx-background-color: #62727b;
     -fx-padding: 0;
-    -fx-border-color: #607D8B;
+    -fx-border-color: #62727b;
 }
 
 .separator:vertical > .line {
-   -fx-background-color: #607D8B;
+   -fx-background-color: #62727b;
    -fx-padding: 0;
-   -fx-border-color: #607D8B;
+   -fx-border-color: #62727b;
 }
 
 /*******************************************************************************
@@ -109,13 +109,13 @@
 
 .split-pane:horizontal > .split-pane-divider {
    -fx-border-color: transparent;
-   -fx-background-color: #607D8B;
+   -fx-background-color: #62727b;
    -fx-background-insets: 0, 0 1 0 1;
 }
 
 .split-pane:vertical > .split-pane-divider {
    -fx-border-color: transparent;
-   -fx-background-color: #607D8B;
+   -fx-background-color: #62727b;
    -fx-background-insets: 0, 0 1 0 1;
 }
 
@@ -156,13 +156,13 @@
 }
 
 .scroll-bar:horizontal > .thumb {
-    -fx-background-color: #607D8B;
+    -fx-background-color: #62727b;
     -fx-background-insets: 6;
     -fx-background-radius: 0.5em;
 }
 
 .scroll-bar:vertical > .thumb {
-    -fx-background-color: #607D8B;
+    -fx-background-color: #62727b;
     -fx-background-insets: 6;
     -fx-background-radius: 0.5em;
 }
@@ -203,7 +203,7 @@
  ******************************************************************************/
 
 .tooltip {
-    -fx-background-color: #607D8B;
+    -fx-background-color: #62727b;
 }
 
 /*******************************************************************************
@@ -217,7 +217,7 @@
 }
 
 #editable-numeric-value{
-    -fx-background-color: #607D8B;
+    -fx-background-color: #62727b;
     -fx-background-insets: 18 0 16 0;
     -fx-background-radius: 0;
     -fx-padding: 0 0 20 0;
@@ -255,7 +255,7 @@
     -fx-padding: 0.1em;
 }
 .progress-bar > .track {
-	-fx-background-color: #607D8B;
+	-fx-background-color: #62727b;
     -fx-background-insets:  0;
 }
 
@@ -266,7 +266,7 @@
  ******************************************************************************/
 
 .text-field {
-    -fx-background-color: #607D8B;
+    -fx-background-color: #62727b;
     -fx-background-insets: 22 0 1 0;
     -fx-background-radius: 0;
     -fx-padding: 0 0 9 0;
@@ -293,7 +293,7 @@
 }
 
 .check-box > .box {
-    -fx-background-color: #607D8B, #37474F;
+    -fx-background-color: #62727b, #37474F;
     -fx-background-insets: -0.5, 1.8;
     -fx-background-radius: 1, 1;
     -fx-padding: 0.25em;
@@ -385,7 +385,7 @@
 	-fx-padding: 0px 0px 0px 20px;
 }
 #save-button{
- 	-fx-background-color: #263238;
+ 	-fx-background-color: #102027;
  	-fx-text-fill: #FFFFFF;
 }
 #save-button:hover{
@@ -403,7 +403,7 @@
 	-fx-background-radius: 0;
 }
 #tool-bar-pane{
-	-fx-background-color: #263238;
+	-fx-background-color: #102027;
 	-fx-padding: 10px 20px 10px 20px;
     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);
 }
@@ -429,7 +429,7 @@
 	-fx-font-size: 14;
 }
 #separator{
-	-fx-border-color: #607D8B;
+	-fx-border-color: #62727b;
 	-fx-border-image-width: 30;
 }
 #subtitle-separator-container{
@@ -443,7 +443,7 @@
  ******************************************************************************/
 
 .choice-box {
-    -fx-background-color: #607D8B;
+    -fx-background-color: #62727b;
     -fx-background-insets: 23 0 1 0;
     -fx-background-radius: 0;
     -fx-padding: 0 0 0 0;
@@ -468,7 +468,7 @@
 }
 
 .choice-box > .open-button > .arrow {
-    -fx-background-color: #607D8B;
+    -fx-background-color: #62727b;
     -fx-background-insets: 1;
     -fx-padding: 4 5.5 4 5.5;
     -fx-shape: "M 0 0 h 7 l -3.5 4 z";

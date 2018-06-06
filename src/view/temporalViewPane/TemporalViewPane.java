@@ -9,7 +9,6 @@ import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.Tooltip;
@@ -24,6 +23,7 @@ import model.temporalView.enums.TemporalViewOperator;
 import model.utility.Operation;
 import view.common.Language;
 import view.repositoryPane.RepositoryPane;
+import view.sensoryEffectsPane.SensoryEffectsPane;
 import view.stevePane.StevePane;
 import controller.Controller;
 
@@ -44,6 +44,7 @@ public class TemporalViewPane extends BorderPane implements Observer, view.commo
 	private StevePane stevePane;
 	private StackPane tabAddButtonContainer;
 	private Button tabAddButton;
+	private SensoryEffectsPane sensoryEffectsPane;
 	
 	public TemporalViewPane(Controller controller, SpatialTemporalView temporalViewModel, RepositoryPane repositoryPane, StevePane stevePane, RepositoryMediaList repositoryMediaList){
 		
@@ -55,11 +56,12 @@ public class TemporalViewPane extends BorderPane implements Observer, view.commo
 		this.repositoryMediaList = repositoryMediaList;
 		this.stevePane = stevePane;
 		
-		
+		sensoryEffectsPane = new SensoryEffectsPane(controller, temporalChainTabPane, this, repositoryMediaList);
 		temporalViewButtonPane = new TemporalViewButtonPane(controller, temporalChainTabPane, this, repositoryMediaList);
       	
 		createTemporalChainTabPane();
 
+		setTop(sensoryEffectsPane);
 	    setCenter(tabAddButtonContainer);
 	    setBottom(temporalViewButtonPane);
 	    
@@ -218,7 +220,7 @@ public class TemporalViewPane extends BorderPane implements Observer, view.commo
 			
 		        case ADD_INTERACTIVITY_RELATION:
 		        	
-		        	Interactivity<Media, ?> interactivityRelation = (Interactivity<Media, ?>) operation.getOperating();
+		        	Interactivity<Media> interactivityRelation = (Interactivity<Media>) operation.getOperating();
 		        	
 		        	for(Tab tab : getTemporalChainTabPane().getTabs()){
 		        		TemporalChainPane temporalChainPane = (TemporalChainPane) tab.getContent();

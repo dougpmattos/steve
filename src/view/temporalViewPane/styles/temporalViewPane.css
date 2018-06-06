@@ -17,7 +17,7 @@
 .axis {
     -fx-tick-label-font-size: 12px;
     -fx-tick-label-fill: white;
-    -fx-background-color: #263238;
+    -fx-background-color: #102027;
 	-fx-tick-length: 5;
 	-fx-tick-unit: 5; 
 	-fx-tick-label-gap: 3;
@@ -34,22 +34,22 @@
     -fx-border-color: transparent;
 }
 .axis-tick-mark {
-    -fx-stroke: #607D8B;
+    -fx-stroke: #62727b;
 }
 .axis-minor-tick-mark {
-    -fx-stroke: #607D8B;
+    -fx-stroke: #62727b;
 }
 .chart{
 	-fx-legend-visible: false;
 	-fx-category-gap: 8;
 	-fx-padding: -11 0 -11 -5;
-	-fx-background-color: #263238;
+	-fx-background-color: #102027;
 }
 .chart-plot-background {
     -fx-background-color: #37474F;
 }
 .chart-vertical-grid-lines {
-    -fx-stroke: #607D8B;
+    -fx-stroke: #62727b;
 }
 .chart-horizontal-grid-lines {
     -fx-grid-lines-visible: false;
@@ -114,7 +114,7 @@
 }
 
 .tab-pane > .tab-header-area > .headers-region > .tab {
-    -fx-background-color: #263238;
+    -fx-background-color: #102027;
     -fx-background-insets: 0 0 4 0;
     -fx-background-radius: 0;
     -fx-padding: 0 5 5 5;
@@ -122,13 +122,13 @@
 }
 
 .tab-pane > .tab-header-area > .headers-region > .tab:selected {
-    -fx-background-color: #263238, #00BFA5;
+    -fx-background-color: #102027, #00BFA5;
     -fx-background-insets: 0, 40 0 0 0;
     -fx-background-radius: 0, 0;
 }
 
 .tab-pane > .tab-header-area > .tab-header-background {
-    -fx-background-color: #263238; /*nao é esse que muda o back da tab */
+    -fx-background-color: #102027; /*nao é esse que muda o back da tab */
     -fx-background-insets: 0; 
 }
 
@@ -141,7 +141,7 @@
 }
 
 .tab-pane > .tab-header-area > .headers-region > .tab > .tab-container > .tab-close-button {
-    -fx-background-color: #607D8B;
+    -fx-background-color: #62727b;
     -fx-shape: "M 0,0 H1 L 4,3 7,0 H8 V1 L 5,4 8,7 V8 H7 L 4,5 1,8 H0 V7 L 3,4 0,1 Z";
     -fx-scale-shape: false;
     -fx-translate-x: -10;
@@ -159,7 +159,7 @@
  ******************************************************************************/
 
 .menu-item:disabled{
-	-fx-background-color: #263238;
+	-fx-background-color: #102027;
 	-fx-opacity: 1;
 }
 
@@ -168,7 +168,7 @@
 }
 
 .menu-item:disabled > .label {
-    -fx-background-color: #263238;
+    -fx-background-color: #102027;
 }
 
 /*******************************************************************************
@@ -182,7 +182,7 @@
 }
 
 #temporal-chain-scroll-pane {
-    /*-fx-border-color: #263238;*/
+    /*-fx-border-color: #102027;*/
     -fx-border-color: green;
     -fx-background-color: blue;
     -fx-border-width: 10 0 0 0;
@@ -196,7 +196,7 @@
 }
 
 #media-name{
-	-fx-background-color: #607D8B;
+	-fx-background-color: #62727b;
 	-fx-background-radius: 0 8 0 0;
 	-fx-pref-height: 30;
 	-fx-min-width: 0;
@@ -204,7 +204,7 @@
 }
 
 #temporal-media-container{
-	-fx-background-color: #263238;
+	-fx-background-color: #102027;
 	-fx-background-radius: 8;
 }
 

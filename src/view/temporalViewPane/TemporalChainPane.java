@@ -19,7 +19,6 @@ import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
-import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.Tab;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.DataFormat;
@@ -394,8 +393,8 @@ public class TemporalChainPane extends StackPane implements Observer{
 
 		Media media;
 		int line;
-		Synchronous<Media> syncRelation;
-		Interactivity<Media, ?> interactivityRelation;
+		Synchronous syncRelation;
+		Interactivity<Media> interactivityRelation;
 		TemporalChain temporalChainModel;
 		DisplayPane displayPane = stevePane.getSpatialViewPane().getDisplayPane();
 		ControlButtonPane controlButtonPane = displayPane.getControlButtonPane();
@@ -428,7 +427,7 @@ public class TemporalChainPane extends StackPane implements Observer{
 	            
 			case ADD_SYNC_RELATION:
 				
-				syncRelation = (Synchronous<Media>) operation.getOperating();
+				syncRelation = (Synchronous) operation.getOperating();
 				temporalChainModel = (TemporalChain) operation.getArg();
 	            addSyncRelation(syncRelation, temporalChainModel);
 				
@@ -436,16 +435,16 @@ public class TemporalChainPane extends StackPane implements Observer{
 				
 			case REMOVE_SYNC_RELATION:
 				
-				syncRelation = (Synchronous<Media>) operation.getOperating();
+				syncRelation = (Synchronous) operation.getOperating();
 				temporalChainModel = (TemporalChain) operation.getArg();
 	            removeSyncRelation(syncRelation, temporalChainModel);
 				
 				break;
 			
-			case REMOVE_SLAVE_MEDIA_OF_SYNC_RELATION:
+			case REMOVE_SLAVE_NODE_OF_SYNC_RELATION:
 				
 				media = (Media) operation.getOperating();
-				syncRelation = (Synchronous<Media>) operation.getArg();
+				syncRelation = (Synchronous) operation.getArg();
 	            removeSlaveMediaOfSyncRelation(media, syncRelation);
 				
 				break;
@@ -507,7 +506,7 @@ public class TemporalChainPane extends StackPane implements Observer{
 
 	}
 	
-	private void addSyncRelation(Synchronous<Media> syncRelation, TemporalChain temporalChainModel){
+	private void addSyncRelation(Synchronous syncRelation, TemporalChain temporalChainModel){
 
 		switch(syncRelation.getType()){
 		
@@ -626,13 +625,13 @@ public class TemporalChainPane extends StackPane implements Observer{
 
 	}
 	
-	private void removeSyncRelation(Synchronous<Media> syncRelation, TemporalChain temporalChainModel){
+	private void removeSyncRelation(Synchronous syncRelation, TemporalChain temporalChainModel){
 		
 		//TODO remover as setas das relações entre as mídias.
 
 	}
 	
-	private void removeSlaveMediaOfSyncRelation(Media slaveMedia, Synchronous<Media> syncRelation){
+	private void removeSlaveMediaOfSyncRelation(Media slaveMedia, Synchronous syncRelation){
 		
 		//TODO remover as seta que aponta para a mídia escrava removida da relação.
 

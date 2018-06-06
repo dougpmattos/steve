@@ -2,7 +2,7 @@ package model.temporalView;
 
 import java.util.ArrayList;
 
-public abstract class Asynchronous<T> extends TemporalRelation<T> {
+public abstract class Asynchronous extends TemporalRelation {
 
 	private static final long serialVersionUID = 5310555901053772316L;
 	

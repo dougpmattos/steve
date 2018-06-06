@@ -120,7 +120,7 @@ public class TimeLineXYChartData implements Observer {
 					if(relation instanceof Interactivity){
 						
 						Interactivity interactivityRelation = (Interactivity) relation;
-						if(interactivityRelation.getMasterMedia() == media){
+						if(interactivityRelation.getMasterNode() == media){
 							controller.removeInteractivityRelation(temporalChainModel, interactivityRelation);
 							break;
 						}
@@ -165,7 +165,7 @@ public class TimeLineXYChartData implements Observer {
 					if(relation instanceof Interactivity){
 						
 						Interactivity interactivityRelation = (Interactivity) relation;
-						if(interactivityRelation.getMasterMedia() == firstSelectedMedia){
+						if(interactivityRelation.getMasterNode() == firstSelectedMedia){
 							interactivityToLoad = interactivityRelation;
 							break;
 						}
@@ -242,14 +242,14 @@ public class TimeLineXYChartData implements Observer {
 				@Override
 				public void handle(ActionEvent event) {
 					
-					Interactivity<Media, ?> interactivityRelation = null;
+					Interactivity<Media> interactivityRelation = null;
 					
 					for(TemporalRelation relation : temporalChainModel.getRelationList()){
 						
 						if(relation instanceof Interactivity){
 							
 							interactivityRelation = (Interactivity) relation;
-							if(interactivityRelation.getMasterMedia() == media){
+							if(interactivityRelation.getMasterNode() == media){
 								controller.removeInteractivityRelation(temporalChainModel, interactivityRelation);
 								break;
 							}
@@ -264,7 +264,7 @@ public class TimeLineXYChartData implements Observer {
 						VBox nameInteractiveIconContainer = (VBox) containerNode.getChildren().get(1);
 						Label mediaLabel = (Label) nameInteractiveIconContainer.getChildren().get(0);
 						
-						for(Media media : interactivityRelation.getSlaveMediaList()){
+						for(model.common.Node media : interactivityRelation.getSlaveNodeList()){
 							
 							if(mediaLabel.getText().equalsIgnoreCase(media.getName())){
 								
@@ -523,9 +523,9 @@ public class TimeLineXYChartData implements Observer {
 			
 		        case ADD_INTERACTIVITY_RELATION:
 		        	
-		        	Interactivity<Media, ?> interactivityRelation = (Interactivity<Media, ?>) operation.getOperating();
+		        	Interactivity<Media> interactivityRelation = (Interactivity<Media>) operation.getOperating();
 	
-		        	if(interactivityRelation.getMasterMedia() == media){
+		        	if(interactivityRelation.getMasterNode() == media){
 		        		
 		        		iButton = new Button();
 		        		iButton.setId("i-button");
@@ -576,7 +576,7 @@ public class TimeLineXYChartData implements Observer {
 		        		
 		        	}
 		 
-		        	if(interactivityRelation.getSlaveMediaList().contains(media)){
+		        	if(interactivityRelation.getSlaveNodeList().contains(media)){
 		        		containerNode.getStylesheets().add("view/temporalViewPane/styles/borderOfMediaToBeStopped.css");
 		        		mediaImageClip.setHeight(mediaImageClip.getHeight()-5);
 		        	}
@@ -585,9 +585,9 @@ public class TimeLineXYChartData implements Observer {
 		            
 		        	case REMOVE_INTERACTIVITY_RELATION:
 					
-						interactivityRelation = (Interactivity<Media, ?>) operation.getOperating();
+						interactivityRelation = (Interactivity<Media>) operation.getOperating();
 						
-						if(interactivityRelation.getMasterMedia().getName().equalsIgnoreCase(media.getName())){
+						if(interactivityRelation.getMasterNode().getName().equalsIgnoreCase(media.getName())){
 							
 							nameInteractiveIconContainer.getChildren().remove(iButton);
 							
