@@ -54,7 +54,7 @@ import view.spatialViewPane.ControlButtonPane;
 import view.spatialViewPane.DisplayPane;
 import view.spatialViewPane.PositionPane;
 import view.stevePane.StevePane;
-import view.spatialViewPane.DragResizerXY;
+//import view.spatialViewPane.DragResizerXY;
 import controller.Controller;
 
 @SuppressWarnings({ "unchecked", "rawtypes" })
@@ -181,7 +181,7 @@ public class TemporalChainPane extends StackPane implements Observer{
 									
 									controlButtonPane.setVideoPresentationProperties((MediaView) mediaContent, media);
 									screen.getChildren().add((MediaView) mediaContent);
-									DragResizerXY.makeResizable(screen);
+//									DragResizerXY.makeResizable(screen);
 									
 								} else if(mediaContent instanceof ImageView){
 									
@@ -190,17 +190,17 @@ public class TemporalChainPane extends StackPane implements Observer{
 									if(screen.getChildren().isEmpty()){
 										System.out.println(((ImageView) mediaContent).getTranslateX());
 										System.out.println(((ImageView) mediaContent).getTranslateY());
-										File file = new File("test6.png");
-								        RenderedImage renderedImage = SwingFXUtils.fromFXImage(((ImageView) mediaContent).getImage(), null);
-								        try {
-											ImageIO.write(
-											        renderedImage, 
-											        "png",
-											        file);
-										} catch (IOException e) {
-											// TODO Auto-generated catch block
-											e.printStackTrace();
-										}
+//										File file = new File("test6.png");
+//								        RenderedImage renderedImage = SwingFXUtils.fromFXImage(((ImageView) mediaContent).getImage(), null);
+//								        try {
+//											ImageIO.write(
+//											        renderedImage,
+//											        "png",
+//											        file);
+//										} catch (IOException e) {
+//											// TODO Auto-generated catch block
+//											e.printStackTrace();
+//										}
 										screen.getChildren().add((ImageView) mediaContent);
 										System.out.println("Mostrou");
 										//DragResizerXY.makeResizable(screen);
@@ -405,17 +405,17 @@ public class TemporalChainPane extends StackPane implements Observer{
 																		
 									controlButtonPane.setImagePresentationProperties((ImageView) mediaContent, media);
 									
-									File file = new File("test5.png");
-							        RenderedImage renderedImage = SwingFXUtils.fromFXImage(((ImageView) mediaContent).getImage(), null);
-							        try {
-										ImageIO.write(
-										        renderedImage, 
-										        "png",
-										        file);
-									} catch (IOException e) {
-										// TODO Auto-generated catch block
-										e.printStackTrace();
-									}
+//									File file = new File("test5.png");
+//							        RenderedImage renderedImage = SwingFXUtils.fromFXImage(((ImageView) mediaContent).getImage(), null);
+//							        try {
+//										ImageIO.write(
+//										        renderedImage,
+//										        "png",
+//										        file);
+//									} catch (IOException e) {
+//										// TODO Auto-generated catch block
+//										e.printStackTrace();
+//									}
 							        
 									ImageView i = (ImageView)mediaContent;
 									

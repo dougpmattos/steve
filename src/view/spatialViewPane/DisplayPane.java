@@ -20,10 +20,19 @@ public class DisplayPane extends BorderPane {
 		screen.setId("screen-pane");
 		
 		controlButtonPane = new ControlButtonPane(screen, temporalViewPane, steveMenuBar, spatialTemporalView);
-		
+
+		this.minHeightProperty().set(390);
+		this.maxHeightProperty().set(390);
+		this.minWidthProperty().set(640);
+		this.maxWidthProperty().set(640);
+
 		setCenter(screen);
+//		getCenter().maxWidth(640);
+//		getCenter().minWidth(640);
+//		getCenter().minHeight(360);
+//		getCenter().maxHeight(360);
 		setBottom(controlButtonPane);
-		
+
 	}
 	
 	public StackPane getScreen(){
@@ -33,5 +42,7 @@ public class DisplayPane extends BorderPane {
 	public ControlButtonPane getControlButtonPane(){
 		return controlButtonPane;
 	}
+
+
 
 }
