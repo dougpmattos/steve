@@ -102,23 +102,27 @@ public class SizePane extends VBox {
 		width.textProperty().addListener((observable, oldValue, newValue) -> {
 			
 			ImageView mediaContent = new ImageView(new Image(media.getFile().toURI().toString()));
+			if (Integer.parseInt(newValue.replace("%","")) < 1) newValue = "100";
 			media.getPresentationProperty().getSizeProperty().setWidth(newValue);
-			this.controlButtonPane.setImagePresentationProperties(mediaContent, media);
+			Object mediaContentObject = controlButtonPane.getMediaContent(media);
+			controlButtonPane.setImagePresentationProperties((ImageView) mediaContentObject, media);
 //			mediaContent.setPreserveRatio(false);
 //			mediaContent.setFitWidth((Double.parseDouble(newValue)/100)*screen.getWidth());
 			this.screen.getChildren().clear();
-			this.screen.getChildren().add((ImageView) mediaContent);
+			this.screen.getChildren().add((ImageView) mediaContentObject);
 		});
 		
 		height.textProperty().addListener((observable, oldValue, newValue) -> {
 			ImageView mediaContent = new ImageView(new Image(media.getFile().toURI().toString()));
+			if (Integer.parseInt(newValue.replace("%","")) < 1) newValue = "100";
 			media.getPresentationProperty().getSizeProperty().setHeight(newValue);
-			this.controlButtonPane.setImagePresentationProperties(mediaContent, media);
+			Object mediaContentObject = controlButtonPane.getMediaContent(media);
+			controlButtonPane.setImagePresentationProperties((ImageView) mediaContentObject, media);
 //			mediaContent.setPreserveRatio(false);
 //			mediaContent.setFitHeight((Double.parseDouble(newValue)/100)*screen.getHeight());
 			
 			this.screen.getChildren().clear();
-			this.screen.getChildren().add((ImageView) mediaContent);
+			this.screen.getChildren().add((ImageView) mediaContentObject);
 		});
 		
 		/*ChangeListener heightChanged = new ChangeListener<String>(){

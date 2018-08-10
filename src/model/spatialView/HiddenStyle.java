@@ -15,11 +15,14 @@ import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.IOException;
 
-public class HiddenStyle implements setImage {
-
+public class HiddenStyle implements setImageInterface {
 
     @Override
     public Point2D spaceAvailable(ImageView mediaContent, double left, double right, double top, double bottom, String w, String h, StackPane screen) {
+        return null;
+    }
+
+    public Point2D spaceAvailable(ImageView mediaContent, Media media, double left, double right, double top, double bottom, String w, String h, StackPane screen) {
         Point2D space = null;
 
         double x=screen.getWidth(), y=screen.getHeight();
@@ -28,24 +31,40 @@ public class HiddenStyle implements setImage {
         if(right>100) right=100;
         if(bottom>100) bottom=100;
 
+        SizeProperty sizeProperty = media.getPresentationProperty().getSizeProperty();
+
+        double absolutWidth = Integer.parseInt(sizeProperty.getWidth().replace("%",""));
+        absolutWidth = absolutWidth/100 * screen.getWidth();
+
+        double absolutHeight = Integer.parseInt(sizeProperty.getHeight().replace("%",""));
+        absolutHeight = absolutHeight/100 * screen.getHeight();
+
         //atualizar width e height
         //testar se left + width formam uma combinacao valida
-        if(left!=0){
-            x=screen.getWidth()-((left/100)*screen.getWidth());
+        if(absolutWidth==screen.getWidth()) {
 
-        } else { //testar se right + width formam uma combinacao valida
-            if(right!=0){
-                x=(right/100)*screen.getWidth();
-            }
-        }
+            if (left != 0) {
+                x = screen.getWidth() - ((left / 100) * screen.getWidth());
 
-        if(top!=0){
-            y=screen.getHeight()-((top/100)*screen.getHeight());
-        } else { //testar se bottom + height formam uma combinacao valida
-            if(bottom!=0){
-                y=(bottom/100)*screen.getHeight();
+            } else { //testar se right + width formam uma combinacao valida
+                if (right != 0) {
+                    x = (right / 100) * screen.getWidth();
+                }
             }
-        }
+        } else
+            x=absolutWidth;
+
+        if(absolutHeight==screen.getHeight()) {
+
+            if (top != 0) {
+                y = screen.getHeight() - ((top / 100) * screen.getHeight());
+            } else { //testar se bottom + height formam uma combinacao valida
+                if (bottom != 0) {
+                    y = (bottom / 100) * screen.getHeight();
+                }
+            }
+        } else
+            y=absolutHeight;
 
         space = new Point2D.Double(x,y);
 
@@ -55,6 +74,8 @@ public class HiddenStyle implements setImage {
 
     @Override
     public ImageView setImageProperties(ImageView mediaContent, Media media, boolean hLock, boolean vLock, double top, double bottom, double left, double right, StackPane screen, boolean widthLock, boolean heightLock, String w, String h) {
+        Point2D spaceAvailable = spaceAvailable(mediaContent, media,left,right,top,bottom,w,h, screen);
+        mediaContent = hidden(mediaContent,media,spaceAvailable,vLock,hLock,screen);
         if ((top == 0) && (bottom == 0) && (left == 0) && (right == 0)) {
             moveMediaLeft(mediaContent, media, left,screen);
             moveMediaTop(mediaContent, media, top,screen);

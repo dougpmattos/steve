@@ -20,6 +20,7 @@ import javafx.event.EventHandler;
 import javafx.geometry.Bounds;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.SnapshotParameters;
 import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
@@ -32,6 +33,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.StackPane;
 import javafx.scene.media.MediaView;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.ClosePath;
 import javafx.scene.shape.LineTo;
 import javafx.scene.shape.MoveTo;
@@ -404,20 +406,28 @@ public class TemporalChainPane extends StackPane implements Observer{
 								if(screen.getChildren().isEmpty()){
 																		
 									controlButtonPane.setImagePresentationProperties((ImageView) mediaContent, media);
+
+
+									SnapshotParameters snapParams = new SnapshotParameters();
+									snapParams.setFill(Color.TRANSPARENT); // see documentation
+									// with your describtion YOURNODE is your stackpane...
+									ImageView newImageView = new ImageView();
+									newImageView.setImage(screen.snapshot(snapParams, null));
+
 									
-//									File file = new File("test5.png");
-//							        RenderedImage renderedImage = SwingFXUtils.fromFXImage(((ImageView) mediaContent).getImage(), null);
-//							        try {
-//										ImageIO.write(
-//										        renderedImage,
-//										        "png",
-//										        file);
-//									} catch (IOException e) {
-//										// TODO Auto-generated catch block
-//										e.printStackTrace();
-//									}
+									File file = new File("imageView-on-mouse-exited.png");
+							        RenderedImage renderedImage = SwingFXUtils.fromFXImage(((ImageView) newImageView).getImage(), null);
+							        try {
+										ImageIO.write(
+										        renderedImage,
+										        "png",
+										        file);
+									} catch (IOException e) {
+										// TODO Auto-generated catch block
+										e.printStackTrace();
+									}
 							        
-									ImageView i = (ImageView)mediaContent;
+//									ImageView i = (ImageView)mediaContent;
 									
 //									i.setOnMousePressed(imageOnMousePressedEventHandler);
 //									i.setOnMouseDragged(imageOnMouseDraggedEventHandler);
@@ -462,7 +472,7 @@ public class TemporalChainPane extends StackPane implements Observer{
 //							    	//((ImageView) mediaContent).setTranslateX(newSceneX);
 //									//((ImageView) mediaContent).setTranslateY(newSceneY);
 									screen.getChildren().clear();
-									screen.getChildren().add(i);
+									screen.getChildren().add((ImageView) mediaContent);
 									
 								} else{
 									boolean inserted = false;

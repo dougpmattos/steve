@@ -1,17 +1,29 @@
 package model.spatialView;
 
+import javafx.embed.swing.SwingFXUtils;
+import javafx.scene.SnapshotParameters;
 import javafx.scene.image.Image;
 import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
 import model.common.Media;
 import javafx.scene.image.ImageView;
 
+import javax.imageio.ImageIO;
 import java.awt.geom.Point2D;
+import java.awt.image.RenderedImage;
+import java.io.File;
+import java.io.IOException;
 
-public class FillStyle implements setImage {
+public class FillStyle implements setImageInterface {
+
+    @Override
+    public Point2D spaceAvailable(ImageView mediaContent, double left, double right, double top, double bottom, String w, String h, StackPane screen) {
+        return null;
+    }
 
     @Override
     public ImageView setImageProperties(ImageView mediaContent, Media media, boolean hLock, boolean vLock, double top, double bottom, double left, double right, StackPane screen, boolean widthLock, boolean heightLock, String w, String h){
-        Point2D spaceAvailable = spaceAvailable(mediaContent,left,right,top,bottom,w,h, screen);
+        Point2D spaceAvailable = spaceAvailable(mediaContent, media, left,right,top,bottom,w,h, screen);
         mediaContent = fill(mediaContent,spaceAvailable);
         if((top==0)&&(bottom==0)&&(left==0)&&(right==0)){
             moveMediaLeft(mediaContent,media,left, screen);
@@ -19,16 +31,22 @@ public class FillStyle implements setImage {
         }
 
         System.out.println("H Lock = "+hLock);
-        if((!hLock) && (!widthLock)) { //widthLock: only move to right if width % of image is not 100 else width has precedence over right
+//        if((!hLock) && (!widthLock)) { //widthLock: only move to right if width % of image is not 100 else width has precedence over right
+        if(!hLock){
             moveMediaRight(mediaContent, media, right,screen);
         } else {
             moveMediaLeft(mediaContent,media,left,screen);
         }
-
-        System.out.println("bottom: "+bottom+" top: "+top+" right: "+right+" left: "+left);
-        if((!vLock)&&(bottom==0)) {
+//        if ((!vLock) && (!heightLock)) { // heightLock: only move to bottom if height % of image is not 100 else height has precedence over bottom
+        if (!vLock){
+            moveMediaBottom(mediaContent, media, bottom, screen);
+        } else {
+            moveMediaTop(mediaContent, media, top, screen);
+        }
+        System.out.println("bottom: " + bottom + " top: " + top + " right: " + right + " left: " + left);
+        if ((!vLock) && (bottom == 0)) {
             System.out.println("e zero vertical");
-            moveMediaTop(mediaContent,media,top,screen);
+            moveMediaTop(mediaContent, media, top, screen);
         }
         System.out.println(right==0);
         if((!hLock)&&(right==0))
@@ -37,7 +55,7 @@ public class FillStyle implements setImage {
         return mediaContent;
     }
 
-    public Point2D spaceAvailable(ImageView mediaContent, double left, double right, double top, double bottom, String w, String h, StackPane screen) {
+    public Point2D spaceAvailable(ImageView mediaContent, Media media, double left, double right, double top, double bottom, String w, String h, StackPane screen) {
 
         Point2D space = null;
 
@@ -47,24 +65,36 @@ public class FillStyle implements setImage {
         if (right > 100) right = 100;
         if (bottom > 100) bottom = 100;
 
-        //atualizar width e height
-        //testar se left + width formam uma combinacao valida
-        if (left != 0) {
-            x = screen.getWidth() - ((left / 100) * screen.getWidth());
+        SizeProperty sizeProperty = media.getPresentationProperty().getSizeProperty();
 
-        } else { //testar se right + width formam uma combinacao valida
-            if (right != 0) {
-                x = (right / 100) * screen.getWidth();
-            }
-        }
+        double absolutWidth = Integer.parseInt(sizeProperty.getWidth().replace("%",""));
+        absolutWidth = absolutWidth/100 * screen.getWidth();
 
-        if (top != 0) {
-            y = screen.getHeight() - ((top / 100) * screen.getHeight());
-        } else { //testar se bottom + height formam uma combinacao valida
-            if (bottom != 0) {
-                y = (bottom / 100) * screen.getHeight();
+        double absolutHeight = Integer.parseInt(sizeProperty.getHeight().replace("%",""));
+        absolutHeight = absolutHeight/100 * screen.getHeight();
+
+        if(absolutWidth==screen.getWidth()) {
+            if (left != 0) {
+                x = screen.getWidth() - ((left / 100) * screen.getWidth());
+
+            } else { //testar se right + width formam uma combinacao valida
+                if (right != 0) {
+                    x = (right / 100) * screen.getWidth();
+                }
             }
-        }
+        } else
+            x=absolutWidth;
+
+        if(absolutHeight==screen.getHeight()) {
+            if (top != 0) {
+                y = screen.getHeight() - ((top / 100) * screen.getHeight());
+            } else { //testar se bottom + height formam uma combinacao valida
+                if (bottom != 0) {
+                    y = (bottom / 100) * screen.getHeight();
+                }
+            }
+        } else
+            y=absolutHeight;
 
         space = new Point2D.Double(x, y);
 
@@ -76,6 +106,7 @@ public class FillStyle implements setImage {
         imageView.setPreserveRatio(false);
         imageView.setFitWidth(space.getX());
         imageView.setFitHeight(space.getY());
+
         return imageView;
     }
 
@@ -130,6 +161,25 @@ public class FillStyle implements setImage {
 
         mediaContent.setTranslateY(yZero+dYTop);
 
+        ImageView newImageView = new ImageView();
+        SnapshotParameters snapParams = new SnapshotParameters();
+        snapParams.setFill(Color.TRANSPARENT); // see documentation
+        newImageView.setImage(screen.snapshot(snapParams, null));
+        File file = new File("imageView-fill-move-top.png");
+        RenderedImage renderedImage = SwingFXUtils.fromFXImage(((ImageView) newImageView).getImage(), null);
+        try {
+            ImageIO.write(
+                    renderedImage,
+                    "png",
+                    file);
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        //COLOCAR AQUI MAIS UM DESLOCAMENTO.
+
+
+
     }
 
     public void moveMediaBottom(ImageView mediaContent, Media media, double bottom, StackPane screen){
@@ -156,7 +206,7 @@ public class FillStyle implements setImage {
 
         double dYDown = (bottom/100)*screenHeight;
 
-        mediaContent.setTranslateY(yZero-dYDown);
+//        mediaContent.setTranslateY(dYDown);
 
     }
 }

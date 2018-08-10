@@ -40,7 +40,7 @@ import model.spatialView.PositionProperty;
 import model.spatialView.PresentationProperty;
 import model.spatialView.enums.AspectRatio;
 import model.temporalView.TemporalChain;
-import model.spatialView.setImage;
+import model.spatialView.setImageInterface;
 import model.spatialView.FillStyle;
 import model.spatialView.HiddenStyle;
 import model.spatialView.SliceStyle;
@@ -516,6 +516,7 @@ public class ControlButtonPane extends BorderPane{
 			case IMAGE:
 
 				ImageView image = new ImageView(new Image(media.getFile().toURI().toString()));
+				setImagePresentationProperties(image, media);
 //				image.setFitWidth(screen.getWidth());
 //				image.setFitHeight(screen.getHeight());
 				image.setSmooth(false);
@@ -817,12 +818,21 @@ public class ControlButtonPane extends BorderPane{
 //
 //	}
 
-	public void setImagePresentationProperties(ImageView mediaContent, Media media){
+	public ImageView setImagePresentationProperties(ImageView mediaContent, Media media){
 
 		//media.getPresentationProperty().set Mudar apsect ratio da imagem
 		double percentageHeight, percentageWidth;
 		String temp;
 		boolean smlImg = false;
+//
+//		PresentationProperty pp = media.getPresentationProperty();
+//		mediaContent = new ImageView(media);
+//
+//		String imageFile = media.getFile().toURI().toString();
+//
+//		Image image = new Image(imageFile);
+//
+//		mediaContent.setImage(image);
 
 		String ratio = "";
 		if(media.getPresentationProperty().getSizeProperty().getAspectRatio()==AspectRatio.SLICE){
@@ -884,10 +894,6 @@ public class ControlButtonPane extends BorderPane{
 
 			SliceStyle sliceStyle = new SliceStyle();
 
-//			mediaContent = sliceImage.setImageProperties(mediaContent, media, spaceAvailable(mediaContent, left, right, top, bottom, w, h), hLock, vLock);
-			//slice(mediaContent, media, spaceAvailable(mediaContent, left, right, top, bottom, w, h, ratio), hLock, vLock);
-//			slice(mediaContent, spaceAvailable(mediaContent, left, right, top, bottom, w, h), media);
-
 			mediaContent = sliceStyle.setImageProperties(mediaContent,media, hLock, vLock, top, bottom, left, right, screen, widthLock, heightLock, w, h);
 
 
@@ -905,7 +911,7 @@ public class ControlButtonPane extends BorderPane{
 	    	HiddenStyle hiddenStyle = new HiddenStyle();
 
 			mediaContent = hiddenStyle.setImageProperties(mediaContent,media, hLock, vLock, top, bottom, left, right, screen, widthLock, heightLock, w, h);//slice(mediaContent, media, spaceAvailable(mediaContent, left, right, top, bottom, w, h, ratio), hLock, vLock);
-					hidden(mediaContent, media, spaceAvailable(mediaContent, left, right, top, bottom, w, h), hLock, vLock);
+//					hidden(mediaContent, media, spaceAvailable(mediaContent, left, right, top, bottom, w, h), hLock, vLock);
 
 	    }
 
@@ -922,30 +928,7 @@ public class ControlButtonPane extends BorderPane{
 //		nesse caso imagem fica com 10% de altura
 
 
-		if ((top == 0) && (bottom == 0) && (left == 0) && (right == 0)) {
-			moveMediaLeft(mediaContent, media, left);
-			moveMediaTop(mediaContent, media, top);
-		}
 
-		System.out.println("H Lock = " + hLock);
-		if ((!hLock) && (!widthLock)) { //widthLock: only move to right if width % of image is not 100 else width has precedence over right
-			moveMediaRight(mediaContent, media, right);
-		} else {
-			moveMediaLeft(mediaContent, media, left);
-		}
-		if ((!vLock) && (!heightLock) && (ratio != "FILL")) { // heightLock: only move to bottom if height % of image is not 100 else height has precedence over bottom
-			moveMediaBottom(mediaContent, media, bottom);
-		} else {
-			moveMediaTop(mediaContent, media, top);
-		}
-		System.out.println("bottom: " + bottom + " top: " + top + " right: " + right + " left: " + left);
-		if ((!vLock) && (bottom == 0)) {
-			System.out.println("e zero vertical");
-			moveMediaTop(mediaContent, media, top);
-		}
-		System.out.println(right == 0);
-		if ((!hLock) && (right == 0))
-			moveMediaLeft(mediaContent, media, left);
 
 
 		mediaContent.setDepthTest(DepthTest.ENABLE);
@@ -954,6 +937,8 @@ public class ControlButtonPane extends BorderPane{
 
 		double opacity = 1-(media.getPresentationProperty().getStyleProperty().getTransparency()/100);
 		mediaContent.setOpacity(opacity);
+
+		return mediaContent;
 
 	}
 

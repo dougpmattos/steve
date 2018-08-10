@@ -1,5 +1,6 @@
 package model.spatialView;
 
+import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.image.Image;
 import javafx.scene.image.PixelReader;
@@ -10,9 +11,13 @@ import model.common.Media;
 import javafx.scene.image.ImageView;
 import model.spatialView.enums.AspectRatio;
 
+import javax.imageio.ImageIO;
 import java.awt.geom.Point2D;
+import java.awt.image.RenderedImage;
+import java.io.File;
+import java.io.IOException;
 
-public class SliceStyle implements setImage {
+public class SliceStyle implements setImageInterface {
 
     @Override
     public Point2D spaceAvailable(ImageView mediaContent, double left, double right, double top, double bottom, String w, String h, StackPane screen) {
@@ -50,6 +55,8 @@ public class SliceStyle implements setImage {
 
     @Override
     public ImageView setImageProperties(ImageView mediaContent, Media media, boolean hLock, boolean vLock, double top, double bottom, double left, double right, StackPane screen, boolean widthLock, boolean heightLock, String w, String h) {
+        Point2D spaceAvailable = spaceAvailable(mediaContent,left,right,top,bottom,w,h, screen);
+        mediaContent = slice(mediaContent,spaceAvailable,media, screen);
         if ((top == 0) && (bottom == 0) && (left == 0) && (right == 0)) {
             moveMediaLeft(mediaContent, media, left, screen);
             moveMediaTop(mediaContent, media, top, screen);
@@ -58,6 +65,22 @@ public class SliceStyle implements setImage {
         System.out.println("H Lock = " + hLock);
         if ((!hLock) && (!widthLock)) { //widthLock: only move to right if width % of image is not 100 else width has precedence over right
             moveMediaRight(mediaContent, media, right, screen);
+
+            ImageView newImageView = new ImageView();
+            SnapshotParameters snapParams = new SnapshotParameters();
+            snapParams.setFill(Color.TRANSPARENT); // see documentation
+            newImageView.setImage(screen.snapshot(snapParams, null));
+            File file = new File("imageView-after-move-to-right.png");
+            RenderedImage renderedImage = SwingFXUtils.fromFXImage(((ImageView) newImageView).getImage(), null);
+            try {
+                ImageIO.write(
+                        renderedImage,
+                        "png",
+                        file);
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
         } else {
             moveMediaLeft(mediaContent, media, left, screen);
         }
@@ -88,9 +111,9 @@ public class SliceStyle implements setImage {
 
         media.getPresentationProperty().setPositionProperty(pp);
 
-        int boundHeight = (int)mediaContent.getLayoutBounds().getHeight();
-        int boundHeightParent = (int)mediaContent.getBoundsInParent().getHeight();
-        int boundHeightLocal = (int)mediaContent.getBoundsInLocal().getHeight();
+        int boundHeight = (int) mediaContent.getLayoutBounds().getHeight();
+        int boundHeightParent = (int) mediaContent.getBoundsInParent().getHeight();
+        int boundHeightLocal = (int) mediaContent.getBoundsInLocal().getHeight();
 
         double screenHeight = screen.getHeight();
 
@@ -98,37 +121,24 @@ public class SliceStyle implements setImage {
         System.out.println(boundHeightLocal);
         System.out.println(boundHeightParent);
 
-        double yZero = (screenHeight)-boundHeight; //Referencial da tela (borda inferior)
-        System.out.println("yZero: "+ yZero);
+        double yZero = (screenHeight) - boundHeight; //Referencial da tela (borda inferior)
+        System.out.println("yZero: " + yZero);
 
-        double dYDown = (bottom/100)*screenHeight;
+        double dYDown = (bottom / 100) * screenHeight;
 
         String imageFile = media.getFile().toURI().toString();
 
-        System.out.println("imageFile: "+imageFile);
+        System.out.println("imageFile: " + imageFile);
 
         Image image = new Image(imageFile);
 
-        double ty=image.getHeight();
+        double ty = image.getHeight();
 
-        if(media.getPresentationProperty().getSizeProperty().getAspectRatio()!=AspectRatio.FILL){
+        if (ty < screenHeight) {
 
-            if(ty<screenHeight){
+            mediaContent.setFitHeight(dYDown);
 
-                if(ty < dYDown){
-                    double x = dYDown-ty;
-                    System.out.println("Move: "+x);
-                    mediaContent.setTranslateY(dYDown-ty);
-
-                } else {
-                    mediaContent.setFitHeight(dYDown);
-                }
-
-            }
-        } else {
-            mediaContent.setTranslateY(yZero-dYDown);
         }
-
     }
 
     @Override
@@ -152,14 +162,14 @@ public class SliceStyle implements setImage {
 
         System.out.println("Size of media is: "+mediaContent.getImage().getWidth());
         if(tx<screenWidth){
-            if(tx < dXRight){
-                mediaContent.setTranslateX(dXRight-tx);
-            } else {
+//            if(tx < dXRight){
+//                mediaContent.setTranslateX(dXRight-tx);
+//            } else {
                 mediaContent.setFitWidth(dXRight);
-            }
-
-
+//            }
         }
+
+
     }
 
 
@@ -258,7 +268,7 @@ public class SliceStyle implements setImage {
         WritableImage wi = nv.snapshot(parameters, new WritableImage(reader, 0,0,(int) space.getX(),(int) space.getY()));
 
         if(ty>tx){
-
+            //if (space.getX()<screen.getHeight()) nv.setFitWidth();
             nv.setFitWidth(space.getX());
 
         }

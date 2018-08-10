@@ -126,36 +126,41 @@ public class PositionPane extends VBox {
 		getChildren().add(titleButtonBorderPane);
 		getChildren().add(positionPropertyGridPane);
 												
+
 		left.textProperty().addListener((observable, oldValue, newValue) -> {
-			System.out.println("MUDOU O LISTENER OUVINDO CHANGES LEFT: "+left.getText());	
-			media.getPresentationProperty().getPositionProperty().setLeft(left.getText());			
-			controlButtonPane.setImagePresentationProperties(this.imageView, media);
+			System.out.println("MUDOU O LISTENER OUVINDO CHANGES LEFT: "+left.getText());
+			media.getPresentationProperty().getPositionProperty().setLeft(left.getText());
+			Object mediaContent = controlButtonPane.getMediaContent(media);
+			controlButtonPane.setImagePresentationProperties((ImageView) mediaContent, media);
 			screen.getChildren().clear();
-			screen.getChildren().add(this.imageView);			
-			
+			screen.getChildren().add((ImageView) mediaContent);
+
 
 		});
 		right.textProperty().addListener((observable, oldValue, newValue) -> {
-			
-			media.getPresentationProperty().getPositionProperty().setRight(right.getText());			
-			controlButtonPane.setImagePresentationProperties(this.imageView, media);
+
+			media.getPresentationProperty().getPositionProperty().setRight(right.getText());
+			Object mediaContent = controlButtonPane.getMediaContent(media);
+			controlButtonPane.setImagePresentationProperties((ImageView) mediaContent, media);
 			screen.getChildren().clear();
-			screen.getChildren().add(this.imageView);
-			
+			screen.getChildren().add((ImageView) mediaContent);
+
 		});
 		top.textProperty().addListener((observable, oldValue, newValue) -> {
 			media.getPresentationProperty().getPositionProperty().setTop(top.getText());
-			controlButtonPane.setImagePresentationProperties(this.imageView, media);		
+			Object mediaContent = controlButtonPane.getMediaContent(media);
+			controlButtonPane.setImagePresentationProperties((ImageView) mediaContent, media);
 			screen.getChildren().clear();
-			screen.getChildren().add(this.imageView);
+			screen.getChildren().add((ImageView) mediaContent);
 		});
 		bottom.textProperty().addListener((observable, oldValue, newValue) -> {
 			System.out.println("aqui mudou para "+newValue+" e o top é "+top.getText());
 			media.getPresentationProperty().getPositionProperty().setBottom(newValue);
-			controlButtonPane.setImagePresentationProperties(this.imageView, media);
+			Object mediaContent = controlButtonPane.getMediaContent(media);
+			controlButtonPane.setImagePresentationProperties((ImageView) mediaContent, media);
 			screen.getChildren().clear();
-			screen.getChildren().add(this.imageView);
-			
+			screen.getChildren().add((ImageView) mediaContent);
+
 		});
 
 	}
