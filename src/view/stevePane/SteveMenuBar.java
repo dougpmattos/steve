@@ -15,6 +15,8 @@ import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.Tab;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
@@ -74,7 +76,20 @@ public class SteveMenuBar extends MenuBar{
 	private Menu menuView;
 	private Menu menuTools;
 	private Menu menuHelp;
-	
+	private Menu menuAlignment;
+	private Menu menuDistribution;
+
+
+	private  MenuItem menuItemAlignmentTop;
+	private  MenuItem menuItemAlignmentBottom;
+	private  MenuItem menuItemAlignmentLeft;
+	private  MenuItem menuItemAlignmentRight;
+	private  MenuItem menuItemAlignmentEqual;
+	private  MenuItem menuItemAlignmentCenter;
+
+	private  MenuItem menuItemDistributionVertical;
+	private  MenuItem menuItemDistributionHorizontal;
+
 	private  MenuItem menuItemNew;
 	private  MenuItem menuItemOpen;
 	private  MenuItem menuItemClose; 
@@ -95,6 +110,7 @@ public class SteveMenuBar extends MenuBar{
 	private  MenuItem menuItemSimulation;
 	private  MenuItem menuItemHelpContents;
 	private  MenuItem menuItemAbout;
+
 	
 	
 	private  CheckMenuItem checkMenuItemMediaView;  
@@ -117,13 +133,18 @@ public class SteveMenuBar extends MenuBar{
 		createViewMenuItems();
 		createToolMenuItems();
 		createHelpMenuItems();
+		createAlignmentMenuItems();
+		createDistributionMenuItems();
 		
 		createFileMenuItemActions();
 		createEditMenuItemActions();
 		createViewMenuItemActions();
 		createToolMenuItemActions();
 		createHelpMenuItemActions();
-		
+		createAlignmentMenuItemActions();
+		createDistributionMenuItemActions();
+
+
 		//menuFile.getItems().addAll(menuItemNew, menuItemOpen, new SeparatorMenuItem(), menuItemClose, new SeparatorMenuItem(), menuItemExportNCL, new SeparatorMenuItem(), menuItemExportHTML5, new SeparatorMenuItem(), menuItemRun, new SeparatorMenuItem(), menuItemExit); 
 		menuFile.getItems().addAll(menuItemNew, menuItemOpen, new SeparatorMenuItem(), menuItemExportNCL, new SeparatorMenuItem(), menuItemExportHTML5, new SeparatorMenuItem(), menuItemRun, new SeparatorMenuItem(), menuItemExit);
 //		menuEdit.getItems().addAll(menuItemUndo, menuItemRedo, new SeparatorMenuItem(), menuItemCut, menuItemCopy, menuItemPaste, new SeparatorMenuItem(), 
@@ -132,9 +153,14 @@ public class SteveMenuBar extends MenuBar{
 		menuTools.getItems().addAll(menuItemSimulation);
 //		menuHelp.getItems().addAll(menuItemHelpContents, new SeparatorMenuItem(), menuItemAbout);
 		menuHelp.getItems().addAll(menuItemAbout);
+		menuAlignment.getItems().addAll(menuItemAlignmentTop, menuItemAlignmentBottom, menuItemAlignmentEqual, menuItemAlignmentCenter);
+		menuAlignment.getItems().addAll(menuItemAlignmentLeft, menuItemAlignmentRight);
+
+		menuDistribution.getItems().addAll(menuItemDistributionVertical);
+		menuDistribution.getItems().addAll(menuItemDistributionHorizontal);
 		    
 //		getMenus().addAll(menuFile, menuEdit, menuView, menuTools, menuHelp);
-		getMenus().addAll(menuFile, menuEdit, menuHelp);
+		getMenus().addAll(menuFile, menuEdit, menuAlignment, menuDistribution, menuHelp);
 		
 		
 	}
@@ -429,7 +455,143 @@ public class SteveMenuBar extends MenuBar{
 		
 		menuItemExit = new MenuItem (Language.translate("exit"));
 		menuItemExit.setAccelerator(KeyCombination.keyCombination("Ctrl+Q"));
-		
+
+	}
+
+	private void createAlignmentMenuItemActions(){
+		menuItemAlignmentTop.setOnAction(new EventHandler<ActionEvent>() {
+			public void handle(ActionEvent t) {
+
+				MessageDialog messageDialog = new MessageDialog("ALIGNMENT TOP", "MOVE THIS TOP", "OK", 300);
+				messageDialog.showAndWait();
+
+			}
+		});
+
+		menuItemAlignmentBottom.setOnAction(new EventHandler<ActionEvent>() {
+			public void handle(ActionEvent t) {
+
+				MessageDialog messageDialog = new MessageDialog("ALIGNMENT BOTTOM", "MOVE THIS BOTTOM", "OK", 300);
+				messageDialog.showAndWait();
+
+			}
+		});
+
+		menuItemAlignmentLeft.setOnAction(new EventHandler<ActionEvent>() {
+			public void handle(ActionEvent t) {
+
+				MessageDialog messageDialog = new MessageDialog("ALIGNMENT LEFT", "MOVE THIS LEFT", "OK", 300);
+				messageDialog.showAndWait();
+
+			}
+		});
+
+		menuItemAlignmentRight.setOnAction(new EventHandler<ActionEvent>() {
+			public void handle(ActionEvent t) {
+
+				MessageDialog messageDialog = new MessageDialog("ALIGNMENT RIGHT", "MOVE THIS RIGHT", "OK", 300);
+				messageDialog.showAndWait();
+
+			}
+		});
+
+		menuItemAlignmentEqual.setOnAction(new EventHandler<ActionEvent>() {
+			public void handle(ActionEvent t) {
+
+				MessageDialog messageDialog = new MessageDialog("ALIGNMENT EQUAL", "MOVE THIS EQUAL", "OK", 300);
+				messageDialog.showAndWait();
+
+			}
+		});
+
+		menuItemAlignmentEqual.setOnAction(new EventHandler<ActionEvent>() {
+			public void handle(ActionEvent t) {
+
+				MessageDialog messageDialog = new MessageDialog("ALIGNMENT CENTER", "MOVE THIS CENTER", "OK", 300);
+				messageDialog.showAndWait();
+
+			}
+		});
+	}
+
+	private void createDistributionMenuItemActions(){
+		menuItemDistributionHorizontal.setOnAction(new EventHandler<ActionEvent>() {
+			public void handle(ActionEvent t) {
+
+				MessageDialog messageDialog = new MessageDialog("DISTRIBUTION HORIZONTAL", "MOVE THIS HORIZONTAL", "OK", 300);
+				messageDialog.showAndWait();
+
+			}
+		});
+
+		menuItemDistributionVertical.setOnAction(new EventHandler<ActionEvent>() {
+			public void handle(ActionEvent t) {
+
+				MessageDialog messageDialog = new MessageDialog("Distribution Vertical", "MOVE THIS VERTICAL", "OK", 300);
+				messageDialog.showAndWait();
+
+			}
+		});
+	}
+
+	private void createAlignmentMenuItems() {
+		menuItemAlignmentTop = new MenuItem (Language.translate("alignment.top"));
+		Image alignmentTop = new Image(getClass().getResourceAsStream("alignment.top.png"));
+		ImageView alignmentTopView = new ImageView(alignmentTop);
+		alignmentTopView.setFitWidth(15);
+		alignmentTopView.setFitHeight(15);
+		menuItemAlignmentTop.setGraphic(alignmentTopView);
+
+		menuItemAlignmentBottom = new MenuItem (Language.translate("alignment.bottom"));
+		Image alignmentBottom = new Image(getClass().getResourceAsStream("alignment.bottom.png"));
+		ImageView alignmentBottomView = new ImageView(alignmentBottom);
+		alignmentBottomView.setFitWidth(15);
+		alignmentBottomView.setFitHeight(15);
+		menuItemAlignmentBottom.setGraphic(alignmentBottomView);
+
+		menuItemAlignmentCenter = new MenuItem (Language.translate("alignment.center"));
+		Image alignmentCenter = new Image(getClass().getResourceAsStream("alignment.center.png"));
+		ImageView alignmentCenterView = new ImageView(alignmentCenter);
+		alignmentCenterView.setFitWidth(15);
+		alignmentCenterView.setFitHeight(15);
+		menuItemAlignmentCenter.setGraphic(alignmentCenterView);
+
+		menuItemAlignmentLeft = new MenuItem (Language.translate("alignment.left"));
+		Image alignmentLeft = new Image(getClass().getResourceAsStream("alignment.left.png"));
+		ImageView alignmentLeftView = new ImageView(alignmentLeft);
+		alignmentLeftView.setFitWidth(15);
+		alignmentLeftView.setFitHeight(15);
+		menuItemAlignmentLeft.setGraphic(alignmentLeftView);
+
+		menuItemAlignmentRight = new MenuItem (Language.translate("alignment.right"));
+		Image alignmentRight = new Image(getClass().getResourceAsStream("alignment.right.png"));
+		ImageView alignmentRightView = new ImageView(alignmentRight);
+		alignmentRightView.setFitWidth(15);
+		alignmentRightView.setFitHeight(15);
+		menuItemAlignmentRight.setGraphic(alignmentRightView);
+
+		menuItemAlignmentEqual = new MenuItem (Language.translate("alignment.equal"));
+		Image alignmentEqual = new Image(getClass().getResourceAsStream("alignment.equal.png"));
+		ImageView alignmentEqualView = new ImageView(alignmentEqual);
+		alignmentEqualView.setFitWidth(15);
+		alignmentEqualView.setFitHeight(15);
+		menuItemAlignmentEqual.setGraphic(alignmentEqualView);
+	}
+
+	private void createDistributionMenuItems() {
+		menuItemDistributionVertical = new MenuItem (Language.translate("distribution.vertical"));
+		Image distributionVertical = new Image(getClass().getResourceAsStream("distribution.vertical.png"));
+		ImageView distributionVerticalView = new ImageView(distributionVertical);
+		distributionVerticalView.setFitWidth(15);
+		distributionVerticalView.setFitHeight(15);
+		menuItemDistributionVertical.setGraphic(distributionVerticalView);
+
+		menuItemDistributionHorizontal = new MenuItem (Language.translate("distribution.horizontal"));
+		Image distributionHorizontal = new Image(getClass().getResourceAsStream("distribution.horizontal.png"));
+		ImageView distributionHorizontalView = new ImageView(distributionHorizontal);
+		distributionHorizontalView.setFitWidth(15);
+		distributionHorizontalView.setFitHeight(15);
+		menuItemDistributionHorizontal.setGraphic(distributionHorizontalView);
 	}
 	
 	private void createMenu() {
@@ -439,7 +601,23 @@ public class SteveMenuBar extends MenuBar{
 		menuView = new Menu(Language.translate("view"));
 		menuTools = new Menu(Language.translate("tools"));
 		menuHelp = new Menu(Language.translate("help"));
+		menuAlignment = new Menu(Language.translate("alignment"));
 		
+		Image alignment = new Image(getClass().getResourceAsStream("alignment.png"));
+		ImageView alignmentView = new ImageView(alignment);
+		alignmentView.setFitWidth(15);
+		alignmentView.setFitHeight(15);
+		menuAlignment.setGraphic(alignmentView);
+
+		menuDistribution= new Menu(Language.translate("distribution"));
+
+		Image distribution = new Image(getClass().getResourceAsStream("distribution.png"));
+		ImageView distributionView = new ImageView(distribution);
+		distributionView.setFitWidth(15);
+		distributionView.setFitHeight(15);
+		menuDistribution.setGraphic(distributionView);
+
+
 	}	
 
 }
