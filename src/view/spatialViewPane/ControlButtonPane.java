@@ -896,15 +896,11 @@ public class ControlButtonPane extends BorderPane{
 
 			mediaContent = sliceStyle.setImageProperties(mediaContent,media, hLock, vLock, top, bottom, left, right, screen, widthLock, heightLock, w, h);
 
-
-
-
 	    } else if(media.getPresentationProperty().getSizeProperty().getAspectRatio()==AspectRatio.FILL){
 
 			FillStyle fillStyle = new FillStyle();
 
 			mediaContent = fillStyle.setImageProperties(mediaContent,media, hLock, vLock, top, bottom, left, right, screen, widthLock, heightLock, w, h);
-
 
 	    } else if(media.getPresentationProperty().getSizeProperty().getAspectRatio()==AspectRatio.HIDDEN){
 

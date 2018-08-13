@@ -38,9 +38,15 @@ import javax.xml.transform.stream.StreamSource;
 import model.HTMLSupport.HTMLExportEventHandler;
 import model.NCLSupport.NCLExportEventHandler;
 import model.NCLSupport.NCLImportEventHandler;
+import model.common.Media;
 import model.common.SpatialTemporalView;
 import model.repository.RepositoryMediaList;
 
+import model.spatialView.PositionProperty;
+import model.spatialView.PresentationProperty;
+import model.spatialView.SizeProperty;
+import model.spatialView.StyleProperty;
+import model.spatialView.enums.AspectRatio;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 //import com.sun.xml.internal.txw2.Document;
@@ -51,6 +57,7 @@ import view.common.CommonMethods;
 import view.common.Language;
 import view.common.MessageDialog;
 import view.common.ReturnMessage;
+import view.spatialViewPane.PositionPane;
 import view.temporalViewPane.InteractiveMediaWindow;
 import view.temporalViewPane.TemporalChainPane;
 import view.temporalViewPane.TemporalViewPane;
@@ -515,23 +522,91 @@ public class SteveMenuBar extends MenuBar{
 	}
 
 	private void createDistributionMenuItemActions(){
-		menuItemDistributionHorizontal.setOnAction(new EventHandler<ActionEvent>() {
-			public void handle(ActionEvent t) {
-
-				MessageDialog messageDialog = new MessageDialog("DISTRIBUTION HORIZONTAL", "MOVE THIS HORIZONTAL", "OK", 300);
-				messageDialog.showAndWait();
-
-			}
-		});
 
 		menuItemDistributionVertical.setOnAction(new EventHandler<ActionEvent>() {
 			public void handle(ActionEvent t) {
 
-				MessageDialog messageDialog = new MessageDialog("Distribution Vertical", "MOVE THIS VERTICAL", "OK", 300);
-				messageDialog.showAndWait();
+				System.out.println("Size is "+temporalViewPane.getSelectedMediaList().size()+". ");
+				// pega 1% da tela entre as midias (midia - 1: 1%)
+				// pega o resto da tela que sobrou divide pelo n de midia (ex 98%/2)
+				int spaces = temporalViewPane.getSelectedMediaList().size()-1;
+				double mediaSpace = (100 - spaces)/(spaces+1);
+				int i=0;
+				controller.getStevePane().getSpatialViewPane().getDisplayPane().getScreen().getChildren().clear();
+
+				for(Media media: temporalViewPane.getSelectedMediaList()){
+
+					SizeProperty sp = new SizeProperty ();
+
+					sp.setAspectRatio(AspectRatio.FILL);
+					sp.setHeight(Integer.toString((int)(mediaSpace)));
+
+
+					PositionProperty pp = new PositionProperty();
+					pp.setTop(Integer.toString((int) ((i*mediaSpace) +i)));
+
+					media.getPresentationProperty().setSizeProperty(sp);
+					media.getPresentationProperty().setPositionProperty(pp);
+
+					ImageView mediaContent = new ImageView(new Image(media.getFile().toURI().toString()));
+					controller.getStevePane().getSpatialViewPane().getDisplayPane().getControlButtonPane().setImagePresentationProperties(mediaContent,media);
+					controller.getStevePane().getSpatialViewPane().getDisplayPane().getScreen().getChildren().add(mediaContent);
+
+					i++;
+					// seta tudo pra fill
+					// pega 1% da tela entre as midias (midia - 1: 1%)
+					// pega o resto da tela que sobrou divide pelo n de midia (ex 98%/2)
+					// cada midia vai ter resultado % de height (49%)
+					// left de cada midia vai ser index * resultado ( 0 * 49, 1 * 49 )
+
+
+				}
 
 			}
 		});
+
+		menuItemDistributionHorizontal.setOnAction(new EventHandler<ActionEvent>() {
+			public void handle(ActionEvent t) {
+
+                System.out.println("Size is "+temporalViewPane.getSelectedMediaList().size()+". ");
+                // pega 1% da tela entre as midias (midia - 1: 1%)
+                // pega o resto da tela que sobrou divide pelo n de midia (ex 98%/2)
+                int spaces = temporalViewPane.getSelectedMediaList().size()-1;
+                double mediaSpace = (100 - spaces)/(spaces+1);//24
+                int i=0;
+
+				controller.getStevePane().getSpatialViewPane().getDisplayPane().getScreen().getChildren().clear();
+                for(Media media: temporalViewPane.getSelectedMediaList()){
+					SizeProperty sp = new SizeProperty ();
+
+                    sp.setAspectRatio(AspectRatio.FILL);
+                    sp.setWidth(Integer.toString((int)(mediaSpace)));
+
+					PositionProperty pp = new PositionProperty();
+                    pp.setLeft(Integer.toString((int) ((i*mediaSpace) +i)));
+
+                    media.getPresentationProperty().setSizeProperty(sp);
+                    media.getPresentationProperty().setPositionProperty(pp);
+
+					ImageView mediaContent = new ImageView(new Image(media.getFile().toURI().toString()));
+					controller.getStevePane().getSpatialViewPane().getDisplayPane().getControlButtonPane().setImagePresentationProperties(mediaContent,media);
+					controller.getStevePane().getSpatialViewPane().getDisplayPane().getScreen().getChildren().add(mediaContent);
+
+
+//                    pp.getSizeProperty().setAspectRatio(AspectRatio.FILL);
+//                    pp.getSizeProperty().setWidth(Integer.toString((int)(mediaSpace))); 
+//                    pp.getPositionProperty().setLeft(Integer.toString((int) ((i*mediaSpace) +i)));
+                    i++;
+                    // seta tudo pra fill
+                    // pega 1% da tela entre as midias (midia - 1: 1%)
+                    // pega o resto da tela que sobrou divide pelo n de midia (ex 98%/2)
+                    // cada midia vai ter resultado % de width (49%)
+                    // left de cada midia vai ser index * resultado ( 0 * 49, 1 * 49 )
+
+                }
+			}
+		});
+
 	}
 
 	private void createAlignmentMenuItems() {

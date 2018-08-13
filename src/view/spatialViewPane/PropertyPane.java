@@ -104,9 +104,9 @@ public class PropertyPane extends ScrollPane implements Observer{
 				else {
 			    	
 			    	positionPane.populatePositionPropertyJavaBean();
-				    sizePane.populateSizePropertyJavaBean();
 				    cropPane.populateCropPropertyJavaBean();
 				    stylePane.populateStylePropertyJavaBean();
+					sizePane.populateSizePropertyJavaBean();
 				    
 			    }
 				

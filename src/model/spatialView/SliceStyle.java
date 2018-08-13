@@ -70,17 +70,17 @@ public class SliceStyle implements setImageInterface {
             SnapshotParameters snapParams = new SnapshotParameters();
             snapParams.setFill(Color.TRANSPARENT); // see documentation
             newImageView.setImage(screen.snapshot(snapParams, null));
-            File file = new File("imageView-after-move-to-right.png");
-            RenderedImage renderedImage = SwingFXUtils.fromFXImage(((ImageView) newImageView).getImage(), null);
-            try {
-                ImageIO.write(
-                        renderedImage,
-                        "png",
-                        file);
-            } catch (IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
+//            File file = new File("imageView-after-move-to-right.png");
+//            RenderedImage renderedImage = SwingFXUtils.fromFXImage(((ImageView) newImageView).getImage(), null);
+//            try {
+//                ImageIO.write(
+//                        renderedImage,
+//                        "png",
+//                        file);
+//            } catch (IOException e) {
+//                // TODO Auto-generated catch block
+//                e.printStackTrace();
+//            }
         } else {
             moveMediaLeft(mediaContent, media, left, screen);
         }

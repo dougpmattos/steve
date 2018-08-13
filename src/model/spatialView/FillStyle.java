@@ -67,10 +67,10 @@ public class FillStyle implements setImageInterface {
 
         SizeProperty sizeProperty = media.getPresentationProperty().getSizeProperty();
 
-        double absolutWidth = Integer.parseInt(sizeProperty.getWidth().replace("%",""));
+        double absolutWidth = Integer.parseInt(sizeProperty.getWidth().replace("%","").replace(".0",""));
         absolutWidth = absolutWidth/100 * screen.getWidth();
 
-        double absolutHeight = Integer.parseInt(sizeProperty.getHeight().replace("%",""));
+        double absolutHeight = Integer.parseInt(sizeProperty.getHeight().replace("%","").replace(".0",""));
         absolutHeight = absolutHeight/100 * screen.getHeight();
 
         if(absolutWidth==screen.getWidth()) {
@@ -165,17 +165,17 @@ public class FillStyle implements setImageInterface {
         SnapshotParameters snapParams = new SnapshotParameters();
         snapParams.setFill(Color.TRANSPARENT); // see documentation
         newImageView.setImage(screen.snapshot(snapParams, null));
-        File file = new File("imageView-fill-move-top.png");
-        RenderedImage renderedImage = SwingFXUtils.fromFXImage(((ImageView) newImageView).getImage(), null);
-        try {
-            ImageIO.write(
-                    renderedImage,
-                    "png",
-                    file);
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+//        File file = new File("imageView-fill-move-top.png");
+//        RenderedImage renderedImage = SwingFXUtils.fromFXImage(((ImageView) newImageView).getImage(), null);
+//        try {
+//            ImageIO.write(
+//                    renderedImage,
+//                    "png",
+//                    file);
+//        } catch (IOException e) {
+//            // TODO Auto-generated catch block
+//            e.printStackTrace();
+//        }
         //COLOCAR AQUI MAIS UM DESLOCAMENTO.
 
 

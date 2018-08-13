@@ -163,6 +163,9 @@ public class TemporalChainPane extends StackPane implements Observer{
 
 			@Override
 			public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+				if(temporalChainModel.getMediaAllList().isEmpty()){
+					screen.getChildren().clear();
+				}
 				
 				if(!controlButtonPane.getIsPlaying() && !controlButtonPane.getHasPaused()) {
 					
@@ -404,75 +407,22 @@ public class TemporalChainPane extends StackPane implements Observer{
 							} else if(mediaContent instanceof ImageView){
 															
 								if(screen.getChildren().isEmpty()){
-																		
-									controlButtonPane.setImagePresentationProperties((ImageView) mediaContent, media);
+
+									if(!temporalChainModel.getMediaAllList().isEmpty()) {
 
 
-									SnapshotParameters snapParams = new SnapshotParameters();
-									snapParams.setFill(Color.TRANSPARENT); // see documentation
-									// with your describtion YOURNODE is your stackpane...
-									ImageView newImageView = new ImageView();
-									newImageView.setImage(screen.snapshot(snapParams, null));
+										controlButtonPane.setImagePresentationProperties((ImageView) mediaContent, media);
 
-									
-									File file = new File("imageView-on-mouse-exited.png");
-							        RenderedImage renderedImage = SwingFXUtils.fromFXImage(((ImageView) newImageView).getImage(), null);
-							        try {
-										ImageIO.write(
-										        renderedImage,
-										        "png",
-										        file);
-									} catch (IOException e) {
-										// TODO Auto-generated catch block
-										e.printStackTrace();
+
+										SnapshotParameters snapParams = new SnapshotParameters();
+										snapParams.setFill(Color.TRANSPARENT); // see documentation
+										// with your describtion YOURNODE is your stackpane...
+										ImageView newImageView = new ImageView();
+										newImageView.setImage(screen.snapshot(snapParams, null));
+
+										screen.getChildren().clear();
+										screen.getChildren().add((ImageView) mediaContent);
 									}
-							        
-//									ImageView i = (ImageView)mediaContent;
-									
-//									i.setOnMousePressed(imageOnMousePressedEventHandler);
-//									i.setOnMouseDragged(imageOnMouseDraggedEventHandler);
-//									i.setTranslateX(newSceneX);
-//									i.setTranslateY(newSceneY);
-//									
-//									Bounds boundsInScene = i.localToScene(i.getBoundsInLocal());
-//									double minXInScene = boundsInScene.getMinX();
-//							        double minYInScene = boundsInScene.getMinY();
-//							        double maxXInScene = boundsInScene.getMaxX();
-//							        double maxYInScene = boundsInScene.getMaxY();
-//
-//							        	
-//							        double percentageHeight, percentageWidth;							        
-//							        double temp;							        							        
-//									double screenHeight = screen.getHeight();
-//									double screenWidth = screen.getWidth();
-//									
-//									double bottomMargin = 100*(screenHeight - maxYInScene)/screenHeight; //bottom margin %
-//									double topMargin = 100*(minYInScene)/screenHeight; //top margin %
-//									double leftMargin = 100*(minXInScene)/screenWidth; //left margin %
-//									double rightMargin = 100*(screenWidth - maxXInScene)/screenWidth; //right margin %
-//									
-//									
-//
-//							        
-//									PositionProperty pp = new PositionProperty(); //FAZER A CONTA PRA CONVERTER PRA %
-//									System.out.println("Bottom: "+bottomMargin);
-//									pp.setBottom(Double.toString(bottomMargin).concat("%"));
-//									System.out.println("Top: "+topMargin);
-//									pp.setTop(Double.toString(topMargin).concat("%"));
-//									System.out.println("Left: "+leftMargin);
-//									pp.setLeft(Double.toString(leftMargin).concat("%"));
-//									System.out.println("Right: "+rightMargin);
-//									pp.setRight(Double.toString(rightMargin).concat("%"));
-//									media.getPresentationProperty().setPositionProperty(pp);
-//									
-//									PositionPane positionPane = new PositionPane(controller, media);
-//							    	controller.populatePositionPropertyJavaBean(positionPane, media);
-//									
-//							    	//update(temporalViewModel, positionPane);
-//							    	//((ImageView) mediaContent).setTranslateX(newSceneX);
-//									//((ImageView) mediaContent).setTranslateY(newSceneY);
-									screen.getChildren().clear();
-									screen.getChildren().add((ImageView) mediaContent);
 									
 								} else{
 									boolean inserted = false;
