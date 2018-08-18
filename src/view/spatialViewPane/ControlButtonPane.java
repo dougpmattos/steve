@@ -135,8 +135,8 @@ public class ControlButtonPane extends BorderPane{
 		screen.minWidthProperty().setValue(640);
 		screen.maxWidthProperty().setValue(640);
 
-		screen.minHeightProperty().setValue(350);
-		screen.maxHeightProperty().setValue(350);
+		screen.minHeightProperty().setValue(340);
+		screen.maxHeightProperty().setValue(340);
 
 //		setStyle("-fx-border-color: #607D8B; -fx-border: 22px solid;");
 		createListeners();
@@ -584,14 +584,13 @@ public class ControlButtonPane extends BorderPane{
 
 	private void createAlignmentMenuItemActions() {
 		alignBottom.setOnAction(new EventHandler<ActionEvent>() {
-			@Override
 			public void handle(ActionEvent event) {
 				if(temporalViewPane.getSelectedMediaList().size()>1) {
 					//get first selected media
 					Media media = temporalViewPane.getSelectedMediaList().get(0);
 					//get bottom coordinates of it
 					double masterTop = screen.getHeight() * Double.parseDouble(media.getPresentationProperty().getPositionProperty().getTop().replace("%",""))/100;
-					double masterBottom = screen.getHeight() * Double.parseDouble(media.getPresentationProperty().getPositionProperty().getTop().replace("%",""))/100;
+					double masterBottom = screen.getHeight() * Double.parseDouble(media.getPresentationProperty().getPositionProperty().getBottom().replace("%",""))/100;
 					double masterRealHeight = media.getPresentationProperty().getSizeProperty().getRealSize().getY();
 					double masterRealTopMargin = 0;
 
@@ -604,20 +603,22 @@ public class ControlButtonPane extends BorderPane{
 					}
 					int i = 0;
 					//for each media
+					controller.getStevePane().getSpatialViewPane().getDisplayPane().getScreen().getChildren().clear();
 					for(Media m: temporalViewPane.getSelectedMediaList()){
 						if(i>0) {
 							//calculate Y top margin for alignment
 							//set top margin as Y
 							double topMargin = masterRealTopMargin + masterRealHeight - m.getPresentationProperty().getSizeProperty().getRealSize().getY();
-							m.getPresentationProperty().getPositionProperty().setTop(Double.toString(topMargin));
-
-							ImageView mediaContent = new ImageView(new Image(media.getFile().toURI().toString()));
-							controller.getStevePane().getSpatialViewPane().getDisplayPane().getControlButtonPane().setImagePresentationProperties(mediaContent, media);
-							controller.getStevePane().getSpatialViewPane().getDisplayPane().getScreen().getChildren().add(mediaContent);
+							m.getPresentationProperty().getPositionProperty().setTop(Double.toString(topMargin/screen.getHeight()*100));
 
 						}
+						ImageView mediaContent = new ImageView(new Image(m.getFile().toURI().toString()));
+						controller.getStevePane().getSpatialViewPane().getDisplayPane().getControlButtonPane().setImagePresentationProperties(mediaContent, m);
+						controller.getStevePane().getSpatialViewPane().getDisplayPane().getScreen().getChildren().add(mediaContent);
 						i++;
 					}
+					temporalViewPane.getSelectedMediaList().removeAll(temporalViewPane.getSelectedMediaList());
+
 				} else {notEnoughMediasToDistributeMessage();}
 			}
 		});
@@ -1277,7 +1278,7 @@ public class ControlButtonPane extends BorderPane{
 					transparentButton.setMinWidth(hBoxOutter.getMaxWidth());
 					transparentButton.setMaxWidth(hBoxOutter.getMaxWidth());
 					transparentButton.setStyle("-fx-background-color: transparent;-fx-border-color: transparent;");
-					
+
 					screen.getChildren().add(hBoxOutter);
 
 					hBoxOutterLeft.setStyle(styleOutter);
