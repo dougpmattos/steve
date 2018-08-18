@@ -64,7 +64,7 @@ public class SizePane extends VBox {
 		widthUnit = new ChoiceBox<Size>(FXCollections.observableArrayList(Size.PX, Size.PERCENTAGE));
 		height = new TextField();
 		heightUnit = new ChoiceBox<Size>(FXCollections.observableArrayList(Size.PX, Size.PERCENTAGE));
-		aspectRatio = new ChoiceBox<AspectRatio>(FXCollections.observableArrayList(AspectRatio.SLICE, AspectRatio.FILL, AspectRatio.HIDDEN));
+		aspectRatio = new ChoiceBox<AspectRatio>(FXCollections.observableArrayList(AspectRatio.HIDDEN, AspectRatio.SLICE, AspectRatio.FILL));
 		aspectRatio.setId("size-aspect-ratio");
 		
 		titleButtonBorderPane = new BorderPane();

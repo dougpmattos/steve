@@ -1,5 +1,6 @@
 package view.temporalViewPane;
 
+import java.awt.*;
 import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.IOException;
@@ -11,6 +12,7 @@ import java.util.logging.Logger;
 
 import javax.imageio.ImageIO;
 
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -41,6 +43,7 @@ import javafx.scene.shape.Path;
 import javafx.scene.shape.PathElement;
 import javafx.scene.shape.VLineTo;
 import javafx.scene.text.Text;
+import javafx.util.Duration;
 import model.common.Media;
 import model.common.SpatialTemporalView;
 import model.spatialView.PositionProperty;
@@ -87,6 +90,9 @@ public class TemporalChainPane extends StackPane implements Observer{
 	private DisplayPane displayPane;
 	private ControlButtonPane controlButtonPane;
 	private StackPane screen;
+	private TemporalChainPane selectedTemporalChainPane;
+	private Double currentTime;
+	private Object mediaContent;
 	NumberAxis xAxis;
 	CategoryAxis yAxis;
 	
@@ -156,16 +162,27 @@ public class TemporalChainPane extends StackPane implements Observer{
      }
 
 	private void createListeners(){
-		
-		
+
+		temporalViewPane.getTemporalChainTabPane().getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Tab>() {
+
+			@Override
+			public void changed(ObservableValue<? extends Tab> observable, Tab oldValue, Tab newValue) {
+
+				TemporalChainPane temporalChainPane = (TemporalChainPane) newValue.getContent();
+				selectedTemporalChainPane = temporalChainPane;
+				temporalChainModel = selectedTemporalChainPane.getTemporalChainModel();
+
+			}
+
+		});
 		
 		indicativeLine.translateXProperty().addListener(new ChangeListener<Number>(){		
 
 			@Override
 			public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-				if(temporalChainModel.getMediaAllList().isEmpty()){
-					screen.getChildren().clear();
-				}
+//				if(temporalChainModel.getMediaAllList().isEmpty()){
+//					screen.getChildren().clear();
+//				}
 				
 				if(!controlButtonPane.getIsPlaying() && !controlButtonPane.getHasPaused()) {
 					
@@ -374,75 +391,124 @@ public class TemporalChainPane extends StackPane implements Observer{
 			
 			}
 		});
-		
+
 		setOnMouseExited(new EventHandler<MouseEvent>() {
 			
 			public void handle(MouseEvent mouseEvent) {
-				
-				getChildren().remove(indicativeLine);
-				
-				if(!controlButtonPane.getIsPlaying() && !controlButtonPane.getHasPaused()){
+
+				if(temporalChainModel.getMediaAllList().size()<1){
 					screen.getChildren().clear();
-					for(Media media : temporalChainModel.getMediaAllList()){
-		    			media.setIsPLayingInPreview(false);
-		    		}
-					// temporal view pane . get selected media list
-					// temporal view pane .  get first selected media
-						
-						Media media = temporalViewPane.getFirstSelectedMedia();
-						if (media==null){}
-						
-						else {
-							
-						
-							media.setIsPLayingInPreview(true);
-							
-							Object mediaContent = controlButtonPane.getMediaContent(media);
-													
-							if(mediaContent instanceof MediaView){
-								
-								controlButtonPane.setVideoPresentationProperties((MediaView) mediaContent, media);						
-								screen.getChildren().add((MediaView) mediaContent);
-								
-							} else if(mediaContent instanceof ImageView){
-															
-								if(screen.getChildren().isEmpty()){
+				}
+				else {
 
-									if(!temporalChainModel.getMediaAllList().isEmpty()) {
+					currentTime = selectedTemporalChainPane.getTimeLineChart().getXAxis().getValueForDisplay(selectedTemporalChainPane.getPlayhead().getTranslateX()).doubleValue();
+					getChildren().remove(indicativeLine);
 
-
-										controlButtonPane.setImagePresentationProperties((ImageView) mediaContent, media);
-
-
-										SnapshotParameters snapParams = new SnapshotParameters();
-										snapParams.setFill(Color.TRANSPARENT); // see documentation
-										// with your describtion YOURNODE is your stackpane...
-										ImageView newImageView = new ImageView();
-										newImageView.setImage(screen.snapshot(snapParams, null));
-
-										screen.getChildren().clear();
-										screen.getChildren().add((ImageView) mediaContent);
-									}
-									
-								} else{
-									boolean inserted = false;
-									for(Node executionObject : screen.getChildren()){
-						    		
-										if(((ImageView) mediaContent).getTranslateZ() < executionObject.getTranslateZ()){
-											screen.getChildren().add(screen.getChildren().indexOf(executionObject), (ImageView) mediaContent);
-											inserted = true;
-											break;
-										}
-										
-						    		}
-									if(!inserted){
-										screen.getChildren().add((ImageView) mediaContent);
-									}
-								}
-							}
+					if (currentTime > temporalChainModel.getMediaWithHighestEnd().getEnd()) {
+						for (Media media : temporalChainModel.getMediaAllList()) {
+							media.setIsPLayingInPreview(false);
 						}
+						System.out.println(" termino - remove todos d screen e aciona stop do player");
 					}
 
+					for (Media media : temporalChainModel.getMediaAllList()) {
+
+						if (media.getBegin() <= currentTime && currentTime <= media.getEnd()) {
+							System.out.println(media.getName() + " - entrou");
+
+							if (!media.getIsPLayingInPreview()) {
+								System.out.println(media.getName() + " - nao esta no pewview ");
+								Platform.runLater(new Runnable() {
+
+									@Override
+									public void run() {
+
+										media.setIsPLayingInPreview(true);
+										mediaContent = (ImageView) controlButtonPane.getMediaContent(media);
+
+										if (mediaContent instanceof MediaView) {
+
+											controlButtonPane.setVideoPresentationProperties((MediaView) mediaContent, media);
+											Double playerStartTime = currentTime - media.getBegin();
+											Duration playerStartTimeMillis = new Duration(playerStartTime * 1000);
+											((MediaView) mediaContent).getMediaPlayer().setStartTime(playerStartTimeMillis);
+											screen.getChildren().add((MediaView) mediaContent);
+
+										} else if (mediaContent instanceof ImageView) {
+
+											controlButtonPane.setImagePresentationProperties((ImageView) mediaContent, media);
+
+//										File file = new File("test3.png");
+//								        RenderedImage renderedImage = SwingFXUtils.fromFXImage(((ImageView) mediaContent).getImage(), null);
+//								        try {
+//											ImageIO.write(
+//											        renderedImage,
+//											        "png",
+//											        file);
+//										} catch (IOException e) {
+//											// TODO Auto-generated catch block
+//											e.printStackTrace();
+//										}
+											if (screen.getChildren().isEmpty()) {
+
+												screen.getChildren().add((ImageView) mediaContent);
+//											file = new File("test4.png");
+//									        renderedImage = SwingFXUtils.fromFXImage(((ImageView) mediaContent).getImage(), null);
+//									        try {
+//												ImageIO.write(
+//												        renderedImage,
+//												        "png",
+//												        file);
+//											} catch (IOException e) {
+//												// TODO Auto-generated catch block
+//												e.printStackTrace();
+//											}
+
+											} else {
+												boolean inserted = false;
+												for (Node executionObject : screen.getChildren()) {
+
+													if (((ImageView) mediaContent).getTranslateZ() < executionObject.getTranslateZ()) {
+														screen.getChildren().add(screen.getChildren().indexOf(executionObject), (ImageView) mediaContent);
+														inserted = true;
+														break;
+													}
+
+												}
+												if (!inserted) {
+													screen.getChildren().add((ImageView) mediaContent);
+												}
+											}
+
+										}
+									}
+
+								});
+
+							}
+
+						} else {
+
+							if (media.getIsPLayingInPreview()) {
+
+								Platform.runLater(new Runnable() {
+									@Override
+									public void run() {
+
+										if (!screen.getChildren().isEmpty()) {
+											screen.getChildren().remove(media.getExecutionObject());
+											media.setIsPLayingInPreview(false);
+											System.out.println(media.getName() + " - saiu");
+										}
+
+									}
+								});
+							}
+
+						}
+
+					}
+				}
 			}
 	    });
 		

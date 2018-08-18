@@ -20,7 +20,7 @@ public class PresentationProperty implements Serializable{
 	private StyleProperty styleProperty = new StyleProperty();
 	private TextStyleProperty textStyleProperty = new TextStyleProperty();
 	private LevelProperty levelProperty = new LevelProperty();
-	
+
 	public PresentationProperty(){
 
 	}

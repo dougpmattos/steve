@@ -1,10 +1,12 @@
 package model.spatialView;
 
 import javafx.embed.swing.SwingFXUtils;
+import javafx.scene.SnapshotParameters;
 import javafx.scene.image.Image;
 import javafx.scene.image.PixelReader;
 import javafx.scene.image.WritableImage;
 import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
 import model.common.Media;
 import javafx.scene.image.ImageView;
 import model.spatialView.enums.AspectRatio;
@@ -17,6 +19,9 @@ import java.io.IOException;
 
 public class HiddenStyle implements setImageInterface {
 
+    double fullHeight = 1080;
+    double fullWidth = 1920;
+
     @Override
     public Point2D spaceAvailable(ImageView mediaContent, double left, double right, double top, double bottom, String w, String h, StackPane screen) {
         return null;
@@ -25,7 +30,7 @@ public class HiddenStyle implements setImageInterface {
     public Point2D spaceAvailable(ImageView mediaContent, Media media, double left, double right, double top, double bottom, String w, String h, StackPane screen) {
         Point2D space = null;
 
-        double x=screen.getWidth(), y=screen.getHeight();
+        double x=fullWidth, y=fullHeight;
         if(left>100) left=100;
         if(top>100) top=100;
         if(right>100) right=100;
@@ -233,19 +238,19 @@ public class HiddenStyle implements setImageInterface {
         PixelReader reader = image.getPixelReader();
 
         System.out.println("X = "+space.getX()+" >= "+image.getWidth());
-        if(space.getX()>=image.getWidth()){
+        if(fullWidth>=image.getWidth()){ //if width available bigger than original width then width will be original width
             x=image.getWidth();
         }
 
-        else if(space.getX()==0){
-            x=screen.getWidth();
+        else if(space.getX()==0){ //if 0 width available then fix it
+            x=image.getWidth();
         }
 
-        else {
-            x=space.getX();
+        else { // if width available is smaller then original image width then width will be available width
+            x=fullWidth;
         }
 
-        if(space.getY()>=image.getHeight()){
+        if(fullHeight>=image.getHeight()){
             y=image.getHeight();
         }
 
@@ -253,34 +258,37 @@ public class HiddenStyle implements setImageInterface {
             y=screen.getHeight();
         }
         else {
-            y=space.getY();
+            y=fullHeight;
         }
 
 //	        WritableImage(PixelReader reader, int x, int y, int width, int height)
-        if((x!=0)||(y!=0)){
-            WritableImage newImage = new WritableImage(reader, 0,0,(int) x, (int) y);
-//            File file = new File("test.png");
-//            RenderedImage renderedImage = SwingFXUtils.fromFXImage(newImage, null);
-//            try {
-//                ImageIO.write(
-//                        renderedImage,
-//                        "png",
-//                        file);
-//            } catch (IOException e) {
-//                // TODO Auto-generated catch block
-//                e.printStackTrace();
-//            }
-            imageView.setImage(newImage);
+        SnapshotParameters parameters = new SnapshotParameters();
+        parameters.setFill(Color.TRANSPARENT);
 
-            imageView.setFitHeight(y);
-            imageView.setFitWidth(x);
+        WritableImage newImage=null;
+
+        if((x!=0)||(y!=0)){
+            newImage = new WritableImage(reader, 0,0,(int) x, (int) y);
+            Image n1 = scale(newImage, newImage.getWidth()/(fullWidth/screen.getWidth()), newImage.getHeight()/(fullHeight/screen.getHeight()), true, parameters);
+
+            imageView.setImage(n1);
 
         }
+
+        media.getPresentationProperty().getSizeProperty().setRealSize(new Point2D.Double(newImage.getWidth()/(fullWidth/screen.getWidth()), newImage.getHeight()/(fullHeight/screen.getHeight())));
 
 
 
         System.out.println("Compute area in screen: "+imageView.computeAreaInScreen());
         return imageView;
+    }
+
+    public Image scale(Image source, double targetWidth, double targetHeight, boolean preserveRatio, SnapshotParameters parameters) {
+        ImageView imageView = new ImageView(source);
+        imageView.setPreserveRatio(preserveRatio);
+        imageView.setFitWidth(targetWidth);
+        imageView.setFitHeight(targetHeight);
+        return imageView.snapshot(parameters, null);
     }
 
 

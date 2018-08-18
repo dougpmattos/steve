@@ -25,6 +25,7 @@ public class FillStyle implements setImageInterface {
     public ImageView setImageProperties(ImageView mediaContent, Media media, boolean hLock, boolean vLock, double top, double bottom, double left, double right, StackPane screen, boolean widthLock, boolean heightLock, String w, String h){
         Point2D spaceAvailable = spaceAvailable(mediaContent, media, left,right,top,bottom,w,h, screen);
         mediaContent = fill(mediaContent,spaceAvailable);
+
         if((top==0)&&(bottom==0)&&(left==0)&&(right==0)){
             moveMediaLeft(mediaContent,media,left, screen);
             moveMediaTop(mediaContent,media,top,screen);
@@ -51,6 +52,7 @@ public class FillStyle implements setImageInterface {
         System.out.println(right==0);
         if((!hLock)&&(right==0))
             moveMediaLeft(mediaContent,media,left,screen);
+        media.getPresentationProperty().getSizeProperty().setRealSize(new Point2D.Double(mediaContent.getFitWidth(),mediaContent.getFitHeight()));
 
         return mediaContent;
     }

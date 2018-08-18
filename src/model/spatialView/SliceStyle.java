@@ -278,6 +278,8 @@ public class SliceStyle implements setImageInterface {
 
         }
 
+        media.getPresentationProperty().getSizeProperty().setRealSize(new Point2D.Double(nv.getFitWidth(),nv.getFitWidth()));
+
 //		saveToFile(nv.getImage(),"-3");
 
         System.out.println("Tamanho 1: "+nv.getFitWidth()+"x"+nv.getFitHeight());

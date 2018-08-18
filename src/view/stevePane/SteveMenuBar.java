@@ -83,19 +83,6 @@ public class SteveMenuBar extends MenuBar{
 	private Menu menuView;
 	private Menu menuTools;
 	private Menu menuHelp;
-	private Menu menuAlignment;
-	private Menu menuDistribution;
-
-
-	private  MenuItem menuItemAlignmentTop;
-	private  MenuItem menuItemAlignmentBottom;
-	private  MenuItem menuItemAlignmentLeft;
-	private  MenuItem menuItemAlignmentRight;
-	private  MenuItem menuItemAlignmentEqual;
-	private  MenuItem menuItemAlignmentCenter;
-
-	private  MenuItem menuItemDistributionVertical;
-	private  MenuItem menuItemDistributionHorizontal;
 
 	private  MenuItem menuItemNew;
 	private  MenuItem menuItemOpen;
@@ -128,6 +115,7 @@ public class SteveMenuBar extends MenuBar{
 	public SteveMenuBar(Controller controller, SpatialTemporalView spatialTemporalView, RepositoryMediaList repositoryMediaList, TemporalViewPane temporalViewPane, Stage stage){
 		
 		this.controller = controller;
+		controller.getStevePane().getSpatialViewPane().getDisplayPane().getControlButtonPane().setController(this.controller);
 		this.spatialTemporalView = spatialTemporalView;
 		this.repositoryMediaList = repositoryMediaList;
 		this.temporalViewPane = temporalViewPane;
@@ -140,17 +128,12 @@ public class SteveMenuBar extends MenuBar{
 		createViewMenuItems();
 		createToolMenuItems();
 		createHelpMenuItems();
-		createAlignmentMenuItems();
-		createDistributionMenuItems();
 		
 		createFileMenuItemActions();
 		createEditMenuItemActions();
 		createViewMenuItemActions();
 		createToolMenuItemActions();
 		createHelpMenuItemActions();
-		createAlignmentMenuItemActions();
-		createDistributionMenuItemActions();
-
 
 		//menuFile.getItems().addAll(menuItemNew, menuItemOpen, new SeparatorMenuItem(), menuItemClose, new SeparatorMenuItem(), menuItemExportNCL, new SeparatorMenuItem(), menuItemExportHTML5, new SeparatorMenuItem(), menuItemRun, new SeparatorMenuItem(), menuItemExit); 
 		menuFile.getItems().addAll(menuItemNew, menuItemOpen, new SeparatorMenuItem(), menuItemExportNCL, new SeparatorMenuItem(), menuItemExportHTML5, new SeparatorMenuItem(), menuItemRun, new SeparatorMenuItem(), menuItemExit);
@@ -160,14 +143,8 @@ public class SteveMenuBar extends MenuBar{
 		menuTools.getItems().addAll(menuItemSimulation);
 //		menuHelp.getItems().addAll(menuItemHelpContents, new SeparatorMenuItem(), menuItemAbout);
 		menuHelp.getItems().addAll(menuItemAbout);
-		menuAlignment.getItems().addAll(menuItemAlignmentTop, menuItemAlignmentBottom, menuItemAlignmentEqual, menuItemAlignmentCenter);
-		menuAlignment.getItems().addAll(menuItemAlignmentLeft, menuItemAlignmentRight);
 
-		menuDistribution.getItems().addAll(menuItemDistributionVertical);
-		menuDistribution.getItems().addAll(menuItemDistributionHorizontal);
-		    
-//		getMenus().addAll(menuFile, menuEdit, menuView, menuTools, menuHelp);
-		getMenus().addAll(menuFile, menuEdit, menuAlignment, menuDistribution, menuHelp);
+		getMenus().addAll(menuFile, menuEdit, menuView, menuTools, menuHelp);
 		
 		
 	}
@@ -465,210 +442,7 @@ public class SteveMenuBar extends MenuBar{
 
 	}
 
-	private void createAlignmentMenuItemActions(){
-		menuItemAlignmentTop.setOnAction(new EventHandler<ActionEvent>() {
-			public void handle(ActionEvent t) {
 
-				MessageDialog messageDialog = new MessageDialog("ALIGNMENT TOP", "MOVE THIS TOP", "OK", 300);
-				messageDialog.showAndWait();
-
-			}
-		});
-
-		menuItemAlignmentBottom.setOnAction(new EventHandler<ActionEvent>() {
-			public void handle(ActionEvent t) {
-
-				MessageDialog messageDialog = new MessageDialog("ALIGNMENT BOTTOM", "MOVE THIS BOTTOM", "OK", 300);
-				messageDialog.showAndWait();
-
-			}
-		});
-
-		menuItemAlignmentLeft.setOnAction(new EventHandler<ActionEvent>() {
-			public void handle(ActionEvent t) {
-
-				MessageDialog messageDialog = new MessageDialog("ALIGNMENT LEFT", "MOVE THIS LEFT", "OK", 300);
-				messageDialog.showAndWait();
-
-			}
-		});
-
-		menuItemAlignmentRight.setOnAction(new EventHandler<ActionEvent>() {
-			public void handle(ActionEvent t) {
-
-				MessageDialog messageDialog = new MessageDialog("ALIGNMENT RIGHT", "MOVE THIS RIGHT", "OK", 300);
-				messageDialog.showAndWait();
-
-			}
-		});
-
-		menuItemAlignmentEqual.setOnAction(new EventHandler<ActionEvent>() {
-			public void handle(ActionEvent t) {
-
-				MessageDialog messageDialog = new MessageDialog("ALIGNMENT EQUAL", "MOVE THIS EQUAL", "OK", 300);
-				messageDialog.showAndWait();
-
-			}
-		});
-
-		menuItemAlignmentEqual.setOnAction(new EventHandler<ActionEvent>() {
-			public void handle(ActionEvent t) {
-
-				MessageDialog messageDialog = new MessageDialog("ALIGNMENT CENTER", "MOVE THIS CENTER", "OK", 300);
-				messageDialog.showAndWait();
-
-			}
-		});
-	}
-
-	private void createDistributionMenuItemActions(){
-
-		menuItemDistributionVertical.setOnAction(new EventHandler<ActionEvent>() {
-			public void handle(ActionEvent t) {
-
-				System.out.println("Size is "+temporalViewPane.getSelectedMediaList().size()+". ");
-				// pega 1% da tela entre as midias (midia - 1: 1%)
-				// pega o resto da tela que sobrou divide pelo n de midia (ex 98%/2)
-				int spaces = temporalViewPane.getSelectedMediaList().size()-1;
-				double mediaSpace = (100 - spaces)/(spaces+1);
-				int i=0;
-				controller.getStevePane().getSpatialViewPane().getDisplayPane().getScreen().getChildren().clear();
-
-				for(Media media: temporalViewPane.getSelectedMediaList()){
-
-					SizeProperty sp = new SizeProperty ();
-
-					sp.setAspectRatio(AspectRatio.FILL);
-					sp.setHeight(Integer.toString((int)(mediaSpace)));
-
-
-					PositionProperty pp = new PositionProperty();
-					pp.setTop(Integer.toString((int) ((i*mediaSpace) +i)));
-
-					media.getPresentationProperty().setSizeProperty(sp);
-					media.getPresentationProperty().setPositionProperty(pp);
-
-					ImageView mediaContent = new ImageView(new Image(media.getFile().toURI().toString()));
-					controller.getStevePane().getSpatialViewPane().getDisplayPane().getControlButtonPane().setImagePresentationProperties(mediaContent,media);
-					controller.getStevePane().getSpatialViewPane().getDisplayPane().getScreen().getChildren().add(mediaContent);
-
-					i++;
-					// seta tudo pra fill
-					// pega 1% da tela entre as midias (midia - 1: 1%)
-					// pega o resto da tela que sobrou divide pelo n de midia (ex 98%/2)
-					// cada midia vai ter resultado % de height (49%)
-					// left de cada midia vai ser index * resultado ( 0 * 49, 1 * 49 )
-
-
-				}
-
-			}
-		});
-
-		menuItemDistributionHorizontal.setOnAction(new EventHandler<ActionEvent>() {
-			public void handle(ActionEvent t) {
-
-                System.out.println("Size is "+temporalViewPane.getSelectedMediaList().size()+". ");
-                // pega 1% da tela entre as midias (midia - 1: 1%)
-                // pega o resto da tela que sobrou divide pelo n de midia (ex 98%/2)
-                int spaces = temporalViewPane.getSelectedMediaList().size()-1;
-                double mediaSpace = (100 - spaces)/(spaces+1);//24
-                int i=0;
-
-				controller.getStevePane().getSpatialViewPane().getDisplayPane().getScreen().getChildren().clear();
-                for(Media media: temporalViewPane.getSelectedMediaList()){
-					SizeProperty sp = new SizeProperty ();
-
-                    sp.setAspectRatio(AspectRatio.FILL);
-                    sp.setWidth(Integer.toString((int)(mediaSpace)));
-
-					PositionProperty pp = new PositionProperty();
-                    pp.setLeft(Integer.toString((int) ((i*mediaSpace) +i)));
-
-                    media.getPresentationProperty().setSizeProperty(sp);
-                    media.getPresentationProperty().setPositionProperty(pp);
-
-					ImageView mediaContent = new ImageView(new Image(media.getFile().toURI().toString()));
-					controller.getStevePane().getSpatialViewPane().getDisplayPane().getControlButtonPane().setImagePresentationProperties(mediaContent,media);
-					controller.getStevePane().getSpatialViewPane().getDisplayPane().getScreen().getChildren().add(mediaContent);
-
-
-//                    pp.getSizeProperty().setAspectRatio(AspectRatio.FILL);
-//                    pp.getSizeProperty().setWidth(Integer.toString((int)(mediaSpace))); 
-//                    pp.getPositionProperty().setLeft(Integer.toString((int) ((i*mediaSpace) +i)));
-                    i++;
-                    // seta tudo pra fill
-                    // pega 1% da tela entre as midias (midia - 1: 1%)
-                    // pega o resto da tela que sobrou divide pelo n de midia (ex 98%/2)
-                    // cada midia vai ter resultado % de width (49%)
-                    // left de cada midia vai ser index * resultado ( 0 * 49, 1 * 49 )
-
-                }
-			}
-		});
-
-	}
-
-	private void createAlignmentMenuItems() {
-		menuItemAlignmentTop = new MenuItem (Language.translate("alignment.top"));
-		Image alignmentTop = new Image(getClass().getResourceAsStream("alignment.top.png"));
-		ImageView alignmentTopView = new ImageView(alignmentTop);
-		alignmentTopView.setFitWidth(15);
-		alignmentTopView.setFitHeight(15);
-		menuItemAlignmentTop.setGraphic(alignmentTopView);
-
-		menuItemAlignmentBottom = new MenuItem (Language.translate("alignment.bottom"));
-		Image alignmentBottom = new Image(getClass().getResourceAsStream("alignment.bottom.png"));
-		ImageView alignmentBottomView = new ImageView(alignmentBottom);
-		alignmentBottomView.setFitWidth(15);
-		alignmentBottomView.setFitHeight(15);
-		menuItemAlignmentBottom.setGraphic(alignmentBottomView);
-
-		menuItemAlignmentCenter = new MenuItem (Language.translate("alignment.center"));
-		Image alignmentCenter = new Image(getClass().getResourceAsStream("alignment.center.png"));
-		ImageView alignmentCenterView = new ImageView(alignmentCenter);
-		alignmentCenterView.setFitWidth(15);
-		alignmentCenterView.setFitHeight(15);
-		menuItemAlignmentCenter.setGraphic(alignmentCenterView);
-
-		menuItemAlignmentLeft = new MenuItem (Language.translate("alignment.left"));
-		Image alignmentLeft = new Image(getClass().getResourceAsStream("alignment.left.png"));
-		ImageView alignmentLeftView = new ImageView(alignmentLeft);
-		alignmentLeftView.setFitWidth(15);
-		alignmentLeftView.setFitHeight(15);
-		menuItemAlignmentLeft.setGraphic(alignmentLeftView);
-
-		menuItemAlignmentRight = new MenuItem (Language.translate("alignment.right"));
-		Image alignmentRight = new Image(getClass().getResourceAsStream("alignment.right.png"));
-		ImageView alignmentRightView = new ImageView(alignmentRight);
-		alignmentRightView.setFitWidth(15);
-		alignmentRightView.setFitHeight(15);
-		menuItemAlignmentRight.setGraphic(alignmentRightView);
-
-		menuItemAlignmentEqual = new MenuItem (Language.translate("alignment.equal"));
-		Image alignmentEqual = new Image(getClass().getResourceAsStream("alignment.equal.png"));
-		ImageView alignmentEqualView = new ImageView(alignmentEqual);
-		alignmentEqualView.setFitWidth(15);
-		alignmentEqualView.setFitHeight(15);
-		menuItemAlignmentEqual.setGraphic(alignmentEqualView);
-	}
-
-	private void createDistributionMenuItems() {
-		menuItemDistributionVertical = new MenuItem (Language.translate("distribution.vertical"));
-		Image distributionVertical = new Image(getClass().getResourceAsStream("distribution.vertical.png"));
-		ImageView distributionVerticalView = new ImageView(distributionVertical);
-		distributionVerticalView.setFitWidth(15);
-		distributionVerticalView.setFitHeight(15);
-		menuItemDistributionVertical.setGraphic(distributionVerticalView);
-
-		menuItemDistributionHorizontal = new MenuItem (Language.translate("distribution.horizontal"));
-		Image distributionHorizontal = new Image(getClass().getResourceAsStream("distribution.horizontal.png"));
-		ImageView distributionHorizontalView = new ImageView(distributionHorizontal);
-		distributionHorizontalView.setFitWidth(15);
-		distributionHorizontalView.setFitHeight(15);
-		menuItemDistributionHorizontal.setGraphic(distributionHorizontalView);
-	}
-	
 	private void createMenu() {
 		
 		menuFile = new Menu(Language.translate("file"));
@@ -676,24 +450,13 @@ public class SteveMenuBar extends MenuBar{
 		menuView = new Menu(Language.translate("view"));
 		menuTools = new Menu(Language.translate("tools"));
 		menuHelp = new Menu(Language.translate("help"));
-		menuAlignment = new Menu(Language.translate("alignment"));
-		
-		Image alignment = new Image(getClass().getResourceAsStream("alignment.png"));
-		ImageView alignmentView = new ImageView(alignment);
-		alignmentView.setFitWidth(15);
-		alignmentView.setFitHeight(15);
-		menuAlignment.setGraphic(alignmentView);
-
-		menuDistribution= new Menu(Language.translate("distribution"));
-
-		Image distribution = new Image(getClass().getResourceAsStream("distribution.png"));
-		ImageView distributionView = new ImageView(distribution);
-		distributionView.setFitWidth(15);
-		distributionView.setFitHeight(15);
-		menuDistribution.setGraphic(distributionView);
 
 
-	}	
+	}
+
+	public Controller getController(){
+		return this.controller;
+	}
 
 }
 
