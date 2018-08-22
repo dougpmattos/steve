@@ -21,6 +21,7 @@ import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.DepthTest;
+import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.control.Button;
@@ -586,71 +587,64 @@ public class ControlButtonPane extends BorderPane{
 		alignBottom.setOnAction(new EventHandler<ActionEvent>() {
 			public void handle(ActionEvent event) {
 				if(temporalViewPane.getSelectedMediaList().size()>1) {
-					//get first selected media
-					Media media = temporalViewPane.getSelectedMediaList().get(0);
-					//get bottom coordinates of it
-					double masterTop = screen.getHeight() * Double.parseDouble(media.getPresentationProperty().getPositionProperty().getTop().replace("%",""))/100;
-					double masterBottom = screen.getHeight() * Double.parseDouble(media.getPresentationProperty().getPositionProperty().getBottom().replace("%",""))/100;
-					double masterRealHeight = media.getPresentationProperty().getSizeProperty().getRealSize().getY();
-					double masterRealTopMargin = 0;
-
-					if((masterTop==0)&&(masterBottom!=0)){
-						masterRealTopMargin = masterBottom + masterRealHeight;
-					} else if((masterTop==0)&&(masterBottom==0)){
-						masterRealTopMargin = 0;
-					} else {
-						masterRealTopMargin = masterTop;
-					}
-					int i = 0;
-					//for each media
-					controller.getStevePane().getSpatialViewPane().getDisplayPane().getScreen().getChildren().clear();
-					for(Media m: temporalViewPane.getSelectedMediaList()){
-						if(i>0) {
-							//calculate Y top margin for alignment
-							//set top margin as Y
-							double topMargin = masterRealTopMargin + masterRealHeight - m.getPresentationProperty().getSizeProperty().getRealSize().getY();
-							m.getPresentationProperty().getPositionProperty().setTop(Double.toString(topMargin/screen.getHeight()*100));
-
-						}
-						ImageView mediaContent = new ImageView(new Image(m.getFile().toURI().toString()));
-						controller.getStevePane().getSpatialViewPane().getDisplayPane().getControlButtonPane().setImagePresentationProperties(mediaContent, m);
-						controller.getStevePane().getSpatialViewPane().getDisplayPane().getScreen().getChildren().add(mediaContent);
-						i++;
-					}
+					alignBottom();
 					temporalViewPane.getSelectedMediaList().removeAll(temporalViewPane.getSelectedMediaList());
-
-				} else {notEnoughMediasToDistributeMessage();}
+				} else {
+					notEnoughMediasMessage();
+				}
 			}
 		});
 		alignTop.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
-
+				if(temporalViewPane.getSelectedMediaList().size()>1) {
+					alignTop();
+					temporalViewPane.getSelectedMediaList().removeAll(temporalViewPane.getSelectedMediaList());
+				} else {
+					notEnoughMediasMessage();
+				}
 			}
 		});
 
 		alignLeft.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
-
+				if(temporalViewPane.getSelectedMediaList().size()>1) {
+					alignLeft();
+					temporalViewPane.getSelectedMediaList().removeAll(temporalViewPane.getSelectedMediaList());
+				} else {
+					notEnoughMediasMessage();
+				}
 			}
 		});
 		alignRight.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
-
+				if(temporalViewPane.getSelectedMediaList().size()>1) {
+					alignRight();
+					temporalViewPane.getSelectedMediaList().removeAll(temporalViewPane.getSelectedMediaList());
+				} else notEnoughMediasToDistributeMessage();
 			}
 		});
 		alignEqual.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
-
+				if(temporalViewPane.getSelectedMediaList().size()>1){
+					alignTop();
+					alignLeft();
+					temporalViewPane.getSelectedMediaList().removeAll(temporalViewPane.getSelectedMediaList());
+				}
+				else notEnoughMediasMessage();
 			}
 		});
 		alignCenter.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
-
+				if(temporalViewPane.getSelectedMediaList().size()>1){
+					alignCenter();
+					temporalViewPane.getSelectedMediaList().removeAll(temporalViewPane.getSelectedMediaList());
+				}
+				else notEnoughMediasMessage();
 			}
 		});
 	}
@@ -1247,10 +1241,11 @@ public class ControlButtonPane extends BorderPane{
 				HBox hBoxTopMiddle = new HBox();
 				HBox hBoxBottomMiddle = new HBox();
 
-				ArrayList<HBox> selectionLines;
+//				Group selectionLines = new Group();
 
 				System.out.println("clicou img view");
 				if(temporalViewPane.getSelectedMediaList().contains(media)){
+//					selectionLines.getChildren().clear();
 
 					temporalViewPane.getSelectedMediaList().remove(media);
 
@@ -1272,6 +1267,7 @@ public class ControlButtonPane extends BorderPane{
 					hBoxOutter.setTranslateX(imageView.getTranslateX());
 					hBoxOutter.setTranslateY(imageView.getTranslateY());
 					hBoxOutter.setTranslateZ(imageView.getTranslateZ()+1);
+//					selectionLines.getChildren().add(hBoxOutter);
 					Button transparentButton = new Button("");
 					transparentButton.setMinHeight(hBoxOutter.getMinHeight());
 					transparentButton.setMaxHeight(hBoxOutter.getMinHeight());
@@ -1291,7 +1287,7 @@ public class ControlButtonPane extends BorderPane{
 					hBoxOutterLeft.setTranslateY(imageView.getTranslateY());
 					hBoxOutterLeft.setTranslateZ(imageView.getTranslateZ()+1);
 //					screen.getChildren().add(hBoxOutterLeft);
-//					selectionLines.add(hBoxOutterLeft);
+//					selectionLines.getChildren().add(hBoxOutterLeft);
 
 					hBoxOutterRight.setStyle(styleOutter);
 					hBoxOutterRight.setMaxWidth(1);
@@ -1301,6 +1297,7 @@ public class ControlButtonPane extends BorderPane{
 					hBoxOutterRight.setTranslateX(imageView.getTranslateX()+media.getPresentationProperty().getSizeProperty().getRealSize().getX());
 					hBoxOutterRight.setTranslateY(imageView.getTranslateY());
 					hBoxOutterRight.setTranslateZ(imageView.getTranslateZ()+1);
+//					selectionLines.getChildren().add(hBoxOutterRight);
 //					screen.getChildren().add(hBoxOutterRight);
 
 					hBoxOutterTop.setStyle(styleOutter);
@@ -1312,6 +1309,7 @@ public class ControlButtonPane extends BorderPane{
 					hBoxOutterTop.setTranslateY(imageView.getTranslateY());
 					hBoxOutterTop.setTranslateZ(imageView.getTranslateZ()+1);
 //					screen.getChildren().add(hBoxOutterTop);
+//					selectionLines.getChildren().add(hBoxOutterTop);
 
 					hBoxOutterBottom.setStyle(styleOutter);
 					hBoxOutterBottom.setMaxWidth(media.getPresentationProperty().getSizeProperty().getRealSize().getX()+1);
@@ -1322,6 +1320,7 @@ public class ControlButtonPane extends BorderPane{
 					hBoxOutterBottom.setTranslateY(imageView.getTranslateY()+media.getPresentationProperty().getSizeProperty().getRealSize().getY());
 					hBoxOutterBottom.setTranslateZ(imageView.getTranslateZ()+1);
 //					screen.getChildren().add(hBoxOutterBottom);
+//					selectionLines.getChildren().add(hBoxOutterBottom);
 
 					hBoxRightTop.setStyle(styleLittleSquares);
 					hBoxRightTop.setMaxWidth(5);
@@ -1332,6 +1331,7 @@ public class ControlButtonPane extends BorderPane{
 					hBoxRightTop.setTranslateY(imageView.getTranslateY()-2);
 					hBoxRightTop.setTranslateZ(imageView.getTranslateZ()+1);
 					screen.getChildren().add(hBoxRightTop);
+//					selectionLines.getChildren().add(hBoxRightTop);
 
 					hBoxRightBottom.setStyle(styleLittleSquares);
 					hBoxRightBottom.setMaxWidth(5);
@@ -1342,6 +1342,7 @@ public class ControlButtonPane extends BorderPane{
 					hBoxRightBottom.setTranslateY(imageView.getTranslateY()+media.getPresentationProperty().getSizeProperty().getRealSize().getY()-2);
 					hBoxRightBottom.setTranslateZ(imageView.getTranslateZ()+1);
 					screen.getChildren().add(hBoxRightBottom);
+//					selectionLines.getChildren().add(hBoxRightBottom);
 
 					hBoxRightMiddle.setStyle(styleLittleSquares);
 					hBoxRightMiddle.setMaxWidth(5);
@@ -1352,6 +1353,7 @@ public class ControlButtonPane extends BorderPane{
 					hBoxRightMiddle.setTranslateY(imageView.getTranslateY()+media.getPresentationProperty().getSizeProperty().getRealSize().getY()/2-2);
 					hBoxRightMiddle.setTranslateZ(imageView.getTranslateZ()+1);
 					screen.getChildren().add(hBoxRightMiddle);
+//					selectionLines.getChildren().add(hBoxRightMiddle);
 
 					hBoxLeftTop.setStyle(styleLittleSquares);
 					hBoxLeftTop.setMaxWidth(5);
@@ -1362,6 +1364,7 @@ public class ControlButtonPane extends BorderPane{
 					hBoxLeftTop.setTranslateY(imageView.getTranslateY()-2);
 					hBoxLeftTop.setTranslateZ(imageView.getTranslateZ()+1);
 					screen.getChildren().add(hBoxLeftTop);
+//					selectionLines.getChildren().add(hBoxLeftTop);
 
 					hBoxLeftBottom.setStyle(styleLittleSquares);
 					hBoxLeftBottom.setMaxWidth(5);
@@ -1372,6 +1375,7 @@ public class ControlButtonPane extends BorderPane{
 					hBoxLeftBottom.setTranslateY(imageView.getTranslateY()+media.getPresentationProperty().getSizeProperty().getRealSize().getY()-2);
 					hBoxLeftBottom.setTranslateZ(imageView.getTranslateZ()+1);
 					screen.getChildren().add(hBoxLeftBottom);
+//					selectionLines.getChildren().add(hBoxLeftBottom);
 
 					hBoxLeftMiddle.setStyle(styleLittleSquares);
 					hBoxLeftMiddle.setMaxWidth(5);
@@ -1382,6 +1386,7 @@ public class ControlButtonPane extends BorderPane{
 					hBoxLeftMiddle.setTranslateY(imageView.getTranslateY()+media.getPresentationProperty().getSizeProperty().getRealSize().getY()/2-2);
 					hBoxLeftMiddle.setTranslateZ(imageView.getTranslateZ()+1);
 					screen.getChildren().add(hBoxLeftMiddle);
+//					selectionLines.getChildren().add(hBoxLeftMiddle);
 
 					hBoxTopMiddle.setStyle(styleLittleSquares);
 					hBoxTopMiddle.setMaxWidth(5);
@@ -1392,6 +1397,7 @@ public class ControlButtonPane extends BorderPane{
 					hBoxTopMiddle.setTranslateY(imageView.getTranslateY()-2);
 					hBoxTopMiddle.setTranslateZ(imageView.getTranslateZ()+1);
 					screen.getChildren().add(hBoxTopMiddle);
+//					selectionLines.getChildren().add(hBoxTopMiddle);
 
 					hBoxBottomMiddle.setStyle(styleLittleSquares);
 					hBoxBottomMiddle.setMaxWidth(5);
@@ -1402,6 +1408,7 @@ public class ControlButtonPane extends BorderPane{
 					hBoxBottomMiddle.setTranslateY(imageView.getTranslateY()+media.getPresentationProperty().getSizeProperty().getRealSize().getY()-2);
 					hBoxBottomMiddle.setTranslateZ(imageView.getTranslateZ()+1);
 					screen.getChildren().add(hBoxBottomMiddle);
+//					selectionLines.getChildren().add(hBoxBottomMiddle);
 
 					hBoxOutter.getChildren().add(transparentButton);
 					transparentButton.setOnAction(e->{
@@ -1421,6 +1428,7 @@ public class ControlButtonPane extends BorderPane{
 
 						temporalViewPane.getSelectedMediaList().remove(media);
 					});
+
 					temporalViewPane.getSelectedMediaList().add(media);
 
 				}
@@ -1997,7 +2005,210 @@ public class ControlButtonPane extends BorderPane{
 		this.controller = controller;
 	}
 
+	private void alignTop() {
+		//get first selected media
+		Media media = temporalViewPane.getSelectedMediaList().get(0);
+		//get bottom coordinates of it
+		double masterTop = screen.getHeight() * Double.parseDouble(media.getPresentationProperty().getPositionProperty().getTop().replace("%",""))/100;
+		double masterBottom = screen.getHeight() * Double.parseDouble(media.getPresentationProperty().getPositionProperty().getBottom().replace("%",""))/100;
+		double masterRealHeight = media.getPresentationProperty().getSizeProperty().getRealSize().getY();
+		double masterRealTopMargin = 0;
 
+		if((masterTop==0)&&(masterBottom!=0)){
+			masterRealTopMargin = masterBottom;
+		} else if((masterTop==0)&&(masterBottom==0)){
+			masterRealTopMargin = 0;
+		} else {
+			masterRealTopMargin = masterTop;
+		}
+		ArrayList<Media> ordered = orderByZIndex();
+		int i = 0;
+		//for each media
+		controller.getStevePane().getSpatialViewPane().getDisplayPane().getScreen().getChildren().clear();
+		for(Media m: temporalViewPane.getSelectedMediaList()){
+			if(i>0) {
+				//calculate Y top margin for alignment
+				//set top margin as Y
+				double topMargin = masterRealTopMargin;
+				m.getPresentationProperty().getPositionProperty().setTop(Double.toString(topMargin/screen.getHeight()*100));
 
+			}
+			ImageView mediaContent = new ImageView(new Image(m.getFile().toURI().toString()));
+			controller.getStevePane().getSpatialViewPane().getDisplayPane().getControlButtonPane().setImagePresentationProperties(mediaContent, m);
+			controller.getStevePane().getSpatialViewPane().getDisplayPane().getScreen().getChildren().add(mediaContent);
+			i++;
+		}
 
+	}
+
+	private void alignLeft(){
+
+		//get first selected media
+		Media media = temporalViewPane.getSelectedMediaList().get(0);
+		//get bottom coordinates of it
+		double masterLeft = screen.getWidth() * Double.parseDouble(media.getPresentationProperty().getPositionProperty().getLeft().replace("%",""))/100;
+		double masterRight = screen.getWidth() * Double.parseDouble(media.getPresentationProperty().getPositionProperty().getRight().replace("%",""))/100;
+		double masterRealWidth = media.getPresentationProperty().getSizeProperty().getRealSize().getX();
+		double masterRealLeftMargin = 0;
+
+		if((masterLeft==0)&&(masterRight!=0)){
+			masterRealLeftMargin = masterRight;
+		} else if((masterLeft==0)&&(masterRight==0)){
+			masterRealLeftMargin = 0;
+		} else {
+			masterRealLeftMargin = masterLeft;
+		}
+		ArrayList<Media> ordered = orderByZIndex();
+		int i = 0;
+		//for each media
+		controller.getStevePane().getSpatialViewPane().getDisplayPane().getScreen().getChildren().clear();
+		for(Media m: temporalViewPane.getSelectedMediaList()){
+			if(i>0) {
+				//calculate X left margin for alignment
+				//set left margin as X
+				double leftMargin = masterRealLeftMargin;
+				m.getPresentationProperty().getPositionProperty().setLeft(Double.toString(leftMargin/screen.getWidth()*100));
+
+			}
+			ImageView mediaContent = new ImageView(new Image(m.getFile().toURI().toString()));
+			controller.getStevePane().getSpatialViewPane().getDisplayPane().getControlButtonPane().setImagePresentationProperties(mediaContent, m);
+			controller.getStevePane().getSpatialViewPane().getDisplayPane().getScreen().getChildren().add(mediaContent);
+			i++;
+		}
+
+	}
+
+	private void alignRight(){
+
+		//get first selected media
+		Media media = temporalViewPane.getSelectedMediaList().get(0);
+		//get bottom coordinates of it
+		double masterLeft = screen.getWidth() * Double.parseDouble(media.getPresentationProperty().getPositionProperty().getLeft().replace("%",""))/100;
+		double masterRight = screen.getWidth() * Double.parseDouble(media.getPresentationProperty().getPositionProperty().getRight().replace("%",""))/100;
+		double masterRealWidth = media.getPresentationProperty().getSizeProperty().getRealSize().getX();
+		double masterRealLeftMargin = 0;
+
+		if((masterLeft==0)&&(masterRight!=0)){
+			masterRealLeftMargin = masterRight + masterRealWidth;
+		} else if((masterLeft==0)&&(masterRight==0)){
+			masterRealLeftMargin = 0;
+		} else {
+			masterRealLeftMargin = masterLeft;
+		}
+		ArrayList<Media> ordered = orderByZIndex();
+		int i = 0;
+		//for each media
+		controller.getStevePane().getSpatialViewPane().getDisplayPane().getScreen().getChildren().clear();
+		for(Media m: temporalViewPane.getSelectedMediaList()){
+			if(i>0) {
+				//calculate X left margin for alignment
+				//set left margin as X
+				double leftMargin = masterRealLeftMargin + masterRealWidth - m.getPresentationProperty().getSizeProperty().getRealSize().getX();
+				m.getPresentationProperty().getPositionProperty().setLeft(Double.toString(leftMargin/screen.getWidth()*100));
+
+			}
+			ImageView mediaContent = new ImageView(new Image(m.getFile().toURI().toString()));
+			controller.getStevePane().getSpatialViewPane().getDisplayPane().getControlButtonPane().setImagePresentationProperties(mediaContent, m);
+			controller.getStevePane().getSpatialViewPane().getDisplayPane().getScreen().getChildren().add(mediaContent);
+			i++;
+		}
+	}
+	private void alignBottom(){
+		//get first selected media
+		Media media = temporalViewPane.getSelectedMediaList().get(0);
+		//get bottom coordinates of it
+		double masterTop = screen.getHeight() * Double.parseDouble(media.getPresentationProperty().getPositionProperty().getTop().replace("%",""))/100;
+		double masterBottom = screen.getHeight() * Double.parseDouble(media.getPresentationProperty().getPositionProperty().getBottom().replace("%",""))/100;
+		double masterRealHeight = media.getPresentationProperty().getSizeProperty().getRealSize().getY();
+		double masterRealTopMargin = 0;
+
+		if((masterTop==0)&&(masterBottom!=0)){
+			masterRealTopMargin = masterBottom + masterRealHeight;
+		} else if((masterTop==0)&&(masterBottom==0)){
+			masterRealTopMargin = 0;
+		} else {
+			masterRealTopMargin = masterTop;
+		}
+		ArrayList<Media> ordered = orderByZIndex();
+		int i = 0;
+		//for each media
+		controller.getStevePane().getSpatialViewPane().getDisplayPane().getScreen().getChildren().clear();
+		for(Media m: temporalViewPane.getSelectedMediaList()){
+			if(i>0) {
+				//calculate Y top margin for alignment
+				//set top margin as Y
+				double topMargin = masterRealTopMargin + masterRealHeight - m.getPresentationProperty().getSizeProperty().getRealSize().getY();
+				m.getPresentationProperty().getPositionProperty().setTop(Double.toString(topMargin/screen.getHeight()*100));
+
+			}
+			ImageView mediaContent = new ImageView(new Image(m.getFile().toURI().toString()));
+			controller.getStevePane().getSpatialViewPane().getDisplayPane().getControlButtonPane().setImagePresentationProperties(mediaContent, m);
+			controller.getStevePane().getSpatialViewPane().getDisplayPane().getScreen().getChildren().add(mediaContent);
+			i++;
+		}
+	}
+
+	private void alignCenter(){
+		//get first selected media
+		Media media = temporalViewPane.getSelectedMediaList().get(0);
+		//get bottom coordinates of it
+
+		double masterLeft = screen.getWidth() * Double.parseDouble(media.getPresentationProperty().getPositionProperty().getLeft().replace("%",""))/100;
+		double masterRight = screen.getWidth() * Double.parseDouble(media.getPresentationProperty().getPositionProperty().getRight().replace("%",""))/100;
+		double masterRealWidth = media.getPresentationProperty().getSizeProperty().getRealSize().getX();
+		double masterRealLeftMargin = 0;
+		double masterCenter = masterRealWidth/2;
+
+		if((masterLeft==0)&&(masterRight!=0)){
+			masterRealLeftMargin = masterRight;
+		} else if((masterLeft==0)&&(masterRight==0)){
+			masterRealLeftMargin = 0;
+		} else {
+			masterRealLeftMargin = masterLeft;
+		}
+		ArrayList<Media> ordered = orderByZIndex();
+		int i = 0;
+		//for each media
+		controller.getStevePane().getSpatialViewPane().getDisplayPane().getScreen().getChildren().clear();
+		for(Media m: temporalViewPane.getSelectedMediaList()){
+//		for(Media m: ordered){
+			if(i>0) {
+				//calculate X left margin for alignment
+				//set left margin as X
+				double leftMargin = masterRealLeftMargin;
+				double mediaCenter = m.getPresentationProperty().getSizeProperty().getRealSize().getX()/2;
+				m.getPresentationProperty().getPositionProperty().setLeft(Double.toString(leftMargin/screen.getWidth()*100 + masterCenter/screen.getWidth()*100 - mediaCenter/screen.getWidth()*100 ));
+
+			}
+			ImageView mediaContent = new ImageView(new Image(m.getFile().toURI().toString()));
+			controller.getStevePane().getSpatialViewPane().getDisplayPane().getControlButtonPane().setImagePresentationProperties(mediaContent, m);
+			controller.getStevePane().getSpatialViewPane().getDisplayPane().getScreen().getChildren().add(mediaContent);
+			i++;
+		}
+//		for (Media m: ordered){
+//			ImageView mediaContent = new ImageView(new Image(m.getFile().toURI().toString()));
+//			controller.getStevePane().getSpatialViewPane().getDisplayPane().getControlButtonPane().setImagePresentationProperties(mediaContent, m);
+//			controller.getStevePane().getSpatialViewPane().getDisplayPane().getScreen().getChildren().add(mediaContent);
+//		}
+	}
+
+	private ArrayList<Media> orderByZIndex(){
+		ArrayList<Media> ordered = new ArrayList<>();
+		int orderZ = temporalViewPane.getSelectedMediaList().get(0).getPresentationProperty().getPositionProperty().getOrderZ();
+
+		int i=0;
+		for(Media media : temporalViewPane.getSelectedMediaList()){
+			if(orderZ<=media.getPresentationProperty().getPositionProperty().getOrderZ())
+				orderZ=media.getPresentationProperty().getPositionProperty().getOrderZ();
+		}
+		for(i=0;i>orderZ;i++){
+			for(Media media : temporalViewPane.getSelectedMediaList()){
+				if(media.getPresentationProperty().getPositionProperty().getOrderZ()==i){
+					ordered.add(media);
+					System.out.println("OrderZ: "+media.getPresentationProperty().getPositionProperty().getOrderZ());
+				}
+			}
+		}
+		return ordered;
+	}
 }

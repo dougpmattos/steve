@@ -2,6 +2,7 @@ package model.spatialView;
 
 import java.io.Serializable;
 
+import javafx.scene.Group;
 import view.spatialViewPane.CropPane;
 import view.spatialViewPane.LevelPane;
 import view.spatialViewPane.PositionPane;
@@ -20,6 +21,15 @@ public class PresentationProperty implements Serializable{
 	private StyleProperty styleProperty = new StyleProperty();
 	private TextStyleProperty textStyleProperty = new TextStyleProperty();
 	private LevelProperty levelProperty = new LevelProperty();
+	private Group selectionLines;
+
+	public Group getSelectionLines() {
+		return selectionLines;
+	}
+
+	public void setSelectionLines(Group selectionLines) {
+		this.selectionLines = selectionLines;
+	}
 
 	public PresentationProperty(){
 
