@@ -157,7 +157,7 @@ public class Controller {
 	}
 
 	public void populatePositionPropertyJavaBean(PositionPane positionPane, Media media) {
-		media.getPresentationProperty().populatePositionPropertyJavaBean(positionPane);
+		media.getPresentationProperty().populatePositionPropertyJavaBean(positionPane, media);
 	}
 
 	public void populateSizePropertyJavaBean(SizePane sizePane, Media media) {
@@ -211,5 +211,8 @@ public class Controller {
 	public void updateInteractivityRelation(TemporalChain temporalChainModel, Interactivity<Media, ?> interactivityRelation) {
 		temporalChainModel.updateInteractivityRelation(interactivityRelation);
 	}
-
+	
+	public StevePane getStevePane(){
+		return stevePane;
+	}
 }

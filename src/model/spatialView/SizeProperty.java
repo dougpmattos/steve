@@ -1,5 +1,6 @@
 package model.spatialView;
 
+import java.awt.geom.Point2D;
 import java.io.Serializable;
 
 import model.spatialView.enums.AspectRatio;
@@ -10,8 +11,17 @@ public class SizeProperty implements Serializable{
 	
 	private String width = "100%";
 	private String height = "100%";
-	private AspectRatio aspectRatio = AspectRatio.SLICE;
-	
+	private AspectRatio aspectRatio = AspectRatio.HIDDEN;
+	private Point2D realSize;
+
+	public Point2D getRealSize() {
+		return realSize;
+	}
+
+	public void setRealSize(Point2D realSize) {
+		this.realSize = realSize;
+	}
+
 	public SizeProperty(){
 
 	}

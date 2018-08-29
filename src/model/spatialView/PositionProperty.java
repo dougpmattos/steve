@@ -8,10 +8,10 @@ public class PositionProperty implements Serializable{
 
 	private static final long serialVersionUID = 7275587760424836463L;
 	
-	private String left = "0px";
-	private String right = "0px";
-	private String top = "0px";
-	private String bottom = "0px";
+	private String left = "0%";
+	private String right = "0%";
+	private String top = "0%";
+	private String bottom = "0%";
 	private String rotation = "0";
 	private int orderZ;
 	

@@ -15,6 +15,8 @@ import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.Tab;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
@@ -36,18 +38,26 @@ import javax.xml.transform.stream.StreamSource;
 import model.HTMLSupport.HTMLExportEventHandler;
 import model.NCLSupport.NCLExportEventHandler;
 import model.NCLSupport.NCLImportEventHandler;
+import model.common.Media;
 import model.common.SpatialTemporalView;
 import model.repository.RepositoryMediaList;
 
+import model.spatialView.PositionProperty;
+import model.spatialView.PresentationProperty;
+import model.spatialView.SizeProperty;
+import model.spatialView.StyleProperty;
+import model.spatialView.enums.AspectRatio;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 //import com.sun.xml.internal.txw2.Document;
 import org.w3c.dom.Document;
 
 import view.HTMLSupport.RunWindow;
+import view.common.CommonMethods;
 import view.common.Language;
 import view.common.MessageDialog;
 import view.common.ReturnMessage;
+import view.spatialViewPane.PositionPane;
 import view.temporalViewPane.InteractiveMediaWindow;
 import view.temporalViewPane.TemporalChainPane;
 import view.temporalViewPane.TemporalViewPane;
@@ -73,7 +83,7 @@ public class SteveMenuBar extends MenuBar{
 	private Menu menuView;
 	private Menu menuTools;
 	private Menu menuHelp;
-	
+
 	private  MenuItem menuItemNew;
 	private  MenuItem menuItemOpen;
 	private  MenuItem menuItemClose; 
@@ -94,6 +104,7 @@ public class SteveMenuBar extends MenuBar{
 	private  MenuItem menuItemSimulation;
 	private  MenuItem menuItemHelpContents;
 	private  MenuItem menuItemAbout;
+
 	
 	
 	private  CheckMenuItem checkMenuItemMediaView;  
@@ -104,6 +115,7 @@ public class SteveMenuBar extends MenuBar{
 	public SteveMenuBar(Controller controller, SpatialTemporalView spatialTemporalView, RepositoryMediaList repositoryMediaList, TemporalViewPane temporalViewPane, Stage stage){
 		
 		this.controller = controller;
+		controller.getStevePane().getSpatialViewPane().getDisplayPane().getControlButtonPane().setController(this.controller);
 		this.spatialTemporalView = spatialTemporalView;
 		this.repositoryMediaList = repositoryMediaList;
 		this.temporalViewPane = temporalViewPane;
@@ -122,18 +134,17 @@ public class SteveMenuBar extends MenuBar{
 		createViewMenuItemActions();
 		createToolMenuItemActions();
 		createHelpMenuItemActions();
-		
-		menuFile.getItems().addAll(menuItemNew, menuItemOpen, new SeparatorMenuItem(), menuItemClose, new SeparatorMenuItem(), menuItemExportNCL, new SeparatorMenuItem(), menuItemExportHTML5, new SeparatorMenuItem(), menuItemRun, new SeparatorMenuItem(), menuItemExit); 
-		//menuFile.getItems().addAll(menuItemExportNCL, new SeparatorMenuItem(), menuItemExportHTML5, new SeparatorMenuItem(), menuItemExit);
+
+		//menuFile.getItems().addAll(menuItemNew, menuItemOpen, new SeparatorMenuItem(), menuItemClose, new SeparatorMenuItem(), menuItemExportNCL, new SeparatorMenuItem(), menuItemExportHTML5, new SeparatorMenuItem(), menuItemRun, new SeparatorMenuItem(), menuItemExit); 
+		menuFile.getItems().addAll(menuItemNew, menuItemOpen, new SeparatorMenuItem(), menuItemExportNCL, new SeparatorMenuItem(), menuItemExportHTML5, new SeparatorMenuItem(), menuItemRun, new SeparatorMenuItem(), menuItemExit);
 //		menuEdit.getItems().addAll(menuItemUndo, menuItemRedo, new SeparatorMenuItem(), menuItemCut, menuItemCopy, menuItemPaste, new SeparatorMenuItem(), 
 		menuEdit.getItems().addAll(menuItemPreferences, new SeparatorMenuItem(), menuItemSelectAll);
 		menuView.getItems().addAll(checkMenuItemMediaView, checkMenuItemTemporalView, checkMenuItemSpatialView, checkMenuItemShowRelations);
 		menuTools.getItems().addAll(menuItemSimulation);
 //		menuHelp.getItems().addAll(menuItemHelpContents, new SeparatorMenuItem(), menuItemAbout);
 		menuHelp.getItems().addAll(menuItemAbout);
-		    
-//		getMenus().addAll(menuFile, menuEdit, menuView, menuTools, menuHelp);
-		getMenus().addAll(menuFile, menuEdit, menuHelp);
+
+		getMenus().addAll(menuFile, menuEdit, menuView, menuTools, menuHelp);
 		
 		
 	}
@@ -149,9 +160,12 @@ public class SteveMenuBar extends MenuBar{
 		menuItemAbout.setOnAction(new EventHandler<ActionEvent>() {
 		    public void handle(ActionEvent t) {
 		    	
-		    	MessageDialog messageDialog = new MessageDialog("STEVE", "Spatio-Temporal View Editor              Version 1.0-0                   "
-		    			+ "Copyright 2015 Douglas Paulo de Mattos. MidiaCom Lab. UFF. All rights reserved.                     "
-		    			+ "This product includes software developed by other MidiaCom Lab projects including aNa and NCL4WEB, https://www.aNa.com.br, https://www.NCL4WEB.com.br", "OK", 300);
+		    	MessageDialog messageDialog = new MessageDialog("STEVE", "Spatio-Temporal View Editor - Version 3.0-0" + "\n"
+		    			+ "Copyright 2017 Douglas Paulo de Mattos. MidiaCom Lab. UFF." + "\n"
+		    			+ "All rights reserved." + "\n"
+		    			+ "This product includes software developed by other MidiaCom Lab projects (aNa and NCL4WEB)." + "\n"
+		    			+ "https://www.aNa.com.br" + "\n"
+		    			+ "https://www.NCL4WEB.com.br", "OK", 300);
 	            messageDialog.showAndWait();
 	            
 		    }
@@ -318,8 +332,6 @@ public class SteveMenuBar extends MenuBar{
 		    }
 		});
 		
-		
-		
 		menuItemSave.setOnAction(new SaveEventHandler(spatialTemporalView, repositoryMediaList));
 		
 		menuItemImportNCL.setOnAction(new NCLImportEventHandler());
@@ -330,37 +342,10 @@ public class SteveMenuBar extends MenuBar{
 		
 		menuItemRun.setOnAction(new EventHandler<ActionEvent>() {
 		    public void handle(ActionEvent t) {
-		    	
-		    	String htmlPath = "";
-		    					
-				RunWindow runWindow = null;
-				try {
-					runWindow = new RunWindow(createTempHTML());
-				} catch (org.xml.sax.SAXException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-		    	runWindow.showAndWait();
-		    	
-		    	String mediadir = "src/view/HTMLSupport/media";
-		    	String htmlexportado = "src/view/HTMLSupport/HTMLExportado.html";
-		    	File m = new File (mediadir);
-		    	File h = new File (htmlexportado);
-		    			    	
-		    	
-		    	String[] entries = m.list();
-		    	for(String s: entries){
-		    	    File currentFile = new File(m.getPath(),s);
-		    	    currentFile.delete();
-		    	}
-		    			    	
-		    	m.delete();		    	
-		    	h.delete();
+		    	CommonMethods.runApplication(spatialTemporalView);
 		    }
 		});
-				
-		
-		
+
 		menuItemExit.setOnAction(new EventHandler<ActionEvent>() {
 		    public void handle(ActionEvent t) {
 			   stage.close();
@@ -454,9 +439,10 @@ public class SteveMenuBar extends MenuBar{
 		
 		menuItemExit = new MenuItem (Language.translate("exit"));
 		menuItemExit.setAccelerator(KeyCombination.keyCombination("Ctrl+Q"));
-		
+
 	}
-	
+
+
 	private void createMenu() {
 		
 		menuFile = new Menu(Language.translate("file"));
@@ -464,137 +450,13 @@ public class SteveMenuBar extends MenuBar{
 		menuView = new Menu(Language.translate("view"));
 		menuTools = new Menu(Language.translate("tools"));
 		menuHelp = new Menu(Language.translate("help"));
-		
-	}	
-	
-	private File createTempHTML() throws org.xml.sax.SAXException{
-		final Logger logger = LoggerFactory.getLogger(HTMLExportEventHandler.class);
-		
-		final String EXPORTED_HTML_DOCUMENT = "Exported HTML Document";
-		final String TEMP_NCL_DOCUMENT = "tempNCLDocument";
-		
-		final Document document;
-		final NCLExportEventHandler nclExportEventHandler;
-		
-		nclExportEventHandler = new NCLExportEventHandler(spatialTemporalView);
-		
-		File tempNCLDocumentFile = null;
-		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-                
-        File stylesheet = new File("src/model/HTMLSupport/XSLFile/ncl4web.xsl");
-        String tempNCLDocumentDir = "";
-        File auxF = null;
-        
-        try {
-        	
-        	NCLDoc nclDoc = nclExportEventHandler.exportToNCL(true);
-        
-        	String nclCode = nclDoc.parse(0);
-		
-        	if(nclCode != null){        	        	
-        		
-        		File file = new File("src/view/HTMLSupport/");        		
- 
-        		if(file != null){
-			
-					tempNCLDocumentDir = file.getAbsolutePath();
-					System.out.println("tempNCLDocumentDir: "+tempNCLDocumentDir);
-					tempNCLDocumentFile = new File(tempNCLDocumentDir + ".ncl");
-					System.out.println(tempNCLDocumentFile.getAbsolutePath());			
-					FileWriter fileWriter = new FileWriter(tempNCLDocumentFile);
-					fileWriter.write(nclCode);
-                    fileWriter.close();
 
-        		}
-        		
-			}
-				
-		} catch (Exception e) {
-			
-			logger.error(e.getMessage());
-			MessageDialog messageDialog = new MessageDialog(Language.translate("error.during.the.temp.ncl.document.creation"), 
-					Language.translate("could.not.find.the.temp.ncl.document.directory") + ": " + e.getMessage(), "OK", 250);
-	        messageDialog.showAndWait();
-	        
-	        return  auxF;
-	        
-		}
-        
-        try {
-        	
-            if(tempNCLDocumentFile != null){
-            	
-            	DocumentBuilder builder = factory.newDocumentBuilder();
-                document = builder.parse(tempNCLDocumentFile);
 
-                // Use a Transformer for output
-                TransformerFactory tFactory = TransformerFactory.newInstance();
-                StreamSource stylesource = new StreamSource(stylesheet);
-                Transformer transformer = tFactory.newTransformer(stylesource);
-
-                DOMSource source = new DOMSource(document);
-                
-                String exportedHTMLDocumentDir = tempNCLDocumentDir;
-                
-				String mediaDir = exportedHTMLDocumentDir + "/media";
-				Boolean mediaDirCreated = (new File(mediaDir)).mkdirs();
-				
-				if (mediaDirCreated || (new File(mediaDir)).exists()) {
-					nclExportEventHandler.copyMediaFiles(mediaDir);
-				}
-				
-				File auxFile = new File("src/view/HTMLSupport/HTMLExportado.html");
-				auxF= new File (auxFile.getAbsolutePath());
-				FileWriter fileWriter = new FileWriter(auxFile);
-                StreamResult result = new StreamResult();
-                result.setWriter(fileWriter);
-                transformer.transform(source, result);
-                fileWriter.close();
-                
-
-                tempNCLDocumentFile.delete();
-                
-                ReturnMessage returnMessage = new ReturnMessage(Language.translate("html.export.is.ready"), 300);
-                returnMessage.show();
-                AnimationUtil.applyFadeInOut(returnMessage);
-  
-            }
-        
-        } catch (TransformerConfigurationException tce) {
-            // Error generated by the parser
-            System.out.println("\n** Transformer Factory error");
-            System.out.println("   " + tce.getMessage());
-
-            // Use the contained exception, if any
-            Throwable x = tce;
-
-            if (tce.getException() != null) {
-                x = tce.getException();
-            }
-
-            x.printStackTrace();
-        } catch (TransformerException te) {
-            // Error generated by the parser
-            System.out.println("\n** Transformation error");
-            System.out.println("   " + te.getMessage());
-
-            // Use the contained exception, if any
-            Throwable x = te;
-
-            if (te.getException() != null) {
-                x = te.getException();
-            }
-
-            x.printStackTrace();
-        } catch (ParserConfigurationException pce) {
-            // Parser with specified options can't be built
-            pce.printStackTrace();
-        } catch (IOException ioe) {
-            // I/O error
-            ioe.printStackTrace();
-        }
-			
-        return auxF;
 	}
+
+	public Controller getController(){
+		return this.controller;
+	}
+
 }
 

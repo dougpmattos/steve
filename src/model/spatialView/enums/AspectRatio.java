@@ -4,7 +4,7 @@ public enum AspectRatio {
 
 	FILL,
 	SLICE,
-	NONE;
+	HIDDEN;
 	
 	@Override
 	public String toString(){
@@ -17,8 +17,9 @@ public enum AspectRatio {
 			case SLICE:
 				return "Slice";
 				
-			case NONE:
-				return "None";
+			case HIDDEN:
+				return "Hidden";
+				
 				
 		}
 		

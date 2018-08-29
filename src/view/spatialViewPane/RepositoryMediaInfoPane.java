@@ -36,8 +36,8 @@ public class RepositoryMediaInfoPane extends ScrollPane{
 		
 		name = new TextField();
 		type = new TextField();
-		name.setId("info-pane-field");
-		type.setId("info-pane-field");
+		name.setId("name-text-field");
+		type.setId("type-text-field");
 		name.setEditable(false);
 		type.setEditable(false);
 		
@@ -52,7 +52,7 @@ public class RepositoryMediaInfoPane extends ScrollPane{
 			durationLabel.setId("spatial-view-label");
 			
 			duration = new TextField();
-			duration.setId("info-pane-field");
+			duration.setId("duration-text-field");
 			duration.setEditable(false);
 		}
 		

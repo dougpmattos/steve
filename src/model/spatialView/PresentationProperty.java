@@ -2,11 +2,13 @@ package model.spatialView;
 
 import java.io.Serializable;
 
+import javafx.scene.Group;
 import view.spatialViewPane.CropPane;
 import view.spatialViewPane.LevelPane;
 import view.spatialViewPane.PositionPane;
 import view.spatialViewPane.SizePane;
 import view.spatialViewPane.StylePane;
+import model.common.Media;
 import model.utility.RGBColor;
 
 public class PresentationProperty implements Serializable{
@@ -19,7 +21,16 @@ public class PresentationProperty implements Serializable{
 	private StyleProperty styleProperty = new StyleProperty();
 	private TextStyleProperty textStyleProperty = new TextStyleProperty();
 	private LevelProperty levelProperty = new LevelProperty();
-	
+	private Group selectionLines;
+
+	public Group getSelectionLines() {
+		return selectionLines;
+	}
+
+	public void setSelectionLines(Group selectionLines) {
+		this.selectionLines = selectionLines;
+	}
+
 	public PresentationProperty(){
 
 	}
@@ -72,14 +83,14 @@ public class PresentationProperty implements Serializable{
 		this.levelProperty = levelProperty;
 	}
 	
-	public void populatePositionPropertyJavaBean(PositionPane positionPane) {
+	public void populatePositionPropertyJavaBean(PositionPane positionPane, Media media) {
 		
 		PositionProperty positionProperty = getPositionProperty();
 		
-		positionProperty.setLeft(positionPane.getLeftValue());
-		positionProperty.setRight(positionPane.getRightValue());
-		positionProperty.setTop(positionPane.getTopValue());
-		positionProperty.setBottom(positionPane.getBottomValue());
+		positionProperty.setLeft(media.getPresentationProperty().getPositionProperty().getLeft());
+		positionProperty.setRight(media.getPresentationProperty().getPositionProperty().getRight());
+		positionProperty.setTop(media.getPresentationProperty().getPositionProperty().getTop());
+		positionProperty.setBottom(media.getPresentationProperty().getPositionProperty().getBottom());
 //		positionProperty.setRotation(positionPane.getRotationValue());
 		positionProperty.setOrderZ(Integer.parseInt(positionPane.getZOrderValue()));
 	

@@ -10,7 +10,10 @@ import model.temporalView.enums.ConflictType;
 import model.temporalView.enums.TemporalRelationType;
 import model.temporalView.enums.TemporalViewOperator;
 import model.utility.Operation;
-import view.common.InputDialog;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import view.common.Language;
 import view.common.MessageDialog;
 import view.temporalViewPane.TemporalChainPane;
@@ -20,6 +23,7 @@ import view.temporalViewPane.TimeLineXYChartData;
 public class TemporalChain extends Observable implements Serializable {
 
 	private static final long serialVersionUID = -6154510036093880684L;
+	final Logger logger = LoggerFactory.getLogger(TemporalChain.class);
 	
 	private static int temporalChainNumber = 0;
 	private static int temporalViewMediaNumber = 0;
@@ -213,26 +217,6 @@ public class TemporalChain extends Observable implements Serializable {
 		
 	}
 	
-	private int getMediaLine(Media media){
-		
-		int line = 0;
-    	Boolean removed = false;
-		
-    	while(line < mediaLineList.size()){
-    		
-    		ArrayList<Media> mediaList = mediaLineList.get(line);
-    		
-    		if(mediaList.contains(media)){
-    			return line;
-    		}
-    		line++;
-    		
-    	}
-    	
-    	return -1;
-		
-	}
-	
 	private Media getMediaWithLowestBegin() {
 		
 		Media mediaWithLowestBegin = null;
@@ -254,6 +238,26 @@ public class TemporalChain extends Observable implements Serializable {
 		return mediaWithLowestBegin;
 		
 	}
+	public Media getMediaWithHighestEnd() {
+		
+		Media mediaWithHighestEnd = null;
+		
+		if(!mediaAllList.isEmpty()){
+			mediaWithHighestEnd = mediaAllList.get(mediaAllList.size()-1);
+		}
+		
+		for(Media media : mediaAllList){
+			
+			if(media.getEnd() > mediaWithHighestEnd.getEnd()){
+				mediaWithHighestEnd = media;
+			}
+			
+		}
+		
+		return mediaWithHighestEnd;
+		
+	}
+
 
 	private void removeMediaOfRelations(Media media) {
 		
@@ -1232,17 +1236,6 @@ public class TemporalChain extends Observable implements Serializable {
 		setChanged();
 		Operation<TemporalViewOperator> operation = new Operation<TemporalViewOperator>(TemporalViewOperator.EDIT_INTERACTIVITY_RELATION, interactivityRelation, this);
         notifyObservers(operation);
-		
-	}
-	
-	//bruno modifying
-	public Media getMediaUnderThePlayLineList(Number newValue){
-		int listSize = mediaAllList.size();
-		int currentMediaIndex = 0;
-		int index = (int) (((Double) newValue / 27.5)/5);
-		System.out.println(index);
-		
-		return mediaAllList.get(index); 
 		
 	}
 	

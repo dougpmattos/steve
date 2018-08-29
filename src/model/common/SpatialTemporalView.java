@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Observable;
 
+import model.spatialView.SpatialRelation;
 import model.temporalView.TemporalChain;
 import model.temporalView.enums.TemporalViewOperator;
 import model.utility.Operation;
@@ -11,8 +12,10 @@ import model.utility.Operation;
 public class SpatialTemporalView extends Observable implements Serializable{
 
 	private static final long serialVersionUID = 1818548173102220176L;
-	
+
 	private ArrayList<TemporalChain> temporalChainList = new ArrayList<TemporalChain>();
+
+	private ArrayList<SpatialRelation> spatialRelationList = new ArrayList<SpatialRelation>();
 	
 	public SpatialTemporalView(){
 		
@@ -69,5 +72,15 @@ public class SpatialTemporalView extends Observable implements Serializable{
 		}
 		
 	}
-	
+
+	public ArrayList<SpatialRelation> getSpatialRelationList() {
+		return spatialRelationList;
+	}
+
+	public void setSpatialRelationList(ArrayList<SpatialRelation> spatialRelationList) {
+		this.spatialRelationList = spatialRelationList;
+	}
+
+	//Mais metodos//
+
 }

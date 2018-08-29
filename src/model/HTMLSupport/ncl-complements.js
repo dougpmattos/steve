@@ -1,5 +1,16 @@
 //array com codigo e nome da tecla
 var objectCodeNames =  {112:'F1' , 113:'F2' ,114:'F3' ,115:'F4' ,116:'F5' ,117:'F6' ,118:'F7' ,119:'F8' ,120:'F9' ,121:'F10' ,122:'F11' ,123:'F12' ,8:'BACK_SPACE' ,32:'SPACE' , 9:'TAB' ,16:'SHIFT' ,17:'CONTROL' ,18:'ALT' ,20:'CAPS_LOCK' ,33:'PAGE_UP' ,34:'PAGE_DOWN' ,35:'END' , 36:'HOME' ,19:'PAUSE_BREAK' ,42:'PRINTSCREEN' ,45:'INSERT' , 46:'DELETE' ,96:'NUMPAD0' ,97:'NUMPAD1' ,98:'NUMPAD2' ,99:'NUMPAD3' ,100:'NUMPAD4' ,101:'NUMPAD5' ,102:'NUMPAD6' ,103:'NUMPAD7' ,104:'NUMPAD8' ,105:'NUMPAD9' ,106:'NUMPAD*' ,107:'NUMPAD+' ,108:'NUMPAD,' ,109:'NUMPAD-' ,110:'NUMPAD.' ,144:'NUM_LOCK'}
+var keyCodeMap = {
+        8:"backspace", 9:"tab", 13:"return", 16:"shift", 17:"ctrl", 18:"alt", 19:"pausebreak", 20:"capslock", 27:"escape", 32:" ", 33:"pageup",
+        34:"pagedown", 35:"end", 36:"home", 37:"left", 38:"up", 39:"right", 40:"down", 43:"+", 44:"printscreen", 45:"insert", 46:"delete",
+        48:"0", 49:"1", 50:"2", 51:"3", 52:"4", 53:"5", 54:"6", 55:"7", 56:"8", 57:"9", 59:";",
+        61:"=", 65:"a", 66:"b", 67:"c", 68:"d", 69:"e", 70:"f", 71:"g", 72:"h", 73:"i", 74:"j", 75:"k", 76:"l",
+        77:"m", 78:"n", 79:"o", 80:"p", 81:"q", 82:"r", 83:"s", 84:"t", 85:"u", 86:"v", 87:"w", 88:"x", 89:"y", 90:"z",
+        //96:"0", 97:"1", 98:"2", 99:"3", 100:"4", 101:"5", 102:"6", 103:"7", 104:"8", 105:"9",
+        106: "*", 107:"+", 109:"-", 110:".", 111: "/",
+        112:"f1", 113:"f2", 114:"f3", 115:"f4", 116:"f5", 117:"f6", 118:"f7", 119:"f8", 120:"f9", 121:"f10", 122:"f11", 123:"f12",
+        144:"numlock", 145:"scrolllock", 186:";", 187:"=", 188:",", 189:"-", 190:".", 191:"/", 192:"`", 219:"[", 220:"\\", 221:"]", 222:"'"
+}
 //array de uso de teclas
 var nclKeys = {};
 var hasNclKeys = false;
@@ -8,6 +19,7 @@ var agendados = {};
 var zIndex = 0;
 var currentContext = 'body';
 var winW, winH;
+
 
 function keyPressedNCL(e){
 	var test = nclKeys[e.keyCode];
@@ -919,25 +931,6 @@ function startContext(id,Inter){
 	}
 }
 
-function readTextFile(file)
-{
-    var rawFile = new XMLHttpRequest();
-    rawFile.open("GET", file, false);
-    rawFile.onreadystatechange = function ()
-    {
-        if(rawFile.readyState === 4)
-        {
-            if(rawFile.status === 200 || rawFile.status == 0)
-            {
-                var allText = rawFile.responseText;
-                console.log(allText);
-            }
-        }
-    }
-    rawFile.send(null);
-}
-
-
 function iniciaDocumentoNCL(){
 	$(document).keydown(keyPressedNCL);
 	//linha de codigo para pegar o tamanho da janela
@@ -945,11 +938,6 @@ function iniciaDocumentoNCL(){
 		  carregaTela();
 	});
 	carregaTela();
-
-	var c = "file:///Users/bruno/git/steve/saida.json";
-	
-	readTextFile(c);
-
 	//fim da linha de codigo
 	$('img,vide,iframe').each(function(){$(this).addClass("stoped")});
 	$('video,audio').each(function(index){
@@ -979,16 +967,128 @@ $(document).ready(function(){
 			if(isNaN(nclKeys[k]))
 				nclKeys[k] = key;
 		}
+	} 
+	
+	//percorrer ncl keys mapeando cada uma pra um valor hardcoded
+	keyNumber = 0;
+
+	// Chamada assincrona le o arquivo JSON com as teclas definidas na preferences do Steve
+    var objJson = $.ajax({
+      type: "GET",
+      url: "saida.json",
+      async: false,
+      dataType: "json"
+ 	});
+
+    objKeys = JSON.parse(objJson.responseText); // objKeys[key]
+    
+	var b = 0;
+	var g = 0;
+	var r = 0;
+	var y = 0;
+
+	// Recupera o codigo da tecla em javascript mapeada no Steve
+	for (var key in objKeys) {
+
+		if (objKeys.hasOwnProperty(key)) {
+		  	if(key=="blue"){
+		  		for(v in keyCodeMap){
+		  			if(keyCodeMap[v]==objKeys["blue"]){
+		  				console.log("Blue key is: "+keyCodeMap[v]+" and code is: "+v);
+		  				b = v;
+		  			}
+		  		}		  		
+		  	}
+		  	if(key=='red'){
+		  		for(v in keyCodeMap){
+		  			if(keyCodeMap[v]==objKeys["red"]){
+		  				console.log("Red key is: "+keyCodeMap[v]+" and code is: "+v);
+		  				r = v;
+		  			}
+		  		}		  	
+		  	}
+		  	if(key=='green'){
+		  		for(v in keyCodeMap){
+		  			if(keyCodeMap[v]==objKeys["green"]){
+		  				console.log("Green key is: "+keyCodeMap[v]+" and code is: "+v);
+		  				g = v;
+		  			}
+		  		}		  		
+		  	}
+		  	if(key=='yellow'){
+		  		for(v in keyCodeMap){
+		  			if(keyCodeMap[v]==objKeys["yellow"]){
+		  				console.log("Yellow key is: "+keyCodeMap[v]+" and code is: "+v);
+		  				y = v;
+		  			}
+		  		}		  	
+		  	}
+		    console.log(key + " -> " + objKeys[key]);		    
+		}
 	}
-	/*if(!hasNclKeys||readCookie('pula') == 'true'){
-		iniciaDocumentoNCL();
+	
+	// Atribui os valores do codigo de tecla javascript s
+	for (var k in nclKeys) {
+
+		console.log("Var k = "+k);
+		if(k.indexOf('Name')<0){
+			if(k=='Blue'){
+				nclKeys[k]=b;
+				keyNumber = k;
+			}
+			if(k=='Red'){
+				nclKeys[k]=r;
+				keyNumber = k;
+			}		
+			if(k=='Yellow'){
+				nclKeys[k]=y;
+				keyNumber = k;
+			}		
+			if(k=='Green'){
+				nclKeys[k]=g;
+				keyNumber = k;
+			}			
+
+		}		
+		else {
+			var nome = objectCodeNames[k.keyCode];
+			console.log("k.keyCode = "+k.keyCode);
+			if(!nome)
+			{
+				nome = keyNumber-49;
+			}
+			if(!nome||nome==''){
+				nome = String.fromCharCode((96 <= keyNumber && keyNumber <= 105)? keyNumber-49 : keyNumber)
+			}
+			nclKeys[k] = nome;
+		}
 	}
-	else{
-		inciaPaginaConfig();
-	}*/
+	descarregaVariaveis();
+	iniciaDocumentoNCL();
+
+	//inciaPaginaConfig();
+	//no final o java que vai passar pra ac
 });
 
 
+//Abrir arquivo
+function readTextFile(file)
+{
+    var rawFile = new XMLHttpRequest();
+    rawFile.open("GET", file, false);
+    rawFile.onreadystatechange = function ()
+    {
+        if(rawFile.readyState === 4)
+        {
+            if(rawFile.status === 200 || rawFile.status == 0)
+            {
+                var allText = rawFile.responseText;
+                console.log(allText);
+            }
+        }
+    }
+    rawFile.send(null);
+}
 
 //Janela inicial
 function keyPressedPre(e){
@@ -1012,6 +1112,8 @@ function keyPressedPre(e){
 			}
 		}
 		$('#'+id).removeClass("selecionadoPre");
+		console.log("E = "+ e.keyCode);
+		//nclKeys[id] = parseInt(84);
 		nclKeys[id] = parseInt(e.keyCode);
 		nclKeys[id+'Name'] = nome;
 		$('#'+id).html(nome);
@@ -1085,9 +1187,15 @@ function descarregaVariaveis(){
 	objectCodeNames = null;
 	var newKeys = {}
 	for(var k in nclKeys){
+		console.log('A chave '+nclKeys[k]+' foi definida');		
+		console.log('K = '+k+' foi definida');
+		//console.log('A chaveName '+nclKeys[k+Name]+' foi definida');
+
 		if(k.indexOf('Name')<0){
 			newKeys[nclKeys[k]] = k;
-			//console.log('A chave '+nclKeys[k]+' foi definida');
+			console.log('nclKeys[k] = '+nclKeys[k]);
+			console.log('newKeys[nclKeys[k]] = '+newKeys[nclKeys[k]]);
+
 		}
 		nclKeys[k] = null;
 	}

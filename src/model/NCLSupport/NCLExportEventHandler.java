@@ -131,13 +131,11 @@ public class NCLExportEventHandler implements EventHandler<ActionEvent>{
 	}
 
 	public NCLDoc exportToNCL(Boolean isForHTMLExport) {
-		
+	
 		NCLDoc nclDoc = createNCLDoc(isForHTMLExport);
-		
 		if(nclDoc != null && !isForHTMLExport){
 			saveNCLDoc(nclDoc);
 		}
-		
 		return nclDoc;
 		
 	}
@@ -163,7 +161,7 @@ public class NCLExportEventHandler implements EventHandler<ActionEvent>{
 		NCLDoc nclDoc = new NCLDoc();
 		
 		try {
-			
+			System.out.println(nclDoc.toString());
 			NCLBody nclBody = new NCLBody();
             nclDoc.setBody(nclBody);
 			
@@ -185,9 +183,9 @@ public class NCLExportEventHandler implements EventHandler<ActionEvent>{
             nclImportBase.setBaseId("causalConnectorBase");
             nclImportBase.setAlias("connectorBase");
             nclImportBase.setImportedDoc(importedNCLCausalConnectorBase);
-            
+       
             if(!isForHTMLExport){
-
+          
                  nclConBase.addImportBase(nclImportBase);
             	
             }else {
@@ -202,15 +200,19 @@ public class NCLExportEventHandler implements EventHandler<ActionEvent>{
             
             for(TemporalChain temporalChain : spatialTemporalView.getTemporalChainList()){
             	
-            	createNCLPort(nclBody, nclRegBase, nclDescBase, temporalChain);	
             	createNCLMediaDescriptorRegion(nclBody, nclRegBase, nclDescBase, temporalChain);
+
+            }
+            
+            for(TemporalChain temporalChain : spatialTemporalView.getTemporalChainList()){
+            	
+            	createNCLPort(nclBody, nclRegBase, nclDescBase, temporalChain);
             	createNCLLinks(nclBody, nclImportBase, temporalChain, isForHTMLExport);
             	createStartNCLLinks(nclBody, nclImportBase, temporalChain, isForHTMLExport);
             	
             }
             
         } catch (XMLException ex) {
-        	
         	logger.error(ex.getMessage());
         	MessageDialog messageDialog = new MessageDialog(Language.translate("error"), 
 					Language.translate("error.during.the.export") + ": " + ex.getMessage(), "OK", 150);
@@ -218,7 +220,7 @@ public class NCLExportEventHandler implements EventHandler<ActionEvent>{
             return null;
         	
         }
-		
+
 		return nclDoc;
 		
 	}
@@ -633,7 +635,7 @@ public class NCLExportEventHandler implements EventHandler<ActionEvent>{
 					conditionNCLBind.setComponent(nclBody.findNode(interactivityRelation.getMasterMedia().getNCLName()));
 					NCLBindParam nclBindParam = new NCLBindParam();
 					nclBindParam.setName(importedNCLCausalConnector.getConnectorParam("interactivityKey"));
-					nclBindParam.setValue(interactivityRelation.getInteractivityKey());
+					nclBindParam.setValue(interactivityRelation.getInteractivityKey().toString().toUpperCase());
 					conditionNCLBind.addBindParam(nclBindParam);			
 					nclLink.addBind(conditionNCLBind);
 					
@@ -821,9 +823,9 @@ public class NCLExportEventHandler implements EventHandler<ActionEvent>{
 		NCLDescriptorParam fitParam = new NCLDescriptorParam();
 		fitParam.setName(NCLAttributes.FIT);
 		AspectRatio aspectRatio = media.getPresentationProperty().getSizeProperty().getAspectRatio();
-		if(aspectRatio != AspectRatio.NONE){
-			fitParam.setValue(media.getPresentationProperty().getSizeProperty().getAspectRatio().toString().toLowerCase());
-		}
+		//if(aspectRatio != AspectRatio.NONE){
+		fitParam.setValue(media.getPresentationProperty().getSizeProperty().getAspectRatio().toString().toLowerCase());
+		//}
 		
 		nclDescriptor.addDescriptorParam(transparencyParam);
 		nclDescriptor.addDescriptorParam(fitParam);
@@ -868,13 +870,6 @@ public class NCLExportEventHandler implements EventHandler<ActionEvent>{
 						 return true;
 					}
 					
-				}
-				
-			} else if(relation instanceof Asynchronous){
-				
-				Asynchronous asynchronousRelation = (Asynchronous) relation;
-				if(asynchronousRelation.getSlaveMediaList().contains(media)){
-					return true;
 				}
 				
 			}

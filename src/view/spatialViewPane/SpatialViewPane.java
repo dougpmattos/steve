@@ -18,6 +18,8 @@ import model.temporalView.enums.TemporalViewOperator;
 import model.utility.Operation;
 import view.common.Language;
 import view.repositoryPane.RepositoryPane;
+import view.stevePane.SteveMenuBar;
+import view.stevePane.StevePane;
 import view.temporalViewPane.TemporalViewPane;
 import controller.Controller;
 
@@ -41,7 +43,7 @@ public class SpatialViewPane extends SplitPane implements view.common.Observer, 
 	private TabPane propertyInfoTabPane;
 	private HBox labelContainer;
 	
-    public SpatialViewPane(Controller controller, SpatialTemporalView temporalViewModel, TemporalViewPane temporalViewPane, RepositoryPane repositoryPane, RepositoryMediaList repositoryMediaList) {
+    public SpatialViewPane(Controller controller, SpatialTemporalView temporalViewModel, TemporalViewPane temporalViewPane, RepositoryPane repositoryPane, RepositoryMediaList repositoryMediaList, SteveMenuBar steveMenuBar) {
   
     	setOrientation(Orientation.HORIZONTAL);
     	setDividerPositions(0.5);
@@ -50,7 +52,7 @@ public class SpatialViewPane extends SplitPane implements view.common.Observer, 
     	
     	this.temporalViewModel = temporalViewModel;
     	
-    	displayPane = new DisplayPane(temporalViewPane);
+    	displayPane = new DisplayPane(temporalViewPane, steveMenuBar, temporalViewModel);
     	
     	
     	labelContainer = new HBox();
@@ -132,6 +134,7 @@ public class SpatialViewPane extends SplitPane implements view.common.Observer, 
     	propertyTab = new Tab();
     	propertyTab.setText(Language.translate("PROPERTIES"));
     	propertyTab.setClosable(false); 
+    	
     	propertyTab.setContent(propertyPane);
     	infoTab = new Tab();
     	infoTab.setText(Language.translate("INFO"));
@@ -205,6 +208,10 @@ public class SpatialViewPane extends SplitPane implements view.common.Observer, 
 	
 	public DisplayPane getDisplayPane(){
 		return displayPane;
+	}
+	
+	public PropertyPane getPropertyPane(){
+		return propertyPane;
 	}
     
 }

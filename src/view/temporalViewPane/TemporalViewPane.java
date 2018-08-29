@@ -139,6 +139,41 @@ public class TemporalViewPane extends BorderPane implements Observer, view.commo
 			
 		});
 		
+		newTemporalChainTab.setOnSelectionChanged(new EventHandler<Event>() {
+
+			@Override
+			public void handle(Event event) {
+				
+				clearSelectedMedia();
+	        	
+	        	for(Tab temporalTab : getTemporalChainTabPane().getTabs()){
+	        		
+	        		TemporalChainPane temporalChainPane = (TemporalChainPane) temporalTab.getContent();
+	        		temporalChainPane.getParentTab().setStyle(null);
+	        		
+					for(ArrayList<TimeLineXYChartData> timeLineXYChartDataList : temporalChainPane.getTimeLineXYChartDataLineList()){
+						for(TimeLineXYChartData timeLineXYChartData : timeLineXYChartDataList){
+							boolean styleRemoved = false;
+							if(timeLineXYChartData.getContainerNode().getStylesheets().remove("view/temporalViewPane/styles/mousePressedSlaveTemporalMediaNode.css")){
+								styleRemoved = true;
+							}
+							if(timeLineXYChartData.getContainerNode().getStylesheets().remove("view/temporalViewPane/styles/mousePressedTemporalMediaNode.css")){
+								styleRemoved = true;
+							}
+							if(timeLineXYChartData.getContainerNode().getStylesheets().remove("view/temporalViewPane/styles/borderOfMediaToBeStopped.css")){
+								styleRemoved = true;
+							}
+							if(styleRemoved){
+								timeLineXYChartData.getMediaImageClip().setHeight(timeLineXYChartData.getMediaImageClip().getHeight()+5);
+							}
+						}
+					}	
+				 }
+		
+			}
+			
+		});
+		
 	}
 	
 	private void clearTemporalChainTabPane() {
@@ -188,7 +223,7 @@ public class TemporalViewPane extends BorderPane implements Observer, view.commo
 		        	for(Tab tab : getTemporalChainTabPane().getTabs()){
 		        		TemporalChainPane temporalChainPane = (TemporalChainPane) tab.getContent();
 		        		if(interactivityRelation.getTemporalChainList().contains(temporalChainPane.getTemporalChainModel())){
-		        			temporalChainPane.getParentTab().setStyle("-fx-border-color: #00BFA5;-fx-border-width: 2; -fx-border-radius: 8;");
+		        			temporalChainPane.getParentTab().setStyle("-fx-border-color: #00BFA5;-fx-border-width: 2; -fx-border-radius: 8; -fx-padding: -5, -5, -5, -5;");
 		        		}
 		        	}
 		        	
@@ -271,5 +306,6 @@ public class TemporalViewPane extends BorderPane implements Observer, view.commo
 	public SpatialTemporalView getTemporalViewModel() {
 		return temporalViewModel;
 	}
+	
 
 }

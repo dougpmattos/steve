@@ -3,6 +3,7 @@ package view.spatialViewPane;
 
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import model.common.SpatialTemporalView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
@@ -10,44 +11,37 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Rectangle;
+import view.stevePane.SteveMenuBar;
 import view.temporalViewPane.TemporalViewPane;
 
 public class DisplayPane extends BorderPane {
 
 	private ControlButtonPane controlButtonPane;
 	private StackPane screen;
+	private SpatialTemporalView spatialTemporalView;
 
-	public DisplayPane(TemporalViewPane temporalViewPane){
-		HBox root = new HBox();
+	public DisplayPane(TemporalViewPane temporalViewPane, SteveMenuBar steveMenuBar, SpatialTemporalView spatialTemporalView){
 		
 		setId("display-pane");
 	
 		screen = new StackPane();
 		screen.setId("screen-pane");
+		
+		controlButtonPane = new ControlButtonPane(screen, temporalViewPane, steveMenuBar, spatialTemporalView);
 
-		Image hi = new Image("hello-world.gif");
-		
-		Rectangle rectangle = new Rectangle(200,200);
-		
-		rectangle.setFill(new ImagePattern(hi, 0, 0, 1, 1, true));
+		this.minHeightProperty().set(390);
+		this.maxHeightProperty().set(390);
+		this.minWidthProperty().set(640);
+		this.maxWidthProperty().set(640);
 
-		//rectangle.setFill(new ImagePattern(image));
-		
-		
-		
-		DragResizeMod.makeResizable(rectangle);
-		
-		screen.getChildren().add(rectangle);
-		
-		controlButtonPane = new ControlButtonPane(screen, temporalViewPane);
-		
-		root.getChildren().add(screen);
 		setCenter(screen);
+//		getCenter().maxWidth(640);
+//		getCenter().minWidth(640);
+//		getCenter().minHeight(360);
+//		getCenter().maxHeight(360);
 		setBottom(controlButtonPane);
-		
-	}
-	
 
+	}
 	
 	public StackPane getScreen(){
 		return screen;
@@ -56,5 +50,7 @@ public class DisplayPane extends BorderPane {
 	public ControlButtonPane getControlButtonPane(){
 		return controlButtonPane;
 	}
+
+
 
 }

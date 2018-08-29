@@ -78,7 +78,7 @@ public class HTMLExportEventHandler implements EventHandler<ActionEvent>{
         	if(nclCode != null){
         	
         		FileChooser fileChooser = new FileChooser();
-                fileChooser.setTitle(Language.translate("export.ncl.document"));
+                fileChooser.setTitle(Language.translate("export.html5.document"));
                 File file = fileChooser.showSaveDialog(null);
  
         		if(file != null){
