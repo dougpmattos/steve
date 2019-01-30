@@ -873,5 +873,119 @@ public class TemporalChainPane extends StackPane implements Observer{
         }
     };
 
-	
+	public void addMediasToScreen(){
+		if(temporalChainModel.getMediaAllList().size()<1){
+			screen.getChildren().clear();
+		}
+		else {
+
+			currentTime = selectedTemporalChainPane.getTimeLineChart().getXAxis().getValueForDisplay(selectedTemporalChainPane.getPlayhead().getTranslateX()).doubleValue();
+			getChildren().remove(indicativeLine);
+
+			if (currentTime > temporalChainModel.getMediaWithHighestEnd().getEnd()) {
+				for (Media media : temporalChainModel.getMediaAllList()) {
+					media.setIsPLayingInPreview(false);
+				}
+				System.out.println(" termino - remove todos d screen e aciona stop do player");
+			}
+
+			for (Media media : temporalChainModel.getMediaAllList()) {
+
+				if (media.getBegin() <= currentTime && currentTime <= media.getEnd()) {
+					System.out.println(media.getName() + " - entrou");
+
+					if (!media.getIsPLayingInPreview()) {
+						System.out.println(media.getName() + " - nao esta no pewview ");
+						Platform.runLater(new Runnable() {
+
+							@Override
+							public void run() {
+
+								media.setIsPLayingInPreview(true);
+								mediaContent = (ImageView) controlButtonPane.getMediaContent(media);
+
+								if (mediaContent instanceof MediaView) {
+
+									controlButtonPane.setVideoPresentationProperties((MediaView) mediaContent, media);
+									Double playerStartTime = currentTime - media.getBegin();
+									Duration playerStartTimeMillis = new Duration(playerStartTime * 1000);
+									((MediaView) mediaContent).getMediaPlayer().setStartTime(playerStartTimeMillis);
+									screen.getChildren().add((MediaView) mediaContent);
+
+								} else if (mediaContent instanceof ImageView) {
+
+									controlButtonPane.setImagePresentationProperties((ImageView) mediaContent, media);
+
+//										File file = new File("test3.png");
+//								        RenderedImage renderedImage = SwingFXUtils.fromFXImage(((ImageView) mediaContent).getImage(), null);
+//								        try {
+//											ImageIO.write(
+//											        renderedImage,
+//											        "png",
+//											        file);
+//										} catch (IOException e) {
+//											// TODO Auto-generated catch block
+//											e.printStackTrace();
+//										}
+									if (screen.getChildren().isEmpty()) {
+
+										screen.getChildren().add((ImageView) mediaContent);
+//											file = new File("test4.png");
+//									        renderedImage = SwingFXUtils.fromFXImage(((ImageView) mediaContent).getImage(), null);
+//									        try {
+//												ImageIO.write(
+//												        renderedImage,
+//												        "png",
+//												        file);
+//											} catch (IOException e) {
+//												// TODO Auto-generated catch block
+//												e.printStackTrace();
+//											}
+
+									} else {
+										boolean inserted = false;
+										for (Node executionObject : screen.getChildren()) {
+
+											if (((ImageView) mediaContent).getTranslateZ() < executionObject.getTranslateZ()) {
+												screen.getChildren().add(screen.getChildren().indexOf(executionObject), (ImageView) mediaContent);
+												inserted = true;
+												break;
+											}
+
+										}
+										if (!inserted) {
+											screen.getChildren().add((ImageView) mediaContent);
+										}
+									}
+
+								}
+							}
+
+						});
+
+					}
+
+				} else {
+
+					if (media.getIsPLayingInPreview()) {
+
+						Platform.runLater(new Runnable() {
+							@Override
+							public void run() {
+
+								if (!screen.getChildren().isEmpty()) {
+									screen.getChildren().remove(media.getExecutionObject());
+									media.setIsPLayingInPreview(false);
+									System.out.println(media.getName() + " - saiu");
+								}
+
+							}
+						});
+					}
+
+				}
+
+			}
+		}
+	}
 }

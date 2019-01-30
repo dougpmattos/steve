@@ -35,4 +35,12 @@ public abstract class SpatialRelation<T>  extends Observable implements Serializ
     public void setType(T type) {
         this.type = type;
     }
+
+    public SpatialRelation getSpatialRelation(){
+        return this;
+    }
+
+
+
+
 }

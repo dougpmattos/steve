@@ -175,7 +175,7 @@ public class PositionPane extends VBox {
 		}else {
 			if (value.indexOf('%')!=-1){
 				System.out.println("Settando left = "+value+"% ");
-				this.left.setText(value.substring(0, value.indexOf('%')));			
+				this.left.setText(value.substring(0, value.indexOf('%')));
 				this.leftUnit.setValue(Size.PERCENTAGE);
 			}
 			else {
@@ -199,7 +199,7 @@ public class PositionPane extends VBox {
 			this.rightUnit.setValue(Size.PX);
 		}else {
 			if(value.indexOf('%')!=-1){
-				this.right.setText(value.substring(0, value.indexOf('%')));			
+				this.right.setText(value.substring(0, value.indexOf('%')));
 				this.rightUnit.setValue(Size.PERCENTAGE);
 			}
 			else{

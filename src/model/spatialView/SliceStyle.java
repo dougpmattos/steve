@@ -13,6 +13,7 @@ import model.spatialView.enums.AspectRatio;
 
 import javax.imageio.ImageIO;
 import java.awt.geom.Point2D;
+import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.IOException;
@@ -56,7 +57,13 @@ public class SliceStyle implements setImageInterface {
     @Override
     public ImageView setImageProperties(ImageView mediaContent, Media media, boolean hLock, boolean vLock, double top, double bottom, double left, double right, StackPane screen, boolean widthLock, boolean heightLock, String w, String h) {
         Point2D spaceAvailable = spaceAvailable(mediaContent,left,right,top,bottom,w,h, screen);
+//        Media m = new Media();
+//        m.setFile(media.getFile());
+//        m.setPresentationProperty(media.getPresentationProperty());
+
+
         mediaContent = slice(mediaContent,spaceAvailable,media, screen);
+        SnapshotParameters snapParams = new SnapshotParameters();
         if ((top == 0) && (bottom == 0) && (left == 0) && (right == 0)) {
             moveMediaLeft(mediaContent, media, left, screen);
             moveMediaTop(mediaContent, media, top, screen);
@@ -67,20 +74,10 @@ public class SliceStyle implements setImageInterface {
             moveMediaRight(mediaContent, media, right, screen);
 
             ImageView newImageView = new ImageView();
-            SnapshotParameters snapParams = new SnapshotParameters();
-            snapParams.setFill(Color.TRANSPARENT); // see documentation
+
+            snapParams.setFill(Color.TRANSPARENT);
             newImageView.setImage(screen.snapshot(snapParams, null));
-//            File file = new File("imageView-after-move-to-right.png");
-//            RenderedImage renderedImage = SwingFXUtils.fromFXImage(((ImageView) newImageView).getImage(), null);
-//            try {
-//                ImageIO.write(
-//                        renderedImage,
-//                        "png",
-//                        file);
-//            } catch (IOException e) {
-//                // TODO Auto-generated catch block
-//                e.printStackTrace();
-//            }
+
         } else {
             moveMediaLeft(mediaContent, media, left, screen);
         }
@@ -98,9 +95,23 @@ public class SliceStyle implements setImageInterface {
         if ((!hLock) && (right == 0))
             moveMediaLeft(mediaContent, media, left, screen);
 
+
+        changeWidth(mediaContent, media, media.getPresentationProperty().getSizeProperty().getWidth(), screen);
+        changeHeight(mediaContent, media, media.getPresentationProperty().getSizeProperty().getHeight(), screen);
+
+
         return mediaContent;
     }
 
+    public static void saveToFile(Image image, String n) {
+        File outputFile = new File("thisTest"+n+".png");
+        BufferedImage bImage = SwingFXUtils.fromFXImage(image, null);
+        try {
+            ImageIO.write(bImage, "png", outputFile);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
 
     @Override
@@ -185,7 +196,9 @@ public class SliceStyle implements setImageInterface {
         double dXLeft = (left/100)*screen.getWidth();
 //		if(media.getPresentationProperty().getSizeProperty().getAspectRatio().compareTo(AspectRatio.FILL)==0){
         double xZero = 0; //Referencial da tela (borda esquerda)
+//        saveToFile(mediaContent, "beforeLeft");
         mediaContent.setTranslateX(xZero+dXLeft);
+//        saveToFile(mediaContent,"afterLeft");
     }
 
     @Override
@@ -228,6 +241,8 @@ public class SliceStyle implements setImageInterface {
         PixelReader reader = image.getPixelReader();
 
         WritableImage newImage = new WritableImage(reader, (int)  image.getWidth(), (int) image.getHeight());
+//        WritableImage newImage = new WritableImage(reader, (int)  space.getX(), (int) space.getY());
+
 
         SnapshotParameters parameters = new SnapshotParameters();
 
@@ -278,7 +293,7 @@ public class SliceStyle implements setImageInterface {
 
         }
 
-        media.getPresentationProperty().getSizeProperty().setRealSize(new Point2D.Double(nv.getFitWidth(),nv.getFitWidth()));
+        media.getPresentationProperty().getSizeProperty().setRealSize(new Point2D.Double(nv.getFitWidth(),nv.getFitHeight()));
 
 //		saveToFile(nv.getImage(),"-3");
 
@@ -292,6 +307,29 @@ public class SliceStyle implements setImageInterface {
 //		saveToFile(smlImg,"-5");
 
         return imageView;
+
+    }
+
+    public void changeHeight(ImageView mediaContent, Media media, String height, StackPane screen){
+        //mediaContent = new ImageView(new Image(media.getFile().toURI().toString()));
+        media.getPresentationProperty().getSizeProperty().setHeight(height);
+        //setImagePresentationProperties(mediaContent, media);
+        mediaContent.setPreserveRatio(true);
+        mediaContent.setFitHeight((Double.parseDouble(height.replace("%",""))/100)*screen.getHeight());
+        screen.getChildren().clear();
+        screen.getChildren().add( mediaContent);
+
+    }
+    public void changeWidth(ImageView mediaContent, Media media, String width, StackPane screen){
+        //mediaContent = new ImageView(new Image(media.getFile().toURI().toString()));
+        media.getPresentationProperty().getSizeProperty().setWidth(width);
+        //setImagePresentationProperties(mediaContent, media);
+        mediaContent.setPreserveRatio(true);
+//        double w = (Double.parseDouble(width.replace("%",""))/100)*screen.getWidth();
+
+        mediaContent.setFitWidth((Double.parseDouble(width.replace("%",""))/100)*screen.getWidth());
+        screen.getChildren().clear();
+        screen.getChildren().add( mediaContent);
 
     }
 

@@ -7,7 +7,8 @@ public enum AlignmentType {
     LEFT,
     RIGHT,
     CENTER,
-    EQUAL;
+    EQUAL,
+    MIDDLE;
 
     public String getDescription() {
 
@@ -19,6 +20,7 @@ public enum AlignmentType {
             case RIGHT: return "Right Alignment Relative to the Master";
             case CENTER: return "Center Alignment Relative to the Master";
             case EQUAL: return "Equal Alignment Relative to Master";
+            case MIDDLE: return "Middle Alignment Relative to Master";
 
         }
 

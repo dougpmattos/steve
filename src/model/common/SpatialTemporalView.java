@@ -77,6 +77,10 @@ public class SpatialTemporalView extends Observable implements Serializable{
 		return spatialRelationList;
 	}
 
+	public void removeSpatialRelationFromList(SpatialRelation spatialRelation) {
+		getSpatialRelationList().remove(spatialRelation);
+	}
+
 	public void setSpatialRelationList(ArrayList<SpatialRelation> spatialRelationList) {
 		this.spatialRelationList = spatialRelationList;
 	}

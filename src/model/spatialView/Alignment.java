@@ -1,7 +1,6 @@
 package model.spatialView;
 
-import javafx.scene.media.Media;
-
+import model.common.Media;
 import java.util.ArrayList;
 
 public class Alignment<T> extends SpatialRelation<T> {
@@ -11,7 +10,7 @@ public class Alignment<T> extends SpatialRelation<T> {
     private Media masterMedia;
     private ArrayList<Media> slaveMediaList;
 
-    Alignment(){
+    public Alignment(){
 
     }
 

@@ -24,9 +24,18 @@
       </plugin>
     </plugins>
   </build>
-  
+	<repositories>
+		<repository>
+			<id>jboss-repo</id>
+			<url>http://repository.jboss.org/nexus/content/groups/public/</url>
+		</repository>
+		<repository>
+			<id>java-net-repo</id>
+			<url>https://maven.java.net/content/repositories/public/</url>
+		</repository>
+	</repositories>
   <dependencies>
-  
+
 	<!-- https://mvnrepository.com/artifact/commons-io/commons-io -->
 	<dependency>
 	    <groupId>commons-io</groupId>
@@ -69,13 +78,14 @@
 	    <version>0.8.3</version>
 	</dependency>
 
-	<!-- https://mvnrepository.com/artifact/org.jgraph/jgraph -->
-	<dependency>
-	    <groupId>org.jgraph</groupId>
-	    <artifactId>jgraph</artifactId>
-	    <version>5.12.4</version>
-	</dependency>
-	
+	  <!-- https://mvnrepository.com/artifact/org.jgraph/jgraph -->
+	  <dependency>
+		  <groupId>org.jgraph</groupId>
+		  <artifactId>jgraph</artifactId>
+		  <version>5.12.4</version>
+	  </dependency>
+
+
   </dependencies>
  
 </project>
