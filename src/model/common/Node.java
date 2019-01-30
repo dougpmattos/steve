@@ -12,7 +12,7 @@ public class Node<T> implements Serializable {
 	public String name;
     private Double begin;
     private Double end;
-    public Double duration = 5.0;
+    public Double duration = 52.0;
     private Boolean interactive = false;
     private ArrayList<Property> propertyList = new ArrayList<Property>();
     public T type;

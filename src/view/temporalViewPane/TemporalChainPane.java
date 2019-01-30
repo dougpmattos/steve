@@ -693,12 +693,12 @@ public class TemporalChainPane extends StackPane implements Observer{
 			
 //	FIM DO EXEMPLO--------------------------
 				
-				Path arrow = new Path();
-				arrow.getElements().addAll(new MoveTo(0, 100), new LineTo(10, 100), new LineTo(5, 110), new ClosePath(), 
-						new MoveTo(5, 100), new LineTo(5, 30));
-				arrow.setId("relation-arrow");
-				getChildren().add(arrow);
-				createArrowListeners(arrow);
+//				Path arrow = new Path();
+//				arrow.getElements().addAll(new MoveTo(0, 100), new LineTo(10, 100), new LineTo(5, 110), new ClosePath(), 
+//						new MoveTo(5, 100), new LineTo(5, 30));
+//				arrow.setId("relation-arrow");
+//				getChildren().add(arrow);
+//				createArrowListeners(arrow);
 				
 				
 				/*for(XYChart.Data<Number, String> xyChartData : getSerie().getData()){
