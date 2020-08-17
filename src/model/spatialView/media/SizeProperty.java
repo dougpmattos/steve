@@ -1,8 +1,8 @@
-package model.spatialView;
+package model.spatialView.media;
 
 import java.io.Serializable;
 
-import model.spatialView.enums.AspectRatio;
+import model.spatialView.media.enums.AspectRatio;
 
 public class SizeProperty implements Serializable{
 

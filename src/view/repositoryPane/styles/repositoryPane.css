@@ -77,7 +77,7 @@
  *                                                                             *
  ******************************************************************************/
 #label-media-item{
-	-fx-background-color: #263238;
+	-fx-background-color: #102027;
 	-fx-alignment: center;
  	-fx-background-radius: 0;
  	-fx-pref-width: 120px;
@@ -85,7 +85,7 @@
 }
 
 #repo-media-item-container{
-	-fx-background-color: #263238;
+	-fx-background-color: #102027;
  	-fx-background-radius: 0;
  	-fx-pref-width: 120px;
 }

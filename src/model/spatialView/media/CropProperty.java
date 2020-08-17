@@ -1,4 +1,4 @@
-package model.spatialView;
+package model.spatialView.media;
 
 import java.io.Serializable;
 

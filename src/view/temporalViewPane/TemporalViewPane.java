@@ -9,13 +9,13 @@ import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import model.common.Media;
+import model.common.Node;
 import model.common.SpatialTemporalView;
 import model.repository.RepositoryMediaList;
 import model.temporalView.Interactivity;
@@ -24,6 +24,7 @@ import model.temporalView.enums.TemporalViewOperator;
 import model.utility.Operation;
 import view.common.Language;
 import view.repositoryPane.RepositoryPane;
+import view.sensoryEffectsPane.SensoryEffectsPane;
 import view.stevePane.StevePane;
 import controller.Controller;
 
@@ -39,11 +40,12 @@ public class TemporalViewPane extends BorderPane implements Observer, view.commo
 	private RepositoryPane repositoryPane;
 	private RepositoryMediaList repositoryMediaList;
 	private ArrayList<view.common.Observer> observers;
-	private Media firstSelectedMedia;
-	private ArrayList<Media> selectedMediaList = new ArrayList<Media>();
+	private Node firstSelectedNode;
+	private ArrayList<Node> selectedNodeList = new ArrayList<Node>();
 	private StevePane stevePane;
 	private StackPane tabAddButtonContainer;
 	private Button tabAddButton;
+	private SensoryEffectsPane sensoryEffectsPane;
 	
 	public TemporalViewPane(Controller controller, SpatialTemporalView temporalViewModel, RepositoryPane repositoryPane, StevePane stevePane, RepositoryMediaList repositoryMediaList){
 		
@@ -55,11 +57,12 @@ public class TemporalViewPane extends BorderPane implements Observer, view.commo
 		this.repositoryMediaList = repositoryMediaList;
 		this.stevePane = stevePane;
 		
-		
+		sensoryEffectsPane = new SensoryEffectsPane(controller, temporalChainTabPane, this, repositoryMediaList);
 		temporalViewButtonPane = new TemporalViewButtonPane(controller, temporalChainTabPane, this, repositoryMediaList);
       	
 		createTemporalChainTabPane();
 
+		setTop(sensoryEffectsPane);
 	    setCenter(tabAddButtonContainer);
 	    setBottom(temporalViewButtonPane);
 	    
@@ -218,7 +221,7 @@ public class TemporalViewPane extends BorderPane implements Observer, view.commo
 			
 		        case ADD_INTERACTIVITY_RELATION:
 		        	
-		        	Interactivity<Media, ?> interactivityRelation = (Interactivity<Media, ?>) operation.getOperating();
+		        	Interactivity<Media> interactivityRelation = (Interactivity<Media>) operation.getOperating();
 		        	
 		        	for(Tab tab : getTemporalChainTabPane().getTabs()){
 		        		TemporalChainPane temporalChainPane = (TemporalChainPane) tab.getContent();
@@ -260,18 +263,18 @@ public class TemporalViewPane extends BorderPane implements Observer, view.commo
 		
 		for(int i = 0; i < observers.size(); i++){
 			view.common.Observer observer = (view.common.Observer) observers.get(i);
-			observer.update(this, firstSelectedMedia, temporalViewOperator);
+			observer.update(this, firstSelectedNode, temporalViewOperator);
 		}
 		
 	}
 	
-	public void  addSelectedMedia(Media selectedMedia){
+	public void  addSelectedNode(Node selectedNode){
 		
-		selectedMediaList.add(selectedMedia);
+		selectedNodeList.add(selectedNode);
 		
-		if(selectedMediaList.size() == 1){
+		if(selectedNodeList.size() == 1){
 			
-			this.firstSelectedMedia = selectedMedia;
+			this.firstSelectedNode = selectedNode;
 			notifyObservers(TemporalViewOperator.SELECT_TEMPORAL_MEDIA);
 			
 		}
@@ -280,26 +283,26 @@ public class TemporalViewPane extends BorderPane implements Observer, view.commo
 
 	public void  clearSelectedMedia(){
 		
-		selectedMediaList.clear();
-		this.firstSelectedMedia = null;
+		selectedNodeList.clear();
+		this.firstSelectedNode = null;
 		notifyObservers(TemporalViewOperator.CLEAR_SELECTION_TEMPORAL_MEDIA);
 		
 	}
 
-	public ArrayList<Media> getSelectedMediaList() {
-		return selectedMediaList;
+	public ArrayList<Node> getSelectedNodeList() {
+		return selectedNodeList;
 	}
 
-	public Media getFirstSelectedMedia() {
-		return firstSelectedMedia;
+	public Node getFirstSelectedNode() {
+		return firstSelectedNode;
 	}
 
-	public ArrayList<Media> getMediaListDuringInteractivityTime() {
+	public ArrayList<Node> getNodeListDuringInteractivityTime() {
 
 		Tab selectedTab = temporalChainTabPane.getSelectionModel().getSelectedItem();
 		TemporalChainPane temporalChainPane = (TemporalChainPane) selectedTab.getContent();
 		
-		return temporalChainPane.getMediaListDuringAnother(getFirstSelectedMedia(), temporalChainPane);
+		return temporalChainPane.getNodeListDuringAnother(getFirstSelectedNode(), temporalChainPane);
 
 	}
 	

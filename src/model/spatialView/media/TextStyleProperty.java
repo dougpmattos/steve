@@ -1,11 +1,11 @@
-package model.spatialView;
+package model.spatialView.media;
 
 import java.io.Serializable;
 
 import javafx.scene.paint.Color;
-import model.spatialView.enums.FontFamily;
-import model.spatialView.enums.FontStyle;
-import model.spatialView.enums.FontWeight;
+import model.spatialView.media.enums.FontFamily;
+import model.spatialView.media.enums.FontStyle;
+import model.spatialView.media.enums.FontWeight;
 import model.utility.RGBColor;
 
 public class TextStyleProperty extends StyleProperty implements Serializable{

@@ -1,7 +1,7 @@
 package model.temporalView;
 
 
-public class Interactivity<T, K> extends Asynchronous<T> {
+public class Interactivity<K> extends Interaction {
 
 	private static final long serialVersionUID = 4039625712116589691L;
 	

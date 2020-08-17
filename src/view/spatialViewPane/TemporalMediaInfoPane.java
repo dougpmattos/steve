@@ -154,7 +154,7 @@ public class TemporalMediaInfoPane extends ScrollPane{
 	private void populateInfoPane(){
 		
 		setNameValue(media.getName());
-		setTypeValue(media.getMediaType().toString());
+		setTypeValue(media.getType().toString());
 		setStartTimeValue(Double.toString(media.getBegin()));
 		setEndTimeValue(Double.toString(media.getEnd()));
 		setDurationValue(Double.toString(media.getDuration()));

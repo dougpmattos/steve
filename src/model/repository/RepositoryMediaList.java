@@ -42,7 +42,7 @@ public class RepositoryMediaList extends Observable implements Serializable{
 		
         allTypes.add(media);
         
-        switch(media.getMediaType()){
+        switch(media.getType()){
             case IMAGE:
                 images.add(media);
                 break;
@@ -77,7 +77,7 @@ public class RepositoryMediaList extends Observable implements Serializable{
     	
     	allTypes.remove(media);
     	
-    	switch(media.getMediaType()){
+    	switch(media.getType()){
         case IMAGE:
             images.remove(media);
             break;

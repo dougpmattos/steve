@@ -13,6 +13,7 @@ public class SpatialTemporalView extends Observable implements Serializable{
 	private static final long serialVersionUID = 1818548173102220176L;
 	
 	private ArrayList<TemporalChain> temporalChainList = new ArrayList<TemporalChain>();
+	private ArrayList<GlobalVariable> globalVariableList = new ArrayList<GlobalVariable>();
 	
 	public SpatialTemporalView(){
 		
@@ -52,6 +53,11 @@ public class SpatialTemporalView extends Observable implements Serializable{
 		return temporalChainList;
 		
 	}
+	
+	public ArrayList<GlobalVariable> getGlobalVariableList() {
+		return globalVariableList;
+		
+	}
 
 	public void openExistingTemporalView(SpatialTemporalView existingTemporalView) {
 		
@@ -62,8 +68,8 @@ public class SpatialTemporalView extends Observable implements Serializable{
 			TemporalChain temporalChain = new TemporalChain(existingTemporalChain.getName());
 			temporalChain.setId(existingTemporalChain.getId());
 			addTemporalChain(temporalChain);
-			if(existingTemporalChain.getMasterMedia() != null){
-				temporalChain.setMasterMedia(existingTemporalChain.getMasterMedia());
+			if(existingTemporalChain.getMasterNode() != null){
+				temporalChain.setMasterNode(existingTemporalChain.getMasterNode());
 			}
 			
 		}

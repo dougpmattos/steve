@@ -2,7 +2,7 @@ package model.temporalView;
 
 import model.temporalView.enums.TemporalRelationType;
 
-public class Synchronous<T> extends TemporalRelation<T>{
+public class Synchronous extends TemporalRelation{
 
 	private static final long serialVersionUID = -3957097957495083244L;
 	

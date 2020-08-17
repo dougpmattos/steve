@@ -3,19 +3,20 @@ package controller;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.prefs.*;
-
-import org.json.simple.JSONObject;
+import java.util.prefs.Preferences;
 
 import javafx.stage.Stage;
 import model.common.InteractivityKeyMapping;
 import model.common.Media;
+import model.common.Node;
 import model.common.SpatialTemporalView;
 import model.repository.RepositoryMediaList;
 import model.temporalView.Interactivity;
 import model.temporalView.Synchronous;
 import model.temporalView.TemporalChain;
-import model.temporalView.enums.NumericInteractivityKey;
+
+import org.json.simple.JSONObject;
+
 import view.common.Language;
 import view.spatialViewPane.CropPane;
 import view.spatialViewPane.LevelPane;
@@ -24,7 +25,6 @@ import view.spatialViewPane.SizePane;
 import view.spatialViewPane.StylePane;
 import view.spatialViewPane.TemporalMediaInfoPane;
 import view.stevePane.StevePane;
-import view.temporalViewPane.TemporalChainPane;
 import br.uff.midiacom.ana.util.exception.XMLException;
 
 public class Controller {
@@ -148,12 +148,12 @@ public class Controller {
 		return repositoryMediaList;
 	}
 
-	public void setMasterMedia(Media masterMedia, TemporalChain temporalChainModel) {
-		temporalChainModel.setMasterMedia(masterMedia);
+	public void setMasterNode(Node masterNode, TemporalChain temporalChainModel) {
+		temporalChainModel.setMasterNode(masterNode);
 	}
 	
-	public void addMediaTemporalChain(Media droppedMedia, TemporalChain temporalChainModel) {
-		temporalChainModel.addMedia(droppedMedia);
+	public void addNodeTemporalChain(Node droppedNode, TemporalChain temporalChainModel) {
+		temporalChainModel.addNode(droppedNode);
 	}
 
 	public void populatePositionPropertyJavaBean(PositionPane positionPane, Media media) {
@@ -184,31 +184,31 @@ public class Controller {
 		media.populateTemporalInfoPropertyJavaBean(infoPane);
 	}
 	
-	public void addSynchronousRelation(TemporalChain temporalChain, Synchronous<Media> synchronousRelation){
+	public void addSynchronousRelation(TemporalChain temporalChain, Synchronous synchronousRelation){
 		temporalChain.addSynchronousRelation(synchronousRelation);
 	}
 
-	public void removeMediaTemporalChain(Media media, TemporalChain temporalChainModel, Boolean isDeleteButton) {
-		temporalChainModel.removeMedia(media, isDeleteButton);
+	public void removeMediaTemporalChain(Node node, TemporalChain temporalChainModel, Boolean isDeleteButton) {
+		temporalChainModel.removeNode(node, isDeleteButton);
 	}
 	
-	public void removeSynchronousRelation(TemporalChain temporalChain, Synchronous<Media> synchronousRelation){
+	public void removeSynchronousRelation(TemporalChain temporalChain, Synchronous synchronousRelation){
 		temporalChain.removeSynchronousRelation(synchronousRelation);
 	}
 	
-	public void removeInteractivityRelation(TemporalChain temporalChain, Interactivity<Media, ?> interactivityRelation){
+	public void removeInteractivityRelation(TemporalChain temporalChain, Interactivity<Media> interactivityRelation){
 		temporalChain.removeInteractivityRelation(interactivityRelation);
 	}
 
-	public void dragMediaTemporalChain(TemporalChain temporalChain, Media media, Double droppedTime) {
-		temporalChain.dragMedia(temporalChain, media, droppedTime);
+	public void dragMediaTemporalChain(TemporalChain temporalChain, Node node, Double droppedTime) {
+		temporalChain.dragNode(temporalChain, node, droppedTime);
 	}
 
-	public void addInteractivityRelation(TemporalChain temporalChainModel, Interactivity<Media, ?> interactivityRelation) {
+	public void addInteractivityRelation(TemporalChain temporalChainModel, Interactivity<Media> interactivityRelation) {
 		temporalChainModel.addInteractivityRelation(interactivityRelation);
 	}
 	
-	public void updateInteractivityRelation(TemporalChain temporalChainModel, Interactivity<Media, ?> interactivityRelation) {
+	public void updateInteractivityRelation(TemporalChain temporalChainModel, Interactivity<Media> interactivityRelation) {
 		temporalChainModel.updateInteractivityRelation(interactivityRelation);
 	}
 

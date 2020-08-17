@@ -12,8 +12,8 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import model.common.Media;
-import model.spatialView.CropProperty;
-import model.spatialView.enums.Size;
+import model.spatialView.media.CropProperty;
+import model.spatialView.media.enums.Size;
 import controller.Controller;
 
 public class CropPane extends VBox {

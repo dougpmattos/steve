@@ -1,10 +1,10 @@
-package model.spatialView;
+package model.spatialView.media;
 
 import java.io.Serializable;
 
 import model.temporalView.TemporalChain;
 
-public class PositionProperty implements Serializable{
+public class MediaPositionProperty implements Serializable{
 
 	private static final long serialVersionUID = 7275587760424836463L;
 	
@@ -15,7 +15,7 @@ public class PositionProperty implements Serializable{
 	private String rotation = "0";
 	private int orderZ;
 	
-	public PositionProperty(){
+	public MediaPositionProperty(){
 
 		orderZ = TemporalChain.getTemporalViewMediaNumber();
 

@@ -10,7 +10,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import model.common.Media;
-import model.spatialView.LevelProperty;
+import model.spatialView.media.LevelProperty;
 import controller.Controller;
 
 public class LevelPane extends VBox {
