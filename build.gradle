@@ -1,0 +1,35 @@
+plugins {
+    id 'application'
+    id 'org.openjfx.javafxplugin' version '0.0.8'
+}
+
+repositories {
+
+    mavenCentral()
+
+    maven {
+        url 'https://www.dcm4che.org/maven2/'
+    }
+
+}
+
+javafx {
+    version = "14"
+    modules = [ 'javafx.controls', 'javafx.fxml', 'javafx.base', 'javafx.media', 'javafx.web', 'javafx.swing' ]
+}
+
+dependencies {
+    implementation 'commons-io:commons-io:2.5'
+    implementation  group: 'xuggle', name: 'xuggle-xuggler', version: '5.4'
+    implementation 'org.slf4j:slf4j-api:1.7.25'
+    implementation 'org.slf4j:slf4j-simple:1.7.25'
+    implementation 'com.googlecode.json-simple:json-simple:1.1.1'
+    implementation 'net.sf.jgrapht:jgrapht:0.8.3'
+    implementation  group: 'jgraph', name: 'jgraph', version: '5.13.0.0'
+    implementation files('libs/aNa.jar')
+}
+
+mainClassName = 'view.stevePane.Main'
+group = 'steve'
+version = '4.0.0-SNAPSHOT'
+sourceCompatibility = '1.8'

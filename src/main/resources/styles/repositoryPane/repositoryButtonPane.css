@@ -1,0 +1,71 @@
+/*******************************************************************************
+ *                                                                             *
+ * Button Panes                                                       		   *
+ *                                                                             *
+ ******************************************************************************/
+ 
+#button-pane{
+    -fx-background-color: #102027;
+    -fx-spacing: 20;
+    -fx-background-insets: 2 0 0 0;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);
+}
+#media-button-pane{
+	-fx-spacing: 20;
+	-fx-alignment: center;
+	-fx-padding: 0px 0px 0px 5px;
+}
+#view-button-pane{
+	-fx-spacing: 20;
+	-fx-alignment: center;
+	-fx-padding: 0px 5px 0px 0px;
+}
+
+/*******************************************************************************
+ *                                                                             *
+ * Buttons                                                                     *
+ *                                                                             *
+ ******************************************************************************/
+ 
+#add-button {
+    -fx-graphic: url("../../images/repositoryPane/add.png");
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+}
+#add-button:hover{
+    -fx-background-color: #00BFA5;
+    -fx-background-radius: 0;
+}
+
+
+#delete-button {
+    -fx-graphic: url("../../images/repositoryPane/delete.png");
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+}
+#delete-button:hover {
+   -fx-background-color: #00BFA5;
+   -fx-background-radius: 0;
+}
+
+
+#clear-button {
+    -fx-graphic: url("../../images/repositoryPane/clear.png");
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+}
+#clear-button:hover {
+  -fx-background-color: #00BFA5;
+  -fx-background-radius: 0;
+}
+
+#view-type-button {
+    -fx-graphic: url("../../images/repositoryPane/list.png");
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+}
+
+#view-type-button:hover {
+  -fx-background-color: #00BFA5;
+  -fx-background-radius: 0;
+}

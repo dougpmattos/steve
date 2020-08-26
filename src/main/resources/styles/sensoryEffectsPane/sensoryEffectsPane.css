@@ -1,0 +1,228 @@
+/*******************************************************************************
+ *                                                                             *
+ * Button Panes                                                                *
+ *                                                                             *
+ ******************************************************************************/
+ 
+#sensory-effects-pane{
+	-fx-background-color: #102027;
+	-fx-padding: 20px 0px 20px 0px;
+	-fx-background-insets: 4 0 0 0;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);
+    -fx-border-color: #102027 #102027 #62727b #102027;
+    -fx-border-width: 1px;
+    -fx-border-insets: 0 20 0 20;
+}
+#other-button-pane{
+	-fx-spacing: 20;
+	-fx-alignment: center;
+	-fx-padding: 0px 5px 0px 0px;
+}
+#sensory-effects-chips-pane{
+	-fx-spacing: 20;
+	-fx-alignment: center-left;
+	-fx-padding: 0px 0px 0px 30px;
+	/*-fx-border-color: red;*/
+}
+
+/*******************************************************************************
+ *                                                                             *
+ * Sensory Effect Chip Buttons                                                 *
+ *                                                                             *
+ ******************************************************************************/
+ 
+#wind-effect-chip{
+	-fx-graphic: url("../../images/sensoryEffectsPane/wind-24.png");
+	-fx-opacity: 65%;
+    -fx-text-fill: #FFFFFF;
+    -fx-background-color: #62727b;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);
+    -fx-padding: 0px 5px 0px 5px;
+    -fx-background-radius: 8.5px;
+}
+#wind-effect-chip:hover{
+	-fx-opacity: 100%;
+    -fx-background-color: #00BFA5;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);
+}
+
+#water-sprayer-effect-chip{
+	-fx-graphic: url("../../images/sensoryEffectsPane/watersprayer-24.png");
+	-fx-opacity: 65%;
+    -fx-text-fill: #FFFFFF;
+    -fx-background-color: #62727b;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);
+    -fx-padding: 0px 5px 0px 5px;
+    -fx-background-radius: 8.5px;
+}
+#water-sprayer-effect-chip:hover{
+   	-fx-opacity: 100%;
+    -fx-background-color: #00BFA5;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);
+}
+
+#vibration-effect-chip{
+	-fx-graphic: url("../../images/sensoryEffectsPane/vibration-24.png");
+	-fx-opacity: 65%;
+    -fx-text-fill: #FFFFFF;
+    -fx-background-color: #62727b;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);
+    -fx-padding: 0px 5px 0px 5px;
+    -fx-background-radius: 8.5px;
+}
+#vibration-effect-chip:hover{
+	-fx-opacity: 100%;
+    -fx-background-color: #00BFA5;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);
+}
+
+#temperature-effect-chip{
+	-fx-graphic: url("../../images/sensoryEffectsPane/temperature-24.png");
+	-fx-opacity: 65%;
+    -fx-text-fill: #FFFFFF;
+    -fx-background-color: #62727b;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);
+    -fx-padding: 0px 5px 0px 5px;
+    -fx-background-radius: 8.5px;
+}
+#temperature-effect-chip:hover{
+    -fx-opacity: 100%;
+    -fx-background-color: #00BFA5;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);
+}
+
+#scent-effect-chip{
+	-fx-graphic: url("../../images/sensoryEffectsPane/scent-24.png");
+	-fx-opacity: 65%;
+    -fx-text-fill: #FFFFFF;
+    -fx-background-color: #62727b;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);
+    -fx-padding: 0px 5px 0px 5px;
+    -fx-background-radius: 8.5px;
+}
+#scent-effect-chip:hover{
+    -fx-opacity: 100%;
+    -fx-background-color: #00BFA5;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);
+}
+#light-effect-chip{
+	-fx-graphic: url("../../images/sensoryEffectsPane/light-24.png");
+	-fx-opacity: 65%;
+    -fx-text-fill: #FFFFFF;
+    -fx-background-color: #62727b;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);
+    -fx-padding: 0px 5px 0px 5px;
+    -fx-background-radius: 8.5px;
+}
+#light-effect-chip:hover{
+    -fx-opacity: 100%;
+    -fx-background-color: #00BFA5;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);
+}
+
+#fog-effect-chip{
+	-fx-graphic: url("../../images/sensoryEffectsPane/fog-24.png");
+	-fx-opacity: 65%;
+    -fx-text-fill: #FFFFFF;
+    -fx-background-color: #62727b;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);
+    -fx-padding: 0px 5px 0px 5px;
+    -fx-background-radius: 8.5px;
+}
+#fog-effect-chip:hover{
+    -fx-opacity: 100%;
+    -fx-background-color: #00BFA5;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);
+}
+
+#flashlight-effect-chip{
+	-fx-graphic: url("../../images/sensoryEffectsPane/flashlight-24.png");
+	-fx-opacity: 65%;
+    -fx-text-fill: #FFFFFF;
+    -fx-background-color: #62727b;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);
+    -fx-padding: 0px 5px 0px 5px;
+    -fx-background-radius: 8.5px;
+}
+#flashlight-effect-chip:hover{
+    -fx-opacity: 100%;
+    -fx-background-color: #00BFA5;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);
+}
+
+#rainstorm-effect-chip{
+	-fx-graphic: url("../../images/sensoryEffectsPane/rainstorm-24.png");
+	-fx-opacity: 65%;
+    -fx-text-fill: #FFFFFF;
+    -fx-background-color: #62727b;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);
+    -fx-padding: 0px 5px 0px 5px;
+    -fx-background-radius: 8.5px;
+}
+#rainstorm-effect-chip:hover{
+    -fx-opacity: 100%;
+    -fx-background-color: #00BFA5;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);
+}
+
+/*******************************************************************************
+ *                                                                             *
+ * Other Buttons                                                           	   *
+ *                                                                             *
+ ******************************************************************************/
+
+#interactivity-button{
+	-fx-opacity: 60%;
+	-fx-text-fill: #FFFFFF;
+ 	-fx-background-color: #62727b;
+ 	-fx-graphic: url("../images/interactivity.png");
+ 	-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);
+}
+#interactivity-button:hover {
+	-fx-background-color: #00BFA5;
+}
+
+#zoom-icon{
+	-fx-graphic: url("../images/zoom.png");
+	}
+	
+	
+/*******************************************************************************
+ *                                                                             *
+ * Specific Elements                                                           *
+ *                                                                             *
+ ******************************************************************************/
+#property-pane{
+	-fx-fit-to-height: true;
+	-fx-fit-to-width: true;
+	-fx-padding: 4;
+}
+
+#property-container{
+	-fx-spacing: 6;
+}
+
+#position-vbox{
+	-fx-background-color: #102027;
+	-fx-padding: 15 15 20 15;
+	-fx-background-insets: 2;
+	-fx-effect: dropshadow( three-pass-box , rgba(0,0,0,0.6) , 8, 0.0 , 0 , 0 );
+	-fx-alignment: top-center;
+	-fx-spacing: 15;
+}
+#position-property-grid-pane{
+	-fx-background-color: #102027;
+	-fx-padding: 0px;
+	-fx-background-insets: 0;
+	-fx-hgap: 10;
+	-fx-vgap: 10;
+}
+#effect-title{
+	-fx-fill: #B0BEC5;
+}
+
+#label-container{
+	-fx-alignment: center;
+	-fx-padding: 0;
+	/*-fx-border-color: red;*/
+}
