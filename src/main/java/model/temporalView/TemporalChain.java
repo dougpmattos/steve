@@ -16,7 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import view.common.Language;
-import view.common.MessageDialog;
+import view.common.dialogs.MessageDialog;
 import view.temporalViewPane.TemporalChainPane;
 import view.temporalViewPane.TimeLineXYChartData;
 
@@ -28,15 +28,15 @@ public class TemporalChain extends Observable implements Serializable {
 	
 	private static int temporalChainNumber = 0;
 	private static int temporalViewNodeNumber = 0;
-	
+
+	private ArrayList<Node> nodeAllList = new ArrayList<Node>();
+	private ArrayList<TemporalRelation> relationList = new ArrayList<TemporalRelation>();
+
 	private int id;
 	private String name;
 	private Node masterNode;
 	private ArrayList<Media> mediaAllList = new ArrayList<Media>();
-	private ArrayList<Node> nodeAllList = new ArrayList<Node>();	
-	private ArrayList<TemporalRelation> relationList = new ArrayList<TemporalRelation>();
 	private ArrayList<ArrayList<Node>> nodeLineList = new ArrayList<ArrayList<Node>>();
-	
 
 	public TemporalChain(String name) {
 		
@@ -121,25 +121,130 @@ public class TemporalChain extends Observable implements Serializable {
         temporalViewNodeNumber--;
         
 	}
-	
-	public void dragNode(TemporalChain temporalChain, Node node, Double droppedTime) {
+
+	/**
+	 * Update start time using dragNode method. Remove the node afterwards add it.
+	 * Also, update the model (Node and TemporalChain).
+	 */
+	public void updateNodeStartTimeView(Node node, Double newValue, boolean isLinked) {
+		dragNode(node, newValue, isLinked);
+	}
+
+	/**
+	 * Update end time using dragNode method. Remove the node afterwards add it.
+	 * Also, update the model (Node and TemporalChain).
+	 */
+	public void updateNodeEndTimeView(Node node, Double newValue, boolean isLinked) {
+
+		Double newBeginDerivedFromNewEnd = node.getBegin();
+
+		if(isLinked){
+			newBeginDerivedFromNewEnd = newValue - node.getDuration();
+		}
+
+		ArrayList<Node> rootNodeList = new ArrayList<Node>();
+
+		addElementsInRootNodeList(node, rootNodeList);
+
+		if(rootNodeList.get(0) == node){
+
+			node.setBegin(newBeginDerivedFromNewEnd);
+			if(isLinked){
+				node.setEnd(newBeginDerivedFromNewEnd + node.getDuration());
+			}else{
+				node.setEnd(newValue);
+				node.setDuration(node.getEnd() - node.getBegin());
+			}
+
+			removeNode(node, false);
+			addNode(node);
+
+			dragChildren(node);
+
+		}else {
+
+			//INFO offset(draggedTime) to be applied for all nodes (parents and children of the dragged node)
+			// linked to the dragged node by user.
+			Double draggedTime = node.getDuration() - node.getEnd();
+
+			for(Node rootNode : rootNodeList){
+
+				rootNode.setBegin(rootNode.getBegin() + draggedTime);
+				rootNode.setEnd(rootNode.getEnd() + draggedTime);
+
+				removeNode(rootNode, false);
+				addNode(rootNode);
+
+				dragChildren(rootNode);
+
+			}
+
+		}
+
+	}
+
+	public void updateNodeDurationTimeView(Node node, Double newValue) {
+
+		ArrayList<Node> rootNodeList = new ArrayList<Node>();
+
+		addElementsInRootNodeList(node, rootNodeList);
+
+		if(rootNodeList.get(0) == node){
+
+			node.setDuration(newValue);
+			node.setEnd(node.getBegin() + node.getDuration());
+
+			removeNode(node, false);
+			addNode(node);
+
+			dragChildren(node);
+
+		}else {
+
+			//INFO offset(draggedTime) to be applied for all nodes (parents and children of the dragged node)
+			// linked to the dragged node by user.
+			Double draggedTime = newValue - node.getEnd();
+
+			for(Node rootNode : rootNodeList){
+
+				node.setDuration(newValue);
+				rootNode.setEnd(rootNode.getEnd() + draggedTime);
+
+				removeNode(rootNode, false);
+				addNode(rootNode);
+
+				dragChildren(rootNode);
+
+			}
+
+		}
+
+	}
+
+	public void dragNode(Node node, Double droppedTime, boolean isLinked) {
 		
 		ArrayList<Node> rootNodeList = new ArrayList<Node>();
 		
 		addElementsInRootNodeList(node, rootNodeList);
     		
 		if(rootNodeList.get(0) == node){
-			
+
 			node.setBegin(droppedTime);
-	    	node.setEnd(droppedTime + node.getDuration());
-	    	
+			if(isLinked){
+				node.setEnd(droppedTime + node.getDuration());
+			}else{
+				node.setDuration(node.getEnd() - node.getBegin());
+			}
+
 	    	removeNode(node, false);
 	    	addNode(node);
 	    	
 	    	dragChildren(node);
 			
 		}else {
-			
+
+			//INFO offset(draggedTime) to be applied for all nodes (parents and children of the dragged node)
+			// linked to the dragged node by user.
 			Double draggedTime = droppedTime - node.getBegin();
 			
 			for(Node rootNode : rootNodeList){
@@ -160,12 +265,11 @@ public class TemporalChain extends Observable implements Serializable {
 	
 	private void addElementsInRootNodeList(Node node, ArrayList<Node> rootNodeList){
 		
-		ArrayList<TemporalRelation> listOfSalveRelations = getListOfSlaveRelations(node);
+		ArrayList<TemporalRelation> listOfRelationsWhereNodeIsSecondary = getListOfRelationsWhereNodeIsSecondary(node);
 		
-		if(!listOfSalveRelations.isEmpty()){
+		if(!listOfRelationsWhereNodeIsSecondary.isEmpty()){
 			
-			
-			for(TemporalRelation relation : listOfSalveRelations){
+			for(TemporalRelation relation : listOfRelationsWhereNodeIsSecondary){
 				
 				Synchronous synchronousRelation = (Synchronous) relation;
 				Media masterMedia = (Media) synchronousRelation.getMasterNode();
@@ -427,7 +531,7 @@ public class TemporalChain extends Observable implements Serializable {
 			Boolean slaveBlockedForChanges = false;
 			
 			ArrayList<TemporalRelation> listOfAllRelations = getListOfAllRelations(slaveNode);
-			ArrayList<TemporalRelation> listOfSlaveRelations = getListOfSlaveRelations(slaveNode);
+			ArrayList<TemporalRelation> listOfSlaveRelations = getListOfRelationsWhereNodeIsSecondary(slaveNode);
 			ArrayList<TemporalRelation> listOfMasterRelations = getListOfMasterRelations(slaveNode);
 			
 			if(!listOfAllRelations.isEmpty()){
@@ -1062,7 +1166,7 @@ public class TemporalChain extends Observable implements Serializable {
 		
 	}
 
-	private ArrayList<TemporalRelation> getListOfSlaveRelations(Node slaveNode) {
+	private ArrayList<TemporalRelation> getListOfRelationsWhereNodeIsSecondary(Node slaveNode) {
 		
 		ArrayList<TemporalRelation> listOfSlaveRelations = new ArrayList<TemporalRelation>(); 
 		
@@ -1130,35 +1234,35 @@ public class TemporalChain extends Observable implements Serializable {
 		
 			case BEGIN_END_DEFINED:
 				
-				showBlockedRelationMessageDialog = new MessageDialog(Language.translate("it.is.not.possible.to.define.alignment.for.this.slave") + ": " + slaveNode.getName(), 
+				showBlockedRelationMessageDialog = new MessageDialog(Language.translate("it.is.not.possible.to.define.alignment.for.this.secondary") + ": " + slaveNode.getName(),
 						Language.translate("begin.and.end.have.already.been.defined"), "OK", 160);
 				showBlockedRelationMessageDialog.showAndWait();
 				break;
 	
 			case BEGIN_DEFINED:
 				
-				showBlockedRelationMessageDialog = new MessageDialog(Language.translate("it.is.not.possible.to.define.alignment.for.this.slave") + ": " + slaveNode.getName(), 
+				showBlockedRelationMessageDialog = new MessageDialog(Language.translate("it.is.not.possible.to.define.alignment.for.this.secondary") + ": " + slaveNode.getName(),
 						Language.translate("begin.has.already.been.defined"), "OK", 160);
 				showBlockedRelationMessageDialog.showAndWait();
 				break;
 				
 			case END_DEFINED:
 				
-				showBlockedRelationMessageDialog = new MessageDialog(Language.translate("it.is.not.possible.to.define.alignment.for.this.slave") + ": " + slaveNode.getName(), 
+				showBlockedRelationMessageDialog = new MessageDialog(Language.translate("it.is.not.possible.to.define.alignment.for.this.secondary") + ": " + slaveNode.getName(),
 						Language.translate("end.has.already.been.defined"), "OK", 160);
 				showBlockedRelationMessageDialog.showAndWait();
 				break;
 				
 			case NEW_BEGIN_GREATER_THAN_EXISTING_END:
 				
-				showBlockedRelationMessageDialog = new MessageDialog(Language.translate("it.is.not.possible.to.define.alignment.for.this.slave") + ": " + slaveNode.getName(), 
+				showBlockedRelationMessageDialog = new MessageDialog(Language.translate("it.is.not.possible.to.define.alignment.for.this.secondary") + ": " + slaveNode.getName(),
 						Language.translate("new.begin.is.greater.than.the.end.defined.by.another.alignment"), "OK", 180);
 				showBlockedRelationMessageDialog.showAndWait();
 				break;
 				
 			case NEW_END_LESS_THAN_EXISTING_BEGIN:
 				
-				showBlockedRelationMessageDialog = new MessageDialog(Language.translate("it.is.not.possible.to.define.alignment.for.this.slave") + ": " + slaveNode.getName(), 
+				showBlockedRelationMessageDialog = new MessageDialog(Language.translate("it.is.not.possible.to.define.alignment.for.this.secondary") + ": " + slaveNode.getName(),
 						Language.translate("new.end.is.less.than.the.begin.defined.by.another.alignment"), "OK", 180);
 				showBlockedRelationMessageDialog.showAndWait();
 				break;
@@ -1252,5 +1356,6 @@ public class TemporalChain extends Observable implements Serializable {
         notifyObservers(operation);
 		
 	}
-	
+
+
 }

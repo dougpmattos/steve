@@ -1,21 +1,14 @@
 package view.stevePane;
-	
+
+import controller.ApplicationController;
 import javafx.animation.FadeTransition;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-import model.NCLSupport.NCLExportEventHandler;
-import model.common.InteractivityKeyMapping;
-import model.common.SpatialTemporalView;
-import model.repository.RepositoryMediaList;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import controller.Controller;
-
 
 public class Main extends Application{
 
@@ -27,10 +20,7 @@ public class Main extends Application{
 
 	@Override
 	public void start(Stage stage) throws Exception {
-		
-		RepositoryMediaList repositoryMediaList = new RepositoryMediaList();
-		SpatialTemporalView temporalView = new SpatialTemporalView();
-		
+
 		LoadingWindow loadingWindow = new LoadingWindow();
 		loadingWindow.show();
 		
@@ -55,7 +45,8 @@ public class Main extends Application{
 						
 						loadingWindow.close();
 						try {
-							new Controller(repositoryMediaList, temporalView, stage);
+							ApplicationController.getInstance().createView(stage);
+							ApplicationController.getInstance().createMainTemporalView();
 						} catch (Exception ex) {
 							logger.error(ex.getMessage());
 						}

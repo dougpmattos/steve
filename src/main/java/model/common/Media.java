@@ -15,7 +15,7 @@ import model.common.enums.MimeType;
 import model.spatialView.media.MediaPresentationProperty;
 import model.temporalView.TimeSegment;
 import model.utility.MediaUtil;
-import view.common.MessageDialog;
+import view.common.dialogs.MessageDialog;
 import view.spatialViewPane.TemporalMediaInfoPane;
 
 /**

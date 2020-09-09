@@ -14,11 +14,11 @@ import model.common.Media;
 import model.spatialView.media.MediaPositionProperty;
 import model.spatialView.media.enums.Size;
 import view.common.Language;
-import controller.Controller;
+import controller.ApplicationController;
 
 public class PositionPane extends VBox {
 
-	private Controller controller;
+	private ApplicationController applicationController;
 	private Media media;
 	
 	private TextField left;
@@ -36,11 +36,11 @@ public class PositionPane extends VBox {
 	private BorderPane titleButtonBorderPane;
 	private GridPane positionPropertyGridPane;
 	
-	public PositionPane(Controller controller, Media media){
+	public PositionPane(ApplicationController applicationController, Media media){
 		
 		setId("position-vbox");
 		
-		this.controller = controller;
+		this.applicationController = applicationController;
 		this.media = media;
 		
 		Text title = new Text(Language.translate("position"));
@@ -200,7 +200,7 @@ public class PositionPane extends VBox {
 	
 	public void populatePositionPropertyJavaBean(){
 		
-		controller.populatePositionPropertyJavaBean(this, media);
+		applicationController.populatePositionPropertyJavaBean(this, media);
 		
 	}
 	

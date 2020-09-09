@@ -90,15 +90,15 @@
     -fx-padding: 0;
 }
 #play-button:hover {
-    -fx-background-color: #00BFA5;
+    -fx-graphic: url("../../images/spatialViewPane/play-hover.png");
     -fx-background-radius: 0;
 }
 #run-button:hover {
-    -fx-background-color: #00BFA5;
+    -fx-graphic: url("../../images/spatialViewPane/run-hover.png");
     -fx-background-radius: 0;
 }
 #pause-button:hover {
-    -fx-background-color: #00BFA5;
+    -fx-graphic: url("../../images/spatialViewPane/pause-hover.png");
     -fx-background-radius: 0;
 }
 
@@ -108,7 +108,7 @@
     -fx-padding: 0;
 }
 #stop-button:hover {
-	-fx-background-color: #00BFA5;
+	-fx-graphic: url("../../images/spatialViewPane/stop-hover.png");
     -fx-background-radius: 0;
 }
 
@@ -324,7 +324,11 @@
     -fx-padding: 0 0 9 0;
 }
 
-
+#link-button {
+    -fx-graphic: url("../../images/spatialViewPane/link-off-24dp.png");
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+}
 
 /*******************************************************************************
  *                                                                             *
@@ -618,7 +622,7 @@
 	-fx-spacing: 300;
 }
 #spatial-view-label{
-	-fx-min-width: 50;
+	-fx-min-width: 80;
 }
 #right-spatial-view-label{
 	-fx-min-width: 40;

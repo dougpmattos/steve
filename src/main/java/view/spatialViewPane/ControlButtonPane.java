@@ -20,10 +20,10 @@ import javafx.scene.media.MediaView;
 import javafx.scene.web.WebView;
 import javafx.util.Duration;
 import model.common.Media;
-import model.common.SpatialTemporalView;
+import model.common.SpatialTemporalApplication;
 import model.spatialView.media.enums.AspectRatio;
 import model.temporalView.TemporalChain;
-import view.common.CommonMethods;
+import model.common.CommonMethods;
 import view.common.Language;
 import view.stevePane.SteveMenuBar;
 import view.temporalViewPane.TemporalChainPane;
@@ -46,7 +46,7 @@ public class ControlButtonPane extends BorderPane{
 	private TemporalChain temporalChainModel;
 	private TemporalChainPane selectedTemporalChainPane;
 	private TemporalViewPane temporalViewPane;
-	private SpatialTemporalView spatialTemporalView;
+	private SpatialTemporalApplication spatialTemporalApplication;
 	private SteveMenuBar steveMenuBar;
 	private WebView webView;
 	
@@ -58,13 +58,13 @@ public class ControlButtonPane extends BorderPane{
 	private Boolean hasStopped = false;
 	private Boolean hasPaused = false;
 	
-	public ControlButtonPane(StackPane screen, TemporalViewPane temporalViewPane,SteveMenuBar steveMenuBar, SpatialTemporalView spatialTemporalView){
+	public ControlButtonPane(StackPane screen, TemporalViewPane temporalViewPane,SteveMenuBar steveMenuBar, SpatialTemporalApplication spatialTemporalApplication){
 		
 		setId("control-button-pane");
 		this.steveMenuBar = steveMenuBar;
 		this.screen = screen;
 		this.temporalViewPane = temporalViewPane;
-		this.spatialTemporalView = spatialTemporalView;
+		this.spatialTemporalApplication = spatialTemporalApplication;
 		this.webView = new WebView();
 		
 	    createButtons();
@@ -157,7 +157,7 @@ public class ControlButtonPane extends BorderPane{
 
 		run.setOnAction(new EventHandler<ActionEvent>() {
 			@Override public void handle(ActionEvent t) {
-				CommonMethods.runApplication(spatialTemporalView);
+				CommonMethods.runApplication(spatialTemporalApplication);
 		    }
 		});
 		

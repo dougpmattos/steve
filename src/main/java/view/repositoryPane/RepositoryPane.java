@@ -13,7 +13,7 @@ import model.repository.enums.RepositoryOperator;
 import model.utility.Operation;
 import view.common.Language;
 import view.temporalViewPane.TemporalViewPane;
-import controller.Controller;
+import controller.ApplicationController;
 
 @SuppressWarnings("unchecked")
 public class RepositoryPane extends BorderPane implements Observer {
@@ -26,7 +26,7 @@ public class RepositoryPane extends BorderPane implements Observer {
     private HBox labelContainer;
     private RepositoryMediaList repositoryMediaList;
 		
-	public RepositoryPane(Controller controller, RepositoryMediaList repositoryMediaList){
+	public RepositoryPane(ApplicationController applicationController, RepositoryMediaList repositoryMediaList){
 
 		getStylesheets().add("styles/repositoryPane/repositoryPane.css");
 		
@@ -40,7 +40,7 @@ public class RepositoryPane extends BorderPane implements Observer {
 	    scrollPaneTree.setFitToHeight(true);
 	    scrollPaneTree.setFitToWidth(true);
 	    
-	    buttonPane = new RepositoryButtonPane(controller, scrollPaneTree, mediaTreePane, repositoryMediaItemContainerListPane, this);
+	    buttonPane = new RepositoryButtonPane(applicationController, scrollPaneTree, mediaTreePane, repositoryMediaItemContainerListPane, this);
 	            
 	    labelContainer = new HBox();
 		labelContainer.setId("media-repo-label-container");

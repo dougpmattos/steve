@@ -9,7 +9,7 @@ import javafx.stage.Stage;
 import model.common.InteractivityKeyMapping;
 import model.common.Media;
 import model.common.Node;
-import model.common.SpatialTemporalView;
+import model.common.SpatialTemporalApplication;
 import model.repository.RepositoryMediaList;
 import model.temporalView.Interactivity;
 import model.temporalView.Synchronous;
@@ -27,21 +27,29 @@ import view.spatialViewPane.TemporalMediaInfoPane;
 import view.stevePane.StevePane;
 import br.uff.midiacom.ana.util.exception.XMLException;
 
-public class Controller {
+public class ApplicationController {
 	
 	private RepositoryMediaList repositoryMediaList;
-	private SpatialTemporalView temporalView;
+	private SpatialTemporalApplication spatialTemporalApplication;
 	private InteractivityKeyMapping interactivityKeyMapping; 
 	private Preferences preferences;
 	private JSONObject interactiveKeyMappingJSON;
-	
-	
 	private StevePane stevePane;
-	
-	public Controller(RepositoryMediaList repositoryMediaList, SpatialTemporalView temporalView, Stage stage) throws XMLException, IOException{
+	private static ApplicationController instance;
+
+	public static ApplicationController getInstance() throws IOException, XMLException {
+
+		if (ApplicationController.instance == null){
+			ApplicationController.instance = new ApplicationController();
+		}
+
+		return instance;
+
+	}
+
+	private ApplicationController() throws XMLException, IOException{
+
 		this.preferences = Preferences.userRoot();
-		
-		
 		this.interactivityKeyMapping = new InteractivityKeyMapping();
 		this.interactivityKeyMapping.setInteractivityKeyMapping(
 				this.preferences.get("red", "0"),
@@ -49,20 +57,29 @@ public class Controller {
 				this.preferences.get("blue", "2"),
 				this.preferences.get("yellow", "3"));
 		this.setJson();
-		
-		this.repositoryMediaList = repositoryMediaList;
-		this.temporalView = temporalView;
-		
 
-		stevePane = new StevePane(this, repositoryMediaList, temporalView);
+		this.repositoryMediaList = new RepositoryMediaList();
+		this.spatialTemporalApplication = new SpatialTemporalApplication();
+
+	}
+
+	public void createView(Stage stage) throws IOException, XMLException {
+		stevePane = new StevePane(this, repositoryMediaList, spatialTemporalApplication);
 		stevePane.createView(stage);
+	}
 
+	public void createMainTemporalView(){
 		TemporalChain temporalChain = new TemporalChain(Language.translate("main.temporal.chain"));
 		addTemporalChain(temporalChain);
-		
-		
 	}
-	
+
+	public void createNewProject(Stage stage) throws IOException, XMLException {
+		this.repositoryMediaList = new RepositoryMediaList();
+		this.spatialTemporalApplication = new SpatialTemporalApplication();
+		createView(stage);
+		createMainTemporalView();
+	}
+
 	@SuppressWarnings("unchecked")
 	private void setJson(){
 		JSONObject jObj= new JSONObject();
@@ -105,9 +122,7 @@ public class Controller {
 		this.setJson();
 		
 	}
-	
-	
-	
+
 	public InteractivityKeyMapping getInteractivityKeyMapping(){
 		return this.interactivityKeyMapping;
 	}
@@ -117,19 +132,19 @@ public class Controller {
 	}
 	
 	public void addTemporalChain(TemporalChain temporalChain){
-		temporalView.addTemporalChain(temporalChain);
+		spatialTemporalApplication.addTemporalChain(temporalChain);
 	}
 	
 	public void removeTemporalChain(TemporalChain temporalChain) {
-		temporalView.removeTemporalChain(temporalChain);
+		spatialTemporalApplication.removeTemporalChain(temporalChain);
 	}
 	
 	public void openExistingRepositoryMediaList(RepositoryMediaList existingRepositoryMediaList) {
 		repositoryMediaList.openExistingRepositoryMediaList(existingRepositoryMediaList);
 	}
 	
-	public void openExistingTemporalView(SpatialTemporalView existingTemporalView) {
-		temporalView.openExistingTemporalView(existingTemporalView);
+	public void openExistingTemporalView(SpatialTemporalApplication existingTemporalView) {
+		spatialTemporalApplication.openExistingTemporalView(existingTemporalView);
 	}
 	
 	public Boolean addRepositoryMedia(Media media){
@@ -200,8 +215,11 @@ public class Controller {
 		temporalChain.removeInteractivityRelation(interactivityRelation);
 	}
 
+	/**
+	 * Update the view and model using TemporalChain's dragNode method.
+	 */
 	public void dragMediaTemporalChain(TemporalChain temporalChain, Node node, Double droppedTime) {
-		temporalChain.dragNode(temporalChain, node, droppedTime);
+		temporalChain.dragNode(node, droppedTime, true);
 	}
 
 	public void addInteractivityRelation(TemporalChain temporalChainModel, Interactivity<Media> interactivityRelation) {
@@ -210,6 +228,27 @@ public class Controller {
 	
 	public void updateInteractivityRelation(TemporalChain temporalChainModel, Interactivity<Media> interactivityRelation) {
 		temporalChainModel.updateInteractivityRelation(interactivityRelation);
+	}
+
+	/**
+	 * Update the view and model using TemporalChain's methods.
+	 */
+	public void updateNodeStartTime(Node node, Double newValue, boolean isLinked) {
+		node.getParentTemporalChain().updateNodeStartTimeView(node, newValue, isLinked);
+	}
+
+	/**
+	 * Update the view and model using TemporalChain's methods.
+	 */
+	public void updateNodeEndTime(Node node, Double newValue, boolean isLinked) {
+		node.getParentTemporalChain().updateNodeEndTimeView(node, newValue, isLinked);
+	}
+
+	/**
+	 * Update the view and model using TemporalChain's methods.
+	 */
+	public void updateNodeDurationTime(Node node, Double newValue) {
+		node.getParentTemporalChain().updateNodeDurationTimeView(node, newValue);
 	}
 
 }

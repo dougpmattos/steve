@@ -1,4 +1,4 @@
-package view.common;
+package view.common.customComponents;
 
 import java.text.DecimalFormat;
 

@@ -10,13 +10,14 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.FileChooser;
 import model.common.Media;
 import view.common.Language;
-import view.common.MessageDialog;
-import controller.Controller;
+import view.common.dialogs.MessageDialog;
+import controller.ApplicationController;
 
 /**
  *
@@ -24,7 +25,7 @@ import controller.Controller;
  */
 public class RepositoryButtonPane extends BorderPane{
 	
-	private Controller controller;
+	private ApplicationController applicationController;
 	
     private Button addButton;
     private Button deleteButton;
@@ -35,7 +36,7 @@ public class RepositoryButtonPane extends BorderPane{
     private FileChooser fileChooser;
     private List <File> fileList;
     
-    public RepositoryButtonPane(Controller controller, ScrollPane scrollPaneTree, MediaTreePane mediaTreePane, RepositoryMediaItemContainerListPane mediaListPane, RepositoryPane repositoryPane){
+    public RepositoryButtonPane(ApplicationController applicationController, ScrollPane scrollPaneTree, MediaTreePane mediaTreePane, RepositoryMediaItemContainerListPane mediaListPane, RepositoryPane repositoryPane){
         
         setId("button-pane");
         getStylesheets().add("styles/repositoryPane/repositoryButtonPane.css");
@@ -47,7 +48,7 @@ public class RepositoryButtonPane extends BorderPane{
 
         createButtonActions(scrollPaneTree, mediaTreePane, mediaListPane, repositoryPane);
         
-        this.controller = controller;
+        this.applicationController = applicationController;
         
     }
 
@@ -102,7 +103,7 @@ public class RepositoryButtonPane extends BorderPane{
                             
                 		} else {
                 			
-                			if(!controller.addRepositoryMedia(media)){
+                			if(!applicationController.addRepositoryMedia(media)){
                     			MessageDialog messageDialog = new MessageDialog(Language.translate("media.has.already.imported") + ": " + media.getName(), 
                     												Language.translate("select.other.media"), "OK", 150);
                     	    	messageDialog.showAndWait();
@@ -118,9 +119,9 @@ public class RepositoryButtonPane extends BorderPane{
         deleteButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override public void handle(ActionEvent e) {
             	if(mediaListPane.getSelectedMedia() != null){
-            		controller.deleteRepositoryMedia(mediaListPane.getSelectedMedia());
+            		applicationController.deleteRepositoryMedia(mediaListPane.getSelectedMedia());
             	} else if(mediaTreePane.getSelectedMedia() != null){
-            		controller.deleteRepositoryMedia(mediaTreePane.getSelectedMedia());
+            		applicationController.deleteRepositoryMedia(mediaTreePane.getSelectedMedia());
             	} else{
             		MessageDialog messageDialog = new MessageDialog(Language.translate("no.media.selected"), 
 														Language.translate("select.a.media"), "OK", 150);
@@ -134,7 +135,7 @@ public class RepositoryButtonPane extends BorderPane{
         
         clearButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override public void handle(ActionEvent e) {
-            	controller.clearRepositoryMediaList();
+            	applicationController.clearRepositoryMediaList();
             }
         });
         
@@ -143,7 +144,7 @@ public class RepositoryButtonPane extends BorderPane{
             
             	String currentViewType = (String) viewTypeButton.getProperties().get("viewType");
             	
-            	if(currentViewType.equalsIgnoreCase("grid")){ //botao é list
+            	if(currentViewType.equalsIgnoreCase("grid")){
             		repositoryPane.setCenter(scrollPaneTree);
             		viewTypeButton.getProperties().put("viewType", "list");
             		viewTypeButton.setGraphic(new ImageView(new Image(getClass().getResourceAsStream("/images/repositoryPane/grid.png"))));
@@ -154,6 +155,36 @@ public class RepositoryButtonPane extends BorderPane{
             		viewTypeButton.setGraphic(new ImageView(new Image(getClass().getResourceAsStream("/images/repositoryPane/list.png"))));
             		viewTypeButton.setTooltip(new Tooltip(Language.translate("list.view")));
             	}
+            }
+        });
+
+        viewTypeButton.setOnMouseEntered(new EventHandler<MouseEvent>() {
+
+            @Override public void handle(MouseEvent mouseEvent) {
+
+                String currentViewType = (String) viewTypeButton.getProperties().get("viewType");
+
+                if(currentViewType.equalsIgnoreCase("grid")){
+                    viewTypeButton.setGraphic(new ImageView(new Image(getClass().getResourceAsStream("/images/repositoryPane/list-hover.png"))));
+                }else{
+                    viewTypeButton.setGraphic(new ImageView(new Image(getClass().getResourceAsStream("/images/repositoryPane/grid-hover.png"))));
+                }
+
+            }
+        });
+
+        viewTypeButton.setOnMouseExited(new EventHandler<MouseEvent>() {
+
+            @Override public void handle(MouseEvent mouseEvent) {
+
+                String currentViewType = (String) viewTypeButton.getProperties().get("viewType");
+
+                if(currentViewType.equalsIgnoreCase("grid")){
+                    viewTypeButton.setGraphic(new ImageView(new Image(getClass().getResourceAsStream("/images/repositoryPane/list.png"))));
+                }else{
+                    viewTypeButton.setGraphic(new ImageView(new Image(getClass().getResourceAsStream("/images/repositoryPane/grid.png"))));
+                }
+
             }
         });
         

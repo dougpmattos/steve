@@ -8,14 +8,13 @@ import model.temporalView.TemporalChain;
 import model.temporalView.enums.TemporalViewOperator;
 import model.utility.Operation;
 
-public class SpatialTemporalView extends Observable implements Serializable{
+public class SpatialTemporalApplication extends Observable implements Serializable{
 
 	private static final long serialVersionUID = 1818548173102220176L;
 	
 	private ArrayList<TemporalChain> temporalChainList = new ArrayList<TemporalChain>();
-	private ArrayList<GlobalVariable> globalVariableList = new ArrayList<GlobalVariable>();
 	
-	public SpatialTemporalView(){
+	public SpatialTemporalApplication(){
 		
 	}
 
@@ -53,13 +52,8 @@ public class SpatialTemporalView extends Observable implements Serializable{
 		return temporalChainList;
 		
 	}
-	
-	public ArrayList<GlobalVariable> getGlobalVariableList() {
-		return globalVariableList;
-		
-	}
 
-	public void openExistingTemporalView(SpatialTemporalView existingTemporalView) {
+	public void openExistingTemporalView(SpatialTemporalApplication existingTemporalView) {
 		
 		clearTemporalChainList();
 		

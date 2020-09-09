@@ -16,7 +16,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import model.common.Media;
 import model.common.Node;
-import model.common.SpatialTemporalView;
+import model.common.SpatialTemporalApplication;
 import model.repository.RepositoryMediaList;
 import model.temporalView.Interactivity;
 import model.temporalView.TemporalChain;
@@ -26,14 +26,14 @@ import view.common.Language;
 import view.repositoryPane.RepositoryPane;
 import view.sensoryEffectsPane.SensoryEffectsPane;
 import view.stevePane.StevePane;
-import controller.Controller;
+import controller.ApplicationController;
 
 @SuppressWarnings("unchecked")
 public class TemporalViewPane extends BorderPane implements Observer, view.common.Observable{
 
-	private Controller controller;
+	private ApplicationController applicationController;
 	
-	private SpatialTemporalView temporalViewModel;
+	private SpatialTemporalApplication spatialTemporalApplication;
 	
 	private TabPane temporalChainTabPane;
 	private TemporalViewButtonPane temporalViewButtonPane;
@@ -47,18 +47,18 @@ public class TemporalViewPane extends BorderPane implements Observer, view.commo
 	private Button tabAddButton;
 	private SensoryEffectsPane sensoryEffectsPane;
 	
-	public TemporalViewPane(Controller controller, SpatialTemporalView temporalViewModel, RepositoryPane repositoryPane, StevePane stevePane, RepositoryMediaList repositoryMediaList){
+	public TemporalViewPane(ApplicationController applicationController, SpatialTemporalApplication spatialTemporalApplication, RepositoryPane repositoryPane, StevePane stevePane, RepositoryMediaList repositoryMediaList){
 		
 		setId("temporal-view-pane");
 		getStylesheets().add("styles/temporalViewPane/temporalViewPane.css");
 
-		this.temporalViewModel = temporalViewModel;
+		this.spatialTemporalApplication = spatialTemporalApplication;
 		this.repositoryPane = repositoryPane;
 		this.repositoryMediaList = repositoryMediaList;
 		this.stevePane = stevePane;
 		
-		sensoryEffectsPane = new SensoryEffectsPane(controller, temporalChainTabPane, this, repositoryMediaList);
-		temporalViewButtonPane = new TemporalViewButtonPane(controller, temporalChainTabPane, this, repositoryMediaList);
+		sensoryEffectsPane = new SensoryEffectsPane(applicationController, temporalChainTabPane, this, repositoryMediaList);
+		temporalViewButtonPane = new TemporalViewButtonPane(applicationController, temporalChainTabPane, this, repositoryMediaList);
       	
 		createTemporalChainTabPane();
 
@@ -68,9 +68,9 @@ public class TemporalViewPane extends BorderPane implements Observer, view.commo
 	    
 	    observers = new ArrayList<view.common.Observer>();
 	    
-	    temporalViewModel.addObserver(this);
+	    spatialTemporalApplication.addObserver(this);
 	    
-	    this.controller = controller;
+	    this.applicationController = applicationController;
 	    
 	}
 
@@ -91,7 +91,7 @@ public class TemporalViewPane extends BorderPane implements Observer, view.commo
 			@Override
 			public void handle(ActionEvent event) {
 				
-				controller.addTemporalChain(new TemporalChain(Language.translate("temporal.chain") + " " + (temporalChainTabPane.getTabs().size() + 1)));
+				applicationController.addTemporalChain(new TemporalChain(Language.translate("temporal.chain") + " " + (temporalChainTabPane.getTabs().size() + 1)));
 				
 			}
 			
@@ -103,7 +103,7 @@ public class TemporalViewPane extends BorderPane implements Observer, view.commo
 
 	public void addTemporalChainPane(TemporalChain temporalChainModel) {
 		
-		TemporalChainPane temporalChainPane = new TemporalChainPane(controller, temporalViewModel, temporalChainModel, this, repositoryPane, stevePane);
+		TemporalChainPane temporalChainPane = new TemporalChainPane(applicationController, spatialTemporalApplication, temporalChainModel, this, repositoryPane, stevePane);
 		temporalChainModel.addObserver(this);
 
 		Tab newTemporalChainTab = new Tab();
@@ -136,7 +136,7 @@ public class TemporalViewPane extends BorderPane implements Observer, view.commo
 				}
 				
 				TemporalChainPane temporalChainPaneToBeRemoved = (TemporalChainPane) newTemporalChainTab.getContent();
-				controller.removeTemporalChain(temporalChainPaneToBeRemoved.getTemporalChainModel());
+				applicationController.removeTemporalChain(temporalChainPaneToBeRemoved.getTemporalChainModel());
 			
 			}
 			
@@ -188,7 +188,7 @@ public class TemporalViewPane extends BorderPane implements Observer, view.commo
 	@Override
 	public void update(Observable observable, Object arg) {
 		
-		if(observable instanceof SpatialTemporalView){
+		if(observable instanceof SpatialTemporalApplication){
 			
 			Operation<TemporalViewOperator> operation = (Operation<TemporalViewOperator>) arg;
 
@@ -306,8 +306,8 @@ public class TemporalViewPane extends BorderPane implements Observer, view.commo
 
 	}
 	
-	public SpatialTemporalView getTemporalViewModel() {
-		return temporalViewModel;
+	public SpatialTemporalApplication getSpatialTemporalApplication() {
+		return spatialTemporalApplication;
 	}
 
 }

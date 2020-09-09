@@ -39,7 +39,7 @@ import javafx.scene.shape.PathElement;
 import javafx.scene.shape.VLineTo;
 import model.common.Media;
 import model.common.SensoryEffect;
-import model.common.SpatialTemporalView;
+import model.common.SpatialTemporalApplication;
 import model.common.enums.SensoryEffectType;
 import model.temporalView.Interactivity;
 import model.temporalView.Synchronous;
@@ -53,7 +53,7 @@ import view.repositoryPane.RepositoryPane;
 import view.spatialViewPane.ControlButtonPane;
 import view.spatialViewPane.DisplayPane;
 import view.stevePane.StevePane;
-import controller.Controller;
+import controller.ApplicationController;
 
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public class TemporalChainPane extends StackPane implements Observer{
@@ -65,11 +65,11 @@ public class TemporalChainPane extends StackPane implements Observer{
 
 	private static final double BORDER_DIFF = 0.26;
 
-	private Controller controller;
+	private ApplicationController applicationController;
 	
 	private TimeLineChart<Number, String> timeLineChart;
 	private XYChart.Series<Number, String> serie;
-	private SpatialTemporalView temporalViewModel;
+	private SpatialTemporalApplication temporalViewModel;
 	private TemporalChain temporalChainModel;
 	private TemporalViewPane temporalViewPane;
 	private RepositoryPane repositoryPane;
@@ -88,7 +88,7 @@ public class TemporalChainPane extends StackPane implements Observer{
 	NumberAxis xAxis;
 	CategoryAxis yAxis;
 	
-	public TemporalChainPane(Controller controller, SpatialTemporalView temporalViewModel, TemporalChain temporalChainModel, TemporalViewPane temporalViewPane, RepositoryPane repositoryPane, StevePane stevePane){
+	public TemporalChainPane(ApplicationController applicationController, SpatialTemporalApplication temporalViewModel, TemporalChain temporalChainModel, TemporalViewPane temporalViewPane, RepositoryPane repositoryPane, StevePane stevePane){
     	
 		xAxis = new NumberAxis();
     	xAxis.setAutoRanging(false);
@@ -139,14 +139,14 @@ public class TemporalChainPane extends StackPane implements Observer{
     	createDragAndDropEvent();
     	createMouseEvent();
     	createListeners();
-    	createArrowPopupMenu(controller, temporalChainModel);
+    	createArrowPopupMenu(applicationController, temporalChainModel);
     	
     	temporalChainModel.addObserver(this);
     	for(TemporalRelation relation: temporalChainModel.getRelationList()){
     		relation.addObserver(this);
     	}
     	
-    	this.controller = controller;
+    	this.applicationController = applicationController;
     	
      }
 
@@ -234,11 +234,13 @@ public class TemporalChainPane extends StackPane implements Observer{
 				Dragboard dragBoard = event.getDragboard();
 		        Object[] contentTypes = dragBoard.getContentTypes().toArray();
 		        Object droppedNode = dragBoard.getContent((DataFormat) contentTypes[0]);
-		        
+
 		        if(droppedNode instanceof SensoryEffectType) {
 		        	
 		        	SensoryEffectType sensoryEffectType = (SensoryEffectType) dragBoard.getContent((DataFormat) contentTypes[0]);
 		        	SensoryEffect droppedSensoryEffect = new SensoryEffect();
+					droppedSensoryEffect.setParentTemporalChain(temporalChainModel);
+
 		        	int duplicatedEffectCount;
 		        	
 		        	switch(sensoryEffectType){
@@ -307,18 +309,31 @@ public class TemporalChainPane extends StackPane implements Observer{
 					        
 			                break;
 			                
-			            case TEMPERATURE:
+			            case COLD:
 			            	
-			            	droppedSensoryEffect.setType(SensoryEffectType.TEMPERATURE);
+			            	droppedSensoryEffect.setType(SensoryEffectType.COLD);
 			            	
 				        	duplicatedEffectCount = getDuplicatedNodeCount(droppedSensoryEffect);
 					        if(duplicatedEffectCount > 0){
-					        	droppedSensoryEffect.setName(SensoryEffectType.TEMPERATURE.toString() + "_" + duplicatedEffectCount++);
+					        	droppedSensoryEffect.setName(SensoryEffectType.COLD.toString() + "_" + duplicatedEffectCount++);
 					        }else{
-					        	droppedSensoryEffect.setName(SensoryEffectType.TEMPERATURE.toString());
+					        	droppedSensoryEffect.setName(SensoryEffectType.COLD.toString());
 					        }
 					        
 			                break;
+
+						case HOT:
+
+							droppedSensoryEffect.setType(SensoryEffectType.HOT);
+
+							duplicatedEffectCount = getDuplicatedNodeCount(droppedSensoryEffect);
+							if(duplicatedEffectCount > 0){
+								droppedSensoryEffect.setName(SensoryEffectType.HOT.toString() + "_" + duplicatedEffectCount++);
+							}else{
+								droppedSensoryEffect.setName(SensoryEffectType.HOT.toString());
+							}
+
+							break;
 			                
 			            case VIBRATION:
 			            	
@@ -370,7 +385,7 @@ public class TemporalChainPane extends StackPane implements Observer{
 			        		droppedSensoryEffect.setBegin(droppedTime);
 			        		droppedSensoryEffect.setEnd(droppedSensoryEffect.getDuration());
 				        	
-				        	controller.setMasterNode(droppedSensoryEffect, temporalChainModel);
+				        	applicationController.setMasterNode(droppedSensoryEffect, temporalChainModel);
 			        		
 			        	} else{
 			        	
@@ -380,7 +395,7 @@ public class TemporalChainPane extends StackPane implements Observer{
 			        		droppedSensoryEffect.setBegin(droppedTime);
 			        		droppedSensoryEffect.setEnd(droppedTime + droppedSensoryEffect.getDuration());
 				        	
-			        		controller.addNodeTemporalChain(droppedSensoryEffect, temporalChainModel);
+			        		applicationController.addNodeTemporalChain(droppedSensoryEffect, temporalChainModel);
 			        		
 			        	}
 			        	
@@ -395,7 +410,10 @@ public class TemporalChainPane extends StackPane implements Observer{
 			        }
 		        	 
 		        }else {
+
 		        	Media droppedMedia = (Media) dragBoard.getContent((DataFormat) contentTypes[0]);
+					droppedMedia.setParentTemporalChain(temporalChainModel);
+
 		        	int duplicatedMediaCount = getDuplicatedNodeCount(droppedMedia);
 			        if(duplicatedMediaCount > 0){
 			        	droppedMedia.setName(droppedMedia.getName() + "_" + duplicatedMediaCount++);
@@ -410,7 +428,7 @@ public class TemporalChainPane extends StackPane implements Observer{
 				        	droppedMedia.setBegin(droppedTime);
 				        	droppedMedia.setEnd(droppedMedia.getDuration());
 				        	
-				        	controller.setMasterNode(droppedMedia, temporalChainModel);
+				        	applicationController.setMasterNode(droppedMedia, temporalChainModel);
 			        		
 			        	} else{
 			        	
@@ -420,7 +438,7 @@ public class TemporalChainPane extends StackPane implements Observer{
 				        	droppedMedia.setBegin(droppedTime);
 				        	droppedMedia.setEnd(droppedTime + droppedMedia.getDuration());
 				        	
-			        		controller.addNodeTemporalChain(droppedMedia, temporalChainModel);
+			        		applicationController.addNodeTemporalChain(droppedMedia, temporalChainModel);
 			        		
 			        	}
 			        	
@@ -551,7 +569,13 @@ public class TemporalChainPane extends StackPane implements Observer{
 	    });
 		
 	}
-	
+
+	public void updateNodeStartTime(model.common.Node node) {
+
+
+
+	}
+
 	@Override
 	public void update(Observable o, Object obj) {
 		
@@ -633,7 +657,7 @@ public class TemporalChainPane extends StackPane implements Observer{
 	
 		}
 	
-		TimeLineXYChartData timeLineXYChartData = new TimeLineXYChartData(controller, node, temporalChainModel, temporalViewPane, this,repositoryPane, line, stevePane, timeLineChart); 	
+		TimeLineXYChartData timeLineXYChartData = new TimeLineXYChartData(applicationController, node, temporalChainModel, temporalViewPane, this,repositoryPane, line, stevePane, timeLineChart);
 		serie.getData().add(timeLineXYChartData.getXYChartData());
 		
 		if(!timeLineXYChartDataLineList.isEmpty() && line < timeLineXYChartDataLineList.size()){
@@ -840,16 +864,16 @@ public class TemporalChainPane extends StackPane implements Observer{
 		
 	}
 	
-	private void createArrowPopupMenu(Controller controller, TemporalChain temporalChainModel) {
+	private void createArrowPopupMenu(ApplicationController applicationController, TemporalChain temporalChainModel) {
 		
 		arrowContextMenu = new ContextMenu();
 		menuItemDeleteRelation = new MenuItem (Language.translate("delete.relation"));
 		arrowContextMenu.getItems().addAll(menuItemDeleteRelation);
-		createArrowMenuItemActions(controller, temporalChainModel);
+		createArrowMenuItemActions(applicationController, temporalChainModel);
 		
 	}
 	
-	private void createArrowMenuItemActions(Controller controller, TemporalChain temporalChainModel) {
+	private void createArrowMenuItemActions(ApplicationController applicationController, TemporalChain temporalChainModel) {
 		
 		menuItemDeleteRelation.setOnAction(new EventHandler<ActionEvent>() {
 
@@ -904,5 +928,5 @@ public class TemporalChainPane extends StackPane implements Observer{
 	public Tab getParentTab(){
 		return parentTab;
 	}
-	
+
 }

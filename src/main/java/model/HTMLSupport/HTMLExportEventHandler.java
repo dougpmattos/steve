@@ -1,17 +1,11 @@
 package model.HTMLSupport;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.scene.web.WebEngine;
-import javafx.scene.web.WebView;
 import javafx.stage.FileChooser;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -26,7 +20,7 @@ import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
 import model.NCLSupport.NCLExportEventHandler;
-import model.common.SpatialTemporalView;
+import model.common.SpatialTemporalApplication;
 
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
@@ -35,8 +29,8 @@ import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
 import view.common.Language;
-import view.common.MessageDialog;
-import view.common.ReturnMessage;
+import view.common.dialogs.MessageDialog;
+import view.common.dialogs.ReturnMessage;
 import view.utility.AnimationUtil;
 import br.uff.midiacom.ana.NCLDoc;
 
@@ -49,9 +43,9 @@ public class HTMLExportEventHandler implements EventHandler<ActionEvent>{
 	static Document document;
 	private NCLExportEventHandler nclExportEventHandler;
 	
-	public HTMLExportEventHandler(SpatialTemporalView spatialTemporalView){
+	public HTMLExportEventHandler(SpatialTemporalApplication spatialTemporalApplication){
 
-		nclExportEventHandler = new NCLExportEventHandler(spatialTemporalView);
+		nclExportEventHandler = new NCLExportEventHandler(spatialTemporalApplication);
 	}
 
 	@Override

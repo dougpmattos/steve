@@ -38,12 +38,12 @@ import model.temporalView.enums.InteractivityKeyType;
 import model.temporalView.enums.NumericInteractivityKey;
 import model.temporalView.enums.ProgrammingGuideInteractivityKey;
 import model.temporalView.enums.VolumeChangeInteractivityKey;
-import view.common.InputDialog;
+import view.common.dialogs.InputDialog;
 import view.common.Language;
-import view.common.MessageDialog;
-import view.common.ReturnMessage;
+import view.common.dialogs.MessageDialog;
+import view.common.dialogs.ReturnMessage;
 import view.utility.AnimationUtil;
-import controller.Controller;
+import controller.ApplicationController;
 
 /**
  *
@@ -55,7 +55,7 @@ public class InteractiveMediaWindow extends Stage {
 	private static final int HEIGHT = 610;
 	private static final int WIDTH = 650;
     
-	private Controller controller;
+	private ApplicationController applicationController;
 	private TemporalViewPane temporalViewPane;
 	private Boolean isEdition;
 	private Interactivity interactivityRelation;
@@ -65,8 +65,10 @@ public class InteractiveMediaWindow extends Stage {
     private ChoiceBox<InteractivityKeyType> interactivityKeyTypeField;
 	private ChoiceBox interactivityKeyField;
 	private CheckBox interactiveMediaWillBeStopped;
-//	private CheckBox endApplication;
-//	private CheckBox endTemporalChain;
+	/*TODO
+ 	private CheckBox endApplication;
+	private CheckBox endTemporalChain;
+	*/
     private ChoiceBox<Node> nodeToBeStoppedField;
     private ChoiceBox timelineToBeStartedField;
     private TextField stopDelayField;
@@ -85,14 +87,14 @@ public class InteractiveMediaWindow extends Stage {
 	private ArrayList<Node> nodeListDuringInteractivityTime;
 	private ObservableList timelineFieldOptions;
     
-    public InteractiveMediaWindow(Controller controller, TemporalViewPane temporalViewPane, Media firstSelectedMedia, ArrayList<Node> nodeListDuringInteractivityTime) {
+    public InteractiveMediaWindow(ApplicationController applicationController, TemporalViewPane temporalViewPane, Media firstSelectedMedia, ArrayList<Node> nodeListDuringInteractivityTime) {
 
         setResizable(false);
         initModality(Modality.APPLICATION_MODAL);
         initStyle(StageStyle.UNDECORATED);
 
         this.temporalViewPane = temporalViewPane;
-        this.controller = controller;
+        this.applicationController = applicationController;
         isEdition = false;
         
         this.interactiveMedia = firstSelectedMedia;
@@ -100,7 +102,7 @@ public class InteractiveMediaWindow extends Stage {
 
         BorderPane containerBorderPane = new BorderPane();
         containerBorderPane.setId("container-border-pane");
-        containerBorderPane.getStylesheets().add("styles/temporalViewPane/interactivityMediaWindow.css");
+        containerBorderPane.getStylesheets().add("styles/temporalViewPane/popupWindow.css");
         
         formGridPane = createForm();
         ScrollPane scrollPaneContainer = new ScrollPane();
@@ -116,14 +118,14 @@ public class InteractiveMediaWindow extends Stage {
 
     }
     
-    public InteractiveMediaWindow(Controller controller, TemporalViewPane temporalViewPane, ArrayList<Node> nodeListDuringInteractivityTime, Interactivity<Media> interactivityToLoad){
+    public InteractiveMediaWindow(ApplicationController applicationController, TemporalViewPane temporalViewPane, ArrayList<Node> nodeListDuringInteractivityTime, Interactivity<Media> interactivityToLoad){
     	
     	setResizable(false);
         initModality(Modality.APPLICATION_MODAL);
         initStyle(StageStyle.UNDECORATED);
 
         this.temporalViewPane = temporalViewPane;
-        this.controller = controller;
+        this.applicationController = applicationController;
         isEdition=true;
         this.interactivityRelation = interactivityToLoad;
         
@@ -132,7 +134,7 @@ public class InteractiveMediaWindow extends Stage {
         
         BorderPane containerBorderPane = new BorderPane();
         containerBorderPane.setId("container-border-pane");
-        containerBorderPane.getStylesheets().add("styles/temporalViewPane/interactivityMediaWindow.css");
+        containerBorderPane.getStylesheets().add("styles/temporalViewPane/popupWindow.css");
         
         formGridPane = createForm();
         ScrollPane scrollPaneContainer = new ScrollPane();
@@ -391,7 +393,7 @@ public class InteractiveMediaWindow extends Stage {
         stopDelayField = new TextField();
         startDelayField = new TextField();
         
-        timelineFieldOptions = FXCollections.observableArrayList(temporalViewPane.getTemporalViewModel().getTemporalChainList());
+        timelineFieldOptions = FXCollections.observableArrayList(temporalViewPane.getSpatialTemporalApplication().getTemporalChainList());
         timelineFieldOptions.add(new Separator());
         //timelineFieldOptions.add(Language.translate("add.new.timeline") + "...");
         timelineToBeStartedField = new ChoiceBox(timelineFieldOptions);
@@ -880,9 +882,9 @@ public class InteractiveMediaWindow extends Stage {
 				interactiveMedia.setInteractive(true);
 				
 				if(isEdition){
-					controller.updateInteractivityRelation(temporalChainPane.getTemporalChainModel(), interactivityRelation);
+					applicationController.updateInteractivityRelation(temporalChainPane.getTemporalChainModel(), interactivityRelation);
 				}else {
-					controller.addInteractivityRelation(temporalChainPane.getTemporalChainModel(), interactivityRelation);
+					applicationController.addInteractivityRelation(temporalChainPane.getTemporalChainModel(), interactivityRelation);
 				}
 				
 				InteractiveMediaWindow.this.close();

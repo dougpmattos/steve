@@ -102,11 +102,18 @@ public class SensoryEffect extends Node<SensoryEffectType> implements Serializab
 	            icon.setFitWidth(ICON_WIDTH);
 				break;
 				
-			case TEMPERATURE:
-				icon = new ImageView(new Image(getClass().getResourceAsStream("/images/sensoryEffectsPane/temperature-48.png")));
+			case COLD:
+				icon = new ImageView(new Image(getClass().getResourceAsStream("/images/sensoryEffectsPane/cold-48.png")));
 				icon.setPreserveRatio(true);
 	            icon.setSmooth(true);
 	            icon.setFitWidth(ICON_WIDTH);
+				break;
+
+			case HOT:
+				icon = new ImageView(new Image(getClass().getResourceAsStream("/images/sensoryEffectsPane/hot-48.png")));
+				icon.setPreserveRatio(true);
+				icon.setSmooth(true);
+				icon.setFitWidth(ICON_WIDTH);
 				break;
 				
 			case VIBRATION:

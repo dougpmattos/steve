@@ -8,19 +8,18 @@ import javafx.event.EventHandler;
 import javafx.geometry.Orientation;
 import javafx.scene.Scene;
 import javafx.scene.control.SplitPane;
-import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
-import model.common.SpatialTemporalView;
+import model.common.SpatialTemporalApplication;
 import model.repository.RepositoryMediaList;
 import view.common.Language;
 import view.repositoryPane.RepositoryPane;
 import view.spatialViewPane.SpatialViewPane;
 import view.temporalViewPane.TemporalViewPane;
 import br.uff.midiacom.ana.util.exception.XMLException;
-import controller.Controller;
+import controller.ApplicationController;
 
 /**
  *
@@ -33,14 +32,14 @@ public class StevePane extends Scene{
 	private static final String SEPARATOR = "   -   ";
 
 	private RepositoryMediaList repositoryMediaList;
-	private SpatialTemporalView temporalView;
+	private SpatialTemporalApplication spatialTemporalApplication;
 	
-	private Controller controller;
+	private ApplicationController applicationController;
 	
     private SteveMenuBar steveMenuBar;
     private RepositoryPane repositoryPane;
     private SpatialViewPane spatialViewPane;
-    private TemporalViewPane temporalViewPane;
+	private TemporalViewPane temporalViewPane;
     private SplitPane repositorySpatialViewSplitPane;
     private SplitPane containerSplitPane;
     private Locale defaultLocale;
@@ -48,16 +47,16 @@ public class StevePane extends Scene{
     
     private BorderPane containerBorderPane = new BorderPane();
     
-    public StevePane(Controller controller, RepositoryMediaList repositoryMediaList, SpatialTemporalView temporalView) throws XMLException, IOException  {
+    public StevePane(ApplicationController applicationController, RepositoryMediaList repositoryMediaList, SpatialTemporalApplication spatialTemporalApplication) throws XMLException, IOException  {
     	
     	super(new BorderPane());
     	setRoot(containerBorderPane);
     	getStylesheets().add("styles/stevePane/stevePane.css");
     	containerBorderPane.setPrefSize(STEVE_WITDH, STEVE_HEIGHT);
     	
-    	this.controller = controller;
+    	this.applicationController = applicationController;
     	this.repositoryMediaList = repositoryMediaList;
-		this.temporalView = temporalView;
+		this.spatialTemporalApplication = spatialTemporalApplication;
 
    }
 
@@ -67,10 +66,10 @@ public class StevePane extends Scene{
 		defaultLocale = new Locale("en","US");
 		Language.setLocale(defaultLocale);
 		
-    	repositoryPane = new RepositoryPane(controller, repositoryMediaList);
-    	temporalViewPane = new TemporalViewPane(controller, temporalView, repositoryPane, this, repositoryMediaList);
-    	spatialViewPane = new SpatialViewPane(controller, temporalView, temporalViewPane, repositoryPane, repositoryMediaList, steveMenuBar);
-    	steveMenuBar = new SteveMenuBar(controller, temporalView, repositoryMediaList, temporalViewPane, stage);
+    	repositoryPane = new RepositoryPane(applicationController, repositoryMediaList);
+    	temporalViewPane = new TemporalViewPane(applicationController, spatialTemporalApplication, repositoryPane, this, repositoryMediaList);
+    	spatialViewPane = new SpatialViewPane(applicationController, spatialTemporalApplication, temporalViewPane, repositoryPane, repositoryMediaList, steveMenuBar);
+    	steveMenuBar = new SteveMenuBar(applicationController, spatialTemporalApplication, repositoryMediaList, temporalViewPane, stage);
 	   
     	repositoryPane.setTemporalViewPane(temporalViewPane);
     	
@@ -92,7 +91,6 @@ public class StevePane extends Scene{
     	
 		stage.setScene(this);
 		stage.setTitle(Language.translate("untitled.project") + SEPARATOR + Language.translate("steve"));
-		stage.getIcons().add(new Image(getClass().getResourceAsStream("/images/loadingWindow/logo.png")));
 		stage.show();
 		
 	}
@@ -132,7 +130,11 @@ public class StevePane extends Scene{
 		return isMetaDown;
 		
 	}
-	
+
+	public TemporalViewPane getTemporalViewPane() {
+		return temporalViewPane;
+	}
+
 	public SpatialViewPane getSpatialViewPane(){
 		return spatialViewPane;
 	}

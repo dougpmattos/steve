@@ -4,7 +4,7 @@ import javafx.animation.FadeTransition;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.util.Duration;
-import view.common.ReturnMessage;
+import view.common.dialogs.ReturnMessage;
 
 public class AnimationUtil {
 

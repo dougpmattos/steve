@@ -8,11 +8,11 @@ import javafx.scene.layout.VBox;
 import model.common.Media;
 import model.common.enums.MediaType;
 import view.common.Language;
-import controller.Controller;
+import controller.ApplicationController;
 
 public class RepositoryMediaInfoPane extends ScrollPane{
 
-	private Controller controller;
+	private ApplicationController applicationController;
 	private Media media;
 	
 	private TextField name;
@@ -21,9 +21,9 @@ public class RepositoryMediaInfoPane extends ScrollPane{
 
 	private GridPane infoPropertyGridPane;
 	
-	public RepositoryMediaInfoPane(Controller controller, Media media){
+	public RepositoryMediaInfoPane(ApplicationController applicationController, Media media){
 		
-		this.controller = controller;
+		this.applicationController = applicationController;
 		this.media = media;
 	
 		setId("repository-info-pane");

@@ -13,6 +13,7 @@ public class EffectPresentationProperty extends PresentationProperty<EffectPosit
 	private String intensityRange;
 	private String rgbColorProperty;
 	private Integer frequency;
+	private Integer priority;
 	private ScentType scent;
 	private ColorCorrectionProperty colorCorrectionProperty;
 	
@@ -20,6 +21,14 @@ public class EffectPresentationProperty extends PresentationProperty<EffectPosit
 		
 		this.positionProperty = new EffectPositionProperty();
 		
+	}
+
+	public Integer getPriority() {
+		return priority;
+	}
+
+	public void setPriority(Integer priority) {
+		this.priority = priority;
 	}
 
 	public Double getIntensityValue() {

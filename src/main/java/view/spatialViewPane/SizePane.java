@@ -15,11 +15,11 @@ import model.common.Media;
 import model.spatialView.media.SizeProperty;
 import model.spatialView.media.enums.AspectRatio;
 import model.spatialView.media.enums.Size;
-import controller.Controller;
+import controller.ApplicationController;
 
 public class SizePane extends VBox {
 
-	private Controller controller;
+	private ApplicationController applicationController;
 	private Media media;
 	
 	private TextField width;
@@ -32,11 +32,11 @@ public class SizePane extends VBox {
 	private BorderPane titleButtonBorderPane;
 	private GridPane sizePropertyGridPane;
 	
-	public SizePane(Controller controller, Media media){
+	public SizePane(ApplicationController applicationController, Media media){
 		
 		setId("size-vbox");
 		
-		this.controller = controller;
+		this.applicationController = applicationController;
 		this.media = media;
 		
 		Text title = new Text(Language.translate("size"));
@@ -134,7 +134,7 @@ public class SizePane extends VBox {
 	
 	public void populateSizePropertyJavaBean(){
 		
-		controller.populateSizePropertyJavaBean(this, media);
+		applicationController.populateSizePropertyJavaBean(this, media);
 		
 	}
 }	

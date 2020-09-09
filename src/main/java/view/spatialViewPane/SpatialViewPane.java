@@ -11,7 +11,7 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.HBox;
 import model.common.Media;
-import model.common.SpatialTemporalView;
+import model.common.SpatialTemporalApplication;
 import model.repository.RepositoryMediaList;
 import model.repository.enums.RepositoryOperator;
 import model.temporalView.enums.TemporalViewOperator;
@@ -20,7 +20,7 @@ import view.common.Language;
 import view.repositoryPane.RepositoryPane;
 import view.stevePane.SteveMenuBar;
 import view.temporalViewPane.TemporalViewPane;
-import controller.Controller;
+import controller.ApplicationController;
 
 
 /**
@@ -29,9 +29,7 @@ import controller.Controller;
  */
 public class SpatialViewPane extends SplitPane implements view.common.Observer, Observer {
 
-	private Controller controller;
-	
-	private SpatialTemporalView temporalViewModel;
+	private ApplicationController applicationController;
 	
 	private DisplayPane displayPane;
 	private PropertyPane propertyPane;
@@ -42,15 +40,13 @@ public class SpatialViewPane extends SplitPane implements view.common.Observer, 
 	private TabPane propertyInfoTabPane;
 	private HBox labelContainer;
 	
-    public SpatialViewPane(Controller controller, SpatialTemporalView temporalViewModel, TemporalViewPane temporalViewPane, RepositoryPane repositoryPane, RepositoryMediaList repositoryMediaList, SteveMenuBar steveMenuBar) {
+    public SpatialViewPane(ApplicationController applicationController, SpatialTemporalApplication temporalViewModel, TemporalViewPane temporalViewPane, RepositoryPane repositoryPane, RepositoryMediaList repositoryMediaList, SteveMenuBar steveMenuBar) {
   
     	setOrientation(Orientation.HORIZONTAL);
     	setDividerPositions(0.5);
     	
     	getStylesheets().add("styles/spatialViewPane/spatialViewPane.css");
-    	
-    	this.temporalViewModel = temporalViewModel;
-    	
+
     	displayPane = new DisplayPane(temporalViewPane, steveMenuBar, temporalViewModel);
     	
     	labelContainer = new HBox();
@@ -65,7 +61,7 @@ public class SpatialViewPane extends SplitPane implements view.common.Observer, 
     	repositoryPane.getRepositoryMediaItemContainerListPane().addObserver(this);
     	repositoryMediaList.addObserver(this);
     	
-    	this.controller = controller;
+    	this.applicationController = applicationController;
     	
     }
 
@@ -82,7 +78,7 @@ public class SpatialViewPane extends SplitPane implements view.common.Observer, 
 	    			
 	    			if(obj instanceof Media){
 	    				Media selectedMedia = (Media) obj;
-	    				createMediaInfoTabPane(controller, selectedMedia);
+	    				createMediaInfoTabPane(applicationController, selectedMedia);
 	    			}
 	    			
 	    			break;
@@ -102,7 +98,7 @@ public class SpatialViewPane extends SplitPane implements view.common.Observer, 
 					
 					if(obj instanceof Media){
 						Media selectedMedia = (Media) obj;
-						createPropertyInfoTabPane(controller, selectedMedia);
+						createPropertyInfoTabPane(applicationController, selectedMedia);
 					}
 					
 					break;
@@ -124,10 +120,10 @@ public class SpatialViewPane extends SplitPane implements view.common.Observer, 
 	
 	}
     
-	private void createPropertyInfoTabPane(Controller controller, Media media) {
+	private void createPropertyInfoTabPane(ApplicationController applicationController, Media media) {
 		
-		propertyPane = new PropertyPane(controller, media);
-    	temporalMediaInfoPane = new TemporalMediaInfoPane(controller, media);
+		propertyPane = new PropertyPane(applicationController, media);
+    	temporalMediaInfoPane = new TemporalMediaInfoPane(applicationController, media);
     	
     	propertyTab = new Tab();
     	propertyTab.setText(Language.translate("PROPERTIES"));
@@ -149,9 +145,9 @@ public class SpatialViewPane extends SplitPane implements view.common.Observer, 
     	
 	}
 	
-	private void createMediaInfoTabPane(Controller controller, Media media) {
+	private void createMediaInfoTabPane(ApplicationController applicationController, Media media) {
 		
-		repositoryMediaInfoPane = new RepositoryMediaInfoPane(controller, media);
+		repositoryMediaInfoPane = new RepositoryMediaInfoPane(applicationController, media);
     	
     	infoTab = new Tab();
     	infoTab.setText(Language.translate("INFO"));

@@ -19,11 +19,11 @@ import model.common.Node;
 import model.repository.RepositoryMediaList;
 import model.temporalView.Synchronous;
 import model.temporalView.enums.TemporalRelationType;
-import view.common.InputDialog;
+import view.common.dialogs.InputDialog;
 import view.common.Language;
-import view.common.MessageDialog;
-import view.common.SliderButton;
-import controller.Controller;
+import view.common.dialogs.MessageDialog;
+import view.common.customComponents.SliderButton;
+import controller.ApplicationController;
 
 public class TemporalViewButtonPane extends BorderPane {
 
@@ -46,11 +46,11 @@ public class TemporalViewButtonPane extends BorderPane {
 	private HBox alignmentButtonPane;
 	private TemporalViewPane temporalViewPane;
 	private RepositoryMediaList repositoryMediaList;
-	private Controller controller;
+	private ApplicationController applicationController;
 	
-	public TemporalViewButtonPane(Controller controller, TabPane temporalChainTabPane, TemporalViewPane temporalViewPane, RepositoryMediaList repositoryMediaList){
+	public TemporalViewButtonPane(ApplicationController applicationController, TabPane temporalChainTabPane, TemporalViewPane temporalViewPane, RepositoryMediaList repositoryMediaList){
 		
-		this.controller = controller;
+		this.applicationController = applicationController;
 		this.temporalViewPane = temporalViewPane;
 		this.repositoryMediaList = repositoryMediaList;
 		
@@ -658,7 +658,7 @@ public class TemporalViewButtonPane extends BorderPane {
 		    			InteractiveMediaWindow interactiveMediaWindow;
 			    		ArrayList<Node> nodeListDuringInteractivityTime = temporalViewPane.getNodeListDuringInteractivityTime();
 			    
-				    	interactiveMediaWindow = new InteractiveMediaWindow(controller, temporalViewPane, (Media) firstSelectedNode, nodeListDuringInteractivityTime);
+				    	interactiveMediaWindow = new InteractiveMediaWindow(applicationController, temporalViewPane, (Media) firstSelectedNode, nodeListDuringInteractivityTime);
 			    		
 				    	interactiveMediaWindow.showAndWait();
 				    	
@@ -706,7 +706,7 @@ public class TemporalViewButtonPane extends BorderPane {
     		temporalChainPane = (TemporalChainPane) selectedTab.getContent();
     	}
     	
-		controller.addSynchronousRelation(temporalChainPane.getTemporalChainModel(), synchronousRelation);
+		applicationController.addSynchronousRelation(temporalChainPane.getTemporalChainModel(), synchronousRelation);
 	}
 	
 	private Double showDelayInputDialog() {

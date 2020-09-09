@@ -28,7 +28,9 @@
  ******************************************************************************/
 
 #container-border-pane{
+    -fx-font-family: Raleway;
 	-fx-background-color: #102027;
+	-fx-border-color: #62727b;
 	-fx-padding: 20;
 }
 #container-vbox{
@@ -55,7 +57,8 @@
 }
 #title-label{
 	-fx-text-fill: #FFFFFF;
-	-fx-font-size: 18;
+	-fx-font-size: 14;
+	-fx-font-family: Raleway;
 }
 #msg-label{
 	-fx-text-fill: #B0BEC5;
@@ -82,4 +85,27 @@
 .button:pressed {
 	-fx-background-color:  #5df2d628;
 	-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);
+}
+
+.progress-bar {
+    -fx-background-color: transparent;
+}
+.progress-bar > .bar {
+    -fx-background-color: #00BFA5;
+    -fx-background-insets: 0;
+    -fx-padding: 0.1em;
+}
+.progress-bar > .track {
+	-fx-background-color: #62727b;
+    -fx-background-insets:  0;
+}
+
+/*******************************************************************************
+ *                                                                             *
+ * ProgressIndicator                                                           *
+ *                                                                             *
+ ******************************************************************************/
+
+.progress-indicator:indeterminate .segment {
+    -fx-background-color: #00BFA5;
 }

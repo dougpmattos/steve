@@ -1,12 +1,12 @@
 package view.stevePane;
 
 
-import view.common.InputDialog;
+import view.common.dialogs.InputDialog;
 import view.common.Language;
-import view.common.MessageDialog;
-import view.common.ReturnMessage;
+import view.common.dialogs.MessageDialog;
+import view.common.dialogs.ReturnMessage;
 import view.utility.AnimationUtil;
-import controller.Controller;
+import controller.ApplicationController;
 import model.common.InteractivityKeyMapping;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -40,7 +40,7 @@ public class PreferencesWindow extends Stage {
     private TextField blueKeyField;     
 
     
-    public PreferencesWindow(Controller controller) {
+    public PreferencesWindow(ApplicationController applicationController) {
 
         setResizable(false);
         initModality(Modality.APPLICATION_MODAL);
@@ -51,12 +51,12 @@ public class PreferencesWindow extends Stage {
         containerBorderPane.setId("container-border-pane");
         containerBorderPane.getStylesheets().add("styles/common/preferencesWindow.css");
         
-        formGridPane = createForm(controller);  
+        formGridPane = createForm(applicationController);
         ScrollPane scrollPaneContainer = new ScrollPane();
         scrollPaneContainer.setContent(formGridPane);
         scrollPaneContainer.setId("scroll-pane-container");
         
-        containerBorderPane.setTop(createToolBar(controller));
+        containerBorderPane.setTop(createToolBar(applicationController));
         containerBorderPane.setCenter(scrollPaneContainer);
 
         scene = new Scene(containerBorderPane, WIDTH, HEIGHT);
@@ -65,7 +65,7 @@ public class PreferencesWindow extends Stage {
 
     }
     
-    private void createToolBarButtonActions(Button closeButton, Button saveButton, Controller controller) {
+    private void createToolBarButtonActions(Button closeButton, Button saveButton, ApplicationController applicationController) {
 		
     	closeButton.setOnAction(new EventHandler<ActionEvent>(){
     		@Override
@@ -130,9 +130,9 @@ public class PreferencesWindow extends Stage {
 				InteractivityKeyMapping ikm = new InteractivityKeyMapping();
 				ikm.setInteractivityKeyMapping(redKeyField.getText(), greenKeyField.getText(), blueKeyField.getText(), yellowKeyField.getText());
 								
-				controller.setInteractivityKeyMapping(ikm);
+				applicationController.setInteractivityKeyMapping(ikm);
 				
-				controller.setPreferences(redKeyField.getText(), greenKeyField.getText(), blueKeyField.getText(), yellowKeyField.getText());
+				applicationController.setPreferences(redKeyField.getText(), greenKeyField.getText(), blueKeyField.getText(), yellowKeyField.getText());
 				
 			}
     		
@@ -141,7 +141,7 @@ public class PreferencesWindow extends Stage {
     }
 
     
-	private BorderPane createToolBar(Controller controller){
+	private BorderPane createToolBar(ApplicationController applicationController){
 	    	
     	BorderPane toolBarBorderPane = new BorderPane();
     	toolBarBorderPane.setId("tool-bar-pane");
@@ -150,7 +150,7 @@ public class PreferencesWindow extends Stage {
     	Button saveButton = new Button(Language.translate("save").toUpperCase());
     	saveButton.setId("save-button");
     	closeButton.setId("close-button");
-    	createToolBarButtonActions(closeButton, saveButton, controller);
+    	createToolBarButtonActions(closeButton, saveButton, applicationController);
     	
     	Label titleLabe;
     	    	
@@ -171,7 +171,7 @@ public class PreferencesWindow extends Stage {
     }
 
     
-    private GridPane createForm(Controller controller){
+    private GridPane createForm(ApplicationController applicationController){
     	              
         Label interactivityKeySubtitle = new Label(Language.translate("interactivity.key.mapping").toUpperCase());
         
@@ -203,10 +203,10 @@ public class PreferencesWindow extends Stage {
         yellowKeyField.setMinWidth(70);
         blueKeyField.setMinWidth(70);
         
-        redKeyField.setText(controller.getInteractivityKeyMapping().getInteractivityKeyMapping("red"));
-        greenKeyField.setText(controller.getInteractivityKeyMapping().getInteractivityKeyMapping("green"));
-        blueKeyField.setText(controller.getInteractivityKeyMapping().getInteractivityKeyMapping("blue"));
-        yellowKeyField.setText(controller.getInteractivityKeyMapping().getInteractivityKeyMapping("yellow"));
+        redKeyField.setText(applicationController.getInteractivityKeyMapping().getInteractivityKeyMapping("red"));
+        greenKeyField.setText(applicationController.getInteractivityKeyMapping().getInteractivityKeyMapping("green"));
+        blueKeyField.setText(applicationController.getInteractivityKeyMapping().getInteractivityKeyMapping("blue"));
+        yellowKeyField.setText(applicationController.getInteractivityKeyMapping().getInteractivityKeyMapping("yellow"));
         
         redKeyField.setId("red-key-field");
         greenKeyField.setId("green-key-field");

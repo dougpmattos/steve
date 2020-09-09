@@ -35,14 +35,13 @@
 	-fx-graphic: url("../../images/sensoryEffectsPane/wind-24.png");
 	-fx-opacity: 65%;
     -fx-text-fill: #FFFFFF;
-    -fx-background-color: #62727b;
+    -fx-background-color: linear-gradient(from 20% 20% to 100% 100%, #37474f, #62727b);
     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);
     -fx-padding: 0px 5px 0px 5px;
     -fx-background-radius: 8.5px;
 }
 #wind-effect-chip:hover{
-	-fx-opacity: 100%;
-    -fx-background-color: #00BFA5;
+	-fx-background-color: linear-gradient(from 20% 20% to 100% 100%, derive(#37474f, 50%), derive(#62727b, 50%));
     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);
 }
 
@@ -50,14 +49,13 @@
 	-fx-graphic: url("../../images/sensoryEffectsPane/watersprayer-24.png");
 	-fx-opacity: 65%;
     -fx-text-fill: #FFFFFF;
-    -fx-background-color: #62727b;
+    -fx-background-color: linear-gradient(from 20% 20% to 100% 100%, #37474f, #62727b);
     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);
     -fx-padding: 0px 5px 0px 5px;
     -fx-background-radius: 8.5px;
 }
 #water-sprayer-effect-chip:hover{
-   	-fx-opacity: 100%;
-    -fx-background-color: #00BFA5;
+   	-fx-background-color: linear-gradient(from 20% 20% to 100% 100%, derive(#37474f, 50%), derive(#62727b, 50%));
     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);
 }
 
@@ -65,29 +63,41 @@
 	-fx-graphic: url("../../images/sensoryEffectsPane/vibration-24.png");
 	-fx-opacity: 65%;
     -fx-text-fill: #FFFFFF;
-    -fx-background-color: #62727b;
+    -fx-background-color: linear-gradient(from 20% 20% to 100% 100%, #37474f, #62727b);
     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);
     -fx-padding: 0px 5px 0px 5px;
     -fx-background-radius: 8.5px;
 }
 #vibration-effect-chip:hover{
-	-fx-opacity: 100%;
-    -fx-background-color: #00BFA5;
+	-fx-background-color: linear-gradient(from 20% 20% to 100% 100%, derive(#37474f, 50%), derive(#62727b, 50%));
     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);
 }
 
-#temperature-effect-chip{
-	-fx-graphic: url("../../images/sensoryEffectsPane/temperature-24.png");
+#cold-effect-chip{
+	-fx-graphic: url("../../images/sensoryEffectsPane/cold-24.png");
 	-fx-opacity: 65%;
     -fx-text-fill: #FFFFFF;
-    -fx-background-color: #62727b;
+    -fx-background-color: linear-gradient(from 20% 20% to 100% 100%, #37474f, #62727b);
     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);
     -fx-padding: 0px 5px 0px 5px;
     -fx-background-radius: 8.5px;
 }
-#temperature-effect-chip:hover{
-    -fx-opacity: 100%;
-    -fx-background-color: #00BFA5;
+#cold-effect-chip:hover{
+    -fx-background-color: linear-gradient(from 20% 20% to 100% 100%, derive(#37474f, 50%), derive(#62727b, 50%));
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);
+}
+
+#hot-effect-chip{
+	-fx-graphic: url("../../images/sensoryEffectsPane/hot-24.png");
+	-fx-opacity: 65%;
+    -fx-text-fill: #FFFFFF;
+    -fx-background-color: linear-gradient(from 20% 20% to 100% 100%, #37474f, #62727b);
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);
+    -fx-padding: 0px 5px 0px 5px;
+    -fx-background-radius: 8.5px;
+}
+#hot-effect-chip:hover{
+    -fx-background-color: linear-gradient(from 20% 20% to 100% 100%, derive(#37474f, 50%), derive(#62727b, 50%));
     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);
 }
 
@@ -95,28 +105,26 @@
 	-fx-graphic: url("../../images/sensoryEffectsPane/scent-24.png");
 	-fx-opacity: 65%;
     -fx-text-fill: #FFFFFF;
-    -fx-background-color: #62727b;
+    -fx-background-color: linear-gradient(from 20% 20% to 100% 100%, #37474f, #62727b);
     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);
     -fx-padding: 0px 5px 0px 5px;
     -fx-background-radius: 8.5px;
 }
 #scent-effect-chip:hover{
-    -fx-opacity: 100%;
-    -fx-background-color: #00BFA5;
+    -fx-background-color: linear-gradient(from 20% 20% to 100% 100%, derive(#37474f, 50%), derive(#62727b, 50%));
     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);
 }
 #light-effect-chip{
 	-fx-graphic: url("../../images/sensoryEffectsPane/light-24.png");
 	-fx-opacity: 65%;
     -fx-text-fill: #FFFFFF;
-    -fx-background-color: #62727b;
+    -fx-background-color: linear-gradient(from 20% 20% to 100% 100%, #37474f, #62727b);
     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);
     -fx-padding: 0px 5px 0px 5px;
     -fx-background-radius: 8.5px;
 }
 #light-effect-chip:hover{
-    -fx-opacity: 100%;
-    -fx-background-color: #00BFA5;
+    -fx-background-color: linear-gradient(from 20% 20% to 100% 100%, derive(#37474f, 50%), derive(#62727b, 50%));
     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);
 }
 
@@ -124,14 +132,13 @@
 	-fx-graphic: url("../../images/sensoryEffectsPane/fog-24.png");
 	-fx-opacity: 65%;
     -fx-text-fill: #FFFFFF;
-    -fx-background-color: #62727b;
+    -fx-background-color: linear-gradient(from 20% 20% to 100% 100%, #37474f, #62727b);
     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);
     -fx-padding: 0px 5px 0px 5px;
     -fx-background-radius: 8.5px;
 }
 #fog-effect-chip:hover{
-    -fx-opacity: 100%;
-    -fx-background-color: #00BFA5;
+    -fx-background-color: linear-gradient(from 20% 20% to 100% 100%, derive(#37474f, 50%), derive(#62727b, 50%));
     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);
 }
 
@@ -139,29 +146,26 @@
 	-fx-graphic: url("../../images/sensoryEffectsPane/flashlight-24.png");
 	-fx-opacity: 65%;
     -fx-text-fill: #FFFFFF;
-    -fx-background-color: #62727b;
+    -fx-background-color: linear-gradient(from 5% 5% to 100% 100%, #37474f, #62727b);
     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);
     -fx-padding: 0px 5px 0px 5px;
     -fx-background-radius: 8.5px;
 }
 #flashlight-effect-chip:hover{
-    -fx-opacity: 100%;
-    -fx-background-color: #00BFA5;
+    -fx-background-color: linear-gradient(from 30% 30% to 100% 100%, derive(#37474f, 50%), derive(#62727b, 50%));
     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);
 }
 
 #rainstorm-effect-chip{
 	-fx-graphic: url("../../images/sensoryEffectsPane/rainstorm-24.png");
-	-fx-opacity: 65%;
     -fx-text-fill: #FFFFFF;
-    -fx-background-color: #62727b;
+    -fx-background-color: linear-gradient(from 20% 20% to 100% 100%, #37474f, #62727b);
     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);
     -fx-padding: 0px 5px 0px 5px;
     -fx-background-radius: 8.5px;
 }
 #rainstorm-effect-chip:hover{
-    -fx-opacity: 100%;
-    -fx-background-color: #00BFA5;
+    -fx-background-color: linear-gradient(from 20% 20% to 100% 100%, derive(#37474f, 50%), derive(#62727b, 50%));
     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);
 }
 

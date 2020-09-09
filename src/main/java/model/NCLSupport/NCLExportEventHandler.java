@@ -15,7 +15,7 @@ import javafx.stage.FileChooser;
 import model.NCLSupport.enums.ImportedNCLCausalConnectorType;
 import model.common.Media;
 import model.common.Node;
-import model.common.SpatialTemporalView;
+import model.common.SpatialTemporalApplication;
 import model.spatialView.media.MediaPositionProperty;
 import model.spatialView.media.SizeProperty;
 import model.spatialView.media.enums.AspectRatio;
@@ -29,10 +29,10 @@ import model.temporalView.enums.TemporalRelationType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import view.common.InputDialog;
+import view.common.dialogs.InputDialog;
 import view.common.Language;
-import view.common.MessageDialog;
-import view.common.ReturnMessage;
+import view.common.dialogs.MessageDialog;
+import view.common.dialogs.ReturnMessage;
 import view.utility.AnimationUtil;
 import br.uff.midiacom.ana.NCLBody;
 import br.uff.midiacom.ana.NCLDoc;
@@ -70,14 +70,14 @@ public class NCLExportEventHandler implements EventHandler<ActionEvent>{
 
 	final Logger logger = LoggerFactory.getLogger(NCLExportEventHandler.class);
 
-	private SpatialTemporalView spatialTemporalView;
+	private SpatialTemporalApplication spatialTemporalApplication;
 	private FileInputStream fileInputStream;
 	private FileOutputStream fileOutputStream;
 	private File causalConnectorBaseFile;
 	
-	public NCLExportEventHandler(SpatialTemporalView temporalView){
+	public NCLExportEventHandler(SpatialTemporalApplication temporalView){
 		
-		this.spatialTemporalView = temporalView;
+		this.spatialTemporalApplication = temporalView;
 		causalConnectorBaseFile = new File("src/model/NCLSupport/NCLFiles/causalConnectorBase.ncl");
 		
 	}
@@ -119,7 +119,7 @@ public class NCLExportEventHandler implements EventHandler<ActionEvent>{
 	
 	public boolean isThereNoApplication(){
 		
-		ArrayList<TemporalChain> temporalChainList = spatialTemporalView.getTemporalChainList();
+		ArrayList<TemporalChain> temporalChainList = spatialTemporalApplication.getTemporalChainList();
 		
 		if(temporalChainList.size() == 1 && temporalChainList.get(0).getMediaAllList().isEmpty()){
 			return true;
@@ -143,7 +143,7 @@ public class NCLExportEventHandler implements EventHandler<ActionEvent>{
 		
 		StringBuilder temporalChains = new StringBuilder(); 
 		
-		for(TemporalChain temporalChain : spatialTemporalView.getTemporalChainList()){
+		for(TemporalChain temporalChain : spatialTemporalApplication.getTemporalChainList()){
 			
 			if(temporalChain.getMasterNode() != null && temporalChain.getMasterNode().getBegin() > 0){
 				temporalChains.append(temporalChain.getName() + "\n");
@@ -197,13 +197,13 @@ public class NCLExportEventHandler implements EventHandler<ActionEvent>{
             nclHead.setDescriptorBase(nclDescBase);
             nclHead.setConnectorBase(nclConBase);
             
-            for(TemporalChain temporalChain : spatialTemporalView.getTemporalChainList()){
+            for(TemporalChain temporalChain : spatialTemporalApplication.getTemporalChainList()){
             	
             	createNCLMediaDescriptorRegion(nclBody, nclRegBase, nclDescBase, temporalChain);
 
             }
             
-            for(TemporalChain temporalChain : spatialTemporalView.getTemporalChainList()){
+            for(TemporalChain temporalChain : spatialTemporalApplication.getTemporalChainList()){
             	
             	createNCLPort(nclBody, nclRegBase, nclDescBase, temporalChain);
             	createNCLLinks(nclBody, nclImportBase, temporalChain, isForHTMLExport);
@@ -947,7 +947,7 @@ public class NCLExportEventHandler implements EventHandler<ActionEvent>{
 
 	public void copyMediaFiles(String mediaDir) throws FileNotFoundException, IOException {
 		
-		for(TemporalChain temporalChain : spatialTemporalView.getTemporalChainList()){
+		for(TemporalChain temporalChain : spatialTemporalApplication.getTemporalChainList()){
 			
 			for(Media media :  temporalChain.getMediaAllList()){
 

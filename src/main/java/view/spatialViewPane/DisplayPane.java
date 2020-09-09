@@ -1,6 +1,6 @@
 package view.spatialViewPane;
 
-import model.common.SpatialTemporalView;
+import model.common.SpatialTemporalApplication;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import view.stevePane.SteveMenuBar;
@@ -10,16 +10,16 @@ public class DisplayPane extends BorderPane {
 
 	private ControlButtonPane controlButtonPane;
 	private StackPane screen;
-	private SpatialTemporalView spatialTemporalView;
+	private SpatialTemporalApplication spatialTemporalApplication;
 
-	public DisplayPane(TemporalViewPane temporalViewPane, SteveMenuBar steveMenuBar, SpatialTemporalView spatialTemporalView){
+	public DisplayPane(TemporalViewPane temporalViewPane, SteveMenuBar steveMenuBar, SpatialTemporalApplication spatialTemporalApplication){
 		
 		setId("display-pane");
 	
 		screen = new StackPane();
 		screen.setId("screen-pane");
 		
-		controlButtonPane = new ControlButtonPane(screen, temporalViewPane, steveMenuBar, spatialTemporalView);
+		controlButtonPane = new ControlButtonPane(screen, temporalViewPane, steveMenuBar, spatialTemporalApplication);
 		
 		setCenter(screen);
 		setBottom(controlButtonPane);

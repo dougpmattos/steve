@@ -1,7 +1,7 @@
 package view.spatialViewPane;
 
 import view.common.Language;
-import view.common.SliderButton;
+import view.common.customComponents.SliderButton;
 import javafx.collections.FXCollections;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ColorPicker;
@@ -21,11 +21,11 @@ import model.spatialView.media.TextStyleProperty;
 import model.spatialView.media.enums.FontFamily;
 import model.spatialView.media.enums.FontStyle;
 import model.spatialView.media.enums.FontWeight;
-import controller.Controller;
+import controller.ApplicationController;
 
 public class StylePane extends VBox {
 
-	private Controller controller;
+	private ApplicationController applicationController;
 	private Media media;
 	
 	private SliderButton transparency;
@@ -39,11 +39,11 @@ public class StylePane extends VBox {
 	private BorderPane titleImageBorderPane;
 	private GridPane stylePropertyGridPane;
 	
-	public StylePane(Controller controller, Media media){
+	public StylePane(ApplicationController applicationController, Media media){
 		
 		setId("style-vbox");
 		
-		this.controller = controller;
+		this.applicationController = applicationController;
 		this.media = media;
 		
 		Text title = new Text(Language.translate("style"));
@@ -190,11 +190,11 @@ public class StylePane extends VBox {
 		
 		if(media.getType().equals(MediaType.TEXT)){
 			
-			controller.populateTextStylePropertyJavaBean(this, media);
+			applicationController.populateTextStylePropertyJavaBean(this, media);
 			
 		} else{
 			
-			controller.populateStylePropertyJavaBean(this, media);
+			applicationController.populateStylePropertyJavaBean(this, media);
 			
 		}
 		

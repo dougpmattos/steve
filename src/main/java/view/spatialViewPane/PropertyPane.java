@@ -9,11 +9,11 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 import model.common.Media;
 import model.common.enums.MediaType;
-import controller.Controller;
+import controller.ApplicationController;
 
 public class PropertyPane extends ScrollPane implements Observer{
 	
-	private Controller controller;
+	private ApplicationController applicationController;
 	private Media media;
 	
 	private PositionPane positionPane;
@@ -23,9 +23,9 @@ public class PropertyPane extends ScrollPane implements Observer{
 	private LevelPane levelPane;
 	private VBox container;
 	
-	public PropertyPane(Controller controller, Media media){
+	public PropertyPane(ApplicationController applicationController, Media media){
 		
-		this.controller = controller;
+		this.applicationController = applicationController;
 		this.media = media;
 		
 		setId("property-pane");
@@ -35,16 +35,16 @@ public class PropertyPane extends ScrollPane implements Observer{
 	    
 	    if(media.getType().equals(MediaType.AUDIO)){
 	    	
-	    	levelPane = new LevelPane(controller, media);
+	    	levelPane = new LevelPane(applicationController, media);
 	    	
 	    	container.getChildren().add(levelPane);
 	    	
 	    }else {
 	    	
-	    	positionPane = new PositionPane(controller, media);
-		    sizePane = new SizePane(controller, media);
-		    cropPane = new CropPane(controller, media);
-		    stylePane = new StylePane(controller, media);
+	    	positionPane = new PositionPane(applicationController, media);
+		    sizePane = new SizePane(applicationController, media);
+		    cropPane = new CropPane(applicationController, media);
+		    stylePane = new StylePane(applicationController, media);
 		    
 		    container.getChildren().add(positionPane);
 		    container.getChildren().add(sizePane);

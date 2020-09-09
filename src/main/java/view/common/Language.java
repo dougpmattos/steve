@@ -16,9 +16,6 @@ import java.util.ResourceBundle;
 		
 		ResourceBundle bundle = ResourceBundle.getBundle("languages.messages", Language.locale);
 		return bundle.getString(message);
-
-//		ResourceBundle bundle = ResourceBundle.getBundle("view.common.languages.messages", Language.locale);
-//		return bundle.getString(message);
 		
 	}
 	

@@ -16,7 +16,7 @@ import model.common.enums.SensoryEffectType;
 import model.repository.RepositoryMediaList;
 import view.common.Language;
 import view.temporalViewPane.TemporalViewPane;
-import controller.Controller;
+import controller.ApplicationController;
 
 public class SensoryEffectsPane extends BorderPane{
 
@@ -26,7 +26,8 @@ public class SensoryEffectsPane extends BorderPane{
 	private Button windEffectChip;
 	private Button waterSprayerEffectChip;
 	private Button vibrationEffectChip;
-	private Button temperatureEffectChip;
+	private Button coldEffectChip;
+	private Button hotEffectChip;
 	private Button scentEffectChip;
 	private Button lightEffectChip;
 	private Button fogEffectChip;
@@ -34,7 +35,7 @@ public class SensoryEffectsPane extends BorderPane{
 	private Button rainstormEffectChip;
 	private HBox labelContainer;
 	
-	public SensoryEffectsPane(Controller controller, TabPane temporalChainTabPane, TemporalViewPane temporalViewPane, RepositoryMediaList repositoryMediaList){
+	public SensoryEffectsPane(ApplicationController applicationController, TabPane temporalChainTabPane, TemporalViewPane temporalViewPane, RepositoryMediaList repositoryMediaList){
 		
 		setId("sensory-effects-pane");
 	    getStylesheets().add("styles/sensoryEffectsPane/sensoryEffectsPane.css");
@@ -177,7 +178,7 @@ public class SensoryEffectsPane extends BorderPane{
 			}
 			
        });
-		temperatureEffectChip.setOnDragDetected(new EventHandler<MouseEvent>() {
+		coldEffectChip.setOnDragDetected(new EventHandler<MouseEvent>() {
 
 			@Override
 			public void handle(MouseEvent mouseEvent) {
@@ -185,7 +186,7 @@ public class SensoryEffectsPane extends BorderPane{
 		        Dragboard dragBoard = startDragAndDrop(TransferMode.COPY);
 		        ClipboardContent content = new ClipboardContent();
 
-		        content.put(dataFormat, SensoryEffectType.TEMPERATURE);
+		        content.put(dataFormat, SensoryEffectType.COLD);
 		        
 		        dragBoard.setContent(content);
 		        
@@ -194,6 +195,23 @@ public class SensoryEffectsPane extends BorderPane{
 			}
 			
        });
+		hotEffectChip.setOnDragDetected(new EventHandler<MouseEvent>() {
+
+			@Override
+			public void handle(MouseEvent mouseEvent) {
+
+				Dragboard dragBoard = startDragAndDrop(TransferMode.COPY);
+				ClipboardContent content = new ClipboardContent();
+
+				content.put(dataFormat, SensoryEffectType.HOT);
+
+				dragBoard.setContent(content);
+
+				mouseEvent.consume();
+
+			}
+
+		});
 		waterSprayerEffectChip.setOnDragDetected(new EventHandler<MouseEvent>() {
 
 			@Override
@@ -231,10 +249,15 @@ public class SensoryEffectsPane extends BorderPane{
 		vibrationEffectChip.setId("vibration-effect-chip");
 		vibrationEffectChip.setTooltip(new Tooltip(Language.translate("drag.vibration.effect")));
 		
-		temperatureEffectChip = new Button();
-		temperatureEffectChip.setText(Language.translate("temperature"));
-		temperatureEffectChip.setId("temperature-effect-chip");
-		temperatureEffectChip.setTooltip(new Tooltip(Language.translate("drag.temperature.effect")));
+		coldEffectChip = new Button();
+		coldEffectChip.setText(Language.translate("cold"));
+		coldEffectChip.setId("cold-effect-chip");
+		coldEffectChip.setTooltip(new Tooltip(Language.translate("drag.cold.effect")));
+
+		hotEffectChip = new Button();
+		hotEffectChip.setText(Language.translate("hot"));
+		hotEffectChip.setId("hot-effect-chip");
+		hotEffectChip.setTooltip(new Tooltip(Language.translate("drag.hot.effect")));
 		
 		scentEffectChip = new Button();
 		scentEffectChip.setText(Language.translate("scent"));
@@ -264,7 +287,8 @@ public class SensoryEffectsPane extends BorderPane{
 		sensoyEffectsChipsPane.getChildren().add(windEffectChip);
 		sensoyEffectsChipsPane.getChildren().add(waterSprayerEffectChip);
 		sensoyEffectsChipsPane.getChildren().add(vibrationEffectChip);
-		sensoyEffectsChipsPane.getChildren().add(temperatureEffectChip);
+		sensoyEffectsChipsPane.getChildren().add(coldEffectChip);
+		sensoyEffectsChipsPane.getChildren().add(hotEffectChip);
 		sensoyEffectsChipsPane.getChildren().add(scentEffectChip);
 		sensoyEffectsChipsPane.getChildren().add(lightEffectChip);
 		sensoyEffectsChipsPane.getChildren().add(fogEffectChip);

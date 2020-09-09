@@ -1,7 +1,7 @@
 package view.spatialViewPane;
 
 import view.common.Language;
-import view.common.SliderButton;
+import view.common.customComponents.SliderButton;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -11,11 +11,11 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import model.common.Media;
 import model.spatialView.media.LevelProperty;
-import controller.Controller;
+import controller.ApplicationController;
 
 public class LevelPane extends VBox {
 
-	private Controller controller;
+	private ApplicationController applicationController;
 	private Media media;
 	
 	private SliderButton volume;
@@ -27,11 +27,11 @@ public class LevelPane extends VBox {
 	private BorderPane titleImageBorderPane;
 	private GridPane levelPropertyGridPane;
 	
-	public LevelPane(Controller controller, Media media){
+	public LevelPane(ApplicationController applicationController, Media media){
 		
 		setId("level-vbox");
 		
-		this.controller = controller;
+		this.applicationController = applicationController;
 		this.media = media;
 		
 		Text title = new Text(Language.translate("levels"));
@@ -124,7 +124,7 @@ public class LevelPane extends VBox {
 	
 	public void populateLevelPropertyJavaBean() {
 		
-		controller.populateLevelPropertyJavaBean(this, media);
+		applicationController.populateLevelPropertyJavaBean(this, media);
 		
 	}
 	

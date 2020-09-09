@@ -1,9 +1,13 @@
 package view.stevePane;
 
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -16,7 +20,7 @@ import javafx.stage.StageStyle;
 public class LoadingWindow extends Stage {
 
     private Scene scene;
-    private BorderPane containerBorderPane;
+    private StackPane containerBorderPane;
 
     public LoadingWindow() {
 
@@ -26,22 +30,29 @@ public class LoadingWindow extends Stage {
 
         setLayout();
 
-        scene = new Scene(containerBorderPane, 500, 300);
+        scene = new Scene(containerBorderPane, 800, 450);
         scene.setFill(Color.TRANSPARENT);
         setScene(scene);
 
     }
 
     public void setLayout(){
-    	
-    	containerBorderPane = new BorderPane();
+
+        containerBorderPane = new StackPane();
+
         containerBorderPane.setId("container-border-pane");
-        
-        ImageView icon = new ImageView(new Image(getClass().getResourceAsStream("/images/loadingWindow/compoundLogo.png")));
-		icon.setPreserveRatio(true);
+
+        ImageView icon = new ImageView(new Image(getClass().getResourceAsStream("/images/loadingWindow/loadingScreen.png")));
+        icon.setPreserveRatio(true);
         icon.setSmooth(true);
-        
-        containerBorderPane.setCenter(icon);
+        icon.fitWidthProperty().bind(containerBorderPane.widthProperty());
+        icon.fitHeightProperty().bind(containerBorderPane.heightProperty());
+
+        ProgressBar progressBar = new ProgressBar();
+
+        containerBorderPane.getChildren().addAll(icon, progressBar);
+        containerBorderPane.setAlignment(progressBar, Pos.CENTER_LEFT);
+        StackPane.setMargin(progressBar, new Insets(120,0,0,48));
         containerBorderPane.getStylesheets().add("styles/stevePane/loadingWindow.css");
         
     }

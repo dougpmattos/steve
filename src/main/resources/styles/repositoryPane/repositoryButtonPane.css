@@ -33,7 +33,7 @@
     -fx-padding: 0;
 }
 #add-button:hover{
-    -fx-background-color: #00BFA5;
+    -fx-graphic: url("../../images/repositoryPane/add-hover.png");
     -fx-background-radius: 0;
 }
 
@@ -44,7 +44,7 @@
     -fx-padding: 0;
 }
 #delete-button:hover {
-   -fx-background-color: #00BFA5;
+   -fx-graphic: url("../../images/repositoryPane/delete-hover.png");
    -fx-background-radius: 0;
 }
 
@@ -55,7 +55,7 @@
     -fx-padding: 0;
 }
 #clear-button:hover {
-  -fx-background-color: #00BFA5;
+  -fx-graphic: url("../../images/repositoryPane/clear-hover.png");
   -fx-background-radius: 0;
 }
 
@@ -63,9 +63,4 @@
     -fx-graphic: url("../../images/repositoryPane/list.png");
     -fx-background-color: transparent;
     -fx-padding: 0;
-}
-
-#view-type-button:hover {
-  -fx-background-color: #00BFA5;
-  -fx-background-radius: 0;
 }

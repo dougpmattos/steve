@@ -4,22 +4,24 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 import javafx.scene.image.ImageView;
+import model.temporalView.TemporalChain;
 
 public class Node<T> implements Serializable {
 
 	private static final long serialVersionUID = 3268239784445533812L;
 
 	public String name;
+	private ArrayList<Property> propertyList = new ArrayList<Property>();
+
     private Double begin;
     private Double end;
-    public Double duration = 52.0;
+    public Double duration = 5.0;
     private Boolean interactive = false;
-    private ArrayList<Property> propertyList = new ArrayList<Property>();
     public T type;
-    private Fade fade;
     private Boolean isPLayingInPreview = false;
     public transient ImageView icon;
     private transient Object executionObject;
+	private TemporalChain parentTemporalChain;
 
 	public Node(){
     	
@@ -81,14 +83,6 @@ public class Node<T> implements Serializable {
 		this.type = type;
 	}
 	
-	public Fade getFade() {
-		return fade;
-	}
-
-	public void setFade(Fade fade) {
-		this.fade = fade;
-	}
-	
     public void setIsPLayingInPreview(Boolean value){
 		this.isPLayingInPreview = value;
 	}
@@ -104,4 +98,13 @@ public class Node<T> implements Serializable {
 	public void setExecutionObject(Object executionObject){
 		this.executionObject = executionObject;
 	}
+
+	public TemporalChain getParentTemporalChain() {
+		return parentTemporalChain;
+	}
+
+	public void setParentTemporalChain(TemporalChain parentTemporalChain) {
+		this.parentTemporalChain = parentTemporalChain;
+	}
+
 }

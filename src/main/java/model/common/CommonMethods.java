@@ -1,4 +1,4 @@
-package view.common;
+package model.common;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -17,7 +17,6 @@ import javax.xml.transform.stream.StreamSource;
 
 import model.HTMLSupport.HTMLExportEventHandler;
 import model.NCLSupport.NCLExportEventHandler;
-import model.common.SpatialTemporalView;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,17 +24,20 @@ import org.w3c.dom.Document;
 
 import br.uff.midiacom.ana.NCLDoc;
 import view.HTMLSupport.RunWindow;
+import view.common.Language;
+import view.common.dialogs.MessageDialog;
+import view.common.dialogs.ReturnMessage;
 import view.utility.AnimationUtil;
 
 public class CommonMethods {
 
-	public static void runApplication(SpatialTemporalView spatialTemporalView){
+	public static void runApplication(SpatialTemporalApplication spatialTemporalApplication){
 		
 	 	String htmlPath = "";
 		
 		RunWindow runWindow = null;
 		try {
-			runWindow = new RunWindow(createTempHTML(spatialTemporalView));
+			runWindow = new RunWindow(createTempHTML(spatialTemporalApplication));
 		} catch (org.xml.sax.SAXException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -59,14 +61,14 @@ public class CommonMethods {
 		
 	}
 	
-	private static File createTempHTML(SpatialTemporalView spatialTemporalView) throws org.xml.sax.SAXException{
+	private static File createTempHTML(SpatialTemporalApplication spatialTemporalApplication) throws org.xml.sax.SAXException{
 		
 		final Logger logger = LoggerFactory.getLogger(HTMLExportEventHandler.class);
 		
 		final Document document;
 		final NCLExportEventHandler nclExportEventHandler;
 		
-		nclExportEventHandler = new NCLExportEventHandler(spatialTemporalView);
+		nclExportEventHandler = new NCLExportEventHandler(spatialTemporalApplication);
 		
 		File tempNCLDocumentFile = null;
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -100,7 +102,7 @@ public class CommonMethods {
 		} catch (Exception e) {
 			
 			logger.error(e.getMessage());
-			MessageDialog messageDialog = new MessageDialog(Language.translate("error.during.the.temp.ncl.document.creation"), 
+			MessageDialog messageDialog = new MessageDialog(Language.translate("error.during.the.temp.ncl.document.creation"),
 					Language.translate("could.not.find.the.temp.ncl.document.directory") + ": " + e.getMessage(), "OK", 250);
 	        messageDialog.showAndWait();
 	        

@@ -27,6 +27,8 @@ dependencies {
     implementation 'net.sf.jgrapht:jgrapht:0.8.3'
     implementation  group: 'jgraph', name: 'jgraph', version: '5.13.0.0'
     implementation files('libs/aNa.jar')
+    implementation group: 'com.clarifai.clarifai-api2', name: 'core', version: '2.8.1'
+    implementation 'com.jfoenix:jfoenix:9.0.8'
 }
 
 mainClassName = 'view.stevePane.Main'

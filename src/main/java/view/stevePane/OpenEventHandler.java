@@ -8,27 +8,27 @@ import java.io.ObjectInputStream;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.stage.FileChooser;
-import model.common.SpatialTemporalView;
+import model.common.SpatialTemporalApplication;
 import model.repository.RepositoryMediaList;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import view.common.Language;
-import view.common.MessageDialog;
-import controller.Controller;
+import view.common.dialogs.MessageDialog;
+import controller.ApplicationController;
 
 public class OpenEventHandler implements EventHandler<ActionEvent> {
 
 	final Logger logger = LoggerFactory.getLogger(OpenEventHandler.class);
 	
-	private Controller controller;
-	private SpatialTemporalView temporalView;
+	private ApplicationController applicationController;
+	private SpatialTemporalApplication temporalView;
 	private RepositoryMediaList repositoryMediaList;
 	
-	public OpenEventHandler(Controller controller, SpatialTemporalView temporalView, RepositoryMediaList repositoryMediaList){
+	public OpenEventHandler(ApplicationController applicationController, SpatialTemporalApplication temporalView, RepositoryMediaList repositoryMediaList){
 		
-		this.controller = controller;
+		this.applicationController = applicationController;
 		this.temporalView = temporalView;
 		this.repositoryMediaList = repositoryMediaList;
 
@@ -48,12 +48,12 @@ public class OpenEventHandler implements EventHandler<ActionEvent> {
 			
 			   	FileInputStream fileInputStream = new FileInputStream(file);
 		    	ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
-		    	SpatialTemporalView existingTemporalView = (SpatialTemporalView) objectInputStream.readObject();
+		    	SpatialTemporalApplication existingTemporalView = (SpatialTemporalApplication) objectInputStream.readObject();
 		    	RepositoryMediaList existingRepositoryMediaList = (RepositoryMediaList) objectInputStream.readObject();
 		    	objectInputStream.close();
 		    	
-		    	controller.openExistingRepositoryMediaList(existingRepositoryMediaList);
-		    	controller.openExistingTemporalView(existingTemporalView);
+		    	applicationController.openExistingRepositoryMediaList(existingRepositoryMediaList);
+		    	applicationController.openExistingTemporalView(existingTemporalView);
                 
 			}
             
