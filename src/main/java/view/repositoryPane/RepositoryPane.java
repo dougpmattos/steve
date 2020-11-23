@@ -7,7 +7,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
-import model.common.Media;
+import model.common.MediaNode;
 import model.repository.RepositoryMediaList;
 import model.repository.enums.RepositoryOperator;
 import model.utility.Operation;
@@ -60,14 +60,14 @@ public class RepositoryPane extends BorderPane implements Observer {
 		if(observable instanceof RepositoryMediaList){
 		
 			Operation<RepositoryOperator> operation = (Operation<RepositoryOperator>) obj;
-			Media media = (Media) operation.getOperating();
+			MediaNode mediaNode = (MediaNode) operation.getOperating();
 
 			switch(operation.getOperator()){
 			
 		        case ADD_REPOSITORY_MEDIA:
 		        	
-		        	repositoryMediaItemContainerListPane.add(media);
-		        	mediaTreePane.add(media);
+		        	repositoryMediaItemContainerListPane.add(mediaNode);
+		        	mediaTreePane.add(mediaNode);
 		        	
 		        	buttonPane.getDeleteButton().setDisable(false);
 		        	buttonPane.getClearButton().setDisable(false);
@@ -81,8 +81,8 @@ public class RepositoryPane extends BorderPane implements Observer {
 		            
 		        case REMOVE_REPOSITORY_MEDIA:
 		        	
-		        	repositoryMediaItemContainerListPane.remove(media);
-		        	mediaTreePane.remove(media);
+		        	repositoryMediaItemContainerListPane.remove(mediaNode);
+		        	mediaTreePane.remove(mediaNode);
 		        	
 		        	if(repositoryMediaItemContainerListPane.getAllTypes().isEmpty()){
 		        		getChildren().remove(repositoryMediaItemContainerListPane);

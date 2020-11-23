@@ -195,17 +195,27 @@
 	
 }
 
-#media-name{
+#media-name-label{
 	-fx-background-color: #62727b;
-	-fx-background-radius: 0 8 0 0;
-	-fx-pref-height: 30;
 	-fx-min-width: 0;
 	-fx-padding: 0 0 0 10;
+    -fx-font-size: 11px;
+}
+#i-button-container{
+    -fx-background-color: #62727b;
+    -fx-alignment: CENTER;
+}
+#right-border-rectangle{
+    -fx-background-color: #62727b;
+    -fx-background-radius: 0 4 4 0;
+}
+#right-border-rectangle:hover{
+    -fx-background-color: linear-gradient(from 20% 20% to 100% 100%, derive(#37474f, 50%), derive(#62727b, 50%));
 }
 
 #temporal-media-container{
 	-fx-background-color: #102027;
-	-fx-background-radius: 8;
+	-fx-background-radius: 4;
 }
 
 #name-interactive-icon-container{
@@ -231,12 +241,12 @@
 	-fx-stroke-width: 200% 
 }
 #i-button{
-	-fx-graphic: url("../images/interactivity-button.png");
+	-fx-graphic: url("../../images/temporalViewPane/user-interaction.png");
 	-fx-background-color: transparent;
-    -fx-padding: 0;
+    -fx-padding: 0 3 0 0;
 }
 #i-button:hover{
-    -fx-graphic: url("../images/interactivity-button-hover.png");
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);
 }
 #tab-add-button{
 	-fx-graphic: url("../../images/temporalViewPane/tab-add-button.png");

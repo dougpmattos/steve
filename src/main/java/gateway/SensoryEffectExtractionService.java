@@ -7,7 +7,7 @@ import clarifai2.dto.input.ClarifaiInput;
 import clarifai2.dto.model.Model;
 import clarifai2.dto.model.output.ClarifaiOutput;
 import clarifai2.dto.prediction.Frame;
-import model.common.Media;
+import model.common.MediaNode;
 import model.common.Node;
 import model.common.enums.SensoryEffectType;
 import model.temporalView.SEExtractionServiceResponse;
@@ -30,7 +30,7 @@ public class SensoryEffectExtractionService implements Runnable{
     @Override
     public void run() {
 
-        String myMedia = ((Media) applicationNode).getPath();
+        String myMedia = ((MediaNode) applicationNode).getPath();
         final File currFile = new File(myMedia);
 
         //TODO put apiKey in an external config file

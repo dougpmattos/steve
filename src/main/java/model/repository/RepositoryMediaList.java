@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Observable;
 
-import model.common.Media;
+import model.common.MediaNode;
 import model.repository.enums.RepositoryOperator;
 import model.utility.Operation;
 
@@ -17,91 +17,91 @@ public class RepositoryMediaList extends Observable implements Serializable{
 
 	private static final long serialVersionUID = 5842489767967822129L;
 	
-	private ArrayList<Media> images = new ArrayList<Media>();
-    private ArrayList<Media> video = new ArrayList<Media>();
-    private ArrayList<Media> audio = new ArrayList<Media>();
-    private ArrayList<Media> text = new ArrayList<Media>();
-    private ArrayList<Media> application = new ArrayList<Media>();
-    private ArrayList<Media> allTypes = new ArrayList<Media>();
+	private ArrayList<MediaNode> images = new ArrayList<MediaNode>();
+    private ArrayList<MediaNode> video = new ArrayList<MediaNode>();
+    private ArrayList<MediaNode> audio = new ArrayList<MediaNode>();
+    private ArrayList<MediaNode> text = new ArrayList<MediaNode>();
+    private ArrayList<MediaNode> application = new ArrayList<MediaNode>();
+    private ArrayList<MediaNode> allTypes = new ArrayList<MediaNode>();
     
     public RepositoryMediaList(){
     	
     }
     
-	public Boolean add(Media media) {
+	public Boolean add(MediaNode mediaNode) {
 		
-		String selectedMediaName = media.getName();
+		String selectedMediaName = mediaNode.getName();
         Boolean contains = false;
-		Iterator<Media> mediaListIterator = getAllTypesList().iterator();
+		Iterator<MediaNode> mediaListIterator = getAllTypesList().iterator();
         while(mediaListIterator.hasNext() && contains==false) {
-            String listMediaName = ((Media) mediaListIterator.next()).getName();
+            String listMediaName = ((MediaNode) mediaListIterator.next()).getName();
             if(selectedMediaName.equalsIgnoreCase(listMediaName)){
                 return false;
             }
         }
 		
-        allTypes.add(media);
+        allTypes.add(mediaNode);
         
-        switch(media.getType()){
+        switch(mediaNode.getType()){
             case IMAGE:
-                images.add(media);
+                images.add(mediaNode);
                 break;
                 
             case VIDEO:
-                video.add(media);
+                video.add(mediaNode);
                 break;
                 
             case AUDIO:
-                audio.add(media);
+                audio.add(mediaNode);
                 break;
                 
             case TEXT:
-                text.add(media);
+                text.add(mediaNode);
                 break;
                 
             case APPLICATION:
-                application.add(media);  
+                application.add(mediaNode);
                 break;
                 
         }
         
         setChanged();
-        Operation<RepositoryOperator> operation = new Operation<RepositoryOperator>(RepositoryOperator.ADD_REPOSITORY_MEDIA, media);
+        Operation<RepositoryOperator> operation = new Operation<RepositoryOperator>(RepositoryOperator.ADD_REPOSITORY_MEDIA, mediaNode);
         notifyObservers(operation);
         
         return true;
         
     }
     
-    public void delete(Media media){
+    public void delete(MediaNode mediaNode){
     	
-    	allTypes.remove(media);
+    	allTypes.remove(mediaNode);
     	
-    	switch(media.getType()){
+    	switch(mediaNode.getType()){
         case IMAGE:
-            images.remove(media);
+            images.remove(mediaNode);
             break;
             
         case VIDEO:
-            video.remove(media);
+            video.remove(mediaNode);
             break;
             
         case AUDIO:
-            audio.remove(media);
+            audio.remove(mediaNode);
             break;
             
         case TEXT:
-            text.remove(media);
+            text.remove(mediaNode);
             break;
             
         case APPLICATION:
-            application.remove(media);  
+            application.remove(mediaNode);
             break;
             
     	}
     
     	setChanged();
-        Operation<RepositoryOperator> operation = new Operation<RepositoryOperator>(RepositoryOperator.REMOVE_REPOSITORY_MEDIA, media);
+        Operation<RepositoryOperator> operation = new Operation<RepositoryOperator>(RepositoryOperator.REMOVE_REPOSITORY_MEDIA, mediaNode);
         notifyObservers(operation);
     	
     }
@@ -124,27 +124,27 @@ public class RepositoryMediaList extends Observable implements Serializable{
     	return allTypes.isEmpty();
     }
     
-    public ArrayList<Media> getAllTypesList(){
+    public ArrayList<MediaNode> getAllTypesList(){
         return allTypes;
     }
     
-    public ArrayList<Media> getImageList(){
+    public ArrayList<MediaNode> getImageList(){
         return images;
     }
     
-    public ArrayList<Media> getVideoList(){
+    public ArrayList<MediaNode> getVideoList(){
         return video;
     }
     
-    public ArrayList<Media> getAudioList(){
+    public ArrayList<MediaNode> getAudioList(){
         return audio;
     }
     
-    public ArrayList<Media> getTextList(){
+    public ArrayList<MediaNode> getTextList(){
         return text;
     }
     
-    public ArrayList<Media> getApplicationList(){
+    public ArrayList<MediaNode> getApplicationList(){
         return application;
     }
 
@@ -152,8 +152,8 @@ public class RepositoryMediaList extends Observable implements Serializable{
 		
 		clear();
 		
-		for(Media existentMedia : existingRepositoryMediaList.getAllTypesList()){
-			add(existentMedia);
+		for(MediaNode existentMediaNode : existingRepositoryMediaList.getAllTypesList()){
+			add(existentMediaNode);
 		}
 		
 	}

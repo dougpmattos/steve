@@ -4,8 +4,9 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Observable;
 
-import model.common.Media;
+import model.common.MediaNode;
 import model.common.Node;
+import model.common.SensoryEffectNode;
 import model.temporalView.enums.AllenRelation;
 import model.temporalView.enums.ConflictType;
 import model.temporalView.enums.TemporalRelationType;
@@ -35,7 +36,8 @@ public class TemporalChain extends Observable implements Serializable {
 	private int id;
 	private String name;
 	private Node masterNode;
-	private ArrayList<Media> mediaAllList = new ArrayList<Media>();
+	private ArrayList<MediaNode> mediaNodeAllList = new ArrayList<MediaNode>();
+	private ArrayList<SensoryEffectNode> sensoryEffectNodeAllList = new ArrayList<SensoryEffectNode>();
 	private ArrayList<ArrayList<Node>> nodeLineList = new ArrayList<ArrayList<Node>>();
 
 	public TemporalChain(String name) {
@@ -66,7 +68,6 @@ public class TemporalChain extends Observable implements Serializable {
 	public void setMasterNode(Node masterNode){
 		
 		this.masterNode = masterNode;
-		addNode(masterNode);
 		
 	}
 	
@@ -76,9 +77,10 @@ public class TemporalChain extends Observable implements Serializable {
 	
 	public void addNode(Node node){
 
-		if(node instanceof Media){
-			mediaAllList.add((Media)node); //TODO depois pode tirar isso e faazer if pra 
-			//ver se é efito ou media para crir lista de efeito e de midia separadamente caso necessario
+		if(node instanceof MediaNode){
+			mediaNodeAllList.add((MediaNode)node);
+		}else if(node instanceof SensoryEffectNode){
+			sensoryEffectNodeAllList.add((SensoryEffectNode)node);
 		}
 		
 		nodeAllList.add(node);
@@ -100,8 +102,9 @@ public class TemporalChain extends Observable implements Serializable {
 	}
 	
 	public void removeNode(Node node, Boolean isDeleteButton){
-		
-		mediaAllList.remove(node);
+
+		mediaNodeAllList.remove(node);
+		sensoryEffectNodeAllList.remove(node);
 		nodeAllList.remove(node);
 		
 		int line = removeNodeLineList(node);
@@ -272,9 +275,8 @@ public class TemporalChain extends Observable implements Serializable {
 			for(TemporalRelation relation : listOfRelationsWhereNodeIsSecondary){
 				
 				Synchronous synchronousRelation = (Synchronous) relation;
-				Media masterMedia = (Media) synchronousRelation.getMasterNode();
-				
-				addElementsInRootNodeList(masterMedia, rootNodeList);
+				Node masterNode = synchronousRelation.getPrimaryNode();
+				addElementsInRootNodeList(masterNode, rootNodeList);
 				
 			}
 			
@@ -382,23 +384,23 @@ public class TemporalChain extends Observable implements Serializable {
 			if(relation instanceof Synchronous){
 				
 				Synchronous synchronousRelation = (Synchronous) relation;
-				if(synchronousRelation.getMasterNode() == node){
+				if(synchronousRelation.getPrimaryNode() == node){
 					removeSynchronousRelation(synchronousRelation);
 				}else {
 					synchronousRelation.removeSlaveNode(node);
-					if(synchronousRelation.getSlaveNodeList().isEmpty()){
+					if(synchronousRelation.getSecondaryNodeList().isEmpty()){
 						removeSynchronousRelation(synchronousRelation);
 					}
 				}
 				
 			}else if(relation instanceof Interactivity){
 				
-				Interactivity<Media> interactivityRelation = (Interactivity<Media>) relation;
-				if(interactivityRelation.getMasterNode() == node){
+				Interactivity<MediaNode> interactivityRelation = (Interactivity<MediaNode>) relation;
+				if(interactivityRelation.getPrimaryNode() == node){
 					removeInteractivityRelation(interactivityRelation);
 				}else {
 					interactivityRelation.removeSlaveNode(node);
-					if(interactivityRelation.getSlaveNodeList().isEmpty() && interactivityRelation.getTemporalChainList().isEmpty()){
+					if(interactivityRelation.getSecondaryNodeList().isEmpty() && interactivityRelation.getTemporalChainList().isEmpty()){
 						removeInteractivityRelation(interactivityRelation);
 					}
 				}
@@ -430,8 +432,8 @@ public class TemporalChain extends Observable implements Serializable {
 		
 	}
 
-	public ArrayList<Media> getMediaAllList() {
-		return mediaAllList;
+	public ArrayList<MediaNode> getMediaNodeAllList() {
+		return mediaNodeAllList;
 	}
 	
 	public ArrayList<Node> getNodeAllList() {
@@ -523,9 +525,9 @@ public class TemporalChain extends Observable implements Serializable {
 		Boolean atLeastOneSlaveMediaWasDefined = false;
 		int i;
 		
-		for(i  = 0; i < synchronousRelationToBeDefined.getSlaveNodeList().size(); i++){
+		for(i  = 0; i < synchronousRelationToBeDefined.getSecondaryNodeList().size(); i++){
 			
-			Node slaveNode = synchronousRelationToBeDefined.getSlaveNodeList().get(i);
+			Node slaveNode = synchronousRelationToBeDefined.getSecondaryNodeList().get(i);
 			
 			Boolean slaveWasChangedModifyingDuration = false;
 			Boolean slaveBlockedForChanges = false;
@@ -594,7 +596,7 @@ public class TemporalChain extends Observable implements Serializable {
 					}
 					
 				}else {
-					synchronousRelationToBeDefined.getSlaveNodeList().remove(slaveNode);
+					synchronousRelationToBeDefined.getSecondaryNodeList().remove(slaveNode);
 				}
 				
 			}else {
@@ -630,12 +632,12 @@ public class TemporalChain extends Observable implements Serializable {
 			
 			Synchronous synchronousRelation = (Synchronous) relation;
 			
-			for(int i = 0; i < synchronousRelation.getSlaveNodeList().size(); i++){
+			for(int i = 0; i < synchronousRelation.getSecondaryNodeList().size(); i++){
 				
-				Media slave = (Media) synchronousRelation.getSlaveNodeList().get(i);
-				defineRelation(synchronousRelation, i, slave);
+				Node secondaryNode = synchronousRelation.getSecondaryNodeList().get(i);
+				defineRelation(synchronousRelation, i, secondaryNode);
 				
-				dragChildren(slave);
+				dragChildren(secondaryNode);
 				
 			}
 	
@@ -643,56 +645,56 @@ public class TemporalChain extends Observable implements Serializable {
 
 	}
 
-	private void defineRelationChangingDuration(Synchronous synchronousRelationToBeDefined, int i, Node slaveNode) {
+	private void defineRelationChangingDuration(Synchronous synchronousRelationToBeDefined, int i, Node secondaryNode) {
 		
 		switch(synchronousRelationToBeDefined.getType()){
 		
 			case STARTS:
 				
-				slaveNode.setBegin(synchronousRelationToBeDefined.getMasterNode().getBegin());
-				removeNode(slaveNode, false);
-				addNode(slaveNode);
+				secondaryNode.setBegin(synchronousRelationToBeDefined.getPrimaryNode().getBegin());
+				removeNode(secondaryNode, false);
+				addNode(secondaryNode);
 				break;
 				
 			case STARTS_DELAY:
 				
-				slaveNode.setBegin(synchronousRelationToBeDefined.getMasterNode().getBegin() + synchronousRelationToBeDefined.getDelay());
-				removeNode(slaveNode, false);
-				addNode(slaveNode);
+				secondaryNode.setBegin(synchronousRelationToBeDefined.getPrimaryNode().getBegin() + synchronousRelationToBeDefined.getDelay());
+				removeNode(secondaryNode, false);
+				addNode(secondaryNode);
 	
 				break;
 				
 			case FINISHES:
-	
-				slaveNode.setEnd(synchronousRelationToBeDefined.getMasterNode().getEnd());
-				slaveNode.setDuration(slaveNode.getEnd() - slaveNode.getBegin());
-				removeNode(slaveNode, false);
-				addNode(slaveNode);
+
+				secondaryNode.setEnd(synchronousRelationToBeDefined.getPrimaryNode().getEnd());
+				secondaryNode.setDuration(secondaryNode.getEnd() - secondaryNode.getBegin());
+				removeNode(secondaryNode, false);
+				addNode(secondaryNode);
 	
 				break;
 			
 			case FINISHES_DELAY:
 	
-				slaveNode.setEnd(synchronousRelationToBeDefined.getMasterNode().getEnd() + synchronousRelationToBeDefined.getDelay());
-				slaveNode.setDuration(slaveNode.getEnd() - slaveNode.getBegin());
-				removeNode(slaveNode, false);
-				addNode(slaveNode);
+				secondaryNode.setEnd(synchronousRelationToBeDefined.getPrimaryNode().getEnd() + synchronousRelationToBeDefined.getDelay());
+				secondaryNode.setDuration(secondaryNode.getEnd() - secondaryNode.getBegin());
+				removeNode(secondaryNode, false);
+				addNode(secondaryNode);
 	
 				break;
 				
 			case MEETS:
 	
-				slaveNode.setBegin(synchronousRelationToBeDefined.getMasterNode().getEnd());
-				removeNode(slaveNode, false);
-				addNode(slaveNode);
+				secondaryNode.setBegin(synchronousRelationToBeDefined.getPrimaryNode().getEnd());
+				removeNode(secondaryNode, false);
+				addNode(secondaryNode);
 	
 				break;
 			
 			case MEETS_DELAY:
 	
-				slaveNode.setBegin(synchronousRelationToBeDefined.getMasterNode().getEnd() + synchronousRelationToBeDefined.getDelay());
-				removeNode(slaveNode, false);
-				addNode(slaveNode);
+				secondaryNode.setBegin(synchronousRelationToBeDefined.getPrimaryNode().getEnd() + synchronousRelationToBeDefined.getDelay());
+				removeNode(secondaryNode, false);
+				addNode(secondaryNode);
 	
 				break;
 			
@@ -700,20 +702,20 @@ public class TemporalChain extends Observable implements Serializable {
 				
 				Boolean isPossibleDefineMetBy = true;
 	
-				slaveNode.setEnd(synchronousRelationToBeDefined.getMasterNode().getBegin());
-				slaveNode.setDuration(slaveNode.getEnd() - slaveNode.getBegin());
+				secondaryNode.setEnd(synchronousRelationToBeDefined.getPrimaryNode().getBegin());
+				secondaryNode.setDuration(secondaryNode.getEnd() - secondaryNode.getBegin());
 				
-				if(slaveNode.getDuration() == 0){
+				if(secondaryNode.getDuration() == 0){
 					isPossibleDefineMetBy = false;
 					break;
 				}else {
-					removeNode(slaveNode, false);
-					addNode(slaveNode);
+					removeNode(secondaryNode, false);
+					addNode(secondaryNode);
 				}
 	
 				if(!isPossibleDefineMetBy){
 					MessageDialog messageDialog = new MessageDialog(Language.translate("it.is.not.possible.to.define.alignment"), 
-							Language.translate("select.other.media.to.be.the.master"), "OK", 190);
+							Language.translate("select.other.media.to.be.the.primary"), "OK", 190);
 					messageDialog.showAndWait();
 				}
 				
@@ -723,20 +725,20 @@ public class TemporalChain extends Observable implements Serializable {
 				
 				Boolean isPossibleDefineMetByDelay = true;
 					
-				slaveNode.setEnd(synchronousRelationToBeDefined.getMasterNode().getBegin() + synchronousRelationToBeDefined.getDelay());
-				slaveNode.setDuration(slaveNode.getEnd() - slaveNode.getBegin());
+				secondaryNode.setEnd(synchronousRelationToBeDefined.getPrimaryNode().getBegin() + synchronousRelationToBeDefined.getDelay());
+				secondaryNode.setDuration(secondaryNode.getEnd() - secondaryNode.getBegin());
 				
-				if(slaveNode.getDuration() == 0){
+				if(secondaryNode.getDuration() == 0){
 					isPossibleDefineMetByDelay = false;
 					break;
 				}else {
-					removeNode(slaveNode, false);
-					addNode(slaveNode);
+					removeNode(secondaryNode, false);
+					addNode(secondaryNode);
 				}
 	
 				if(!isPossibleDefineMetByDelay){
 					MessageDialog messageDialog = new MessageDialog(Language.translate("it.is.not.possible.to.define.alignment"), 
-							Language.translate("select.other.media.to.be.the.master"), "OK", 190);
+							Language.translate("select.other.media.to.be.the.primary"), "OK", 190);
 					messageDialog.showAndWait();
 				}
 				
@@ -747,14 +749,14 @@ public class TemporalChain extends Observable implements Serializable {
 				Double beforeRelationBegin;
 				
 				if(i == 0){
-					beforeRelationBegin = synchronousRelationToBeDefined.getMasterNode().getEnd() + synchronousRelationToBeDefined.getDelay();
+					beforeRelationBegin = synchronousRelationToBeDefined.getPrimaryNode().getEnd() + synchronousRelationToBeDefined.getDelay();
 				}else {
-					beforeRelationBegin = synchronousRelationToBeDefined.getSlaveNodeList().get(i-1).getEnd() + synchronousRelationToBeDefined.getDelay();
+					beforeRelationBegin = synchronousRelationToBeDefined.getSecondaryNodeList().get(i-1).getEnd() + synchronousRelationToBeDefined.getDelay();
 				}
 	
-				slaveNode.setBegin(beforeRelationBegin);
-				removeNode(slaveNode, false);
-				addNode(slaveNode);
+				secondaryNode.setBegin(beforeRelationBegin);
+				removeNode(secondaryNode, false);
+				addNode(secondaryNode);
 				
 				break;
 			
@@ -763,75 +765,75 @@ public class TemporalChain extends Observable implements Serializable {
 	}
 
 	//INFO Após passar pela validação das relações (a relação é adicionada de fato no modelo), seta o início e fim das mídias visualmente na cadeia utilizando inicio/fim das mídia mestre e delay conforme o tipo de relação.
-	private void defineRelation(Synchronous synchronousRelationToBeDefined, int i, Node slaveNode) {
+	private void defineRelation(Synchronous synchronousRelationToBeDefined, int i, Node secondaryNode) {
 		
 		switch(synchronousRelationToBeDefined.getType()){
 		
 			case STARTS:
 				
-				slaveNode.setBegin(synchronousRelationToBeDefined.getMasterNode().getBegin());
-				slaveNode.setEnd(slaveNode.getBegin() + slaveNode.getDuration());
-				removeNode(slaveNode, false);
-				addNode(slaveNode);
+				secondaryNode.setBegin(synchronousRelationToBeDefined.getPrimaryNode().getBegin());
+				secondaryNode.setEnd(secondaryNode.getBegin() + secondaryNode.getDuration());
+				removeNode(secondaryNode, false);
+				addNode(secondaryNode);
 				
 				break;
 				
 			case STARTS_DELAY:
 				
-				slaveNode.setBegin(synchronousRelationToBeDefined.getMasterNode().getBegin() + synchronousRelationToBeDefined.getDelay());
-				slaveNode.setEnd(slaveNode.getBegin() + slaveNode.getDuration());
-				removeNode(slaveNode, false);
-				addNode(slaveNode);
+				secondaryNode.setBegin(synchronousRelationToBeDefined.getPrimaryNode().getBegin() + synchronousRelationToBeDefined.getDelay());
+				secondaryNode.setEnd(secondaryNode.getBegin() + secondaryNode.getDuration());
+				removeNode(secondaryNode, false);
+				addNode(secondaryNode);
 
 				break;
 				
 			case FINISHES:
 
-				Double finishesRelationBegin = synchronousRelationToBeDefined.getMasterNode().getEnd() - slaveNode.getDuration();
+				Double finishesRelationBegin = synchronousRelationToBeDefined.getPrimaryNode().getEnd() - secondaryNode.getDuration();
 				if(finishesRelationBegin > 0){
-					slaveNode.setBegin(finishesRelationBegin);
+					secondaryNode.setBegin(finishesRelationBegin);
 				}else {
-					slaveNode.setBegin(0.0);
+					secondaryNode.setBegin(0.0);
 				}
 				
-				slaveNode.setEnd(synchronousRelationToBeDefined.getMasterNode().getEnd());
-				slaveNode.setDuration(slaveNode.getEnd() - slaveNode.getBegin());
-				removeNode(slaveNode, false);
-				addNode(slaveNode);
+				secondaryNode.setEnd(synchronousRelationToBeDefined.getPrimaryNode().getEnd());
+				secondaryNode.setDuration(secondaryNode.getEnd() - secondaryNode.getBegin());
+				removeNode(secondaryNode, false);
+				addNode(secondaryNode);
 
 				break;
 			
 			case FINISHES_DELAY:
 
-				Double delayFinishesRelationBegin = synchronousRelationToBeDefined.getMasterNode().getEnd() + synchronousRelationToBeDefined.getDelay() - slaveNode.getDuration();
+				Double delayFinishesRelationBegin = synchronousRelationToBeDefined.getPrimaryNode().getEnd() + synchronousRelationToBeDefined.getDelay() - secondaryNode.getDuration();
 				if(delayFinishesRelationBegin > 0){
-					slaveNode.setBegin(delayFinishesRelationBegin);
+					secondaryNode.setBegin(delayFinishesRelationBegin);
 				}else {
-					slaveNode.setBegin(0.0);
+					secondaryNode.setBegin(0.0);
 				}
 				
-				slaveNode.setEnd(synchronousRelationToBeDefined.getMasterNode().getEnd() + synchronousRelationToBeDefined.getDelay());
-				slaveNode.setDuration(slaveNode.getEnd() - slaveNode.getBegin());
-				removeNode(slaveNode, false);
-				addNode(slaveNode);
+				secondaryNode.setEnd(synchronousRelationToBeDefined.getPrimaryNode().getEnd() + synchronousRelationToBeDefined.getDelay());
+				secondaryNode.setDuration(secondaryNode.getEnd() - secondaryNode.getBegin());
+				removeNode(secondaryNode, false);
+				addNode(secondaryNode);
 
 				break;
 				
 			case MEETS:
 
-				slaveNode.setBegin(synchronousRelationToBeDefined.getMasterNode().getEnd());
-				slaveNode.setEnd(slaveNode.getBegin() + slaveNode.getDuration());
-				removeNode(slaveNode, false);
-				addNode(slaveNode);
+				secondaryNode.setBegin(synchronousRelationToBeDefined.getPrimaryNode().getEnd());
+				secondaryNode.setEnd(secondaryNode.getBegin() + secondaryNode.getDuration());
+				removeNode(secondaryNode, false);
+				addNode(secondaryNode);
 
 				break;
 			
 			case MEETS_DELAY:
 
-				slaveNode.setBegin(synchronousRelationToBeDefined.getMasterNode().getEnd() + synchronousRelationToBeDefined.getDelay());
-				slaveNode.setEnd(slaveNode.getBegin() + slaveNode.getDuration());
-				removeNode(slaveNode, false);
-				addNode(slaveNode);
+				secondaryNode.setBegin(synchronousRelationToBeDefined.getPrimaryNode().getEnd() + synchronousRelationToBeDefined.getDelay());
+				secondaryNode.setEnd(secondaryNode.getBegin() + secondaryNode.getDuration());
+				removeNode(secondaryNode, false);
+				addNode(secondaryNode);
 
 				break;
 			
@@ -839,26 +841,26 @@ public class TemporalChain extends Observable implements Serializable {
 				
 				Boolean isPossibleDefineMetBy = true;
 
-				slaveNode.setEnd(synchronousRelationToBeDefined.getMasterNode().getBegin());
-				Double begin = slaveNode.getEnd() - slaveNode.getDuration();
+				secondaryNode.setEnd(synchronousRelationToBeDefined.getPrimaryNode().getBegin());
+				Double begin = secondaryNode.getEnd() - secondaryNode.getDuration();
 				if(begin > 0){
-					slaveNode.setBegin(begin);
+					secondaryNode.setBegin(begin);
 				}else {
-					slaveNode.setBegin(0.0);
+					secondaryNode.setBegin(0.0);
 				}
 				
-				slaveNode.setDuration(slaveNode.getEnd() - slaveNode.getBegin());
-				if(slaveNode.getDuration() == 0){
+				secondaryNode.setDuration(secondaryNode.getEnd() - secondaryNode.getBegin());
+				if(secondaryNode.getDuration() == 0){
 					isPossibleDefineMetBy = false;
 					break;
 				}else {
-					removeNode(slaveNode, false);
-					addNode(slaveNode);
+					removeNode(secondaryNode, false);
+					addNode(secondaryNode);
 				}
 
 				if(!isPossibleDefineMetBy){
 					MessageDialog messageDialog = new MessageDialog(Language.translate("it.is.not.possible.to.define.alignment"), 
-							Language.translate("select.other.media.to.be.the.master"), "OK", 190);
+							Language.translate("select.other.media.to.be.the.primary"), "OK", 190);
 					messageDialog.showAndWait();
 				}
 				
@@ -868,26 +870,26 @@ public class TemporalChain extends Observable implements Serializable {
 				
 				Boolean isPossibleDefineMetByDelay = true;
 					
-				slaveNode.setEnd(synchronousRelationToBeDefined.getMasterNode().getBegin() + synchronousRelationToBeDefined.getDelay());
-				Double metByDelayRelationBegin = slaveNode.getEnd() - slaveNode.getDuration();
+				secondaryNode.setEnd(synchronousRelationToBeDefined.getPrimaryNode().getBegin() + synchronousRelationToBeDefined.getDelay());
+				Double metByDelayRelationBegin = secondaryNode.getEnd() - secondaryNode.getDuration();
 				if(metByDelayRelationBegin > 0){
-					slaveNode.setBegin(metByDelayRelationBegin);
+					secondaryNode.setBegin(metByDelayRelationBegin);
 				}else {
-					slaveNode.setBegin(0.0);
+					secondaryNode.setBegin(0.0);
 				}
 				
-				slaveNode.setDuration(slaveNode.getEnd() - slaveNode.getBegin());
-				if(slaveNode.getDuration() == 0){
+				secondaryNode.setDuration(secondaryNode.getEnd() - secondaryNode.getBegin());
+				if(secondaryNode.getDuration() == 0){
 					isPossibleDefineMetByDelay = false;
 					break;
 				}else {
-					removeNode(slaveNode, false);
-					addNode(slaveNode);
+					removeNode(secondaryNode, false);
+					addNode(secondaryNode);
 				}
 
 				if(!isPossibleDefineMetByDelay){
 					MessageDialog messageDialog = new MessageDialog(Language.translate("it.is.not.possible.to.define.alignment"), 
-							Language.translate("select.other.media.to.be.the.master"), "OK", 190);
+							Language.translate("select.other.media.to.be.the.primary"), "OK", 190);
 					messageDialog.showAndWait();
 				}
 				
@@ -898,15 +900,15 @@ public class TemporalChain extends Observable implements Serializable {
 				Double beforeRelationBegin;
 				
 				if(i == 0){
-					beforeRelationBegin = synchronousRelationToBeDefined.getMasterNode().getEnd() + synchronousRelationToBeDefined.getDelay();
+					beforeRelationBegin = synchronousRelationToBeDefined.getPrimaryNode().getEnd() + synchronousRelationToBeDefined.getDelay();
 				}else {
-					beforeRelationBegin = synchronousRelationToBeDefined.getSlaveNodeList().get(i-1).getEnd() + synchronousRelationToBeDefined.getDelay();
+					beforeRelationBegin = synchronousRelationToBeDefined.getSecondaryNodeList().get(i-1).getEnd() + synchronousRelationToBeDefined.getDelay();
 				}
 
-				slaveNode.setBegin(beforeRelationBegin);
-				slaveNode.setEnd(slaveNode.getBegin() + slaveNode.getDuration());
-				removeNode(slaveNode, false);
-				addNode(slaveNode);
+				secondaryNode.setBegin(beforeRelationBegin);
+				secondaryNode.setEnd(secondaryNode.getBegin() + secondaryNode.getDuration());
+				removeNode(secondaryNode, false);
+				addNode(secondaryNode);
 				
 				break;
 		}
@@ -932,46 +934,46 @@ public class TemporalChain extends Observable implements Serializable {
 			switch (newRelationType) {
 			
 				case STARTS:
-					newRelationBegin = synchronousRelationToBeDefined.getMasterNode().getBegin();
+					newRelationBegin = synchronousRelationToBeDefined.getPrimaryNode().getBegin();
 					break;
 	
 				case STARTS_DELAY:
-					newRelationBegin = synchronousRelationToBeDefined.getMasterNode().getBegin() + synchronousRelationToBeDefined.getDelay();
+					newRelationBegin = synchronousRelationToBeDefined.getPrimaryNode().getBegin() + synchronousRelationToBeDefined.getDelay();
 					break;
 					
 				case MEETS:
-					newRelationBegin = synchronousRelationToBeDefined.getMasterNode().getEnd();
+					newRelationBegin = synchronousRelationToBeDefined.getPrimaryNode().getEnd();
 					break;
 					
 				case MEETS_DELAY:
-					newRelationBegin = synchronousRelationToBeDefined.getMasterNode().getEnd() + synchronousRelationToBeDefined.getDelay();
+					newRelationBegin = synchronousRelationToBeDefined.getPrimaryNode().getEnd() + synchronousRelationToBeDefined.getDelay();
 					break;
 					
 				case BEFORE:
 					 
-					ArrayList<Node> auxSlaveMediaList = new ArrayList<Node>(synchronousRelationToBeDefined.getSlaveNodeList());
+					ArrayList<Node> auxSlaveMediaList = new ArrayList<Node>(synchronousRelationToBeDefined.getSecondaryNodeList());
 					Double begin;
 					
 					for(int i=0; i < auxSlaveMediaList.size(); i++){
 		
-						Media auxSlaveMedia = (Media) auxSlaveMediaList.get(i);
+						MediaNode auxSlaveMediaNode = (MediaNode) auxSlaveMediaList.get(i);
 						
 						if(i == 0){
-							begin = synchronousRelationToBeDefined.getMasterNode().getEnd() + synchronousRelationToBeDefined.getDelay();
-							if(auxSlaveMedia == newRelationSlaveNode){
+							begin = synchronousRelationToBeDefined.getPrimaryNode().getEnd() + synchronousRelationToBeDefined.getDelay();
+							if(auxSlaveMediaNode == newRelationSlaveNode){
 								newRelationBegin = begin;
 								break;
 							}
 						}else {
-							begin = synchronousRelationToBeDefined.getSlaveNodeList().get(i-1).getEnd() + synchronousRelationToBeDefined.getDelay();
-							if(auxSlaveMedia == newRelationSlaveNode){
+							begin = synchronousRelationToBeDefined.getSecondaryNodeList().get(i-1).getEnd() + synchronousRelationToBeDefined.getDelay();
+							if(auxSlaveMediaNode == newRelationSlaveNode){
 								newRelationBegin = begin;
 								break;
 							}
 						}
 						
-						auxSlaveMedia.setBegin(begin);
-						auxSlaveMedia.setEnd(auxSlaveMedia.getBegin() + auxSlaveMedia.getDuration());
+						auxSlaveMediaNode.setBegin(begin);
+						auxSlaveMediaNode.setEnd(auxSlaveMediaNode.getBegin() + auxSlaveMediaNode.getDuration());
 						
 					}
 					
@@ -982,19 +984,19 @@ public class TemporalChain extends Observable implements Serializable {
 			switch (existingRelationType) {
 			
 				case FINISHES:
-					existingRelationEnd = synchronousRelationWhereSlaveNodeIsSlave.getMasterNode().getEnd();
+					existingRelationEnd = synchronousRelationWhereSlaveNodeIsSlave.getPrimaryNode().getEnd();
 					break;
 	
 				case FINISHES_DELAY:
-					existingRelationEnd = synchronousRelationWhereSlaveNodeIsSlave.getMasterNode().getEnd() + synchronousRelationWhereSlaveNodeIsSlave.getDelay();
+					existingRelationEnd = synchronousRelationWhereSlaveNodeIsSlave.getPrimaryNode().getEnd() + synchronousRelationWhereSlaveNodeIsSlave.getDelay();
 					break;
 					
 				case MET_BY:
-					existingRelationEnd = synchronousRelationWhereSlaveNodeIsSlave.getMasterNode().getBegin();
+					existingRelationEnd = synchronousRelationWhereSlaveNodeIsSlave.getPrimaryNode().getBegin();
 					break;
 					
 				case MET_BY_DELAY:
-					existingRelationEnd = synchronousRelationWhereSlaveNodeIsSlave.getMasterNode().getBegin() + synchronousRelationWhereSlaveNodeIsSlave.getDelay();
+					existingRelationEnd = synchronousRelationWhereSlaveNodeIsSlave.getPrimaryNode().getBegin() + synchronousRelationWhereSlaveNodeIsSlave.getDelay();
 					break;
 			
 			}
@@ -1015,19 +1017,19 @@ public class TemporalChain extends Observable implements Serializable {
 			switch (newRelationType) {
 			
 				case FINISHES:
-					newRelationEnd = synchronousRelationToBeDefined.getMasterNode().getEnd();
+					newRelationEnd = synchronousRelationToBeDefined.getPrimaryNode().getEnd();
 					break;
 	
 				case FINISHES_DELAY:
-					newRelationEnd = synchronousRelationToBeDefined.getMasterNode().getEnd() + synchronousRelationToBeDefined.getDelay();
+					newRelationEnd = synchronousRelationToBeDefined.getPrimaryNode().getEnd() + synchronousRelationToBeDefined.getDelay();
 					break;
 					
 				case MET_BY:
-					newRelationEnd = synchronousRelationToBeDefined.getMasterNode().getBegin();
+					newRelationEnd = synchronousRelationToBeDefined.getPrimaryNode().getBegin();
 					break;
 					
 				case MET_BY_DELAY:
-					newRelationEnd = synchronousRelationToBeDefined.getMasterNode().getBegin() + synchronousRelationToBeDefined.getDelay();
+					newRelationEnd = synchronousRelationToBeDefined.getPrimaryNode().getBegin() + synchronousRelationToBeDefined.getDelay();
 					break;
 				
 			}
@@ -1035,46 +1037,46 @@ public class TemporalChain extends Observable implements Serializable {
 			switch (existingRelationType) {
 			
 				case STARTS:
-					existingRelationBegin = synchronousRelationWhereSlaveNodeIsSlave.getMasterNode().getBegin();
+					existingRelationBegin = synchronousRelationWhereSlaveNodeIsSlave.getPrimaryNode().getBegin();
 					break;
 	
 				case STARTS_DELAY:
-					existingRelationBegin = synchronousRelationWhereSlaveNodeIsSlave.getMasterNode().getBegin() + synchronousRelationWhereSlaveNodeIsSlave.getDelay();
+					existingRelationBegin = synchronousRelationWhereSlaveNodeIsSlave.getPrimaryNode().getBegin() + synchronousRelationWhereSlaveNodeIsSlave.getDelay();
 					break;
 					
 				case MEETS:
-					existingRelationBegin = synchronousRelationWhereSlaveNodeIsSlave.getMasterNode().getEnd();
+					existingRelationBegin = synchronousRelationWhereSlaveNodeIsSlave.getPrimaryNode().getEnd();
 					break;
 					
 				case MEETS_DELAY:
-					existingRelationBegin = synchronousRelationWhereSlaveNodeIsSlave.getMasterNode().getEnd() + synchronousRelationWhereSlaveNodeIsSlave.getDelay();
+					existingRelationBegin = synchronousRelationWhereSlaveNodeIsSlave.getPrimaryNode().getEnd() + synchronousRelationWhereSlaveNodeIsSlave.getDelay();
 					break;
 					
 				case BEFORE:
 					 
-					ArrayList<Node> auxSlaveMediaList = new ArrayList<Node>(synchronousRelationWhereSlaveNodeIsSlave.getSlaveNodeList());
+					ArrayList<Node> auxSlaveMediaList = new ArrayList<Node>(synchronousRelationWhereSlaveNodeIsSlave.getSecondaryNodeList());
 					Double begin;
 					
 					for(int i=0; i < auxSlaveMediaList.size(); i++){
 		
-						Media auxSlaveMedia = (Media) auxSlaveMediaList.get(i);
+						MediaNode auxSlaveMediaNode = (MediaNode) auxSlaveMediaList.get(i);
 						
 						if(i == 0){
-							begin = synchronousRelationWhereSlaveNodeIsSlave.getMasterNode().getEnd() + synchronousRelationWhereSlaveNodeIsSlave.getDelay();
-							if(auxSlaveMedia == newRelationSlaveNode){
+							begin = synchronousRelationWhereSlaveNodeIsSlave.getPrimaryNode().getEnd() + synchronousRelationWhereSlaveNodeIsSlave.getDelay();
+							if(auxSlaveMediaNode == newRelationSlaveNode){
 								existingRelationBegin = begin;
 								break;
 							}
 						}else {
-							begin = synchronousRelationWhereSlaveNodeIsSlave.getSlaveNodeList().get(i-1).getEnd() + synchronousRelationWhereSlaveNodeIsSlave.getDelay();
-							if(auxSlaveMedia == newRelationSlaveNode){
+							begin = synchronousRelationWhereSlaveNodeIsSlave.getSecondaryNodeList().get(i-1).getEnd() + synchronousRelationWhereSlaveNodeIsSlave.getDelay();
+							if(auxSlaveMediaNode == newRelationSlaveNode){
 								existingRelationBegin = begin;
 								break;
 							}
 						}
 						
-						auxSlaveMedia.setBegin(begin);
-						auxSlaveMedia.setEnd(auxSlaveMedia.getBegin() + auxSlaveMedia.getDuration());
+						auxSlaveMediaNode.setBegin(begin);
+						auxSlaveMediaNode.setEnd(auxSlaveMediaNode.getBegin() + auxSlaveMediaNode.getDuration());
 						
 					}
 					
@@ -1154,7 +1156,7 @@ public class TemporalChain extends Observable implements Serializable {
 				
 				Synchronous synchronousRelation = (Synchronous) relation;
 				
-				if(slaveNode.equals(synchronousRelation.getMasterNode())){
+				if(slaveNode.equals(synchronousRelation.getPrimaryNode())){
 					listOfMasterRelations.add(synchronousRelation);
 				}
 				
@@ -1166,9 +1168,9 @@ public class TemporalChain extends Observable implements Serializable {
 		
 	}
 
-	private ArrayList<TemporalRelation> getListOfRelationsWhereNodeIsSecondary(Node slaveNode) {
+	private ArrayList<TemporalRelation> getListOfRelationsWhereNodeIsSecondary(Node secondaryNode) {
 		
-		ArrayList<TemporalRelation> listOfSlaveRelations = new ArrayList<TemporalRelation>(); 
+		ArrayList<TemporalRelation> listOfSecondaryRelations = new ArrayList<TemporalRelation>();
 		
 		for(TemporalRelation relation : relationList){
 			
@@ -1176,10 +1178,10 @@ public class TemporalChain extends Observable implements Serializable {
 				
 				Synchronous synchronousRelation = (Synchronous) relation;
 				
-				for(Node synchronousRelationSlave : synchronousRelation.getSlaveNodeList()){
+				for(Node synchronousRelationSecondary : synchronousRelation.getSecondaryNodeList()){
 						
-					if(slaveNode.equals(synchronousRelationSlave)){
-						listOfSlaveRelations.add(synchronousRelation);
+					if(secondaryNode.equals(synchronousRelationSecondary)){
+						listOfSecondaryRelations.add(synchronousRelation);
 						break;
 					}
 						
@@ -1189,7 +1191,7 @@ public class TemporalChain extends Observable implements Serializable {
 
 		}
 		
-		return listOfSlaveRelations;
+		return listOfSecondaryRelations;
 		
 	}
 
@@ -1203,11 +1205,11 @@ public class TemporalChain extends Observable implements Serializable {
 				
 				Synchronous synchronousRelation = (Synchronous) relation;
 				
-				if(slaveNode.equals(synchronousRelation.getMasterNode())){
+				if(slaveNode.equals(synchronousRelation.getPrimaryNode())){
 					listOfAllRelations.add(synchronousRelation);
 				}else {
 					
-					for(Node synchronousRelationSlave : synchronousRelation.getSlaveNodeList()){
+					for(Node synchronousRelationSlave : synchronousRelation.getSecondaryNodeList()){
 						
 						if(slaveNode.equals(synchronousRelationSlave)){
 							listOfAllRelations.add(synchronousRelation);
@@ -1281,11 +1283,11 @@ public class TemporalChain extends Observable implements Serializable {
         
 	}
 	
-	public void removeInteractivityRelation(Interactivity<Media> interactivityRelation){
+	public void removeInteractivityRelation(Interactivity<MediaNode> interactivityRelation){
 		
 		relationList.remove(interactivityRelation);
 		
-		interactivityRelation.getMasterNode().setInteractive(false);
+		interactivityRelation.getPrimaryNode().setInteractive(false);
 		
 		setChanged();
 		Operation<TemporalViewOperator> operation = new Operation<TemporalViewOperator>(TemporalViewOperator.REMOVE_INTERACTIVITY_RELATION, interactivityRelation, this);
@@ -1339,7 +1341,7 @@ public class TemporalChain extends Observable implements Serializable {
 		 return name;
 	 }
 
-	public void addInteractivityRelation(Interactivity<Media> interactivityRelation) {
+	public void addInteractivityRelation(Interactivity<MediaNode> interactivityRelation) {
 	
 		relationList.add(interactivityRelation);
 		
@@ -1349,7 +1351,7 @@ public class TemporalChain extends Observable implements Serializable {
 		
 	}
 	
-	public void updateInteractivityRelation(Interactivity<Media> interactivityRelation) {
+	public void updateInteractivityRelation(Interactivity<MediaNode> interactivityRelation) {
 		
 		setChanged();
 		Operation<TemporalViewOperator> operation = new Operation<TemporalViewOperator>(TemporalViewOperator.EDIT_INTERACTIVITY_RELATION, interactivityRelation, this);
@@ -1357,5 +1359,8 @@ public class TemporalChain extends Observable implements Serializable {
 		
 	}
 
+	public ArrayList<SensoryEffectNode> getSensoryEffectNodeAllList() {
+		return sensoryEffectNodeAllList;
+	}
 
 }

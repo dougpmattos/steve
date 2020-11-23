@@ -7,14 +7,14 @@ import javafx.event.EventHandler;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
-import model.common.Media;
+import model.common.MediaNode;
 import model.common.enums.MediaType;
 import controller.ApplicationController;
 
-public class PropertyPane extends ScrollPane implements Observer{
+public class MediaPropertyPane extends ScrollPane implements Observer{
 	
 	private ApplicationController applicationController;
-	private Media media;
+	private MediaNode mediaNode;
 	
 	private PositionPane positionPane;
 	private SizePane sizePane;
@@ -23,28 +23,28 @@ public class PropertyPane extends ScrollPane implements Observer{
 	private LevelPane levelPane;
 	private VBox container;
 	
-	public PropertyPane(ApplicationController applicationController, Media media){
+	public MediaPropertyPane(ApplicationController applicationController, MediaNode mediaNode){
 		
 		this.applicationController = applicationController;
-		this.media = media;
+		this.mediaNode = mediaNode;
 		
 		setId("property-pane");
 		
 	    container = new VBox();
 	    container.setId("property-container");
 	    
-	    if(media.getType().equals(MediaType.AUDIO)){
+	    if(mediaNode.getType().equals(MediaType.AUDIO)){
 	    	
-	    	levelPane = new LevelPane(applicationController, media);
+	    	levelPane = new LevelPane(applicationController, mediaNode);
 	    	
 	    	container.getChildren().add(levelPane);
 	    	
 	    }else {
 	    	
-	    	positionPane = new PositionPane(applicationController, media);
-		    sizePane = new SizePane(applicationController, media);
-		    cropPane = new CropPane(applicationController, media);
-		    stylePane = new StylePane(applicationController, media);
+	    	positionPane = new PositionPane(applicationController, mediaNode);
+		    sizePane = new SizePane(applicationController, mediaNode);
+		    cropPane = new CropPane(applicationController, mediaNode);
+		    stylePane = new StylePane(applicationController, mediaNode);
 		    
 		    container.getChildren().add(positionPane);
 		    container.getChildren().add(sizePane);
@@ -72,7 +72,7 @@ public class PropertyPane extends ScrollPane implements Observer{
 
 			private void populatePresentationPropertyJavaBean() {
 				
-				if(media.getType().equals(MediaType.AUDIO)){
+				if(mediaNode.getType().equals(MediaType.AUDIO)){
 			    	
 			    	levelPane.populateLevelPropertyJavaBean();
 			    	

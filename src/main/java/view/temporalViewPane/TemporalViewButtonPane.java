@@ -14,7 +14,7 @@ import javafx.scene.control.TabPane;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
-import model.common.Media;
+import model.common.MediaNode;
 import model.common.Node;
 import model.repository.RepositoryMediaList;
 import model.temporalView.Synchronous;
@@ -147,7 +147,7 @@ public class TemporalViewButtonPane extends BorderPane {
         alignmentButtonPane.getChildren().add(duringButton);
         alignmentButtonPane.getChildren().add(overlapsButton);
         alignmentButtonPane.getChildren().add(beforeButton);
-        alignmentButtonPane.getChildren().add(interactivityButton);
+        //alignmentButtonPane.getChildren().add(interactivityButton);
         
 	}
 	
@@ -168,7 +168,7 @@ public class TemporalViewButtonPane extends BorderPane {
 		if((temporalViewPane.getFirstSelectedNode() == null) && (selectedSlaveNodeList.isEmpty())){
 			
 			MessageDialog messageDialog = new MessageDialog(Language.translate("it.is.not.possible.to.define.alignment"), 
-					Language.translate("please.select.a.media.to.be.the.master.and.at.least.one.to.be.slave"), "OK", 250);
+					Language.translate("please.select.a.media.to.be.the.primary.and.at.least.one.to.be.secondary"), "OK", 250);
 			messageDialog.showAndWait();
 			
 			return false;
@@ -176,7 +176,7 @@ public class TemporalViewButtonPane extends BorderPane {
     	}else if(temporalViewPane.getFirstSelectedNode() == null){
     		
     		MessageDialog messageDialog = new MessageDialog(Language.translate("it.is.not.possible.to.define.alignment"), 
-					Language.translate("please.select.a.media.to.be.the.master"), "OK", 220);
+					Language.translate("please.select.a.media.to.be.the.primary"), "OK", 220);
 			messageDialog.showAndWait();
 			
 			return false;
@@ -184,7 +184,7 @@ public class TemporalViewButtonPane extends BorderPane {
     	}else if(selectedSlaveNodeList.isEmpty()){
     		
     		MessageDialog messageDialog = new MessageDialog(Language.translate("it.is.not.possible.to.define.alignment"), 
-					Language.translate("please.select.at.least.one.media.to.be.slave"), "OK", 220);
+					Language.translate("please.select.at.least.one.media.to.be.secondary"), "OK", 220);
 			messageDialog.showAndWait();
 			
     		return false;
@@ -259,14 +259,14 @@ public class TemporalViewButtonPane extends BorderPane {
 			    	
 			    	Synchronous synchronousRelation = new Synchronous();
 	    			synchronousRelation.setType(TemporalRelationType.STARTS);
-	    			synchronousRelation.setMasterNode(relationMasterNode);
+	    			synchronousRelation.setPrimaryNode(relationMasterNode);
 	    			synchronousRelation.setExplicit(true);
 		
 			    	for(Node node : temporalViewPane.getSelectedNodeList()){
 			    		
 			    		if(node != relationMasterNode){
 			    			
-			    			synchronousRelation.addSlaveNode(node);
+			    			synchronousRelation.addSecondaryNode(node);
 
 			    		}
 			    		
@@ -296,7 +296,7 @@ public class TemporalViewButtonPane extends BorderPane {
 			    	
 			    	Synchronous synchronousRelation = new Synchronous();
 	    			synchronousRelation.setType(TemporalRelationType.STARTS_DELAY);
-	    			synchronousRelation.setMasterNode(relationMasterNode);
+	    			synchronousRelation.setPrimaryNode(relationMasterNode);
 	    			synchronousRelation.setDelay(delay);
 	    			synchronousRelation.setExplicit(true);
 		
@@ -304,7 +304,7 @@ public class TemporalViewButtonPane extends BorderPane {
 			    		
 			    		if(node != relationMasterNode){
 			    			
-			    			synchronousRelation.addSlaveNode(node);
+			    			synchronousRelation.addSecondaryNode(node);
 			    			
 			    		}
 			    		
@@ -329,14 +329,14 @@ public class TemporalViewButtonPane extends BorderPane {
 			    	
 			    	Synchronous synchronousRelation = new Synchronous();
 	    			synchronousRelation.setType(TemporalRelationType.FINISHES);
-	    			synchronousRelation.setMasterNode(relationMasterNode);
+	    			synchronousRelation.setPrimaryNode(relationMasterNode);
 	    			synchronousRelation.setExplicit(true);
 		
 			    	for(Node node : temporalViewPane.getSelectedNodeList()){
 			    		
 			    		if(node != relationMasterNode){
 			    			
-			    			synchronousRelation.addSlaveNode(node);
+			    			synchronousRelation.addSecondaryNode(node);
 			    			
 			    		}
 			    		
@@ -367,7 +367,7 @@ public class TemporalViewButtonPane extends BorderPane {
 			    	
 			    	Synchronous synchronousRelation = new Synchronous();
 	    			synchronousRelation.setType(TemporalRelationType.FINISHES_DELAY);
-	    			synchronousRelation.setMasterNode(relationMasterNode);
+	    			synchronousRelation.setPrimaryNode(relationMasterNode);
 	    			synchronousRelation.setDelay(delay);
 	    			synchronousRelation.setExplicit(true);
 		
@@ -375,7 +375,7 @@ public class TemporalViewButtonPane extends BorderPane {
 			    		
 			    		if(node != relationMasterNode){
 			    			
-			    			synchronousRelation.addSlaveNode(node);
+			    			synchronousRelation.addSecondaryNode(node);
 			    			
 			    		}
 			    		
@@ -399,14 +399,14 @@ public class TemporalViewButtonPane extends BorderPane {
 			    	
 			    	Synchronous synchronousRelation = new Synchronous();
 	    			synchronousRelation.setType(TemporalRelationType.MEETS);
-	    			synchronousRelation.setMasterNode(relationMasterNode);
+	    			synchronousRelation.setPrimaryNode(relationMasterNode);
 	    			synchronousRelation.setExplicit(true);
 		
 			    	for(Node node : temporalViewPane.getSelectedNodeList()){
 			    		
 			    		if(node != relationMasterNode){
 			    			
-			    			synchronousRelation.addSlaveNode(node);
+			    			synchronousRelation.addSecondaryNode(node);
 			    			
 			    		}
 			    		
@@ -436,7 +436,7 @@ public class TemporalViewButtonPane extends BorderPane {
 			    	
 			    	Synchronous synchronousRelation = new Synchronous();
 	    			synchronousRelation.setType(TemporalRelationType.MEETS_DELAY);
-	    			synchronousRelation.setMasterNode(relationMasterNode);
+	    			synchronousRelation.setPrimaryNode(relationMasterNode);
 	    			synchronousRelation.setDelay(delay);
 	    			synchronousRelation.setExplicit(true);
 		
@@ -444,7 +444,7 @@ public class TemporalViewButtonPane extends BorderPane {
 			    		
 			    		if(node != relationMasterNode){
 			    			
-			    			synchronousRelation.addSlaveNode(node);
+			    			synchronousRelation.addSecondaryNode(node);
 			    			
 			    		}
 			    		
@@ -469,14 +469,14 @@ public class TemporalViewButtonPane extends BorderPane {
 			    	
 			    	Synchronous synchronousRelation = new Synchronous();
 	    			synchronousRelation.setType(TemporalRelationType.MET_BY);
-	    			synchronousRelation.setMasterNode(relationMasterNode);
+	    			synchronousRelation.setPrimaryNode(relationMasterNode);
 	    			synchronousRelation.setExplicit(true);
 		
 			    	for(Node node : temporalViewPane.getSelectedNodeList()){
 			    		
 			    		if(node != relationMasterNode){
 			    			
-			    			synchronousRelation.addSlaveNode(node);
+			    			synchronousRelation.addSecondaryNode(node);
 			    			
 			    		}
 			    		
@@ -506,7 +506,7 @@ public class TemporalViewButtonPane extends BorderPane {
 			    	
 			    	Synchronous synchronousRelation = new Synchronous();
 	    			synchronousRelation.setType(TemporalRelationType.MET_BY_DELAY);
-	    			synchronousRelation.setMasterNode(relationMasterNode);
+	    			synchronousRelation.setPrimaryNode(relationMasterNode);
 	    			synchronousRelation.setDelay(delay);
 	    			synchronousRelation.setExplicit(true);
 		
@@ -514,7 +514,7 @@ public class TemporalViewButtonPane extends BorderPane {
 			    		
 			    		if(node != relationMasterNode){
 			    			
-			    			synchronousRelation.addSlaveNode(node);
+			    			synchronousRelation.addSecondaryNode(node);
 			    			
 			    		}
 			    		
@@ -552,7 +552,7 @@ public class TemporalViewButtonPane extends BorderPane {
 
 				    	Synchronous synchronousRelation = new Synchronous();
 		    			synchronousRelation.setType(TemporalRelationType.MET_BY_DELAY);
-		    			synchronousRelation.setMasterNode(relationMasterNode);
+		    			synchronousRelation.setPrimaryNode(relationMasterNode);
 		    			synchronousRelation.setDelay(metByDelay);
 		    			synchronousRelation.setExplicit(true);
 			
@@ -560,7 +560,7 @@ public class TemporalViewButtonPane extends BorderPane {
 				    		
 				    		if(node != relationMasterNode){
 				    			
-				    			synchronousRelation.addSlaveNode(node);
+				    			synchronousRelation.addSecondaryNode(node);
 				    			
 				    		}
 				    		
@@ -570,7 +570,7 @@ public class TemporalViewButtonPane extends BorderPane {
 
 				    	Synchronous startDelayRelation = new Synchronous();
 		    			startDelayRelation.setType(TemporalRelationType.STARTS_DELAY);
-		    			startDelayRelation.setMasterNode(relationMasterNode);
+		    			startDelayRelation.setPrimaryNode(relationMasterNode);
 		    			startDelayRelation.setDelay(startDelay);
 		    			startDelayRelation.setExplicit(true);
 			
@@ -578,7 +578,7 @@ public class TemporalViewButtonPane extends BorderPane {
 				    		
 				    		if(node != relationMasterNode){
 				    			
-				    			startDelayRelation.addSlaveNode(node);
+				    			startDelayRelation.addSecondaryNode(node);
 				    			
 				    		}
 				    		
@@ -623,7 +623,7 @@ public class TemporalViewButtonPane extends BorderPane {
 			    	
 			    	Synchronous synchronousRelation = new Synchronous();
 	    			synchronousRelation.setType(TemporalRelationType.BEFORE);
-	    			synchronousRelation.setMasterNode(relationMasterNode);
+	    			synchronousRelation.setPrimaryNode(relationMasterNode);
 	    			synchronousRelation.setDelay(delay);
 	    			synchronousRelation.setExplicit(true);
 		
@@ -631,7 +631,7 @@ public class TemporalViewButtonPane extends BorderPane {
 			    		
 			    		if(node != relationMasterNode){
 			    			
-			    			synchronousRelation.addSlaveNode(node);
+			    			synchronousRelation.addSecondaryNode(node);
 			    			
 			    		}
 			    		
@@ -658,7 +658,7 @@ public class TemporalViewButtonPane extends BorderPane {
 		    			InteractiveMediaWindow interactiveMediaWindow;
 			    		ArrayList<Node> nodeListDuringInteractivityTime = temporalViewPane.getNodeListDuringInteractivityTime();
 			    
-				    	interactiveMediaWindow = new InteractiveMediaWindow(applicationController, temporalViewPane, (Media) firstSelectedNode, nodeListDuringInteractivityTime);
+				    	interactiveMediaWindow = new InteractiveMediaWindow(applicationController, temporalViewPane, (MediaNode) firstSelectedNode, nodeListDuringInteractivityTime);
 			    		
 				    	interactiveMediaWindow.showAndWait();
 				    	

@@ -19,7 +19,8 @@ import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
 import javafx.scene.web.WebView;
 import javafx.util.Duration;
-import model.common.Media;
+import model.common.MediaNode;
+import model.common.SensoryEffectNode;
 import model.common.SpatialTemporalApplication;
 import model.spatialView.media.enums.AspectRatio;
 import model.temporalView.TemporalChain;
@@ -30,7 +31,7 @@ import view.temporalViewPane.TemporalChainPane;
 import view.temporalViewPane.TemporalViewPane;
 
 public class ControlButtonPane extends BorderPane{
-	
+
 	private Button fullScreen;
 	private Button play;
 	private Button pause;
@@ -49,8 +50,8 @@ public class ControlButtonPane extends BorderPane{
 	private SpatialTemporalApplication spatialTemporalApplication;
 	private SteveMenuBar steveMenuBar;
 	private WebView webView;
-	
-	private Object mediaContent;
+	private HBox effectIconsContainer;
+	private Object nodeContent;
 	private boolean isPlaying = false;
 	private Double playheadPixelPosition = 0.0;
 	private Double currentTime;
@@ -66,6 +67,10 @@ public class ControlButtonPane extends BorderPane{
 		this.temporalViewPane = temporalViewPane;
 		this.spatialTemporalApplication = spatialTemporalApplication;
 		this.webView = new WebView();
+		this.effectIconsContainer = new HBox();
+		effectIconsContainer.setId("effect-icons-container");
+		effectIconsContainer.setDepthTest(DepthTest.ENABLE);
+		effectIconsContainer.setViewOrder(-1);
 		
 	    createButtons();
 	  
@@ -140,7 +145,7 @@ public class ControlButtonPane extends BorderPane{
 		
 		centerButtonPane = new HBox();
 		centerButtonPane.setId("center-button-pane");
-		centerButtonPane.getChildren().add(run);
+		//centerButtonPane.getChildren().add(run);
 		centerButtonPane.getChildren().add(play);
 		centerButtonPane.getChildren().add(pause);
 		centerButtonPane.getChildren().add(stop);
@@ -174,8 +179,8 @@ public class ControlButtonPane extends BorderPane{
 	    		hasStopped = true;
 	    		hasPaused = false;
 	    		isPlaying = false;
-	    		for(Media media : temporalChainModel.getMediaAllList()){
-	    			media.setIsPLayingInPreview(false);
+	    		for(model.common.Node node : temporalChainModel.getNodeAllList()){
+	    			node.setIsPLayingInPreview(false);
 	    		}
 	    		
 	    		for(Node executionObject : screen.getChildren()){
@@ -188,6 +193,7 @@ public class ControlButtonPane extends BorderPane{
 	    		Platform.runLater(new Runnable() {
 					@Override
 					public void run() {
+						effectIconsContainer.getChildren().clear();
 						screen.getChildren().clear();
 					}
 				});
@@ -226,7 +232,7 @@ public class ControlButtonPane extends BorderPane{
 			@Override
 			public void handle(ActionEvent event) {	
 				
-				if(!temporalChainModel.getMediaAllList().isEmpty()){
+				if(!temporalChainModel.getNodeAllList().isEmpty()){
 					
 					isPlaying = true;
 					hasStopped = false;
@@ -288,59 +294,73 @@ public class ControlButtonPane extends BorderPane{
 		    		stop.fire();
 		    		hasStopped = true;
 		    		isPlaying = false;
-		    		for(Media media : temporalChainModel.getMediaAllList()){
-		    			media.setIsPLayingInPreview(false);
+		    		for(model.common.Node node : temporalChainModel.getNodeAllList()){
+		    			node.setIsPLayingInPreview(false);
 		    		}
-		    		System.out.println(" termino - remove todos d screen e aciona stop do player");
+		    		System.out.println(" termino - remove todos nos da screen e aciona stop do player");
 		    	}
 		    	
-				for(Media media : temporalChainModel.getMediaAllList()){
+				for(model.common.Node node : temporalChainModel.getNodeAllList()){
 					
-					if(media.getBegin() <= currentTime && currentTime <= media.getEnd()){
-						System.out.println(media.getName() + " - entrou");
+					if(node.getBegin() <= currentTime && currentTime <= node.getEnd()){
+						System.out.println(node.getName() + " - entrou");
 						
-						if(!media.getIsPLayingInPreview()){
-							System.out.println(media.getName() + " - nao esta no pewview ");
+						if(!node.getIsPLayingInPreview()){
+							System.out.println(node.getName() + " - nao esta no pewview ");
 							Platform.runLater(new Runnable(){
 
 								@Override
 								public void run() {
 									
-									media.setIsPLayingInPreview(true);
-									mediaContent = getMediaContent(media);
-									
-									if(mediaContent instanceof MediaView){
-										
-										setVideoPresentationProperties((MediaView) mediaContent, media);
-										Double playerStartTime = currentTime - media.getBegin();
-										Duration playerStartTimeMillis = new Duration(playerStartTime*1000);
-										((MediaView) mediaContent).getMediaPlayer().setStartTime(playerStartTimeMillis);
-										screen.getChildren().add((MediaView) mediaContent);
-										
-									} else if(mediaContent instanceof ImageView){
-									
-										setImagePresentationProperties((ImageView) mediaContent, media);
-										if(screen.getChildren().isEmpty()){
-											
-											screen.getChildren().add((ImageView) mediaContent);
-											
-										} else{
-											boolean inserted = false;
-											for(Node executionObject : screen.getChildren()){
-								    			
-												if(((ImageView) mediaContent).getTranslateZ() < executionObject.getTranslateZ()){
-													screen.getChildren().add(screen.getChildren().indexOf(executionObject), (ImageView) mediaContent);
-													inserted = true;
-													break;
+									node.setIsPLayingInPreview(true);
+
+									if(node instanceof MediaNode){
+
+										nodeContent = getMediaContent((MediaNode) node);
+
+										if(nodeContent instanceof MediaView){
+
+											setVideoPresentationProperties((MediaView) nodeContent, (MediaNode) node);
+											Double playerStartTime = currentTime - node.getBegin();
+											Duration playerStartTimeMillis = new Duration(playerStartTime*1000);
+											((MediaView) nodeContent).getMediaPlayer().setStartTime(playerStartTimeMillis);
+											screen.getChildren().add((MediaView) nodeContent);
+
+										} else if(nodeContent instanceof ImageView){
+
+											setImagePresentationProperties((ImageView) nodeContent, (MediaNode) node);
+											if(screen.getChildren().isEmpty()){
+
+												screen.getChildren().add((ImageView) nodeContent);
+
+											} else{
+												boolean inserted = false;
+												for(Node executionObject : screen.getChildren()){
+
+													if(((ImageView) nodeContent).getTranslateZ() < executionObject.getTranslateZ()){
+														screen.getChildren().add(screen.getChildren().indexOf(executionObject), (ImageView) nodeContent);
+														inserted = true;
+														break;
+													}
+
 												}
-												
-								    		}
-											if(!inserted){
-												screen.getChildren().add((ImageView) mediaContent);
+												if(!inserted){
+													screen.getChildren().add((ImageView) nodeContent);
+												}
 											}
+
 										}
-										
-									}								
+
+									}else if(node instanceof SensoryEffectNode){
+
+										nodeContent = getSensoryEffectIcon((SensoryEffectNode) node);
+										effectIconsContainer.getChildren().add((ImageView) nodeContent);
+										if(!screen.getChildren().contains(effectIconsContainer)){
+											screen.getChildren().add(effectIconsContainer);
+										}
+
+									}
+
 								}
 								
 							});
@@ -349,16 +369,20 @@ public class ControlButtonPane extends BorderPane{
 							
 					} else{
 						
-						if(media.getIsPLayingInPreview()){
+						if(node.getIsPLayingInPreview()){
 							
 							Platform.runLater(new Runnable(){
 					    		@Override
 								public void run() {
 									
 					    			if(!screen.getChildren().isEmpty()){
-					    				screen.getChildren().remove(media.getExecutionObject());
-										media.setIsPLayingInPreview(false);
-										System.out.println(media.getName() + " - saiu");
+					    				if(node instanceof SensoryEffectNode){
+					    					effectIconsContainer.getChildren().remove(node.getExecutionObject());
+										}else{
+											screen.getChildren().remove(node.getExecutionObject());
+										}
+										node.setIsPLayingInPreview(false);
+										System.out.println(node.getName() + " - saiu");
 					    			}
 	
 					    		}
@@ -378,25 +402,33 @@ public class ControlButtonPane extends BorderPane{
 		}
 	}
 
-	public Object getMediaContent(Media media){
+	public ImageView getSensoryEffectIcon(SensoryEffectNode sensoryEffectNode){
 
-		mediaContent = null;
+		ImageView nodeContent = sensoryEffectNode.generateEffectIcon();
+		sensoryEffectNode.setExecutionObject(nodeContent);
+		return nodeContent;
+
+	}
+
+	public Object getMediaContent(MediaNode mediaNode){
+
+		nodeContent = null;
 		
-		switch(media.getType()) {
+		switch(mediaNode.getType()) {
 		   
 			case IMAGE:
 				
-				ImageView image = new ImageView(new Image(media.getFile().toURI().toString()));
+				ImageView image = new ImageView(new Image(mediaNode.getFile().toURI().toString()));
 				image.setFitWidth(screen.getWidth());
 				image.setFitHeight(screen.getHeight());
 				image.setSmooth(false);
-				mediaContent = image;
-				media.setExecutionObject(mediaContent);
+				nodeContent = image;
+				mediaNode.setExecutionObject(nodeContent);
 				break;
 	       
 		case VIDEO:
 	
-			final javafx.scene.media.Media video = new javafx.scene.media.Media(media.getFile().toURI().toString());
+			final javafx.scene.media.Media video = new javafx.scene.media.Media(mediaNode.getFile().toURI().toString());
 			final MediaPlayer videoPlayer = new MediaPlayer(video);
 			MediaView videoMediaView = new MediaView(videoPlayer);
 			videoMediaView.setFitWidth(screen.getWidth());
@@ -405,27 +437,27 @@ public class ControlButtonPane extends BorderPane{
 			
 			if(isPlaying){
 				videoPlayer.play();
-				mediaContent = videoMediaView;
+				nodeContent = videoMediaView;
 			} else {
-				mediaContent = videoMediaView;
+				nodeContent = videoMediaView;
 				
 				videoPlayer.statusProperty().addListener(new ChangeListener<MediaPlayer.Status>() {
 							
 				    public void changed(ObservableValue<? extends MediaPlayer.Status> ov,
 				            final MediaPlayer.Status oldStatus, final MediaPlayer.Status newStatus) {
 				    	
-				    	Double frameMillisTime = (media.getDuration()/2)*1000;
+				    	Double frameMillisTime = (mediaNode.getDuration()/2)*1000;
 				    	Duration duration = new Duration(frameMillisTime.intValue()); 
 				    	videoPlayer.seek(duration);
 				    }
 				});
 			}
-			media.setExecutionObject(mediaContent);
+			mediaNode.setExecutionObject(nodeContent);
 				break;
 	
 		case AUDIO:
 			
-			final javafx.scene.media.Media audio = new javafx.scene.media.Media(media.getFile().toURI().toString());
+			final javafx.scene.media.Media audio = new javafx.scene.media.Media(mediaNode.getFile().toURI().toString());
 			final MediaPlayer audioPlayer = new MediaPlayer(audio);
 			MediaView audioMediaView = new MediaView(audioPlayer);
 			audioMediaView.setFitWidth(screen.getWidth());
@@ -434,7 +466,7 @@ public class ControlButtonPane extends BorderPane{
 			
 			if(isPlaying){
 				audioPlayer.play();
-				mediaContent = audioMediaView;
+				nodeContent = audioMediaView;
 			} else {
 				//mediaContent = audioMediaView;
 				//inserir depois a figura do audio tambem alem de tocar
@@ -443,7 +475,7 @@ public class ControlButtonPane extends BorderPane{
 	//			imageAudio.setSmooth(false);
 	//			imageAudio.setFitWidth(ICON_WIDTH);
 			}
-			media.setExecutionObject(mediaContent);
+			mediaNode.setExecutionObject(nodeContent);
 			break; 
 	   
 		case TEXT:
@@ -451,31 +483,31 @@ public class ControlButtonPane extends BorderPane{
 			break;
 	           
 		case APPLICATION:
-			mediaContent = media.generateMediaIcon();
+			nodeContent = mediaNode.generateMediaIcon();
 			break;                
 		}
 
-		return mediaContent; 
+		return nodeContent;
 	
 	}
 	
-public void setVideoPresentationProperties(MediaView mediaContent, Media media){
+public void setVideoPresentationProperties(MediaView mediaContent, MediaNode mediaNode){
 		
 		double percentageHeight, percentageWidth; 
 		String temp;
 
-	    if(media.getPresentationProperty().getSizeProperty().getAspectRatio()==AspectRatio.SLICE){
+	    if(mediaNode.getPresentationProperty().getSizeProperty().getAspectRatio()==AspectRatio.SLICE){
 	    	mediaContent.setPreserveRatio(true);
 	    } else {
 	    	mediaContent.setPreserveRatio(false);
 	    }
 	    		
-		double left = Double.parseDouble(media.getPresentationProperty().getPositionProperty().getLeft().replace("%", ""));
-		double right = Double.parseDouble(media.getPresentationProperty().getPositionProperty().getRight().replace("%", ""));
-		double top = Double.parseDouble(media.getPresentationProperty().getPositionProperty().getTop().replace("%", ""));
-		double bottom = Double.parseDouble(media.getPresentationProperty().getPositionProperty().getBottom().replace("%", ""));		
+		double left = Double.parseDouble(mediaNode.getPresentationProperty().getPositionProperty().getLeft().replace("%", ""));
+		double right = Double.parseDouble(mediaNode.getPresentationProperty().getPositionProperty().getRight().replace("%", ""));
+		double top = Double.parseDouble(mediaNode.getPresentationProperty().getPositionProperty().getTop().replace("%", ""));
+		double bottom = Double.parseDouble(mediaNode.getPresentationProperty().getPositionProperty().getBottom().replace("%", ""));
 		
-		temp = media.getPresentationProperty().getSizeProperty().getHeight().replace("%", "");
+		temp = mediaNode.getPresentationProperty().getSizeProperty().getHeight().replace("%", "");
 		if (Double.parseDouble(temp)!=100){
 			if(((left==0)&&(top==0))&&((right==0)&&(bottom==0))){
 				left=0.1;
@@ -486,7 +518,7 @@ public void setVideoPresentationProperties(MediaView mediaContent, Media media){
 		double screenHeight = screen.getHeight()*(percentageHeight/100);
 		mediaContent.setFitHeight(screenHeight);
 		
-		temp = media.getPresentationProperty().getSizeProperty().getWidth().replace("%", "");			
+		temp = mediaNode.getPresentationProperty().getSizeProperty().getWidth().replace("%", "");
 		if (Double.parseDouble(temp)!=100){
 			if(((left==0)&&(top==0))&&((right==0)&&(bottom==0))){
 				left=0.1;
@@ -543,31 +575,31 @@ public void setVideoPresentationProperties(MediaView mediaContent, Media media){
 //		System.out.println(media.getPresentationProperty().getPositionProperty().getOrderZ());
 //				System.out.println(mediaContent.getTranslateZ());
 		mediaContent.setDepthTest(DepthTest.ENABLE);
-		mediaContent.setTranslateZ(media.getPresentationProperty().getPositionProperty().getOrderZ());
+		mediaContent.setTranslateZ(mediaNode.getPresentationProperty().getPositionProperty().getOrderZ());
 		
 		
-		double opacity = 1-(media.getPresentationProperty().getStyleProperty().getTransparency()/100);
+		double opacity = 1-(mediaNode.getPresentationProperty().getStyleProperty().getTransparency()/100);
 		mediaContent.setOpacity(opacity);
 		
 	}
 	
-	public void setImagePresentationProperties(ImageView mediaContent, Media media){
+	public void setImagePresentationProperties(ImageView mediaContent, MediaNode mediaNode){
 	
 		double percentageHeight, percentageWidth; 
 		String temp;
 
-	    if(media.getPresentationProperty().getSizeProperty().getAspectRatio()==AspectRatio.SLICE){
+	    if(mediaNode.getPresentationProperty().getSizeProperty().getAspectRatio()==AspectRatio.SLICE){
 	    	mediaContent.setPreserveRatio(true);
 	    } else {
 	    	mediaContent.setPreserveRatio(false);
 	    }
 	    		
-		double left = Double.parseDouble(media.getPresentationProperty().getPositionProperty().getLeft().replace("%", ""));
-		double right = Double.parseDouble(media.getPresentationProperty().getPositionProperty().getRight().replace("%", ""));
-		double top = Double.parseDouble(media.getPresentationProperty().getPositionProperty().getTop().replace("%", ""));
-		double bottom = Double.parseDouble(media.getPresentationProperty().getPositionProperty().getBottom().replace("%", ""));		
+		double left = Double.parseDouble(mediaNode.getPresentationProperty().getPositionProperty().getLeft().replace("%", ""));
+		double right = Double.parseDouble(mediaNode.getPresentationProperty().getPositionProperty().getRight().replace("%", ""));
+		double top = Double.parseDouble(mediaNode.getPresentationProperty().getPositionProperty().getTop().replace("%", ""));
+		double bottom = Double.parseDouble(mediaNode.getPresentationProperty().getPositionProperty().getBottom().replace("%", ""));
 		
-		temp = media.getPresentationProperty().getSizeProperty().getHeight().replace("%", "");
+		temp = mediaNode.getPresentationProperty().getSizeProperty().getHeight().replace("%", "");
 		if (Double.parseDouble(temp)!=100){
 			if(((left==0)&&(top==0))&&((right==0)&&(bottom==0))){
 				left=0.1;
@@ -578,7 +610,7 @@ public void setVideoPresentationProperties(MediaView mediaContent, Media media){
 		double screenHeight = screen.getHeight()*(percentageHeight/100);
 		mediaContent.setFitHeight(screenHeight);
 		
-		temp = media.getPresentationProperty().getSizeProperty().getWidth().replace("%", "");			
+		temp = mediaNode.getPresentationProperty().getSizeProperty().getWidth().replace("%", "");
 		if (Double.parseDouble(temp)!=100){
 			if(((left==0)&&(top==0))&&((right==0)&&(bottom==0))){
 				left=0.1;
@@ -635,10 +667,10 @@ public void setVideoPresentationProperties(MediaView mediaContent, Media media){
 //		System.out.println(media.getPresentationProperty().getPositionProperty().getOrderZ());
 //				System.out.println(mediaContent.getTranslateZ());
 		mediaContent.setDepthTest(DepthTest.ENABLE);
-		mediaContent.setTranslateZ(media.getPresentationProperty().getPositionProperty().getOrderZ());
+		mediaContent.setTranslateZ(mediaNode.getPresentationProperty().getPositionProperty().getOrderZ());
 		
 		
-		double opacity = 1-(media.getPresentationProperty().getStyleProperty().getTransparency()/100);
+		double opacity = 1-(mediaNode.getPresentationProperty().getStyleProperty().getTransparency()/100);
 		mediaContent.setOpacity(opacity);
 		
 	}
@@ -665,6 +697,14 @@ public void setVideoPresentationProperties(MediaView mediaContent, Media media){
 	}
 	public StackPane getScreen(){
 		return screen;
+	}
+
+	public HBox getEffectIconsContainer() {
+		return effectIconsContainer;
+	}
+
+	public TemporalChainPane getSelectedTemporalChainPane() {
+		return selectedTemporalChainPane;
 	}
 	
 }

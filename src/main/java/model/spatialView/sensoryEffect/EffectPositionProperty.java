@@ -11,7 +11,11 @@ public class EffectPositionProperty {
 	private ZPositionType zPosition;
 	
 	public EffectPositionProperty(){
-		
+
+		xPosition = XPositionType.LEFT;
+		yPosition = YPositionType.TOP;
+		zPosition = ZPositionType.FRONT;
+
 	}
 
 	public XPositionType getxPosition() {

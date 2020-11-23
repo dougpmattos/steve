@@ -21,6 +21,11 @@
     -fx-alignment: center;
 }
 
+#effect-icons-container{
+    -fx-alignment: bottom-center;
+    -fx-padding: 0 0 10 0;
+}
+
 /*******************************************************************************
  *                                                                             *
  * Button Panes                                                                *
@@ -233,7 +238,6 @@
     -fx-background-radius: 0;
     -fx-padding: 0 0 9 0;
     -fx-text-fill: #FFFFFF;
-    -fx-max-width: 40;
     -fx-alignment: top-right;
 }
  
@@ -324,6 +328,22 @@
     -fx-padding: 0 0 9 0;
 }
 
+#priority-text-field{
+    -fx-background-color: #62727b;
+    -fx-background-insets: 22 1 1 1;
+    -fx-background-radius: 0;
+    -fx-padding: 0 0 9 0;
+    -fx-text-fill: #FFFFFF;
+    -fx-max-width: 100;
+    -fx-alignment: top-left;
+}
+#priority-text-field:focused{
+	-fx-background-color: #62727b;
+    -fx-background-insets: 22 1 1 1;
+    -fx-background-radius: 0;
+    -fx-padding: 0 0 9 0;
+}
+
 #link-button {
     -fx-graphic: url("../../images/spatialViewPane/link-off-24dp.png");
     -fx-background-color: transparent;
@@ -351,7 +371,6 @@
     -fx-background-insets: 23 0 1 0;
     -fx-background-radius: 0;
     -fx-padding: 0 0 0 0;
-    -fx-max-width: 10;
 }
 
 .choice-box:focused {
@@ -395,6 +414,7 @@
 	-fx-background-color: #102027;
 	-fx-color-rect-width: 15;
     -fx-color-rect-height: 15;
+    -fx-min-height: 30;
 }
 
 .color-picker > .arrow-button {
@@ -454,7 +474,7 @@
 
 .color-palette > .color-picker-grid > .color-square {
     -fx-background-color: #62727b;
-    -fx-background-insets: -1, 0;   
+    -fx-background-insets: -1, 0;
     -fx-padding: 0.5;
     -fx-border: #62727b;
 }
@@ -493,6 +513,20 @@
 	-fx-alignment: top-center;
 	-fx-spacing: 15;
 }
+
+#sensory-effect-vbox{
+	-fx-background-color: #102027;
+	-fx-padding: 15 15 20 15;
+	-fx-background-insets: 2;
+	-fx-effect: dropshadow( three-pass-box , rgba(0,0,0,0.6) , 8, 0.0 , 0 , 0 );
+	-fx-alignment: top-center;
+	-fx-spacing: 15;
+}
+
+#effect-position-choice-box{
+    -fx-min-width: 120;
+}
+
 #position-property-grid-pane{
 	-fx-background-color: #102027;
 	-fx-padding: 0px;
@@ -520,10 +554,35 @@
 	-fx-hgap: 10;
 	-fx-vgap: 10;
 }
+
+#sensory-effect-property-grid-pane{
+	-fx-background-color: #102027;
+	-fx-padding: 0px;
+	-fx-background-insets: 0;
+	-fx-hgap: 25;
+	-fx-vgap: 20;
+}
+
 #size-title{
 	-fx-fill: #B0BEC5;
 	-fx-font-size: 16;
 }
+
+#separator{
+    -fx-background-color: #62727b;
+    -fx-opacity: 0.3;
+}
+
+#sensory-effect-title{
+	-fx-fill: #B0BEC5;
+	-fx-font-size: 16;
+}
+
+#sensory-effect-subtitle{
+	-fx-fill: #B0BEC5;
+	-fx-font-size: 14;
+}
+
 #size-aspect-ratio{
     -fx-min-width: 50;
 }
@@ -622,10 +681,22 @@
 	-fx-spacing: 300;
 }
 #spatial-view-label{
-	-fx-min-width: 80;
+	-fx-min-width: 40;
+}
+#spatial-view-label-time{
+	-fx-min-width: 70;
 }
 #right-spatial-view-label{
-	-fx-min-width: 40;
+	-fx-min-width: 55;
+}
+#spatial-view-label-intensity{
+    -fx-min-width: 80;
+}
+#spatial-view-label-intensity-flashlight{
+    -fx-min-width: 90;
+}
+#spatial-view-label-position{
+    -fx-min-width: 40;
 }
 #info-pane-field{
     -fx-max-width: 100;

@@ -27,9 +27,26 @@
  *                                                                             *
  ******************************************************************************/
 
+#left-button:hover{
+    -fx-background-color: linear-gradient(from 20% 20% to 100% 100%, derive(#37474f, 10%), derive(#102027, 10%));
+    -fx-background-radius: 4;
+}
+#left-button:pressed{
+     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);
+}
+
+#right-button:hover{
+    -fx-background-color: linear-gradient(from 20% 20% to 100% 100%, derive(#37474f, 10%), derive(#102027, 10%));
+    -fx-background-radius: 4;
+}
+#right-button:pressed{
+     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);
+}
+
 #container-border-pane{
     -fx-font-family: Raleway;
 	-fx-background-color: #102027;
+	-fx-background-radius: 4;
 	-fx-border-color: #62727b;
 	-fx-padding: 20;
 }
@@ -75,16 +92,7 @@
 }
 .button{
  	-fx-background-color: #102027;
- 	-fx-text-fill: #5df2d6;
-}
-
-.button:hover {
-	-fx-background-color: #5df2d614;
-	-fx-background-radius: 1.5;
-}
-.button:pressed {
-	-fx-background-color:  #5df2d628;
-	-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);
+ 	-fx-text-fill: white;
 }
 
 .progress-bar {

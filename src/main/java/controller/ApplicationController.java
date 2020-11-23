@@ -3,13 +3,12 @@ package controller;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Locale;
 import java.util.prefs.Preferences;
 
 import javafx.stage.Stage;
-import model.common.InteractivityKeyMapping;
-import model.common.Media;
-import model.common.Node;
-import model.common.SpatialTemporalApplication;
+import model.common.*;
 import model.repository.RepositoryMediaList;
 import model.temporalView.Interactivity;
 import model.temporalView.Synchronous;
@@ -18,13 +17,8 @@ import model.temporalView.TemporalChain;
 import org.json.simple.JSONObject;
 
 import view.common.Language;
-import view.spatialViewPane.CropPane;
-import view.spatialViewPane.LevelPane;
-import view.spatialViewPane.PositionPane;
-import view.spatialViewPane.SizePane;
-import view.spatialViewPane.StylePane;
-import view.spatialViewPane.TemporalMediaInfoPane;
-import view.stevePane.StevePane;
+import view.spatialViewPane.*;
+import view.stevePane.SteveScene;
 import br.uff.midiacom.ana.util.exception.XMLException;
 
 public class ApplicationController {
@@ -34,10 +28,11 @@ public class ApplicationController {
 	private InteractivityKeyMapping interactivityKeyMapping; 
 	private Preferences preferences;
 	private JSONObject interactiveKeyMappingJSON;
-	private StevePane stevePane;
+
+	private SteveScene steveScene;
 	private static ApplicationController instance;
 
-	public static ApplicationController getInstance() throws IOException, XMLException {
+	public static ApplicationController getInstance() {
 
 		if (ApplicationController.instance == null){
 			ApplicationController.instance = new ApplicationController();
@@ -47,9 +42,10 @@ public class ApplicationController {
 
 	}
 
-	private ApplicationController() throws XMLException, IOException{
+	private ApplicationController() {
 
 		this.preferences = Preferences.userRoot();
+		Locale.setDefault(Locale.ENGLISH);
 		this.interactivityKeyMapping = new InteractivityKeyMapping();
 		this.interactivityKeyMapping.setInteractivityKeyMapping(
 				this.preferences.get("red", "0"),
@@ -64,8 +60,8 @@ public class ApplicationController {
 	}
 
 	public void createView(Stage stage) throws IOException, XMLException {
-		stevePane = new StevePane(this, repositoryMediaList, spatialTemporalApplication);
-		stevePane.createView(stage);
+		steveScene = new SteveScene(this, repositoryMediaList, spatialTemporalApplication);
+		steveScene.createView(stage);
 	}
 
 	public void createMainTemporalView(){
@@ -134,6 +130,10 @@ public class ApplicationController {
 	public void addTemporalChain(TemporalChain temporalChain){
 		spatialTemporalApplication.addTemporalChain(temporalChain);
 	}
+
+	public ArrayList<TemporalChain> getAllTemporalChains(){
+		return spatialTemporalApplication.getTemporalChainList();
+	}
 	
 	public void removeTemporalChain(TemporalChain temporalChain) {
 		spatialTemporalApplication.removeTemporalChain(temporalChain);
@@ -147,12 +147,12 @@ public class ApplicationController {
 		spatialTemporalApplication.openExistingTemporalView(existingTemporalView);
 	}
 	
-	public Boolean addRepositoryMedia(Media media){
-		return repositoryMediaList.add(media);
+	public Boolean addRepositoryMedia(MediaNode mediaNode){
+		return repositoryMediaList.add(mediaNode);
 	}
 	
-	public void deleteRepositoryMedia(Media media){
-		repositoryMediaList.delete(media);
+	public void deleteRepositoryMedia(MediaNode mediaNode){
+		repositoryMediaList.delete(mediaNode);
 	}
 	
 	public void clearRepositoryMediaList(){
@@ -171,32 +171,32 @@ public class ApplicationController {
 		temporalChainModel.addNode(droppedNode);
 	}
 
-	public void populatePositionPropertyJavaBean(PositionPane positionPane, Media media) {
-		media.getPresentationProperty().populatePositionPropertyJavaBean(positionPane);
+	public void populatePositionPropertyJavaBean(PositionPane positionPane, MediaNode mediaNode) {
+		mediaNode.getPresentationProperty().populatePositionPropertyJavaBean(positionPane);
 	}
 
-	public void populateSizePropertyJavaBean(SizePane sizePane, Media media) {
-		media.getPresentationProperty().populateSizePropertyJavaBean(sizePane);
+	public void populateSizePropertyJavaBean(SizePane sizePane, MediaNode mediaNode) {
+		mediaNode.getPresentationProperty().populateSizePropertyJavaBean(sizePane);
 	}
 
-	public void populateCropPropertyJavaBean(CropPane cropPane, Media media) {
-		media.getPresentationProperty().populateCropPropertyJavaBean(cropPane);
+	public void populateCropPropertyJavaBean(CropPane cropPane, MediaNode mediaNode) {
+		mediaNode.getPresentationProperty().populateCropPropertyJavaBean(cropPane);
 	}
 
-	public void populateStylePropertyJavaBean(StylePane stylePane, Media media) {
-		media.getPresentationProperty().populateStylePropertyJavaBean(stylePane);
+	public void populateStylePropertyJavaBean(StylePane stylePane, MediaNode mediaNode) {
+		mediaNode.getPresentationProperty().populateStylePropertyJavaBean(stylePane);
 	}
 
-	public void populateTextStylePropertyJavaBean(StylePane stylePane, Media media) {
-		media.getPresentationProperty().populateTextStylePropertyJavaBean(stylePane);
+	public void populateTextStylePropertyJavaBean(StylePane stylePane, MediaNode mediaNode) {
+		mediaNode.getPresentationProperty().populateTextStylePropertyJavaBean(stylePane);
 	}
 
-	public void populateLevelPropertyJavaBean(LevelPane levelPane, Media media) {
-		media.getPresentationProperty().populateLevelPropertyJavaBean(levelPane);
+	public void populateLevelPropertyJavaBean(LevelPane levelPane, MediaNode mediaNode) {
+		mediaNode.getPresentationProperty().populateLevelPropertyJavaBean(levelPane);
 	}
 
-	public void populateTemporalInfoPropertyJavaBean(TemporalMediaInfoPane infoPane, Media media) {
-		media.populateTemporalInfoPropertyJavaBean(infoPane);
+	public void populateTemporalInfoPropertyJavaBean(TemporalMediaInfoPane infoPane, MediaNode mediaNode) {
+		mediaNode.populateTemporalInfoPropertyJavaBean(infoPane);
 	}
 	
 	public void addSynchronousRelation(TemporalChain temporalChain, Synchronous synchronousRelation){
@@ -211,7 +211,7 @@ public class ApplicationController {
 		temporalChain.removeSynchronousRelation(synchronousRelation);
 	}
 	
-	public void removeInteractivityRelation(TemporalChain temporalChain, Interactivity<Media> interactivityRelation){
+	public void removeInteractivityRelation(TemporalChain temporalChain, Interactivity<MediaNode> interactivityRelation){
 		temporalChain.removeInteractivityRelation(interactivityRelation);
 	}
 
@@ -222,11 +222,11 @@ public class ApplicationController {
 		temporalChain.dragNode(node, droppedTime, true);
 	}
 
-	public void addInteractivityRelation(TemporalChain temporalChainModel, Interactivity<Media> interactivityRelation) {
+	public void addInteractivityRelation(TemporalChain temporalChainModel, Interactivity<MediaNode> interactivityRelation) {
 		temporalChainModel.addInteractivityRelation(interactivityRelation);
 	}
 	
-	public void updateInteractivityRelation(TemporalChain temporalChainModel, Interactivity<Media> interactivityRelation) {
+	public void updateInteractivityRelation(TemporalChain temporalChainModel, Interactivity<MediaNode> interactivityRelation) {
 		temporalChainModel.updateInteractivityRelation(interactivityRelation);
 	}
 
@@ -242,6 +242,7 @@ public class ApplicationController {
 	 */
 	public void updateNodeEndTime(Node node, Double newValue, boolean isLinked) {
 		node.getParentTemporalChain().updateNodeEndTimeView(node, newValue, isLinked);
+
 	}
 
 	/**
@@ -249,6 +250,25 @@ public class ApplicationController {
 	 */
 	public void updateNodeDurationTime(Node node, Double newValue) {
 		node.getParentTemporalChain().updateNodeDurationTimeView(node, newValue);
+	}
+
+	/**
+	 * Update sensory effect properties according to user's interactions.
+	 */
+	public void updateSensoryEffectProperties(SensoryEffectPropertyPane sensoryEffectPropertyPane, SensoryEffectNode sensoryEffectNode) {
+		sensoryEffectNode.updateProperties(sensoryEffectPropertyPane);
+	}
+
+	public void updateSensoryEffectPositions(EffectPositionPane effectPositionPane, SensoryEffectNode sensoryEffectNode) {
+		sensoryEffectNode.updateSensoryEffectPositions(effectPositionPane);
+	}
+
+	public void removeNodeOfSpatialView(Node node) {
+		steveScene.getSpatialViewPane().removeNodeOfSpatialView(node);
+	}
+
+	public SteveScene getSteveScene() {
+		return steveScene;
 	}
 
 }

@@ -202,32 +202,102 @@ public class TimeLineChart<X, Y> extends StackedBarChart<X, Y>{
 	    }
 
 	    
-	@Override
-	protected void updateAxisRange() {
-		
-		boolean categoryIsX = categoryAxis == getXAxis();
-		
+//	@Override
+//	protected void updateAxisRange() {
+//
+//		boolean categoryIsX = categoryAxis == getXAxis();
+//
+//        if (categoryAxis.isAutoRanging()) {
+//
+//            List cData = new ArrayList();
+//
+//            for (Series<X, Y> series : getData()) {
+//                for (Data<X, Y> data : series.getData()) {
+//                    if (data != null) cData.add(categoryIsX ? data.getXValue() : data.getYValue());
+//                }
+//            }
+//
+//            categoryAxis.invalidateRange(cData);
+//
+//        }
+//
+//        if (valueAxis.isAutoRanging()) {
+//
+//            List<Number> vData = new ArrayList<>();
+//            for (String category : categoryAxis.getCategories()) {
+//                double totalXN = 0;
+//                double totalXP = 0;
+//                Iterator<Series<X, Y>> seriesIterator = getDisplayedSeriesIterator();
+//                while (seriesIterator.hasNext()) {
+//                    Series<X, Y> series = seriesIterator.next();
+//                    for (final Data<X, Y> item : getDataItem(series, category)) {
+//                        if (item != null) {
+//                            boolean isNegative = item.getNode().getStyleClass().contains("negative");
+//                            Number value = (Number) (categoryIsX ? item.getYValue() : item.getXValue());
+//                            if (!isNegative) {
+//                                totalXP += valueAxis.toNumericValue(value);
+//                            } else {
+//                                totalXN += valueAxis.toNumericValue(value);
+//                            }
+//                        }
+//                    }
+//                }
+//                vData.add(totalXP);
+//                vData.add(totalXN);
+//            }
+//            valueAxis.invalidateRange(vData);
+//
+//        }
+//
+//	}
+
+    @Override
+    protected void updateAxisRange() {
+
+        boolean categoryIsX = categoryAxis == getXAxis();
+
         if (categoryAxis.isAutoRanging()) {
-        	
+
             List cData = new ArrayList();
-            
+
             for (Series<X, Y> series : getData()) {
                 for (Data<X, Y> data : series.getData()) {
                     if (data != null) cData.add(categoryIsX ? data.getXValue() : data.getYValue());
                 }
             }
-            
+
             categoryAxis.invalidateRange(cData);
-            
+
         }
-        
+
         if (valueAxis.isAutoRanging()) {
-        	
+
             List<Number> vData = new ArrayList<>();
+            for (String category : categoryAxis.getCategories()) {
+                double totalXN = 0;
+                double totalXP = 0;
+                Iterator<Series<X, Y>> seriesIterator = getDisplayedSeriesIterator();
+                while (seriesIterator.hasNext()) {
+                    Series<X, Y> series = seriesIterator.next();
+                    for (final Data<X, Y> item : getDataItem(series, category)) {
+                        if (item != null) {
+                            boolean isNegative = item.getNode().getStyleClass().contains("negative");
+                            Number value = (Number) (categoryIsX ? item.getYValue() : item.getXValue());
+                            if (!isNegative) {
+                                totalXP += valueAxis.toNumericValue(value);
+                            } else {
+                                totalXN += valueAxis.toNumericValue(value);
+                            }
+                        }
+                    }
+                }
+                vData.add(totalXP);
+                vData.add(totalXN);
+            }
             valueAxis.invalidateRange(vData);
-            
+
         }
-	        
-	}
-	  
+
+    }
+
 }

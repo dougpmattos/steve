@@ -10,7 +10,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
-import model.common.Media;
+import model.common.MediaNode;
 import model.spatialView.media.MediaPositionProperty;
 import model.spatialView.media.enums.Size;
 import view.common.Language;
@@ -19,7 +19,7 @@ import controller.ApplicationController;
 public class PositionPane extends VBox {
 
 	private ApplicationController applicationController;
-	private Media media;
+	private MediaNode mediaNode;
 	
 	private TextField left;
 	private TextField right;
@@ -36,12 +36,12 @@ public class PositionPane extends VBox {
 	private BorderPane titleButtonBorderPane;
 	private GridPane positionPropertyGridPane;
 	
-	public PositionPane(ApplicationController applicationController, Media media){
+	public PositionPane(ApplicationController applicationController, MediaNode mediaNode){
 		
 		setId("position-vbox");
 		
 		this.applicationController = applicationController;
-		this.media = media;
+		this.mediaNode = mediaNode;
 		
 		Text title = new Text(Language.translate("position"));
 		title.setId("position-title");
@@ -57,11 +57,11 @@ public class PositionPane extends VBox {
 //		Label rotationLabel = new Label(Language.translate("rotation"));
 		Label zOrderLabel = new Label(Language.translate("z.order"));
 		leftLabel.setId("spatial-view-label");
-		rightLabel.setId("spatial-view-label");
+		rightLabel.setId("right-spatial-view-label");
 		topLabel.setId("spatial-view-label");
-		bottomLabel.setId("spatial-view-label");
+		bottomLabel.setId("right-spatial-view-label");
 //		rotationLabel.setId("spatial-view-label");
-		zOrderLabel.setId("spatial-view-label");
+		zOrderLabel.setId("right-spatial-view-label");
 
 		left = new TextField();
 		leftUnit = new ChoiceBox<Size>(FXCollections.observableArrayList(Size.PX, Size.PERCENTAGE));
@@ -187,7 +187,7 @@ public class PositionPane extends VBox {
 	
 	private void populatePositionPane(){
 		
-		MediaPositionProperty positionProperty = media.getPresentationProperty().getPositionProperty();
+		MediaPositionProperty positionProperty = mediaNode.getPresentationProperty().getPositionProperty();
 		
 		setLeftValue(positionProperty.getLeft());
 		setRightValue(positionProperty.getRight());
@@ -200,7 +200,7 @@ public class PositionPane extends VBox {
 	
 	public void populatePositionPropertyJavaBean(){
 		
-		applicationController.populatePositionPropertyJavaBean(this, media);
+		applicationController.populatePositionPropertyJavaBean(this, mediaNode);
 		
 	}
 	

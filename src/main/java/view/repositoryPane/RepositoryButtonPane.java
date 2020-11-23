@@ -14,7 +14,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.FileChooser;
-import model.common.Media;
+import model.common.MediaNode;
 import view.common.Language;
 import view.common.dialogs.MessageDialog;
 import controller.ApplicationController;
@@ -93,18 +93,18 @@ public class RepositoryButtonPane extends BorderPane{
                 
                 if(fileList != null){
                 	for (File file : fileList) {
-                		Media media = new Media();
-                		media.setFile(file);
+                		MediaNode mediaNode = new MediaNode();
+                		mediaNode.setFile(file);
                 		
-                		if(media.getType() == null){
+                		if(mediaNode.getType() == null){
                 			
                 			MessageDialog messageDialog = new MessageDialog(Language.translate("media.type.not.supported"), "OK", 110);
                             messageDialog.showAndWait();
                             
                 		} else {
                 			
-                			if(!applicationController.addRepositoryMedia(media)){
-                    			MessageDialog messageDialog = new MessageDialog(Language.translate("media.has.already.imported") + ": " + media.getName(), 
+                			if(!applicationController.addRepositoryMedia(mediaNode)){
+                    			MessageDialog messageDialog = new MessageDialog(Language.translate("media.has.already.imported") + ": " + mediaNode.getName(),
                     												Language.translate("select.other.media"), "OK", 150);
                     	    	messageDialog.showAndWait();
                     		}

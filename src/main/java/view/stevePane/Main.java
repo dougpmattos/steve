@@ -9,6 +9,7 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import view.common.dialogs.InputDialog;
 
 public class Main extends Application{
 
@@ -23,7 +24,7 @@ public class Main extends Application{
 
 		LoadingWindow loadingWindow = new LoadingWindow();
 		loadingWindow.show();
-		
+
 		FadeTransition fadeIn = new FadeTransition(Duration.seconds(1.3), loadingWindow.getScene().getRoot());
 		fadeIn.setFromValue(0.0);
 		fadeIn.setToValue(1.0);
@@ -32,7 +33,7 @@ public class Main extends Application{
 
 			@Override
 			public void handle(ActionEvent event) {
-				
+
 				FadeTransition fadeOut = new FadeTransition(Duration.seconds(1.3), loadingWindow.getScene().getRoot());
 				fadeOut.setFromValue(1.0);
 				fadeOut.setToValue(0.0);
@@ -42,7 +43,7 @@ public class Main extends Application{
 
 					@Override
 					public void handle(ActionEvent event) {
-						
+
 						loadingWindow.close();
 						try {
 							ApplicationController.getInstance().createView(stage);
@@ -50,10 +51,10 @@ public class Main extends Application{
 						} catch (Exception ex) {
 							logger.error(ex.getMessage());
 						}
-						
+
 					}
 				});
-				
+
 			}
 		});
 

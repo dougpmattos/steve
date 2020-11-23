@@ -5,7 +5,7 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
-import model.common.Media;
+import model.common.MediaNode;
 import model.common.enums.MediaType;
 import view.common.Language;
 import controller.ApplicationController;
@@ -13,7 +13,7 @@ import controller.ApplicationController;
 public class RepositoryMediaInfoPane extends ScrollPane{
 
 	private ApplicationController applicationController;
-	private Media media;
+	private MediaNode mediaNode;
 	
 	private TextField name;
 	private TextField type;
@@ -21,10 +21,10 @@ public class RepositoryMediaInfoPane extends ScrollPane{
 
 	private GridPane infoPropertyGridPane;
 	
-	public RepositoryMediaInfoPane(ApplicationController applicationController, Media media){
+	public RepositoryMediaInfoPane(ApplicationController applicationController, MediaNode mediaNode){
 		
 		this.applicationController = applicationController;
-		this.media = media;
+		this.mediaNode = mediaNode;
 	
 		setId("repository-info-pane");
 		
@@ -42,7 +42,7 @@ public class RepositoryMediaInfoPane extends ScrollPane{
 		type.setEditable(false);
 		
 		Boolean isContinousMedia = false;
-		if(media.getType() == MediaType.AUDIO || media.getType() == MediaType.VIDEO){
+		if(mediaNode.getType() == MediaType.AUDIO || mediaNode.getType() == MediaType.VIDEO){
 			isContinousMedia = true; 
 		}
 
@@ -106,16 +106,16 @@ public class RepositoryMediaInfoPane extends ScrollPane{
 
 	private void populateInfoPane(){
 		
-		setNameValue(media.getName());
-		setTypeValue(media.getType().toString());
+		setNameValue(mediaNode.getName());
+		setTypeValue(mediaNode.getType().toString());
 		
 		Boolean isContinousMedia = false;
-		if(media.getType() == MediaType.AUDIO || media.getType() == MediaType.VIDEO){
+		if(mediaNode.getType() == MediaType.AUDIO || mediaNode.getType() == MediaType.VIDEO){
 			isContinousMedia = true; 
 		}
 
-		if(media.getDuration() != null && isContinousMedia){
-			setDurationValue(Double.toString(media.getDuration()));
+		if(mediaNode.getDuration() != null && isContinousMedia){
+			setDurationValue(Double.toString(mediaNode.getDuration()));
 		}
 		
 		

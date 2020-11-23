@@ -15,7 +15,7 @@ import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import model.common.Media;
+import model.common.MediaNode;
 import model.common.Node;
 import model.common.enums.SensoryEffectType;
 import model.temporalView.Interactivity;
@@ -30,43 +30,22 @@ import java.util.List;
 @SuppressWarnings({"unchecked","rawtypes"})
 public class ExtractEffectsSelectionWindow extends Stage {
      
-	private static final int HEIGHT = 610;
-	private static final int WIDTH = 650;
+	private static final int HEIGHT = 530;
+	private static final int WIDTH = 530;
     
 	private ApplicationController applicationController;
 	private TemporalViewPane temporalViewPane;
 	private Boolean isEdition;
-	private Interactivity interactivityRelation;
+	private Boolean hasDiscarded;
 	
     private Scene scene;
-    
-    private ChoiceBox<InteractivityKeyType> interactivityKeyTypeField;
-	private ChoiceBox interactivityKeyField;
-	//private List<CheckBox> effectsCheckbox;
+
 	private List<CheckBox> effectsCheckbox = new ArrayList<CheckBox>();
-	
 	private List<SensoryEffectType> SensoryEffectsList = new ArrayList();
-
-
-
-    private ChoiceBox<Node> nodeToBeStoppedField;
-    private ChoiceBox timelineToBeStartedField;
-    private TextField stopDelayField;
-    private TextField startDelayField;
-    
-    private Button addNewButton;
-    private Button removeMediaButton;
-    
-    private boolean isLastOne;
-    
     private GridPane formGridPane;
-    private VBox mediaCloseNewVBoxContainer;
-    private VBox timelineCloseNewVBoxContainer;
 
-    private Media interactiveMedia;
-	private ObservableList timelineFieldOptions;
     
-    public ExtractEffectsSelectionWindow(ApplicationController applicationController, TemporalViewPane temporalViewPane, Media firstSelectedMedia) {
+    public ExtractEffectsSelectionWindow(ApplicationController applicationController, TemporalViewPane temporalViewPane, MediaNode firstSelectedMediaNode) {
 
         setResizable(false);
         initModality(Modality.APPLICATION_MODAL);
@@ -75,8 +54,7 @@ public class ExtractEffectsSelectionWindow extends Stage {
         this.temporalViewPane = temporalViewPane;
         this.applicationController = applicationController;
         isEdition = false;
-        
-        this.interactiveMedia = firstSelectedMedia;
+		hasDiscarded = false;
 
         BorderPane containerBorderPane = new BorderPane();
         containerBorderPane.setId("container-border-pane");
@@ -94,38 +72,6 @@ public class ExtractEffectsSelectionWindow extends Stage {
         scene.setFill(Color.TRANSPARENT);
         setScene(scene);
 
-    }
-    
-    public ExtractEffectsSelectionWindow(ApplicationController applicationController, TemporalViewPane temporalViewPane, Interactivity<Media> interactivityToLoad){
-    	
-    	setResizable(false);
-        initModality(Modality.APPLICATION_MODAL);
-        initStyle(StageStyle.UNDECORATED);
-
-        this.temporalViewPane = temporalViewPane;
-        this.applicationController = applicationController;
-        isEdition=true;
-        this.interactivityRelation = interactivityToLoad;
-        
-        this.interactiveMedia = (Media) interactivityToLoad.getMasterNode();
-        
-        BorderPane containerBorderPane = new BorderPane();
-        containerBorderPane.setId("container-border-pane");
-        containerBorderPane.getStylesheets().add("styles/temporalViewPane/popupWindow.css");
-        
-        formGridPane = createForm();
-        ScrollPane scrollPaneContainer = new ScrollPane();
-        scrollPaneContainer.setContent(formGridPane);
-        scrollPaneContainer.setId("scroll-pane-container");
-        
-        containerBorderPane.setTop(createToolBar());
-        containerBorderPane.setCenter(scrollPaneContainer);
-
-        scene = new Scene(containerBorderPane, WIDTH, HEIGHT);
-        scene.setFill(Color.TRANSPARENT);
-        setScene(scene);
-        
-    	
     }
 
 	private BorderPane createToolBar(){
@@ -134,10 +80,10 @@ public class ExtractEffectsSelectionWindow extends Stage {
     	toolBarBorderPane.setId("tool-bar-pane");
     	
     	Button closeButton = new Button();
-    	Button saveButton = new Button(Language.translate("extract").toUpperCase());
-    	saveButton.setId("save-button");
+    	Button extractButton = new Button(Language.translate("extract").toUpperCase());
+    	extractButton.setId("save-button");
     	closeButton.setId("close-button");
-    	createToolBarButtonActions(closeButton, saveButton);
+    	createToolBarButtonActions(closeButton, extractButton);
     	
     	Label titleLabe;
     	titleLabe = new Label(Language.translate("new.sensory.effect.auto.extraction"));
@@ -151,20 +97,17 @@ public class ExtractEffectsSelectionWindow extends Stage {
     	
     	toolBarBorderPane.setLeft(closeButton);
     	toolBarBorderPane.setCenter(titleHBox);
-    	toolBarBorderPane.setRight(saveButton);
+    	toolBarBorderPane.setRight(extractButton);
     	
     	return toolBarBorderPane;
     	
     }
 
 	private GridPane createForm(){
-    	
-		Label interactivityKeySubtitle = new Label(Language.translate("interactivity.key").toUpperCase());
-        Label stopActionSubtitle = new Label(Language.translate("select.effects.to.extract"));
-        
-        stopActionSubtitle.setId("subtitle-label");
 
+        Label selectEffectLabel = new Label(Language.translate("select.effects.to.extract"));
 
+		selectEffectLabel.setId("sensory-effect-subtitle");
 
         // popular as checkboxes com os efeitos sensoriais 
         for (SensoryEffectType SensoryEffect : SensoryEffectType.values()) { 
@@ -173,30 +116,21 @@ public class ExtractEffectsSelectionWindow extends Stage {
 
         }
 
-
-        
         for(CheckBox checkbox : effectsCheckbox) {
            checkbox.setId("new-interactive-media-field");
            checkbox.setSelected(false);
        }
 
-
-
-       
         HBox stopActionSeparator = new HBox();
         stopActionSeparator.setId("separator");
         VBox stopActionSubtitleSeparatorContainer = new VBox();
         stopActionSubtitleSeparatorContainer.setId("subtitle-separator-container");
-        stopActionSubtitleSeparatorContainer.getChildren().add(stopActionSubtitle);
+        stopActionSubtitleSeparatorContainer.getChildren().add(selectEffectLabel);
         stopActionSubtitleSeparatorContainer.getChildren().add(stopActionSeparator);
-        
 
-
-        
         GridPane formGridPane = new GridPane();
         formGridPane.setId("form-grid-pane");
         formGridPane.add(stopActionSubtitleSeparatorContainer, 0, 2, 2, 1);
-        
         
         int i=3;
         for(CheckBox checkbox : effectsCheckbox) {
@@ -208,7 +142,7 @@ public class ExtractEffectsSelectionWindow extends Stage {
     	
     }
 
-    private void createToolBarButtonActions(Button closeButton, Button saveButton) {
+    private void createToolBarButtonActions(Button closeButton, Button extractButton) {
 		
     	closeButton.setOnAction(new EventHandler<ActionEvent>(){
     		@Override
@@ -226,99 +160,28 @@ public class ExtractEffectsSelectionWindow extends Stage {
     			
     			if(answer.equalsIgnoreCase("right")){
     				ExtractEffectsSelectionWindow.this.close();
+					hasDiscarded = true;
     	    	}
 
     		}
     	});
 
-		saveButton.setOnAction(new EventHandler<ActionEvent>(){
+		extractButton.setOnAction(new EventHandler<ActionEvent>(){
     		@Override
             public void handle(ActionEvent arg0) {
-	
-    			StringBuilder errorMessage = new StringBuilder();
-    			int high = 190;
-    			int count = 0;
 
-				ExtractEffectsSelectionWindow.this.close();
-				
-				ReturnMessage returnMessage = new ReturnMessage(Language.translate("saved.effects.to.extract"), 350);
-				returnMessage.show();
-				AnimationUtil.applyFadeInOut(returnMessage);
-				
+				List<SensoryEffectType> selectedSensoryEffects = getSelectedSensoryEffects();
+				if(selectedSensoryEffects.isEmpty()){
+
+					InputDialog showOkInputDialog = new InputDialog(Language.translate("please.select.at.least.one.effect"), null, null, "OK", null, 120);
+					showOkInputDialog.showAndWait();
+
+				}else {
+					ExtractEffectsSelectionWindow.this.close();
+				}
+
     		}
     		
-    	});
-		
-	}
-
-	private void createFormButtonActions(Button removeMediaButton, Button addNewButton, HBox fieldCloseHBoxContainer, VBox fieldCloseNewVBoxContainer) {
-		
-		removeMediaButton.setOnAction(new EventHandler<ActionEvent>(){
-    		@Override
-            public void handle(ActionEvent arg0) {
-
-    			ChoiceBox<Media> field = (ChoiceBox<Media>) fieldCloseHBoxContainer.getChildren().get(0);
-				
-    			if(fieldCloseNewVBoxContainer.getChildren().size() == 2){
-    				
-    				field.setValue(null);
-    				
-    				fieldCloseNewVBoxContainer.getChildren().remove(1);
-    				fieldCloseHBoxContainer.getChildren().remove(1);
-
-    			}else {
-    				
-    				fieldCloseNewVBoxContainer.getChildren().remove(fieldCloseHBoxContainer);
-    				
-    			}
-
-    		}
-    	});
-		
-		addNewButton.setOnAction(new EventHandler<ActionEvent>(){
-    		@Override
-            public void handle(ActionEvent arg0) {
-    			
-    			ChoiceBox choiceBoxField;
-    			HBox fieldCloseHBoxContainer = new HBox();
-    			
-
-    				choiceBoxField = new ChoiceBox<Media>(FXCollections.observableArrayList(timelineFieldOptions));
-    				fieldCloseHBoxContainer.setId("timeline-close-button-hbox-container");
-    			
-    			
-    			choiceBoxField.setId("new-interactive-media-field");
-    		    fieldCloseHBoxContainer.getChildren().add(choiceBoxField);
-    
-    			fieldCloseNewVBoxContainer.getChildren().remove(addNewButton);
-    			fieldCloseNewVBoxContainer.getChildren().add(fieldCloseHBoxContainer);
-
-    		    choiceBoxField.setOnAction(new EventHandler<ActionEvent>() {
-
-    				@Override
-    				public void handle(ActionEvent event) {
-    	
-    					if(choiceBoxField.getProperties().get("previousValue") == null){
-    						
-    						Button removeMediaButton = new Button();
-        					removeMediaButton.setId("media-to-be-stopped-close-button");
-        			    	fieldCloseHBoxContainer.getChildren().add(removeMediaButton);
-        			    	
-        			    	Button addNewButton = new Button(Language.translate("add.new"));
-        			    	addNewButton.setId("add-new-button");
-        			    	fieldCloseNewVBoxContainer.getChildren().add(addNewButton);
-        			    	
-        			    	createFormButtonActions(removeMediaButton, addNewButton, fieldCloseHBoxContainer, fieldCloseNewVBoxContainer);
-        			    	
-    					}
-    					
-    					choiceBoxField.getProperties().put("previousValue", choiceBoxField.getValue());
-
-    				}
-    				
-    			});
-    		        
-    		}
     	});
 		
 	}
@@ -338,4 +201,7 @@ public class ExtractEffectsSelectionWindow extends Stage {
 
 	}
 
+	public Boolean getHasDiscarded() {
+		return hasDiscarded;
+	}
 }

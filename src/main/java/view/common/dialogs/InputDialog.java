@@ -4,10 +4,7 @@ import com.jfoenix.controls.JFXButton;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.ProgressIndicator;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -38,8 +35,8 @@ public class InputDialog extends Stage {
     private Label inputLabel;
     private TextField inputField;
     private CheckBox checkbox;
-    private JFXButton leftButton;
-    private JFXButton rightButton;
+    private Button leftButton;
+    private Button rightButton;
     private BorderPane containerBorderPane;
     private VBox containerInputFieldButtonTitleMsgVBox;
     private VBox containerTitleMsgVBox;
@@ -158,22 +155,20 @@ public class InputDialog extends Stage {
     public void createButtons(){
 
         if(leftButtonText != null){
-            leftButton = new JFXButton(leftButtonText.toUpperCase());
-            leftButton.getStyleClass().add("textButton");
-            leftButton.setButtonType(JFXButton.ButtonType.FLAT);
+            leftButton = new Button(leftButtonText.toUpperCase());
+            leftButton.setId("left-button");
         }
 
         if(rightButtonText != null){
-            rightButton = new JFXButton(rightButtonText.toUpperCase());
-            rightButton.getStyleClass().add("textButton");
-            rightButton.setButtonType(JFXButton.ButtonType.FLAT);
+            rightButton = new Button(rightButtonText.toUpperCase());
+            rightButton.setId("right-button");
         }
 
         buttonClicked = CLOSE_BUTTON;
 
     }
 
-    public JFXButton getRightButton() {
+    public Button getRightButton() {
         return rightButton;
     }
 

@@ -8,6 +8,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
+import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
@@ -19,8 +20,8 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Rectangle;
-import model.common.Media;
-import model.common.SensoryEffect;
+import model.common.MediaNode;
+import model.common.SensoryEffectNode;
 import model.common.enums.MediaType;
 import model.common.enums.SensoryEffectType;
 import model.repository.RepositoryMediaList;
@@ -34,7 +35,7 @@ import view.common.dialogs.MessageDialog;
 import view.common.dialogs.ReturnMessage;
 import view.repositoryPane.RepositoryMediaItemContainer;
 import view.repositoryPane.RepositoryPane;
-import view.stevePane.StevePane;
+import view.stevePane.SteveScene;
 import view.utility.AnimationUtil;
 
 import java.util.ArrayList;
@@ -48,7 +49,7 @@ public class TimeLineXYChartData implements Observer {
 	private static final double BORDER_DIFF = 0.26;
 
 	private ApplicationController applicationController;
-	private model.common.Node applicationNode;
+	private model.common.Node node;
 	private int line;
 	private TemporalViewPane temporalViewPane;
 	private RepositoryPane repositoryPane;
@@ -59,37 +60,44 @@ public class TimeLineXYChartData implements Observer {
 	private VBox nameInteractiveIconContainer;
 	private TemporalChainPane temporalChainPane;
 	private RepositoryMediaList repositoryMediaList;
-	private StevePane stevePane;
+	private SteveScene steveScene;
 	private Rectangle mediaImageClip;
 	private ImageView imageView;
 	private Boolean wasDragged;
 	private Button iButton;
+	private HBox containerIButton;
 	private ContextMenu contextMenu;
 	private MenuItem menuItemDeleteInteractivity;
 	private MenuItem menuItemEditInteractivity;
 	private MenuItem menuItemAddInteractivity;
 	private MenuItem menuItemAutoSensoryEffects;
 	private SeparatorMenuItem menuItemSeparator;
-	private MenuItem menuItemDeleteMedia;
+	private MenuItem menuItemDeleteNode;
 	private SensoryEffectExtractionService sensoryEffectExtractionService;
-	private InputDialog effectExtractionLoadingDialog
-			;
+	private InputDialog effectExtractionLoadingDialog;
+	private ReturnMessage currentTimePopup;
+	private Boolean isBorderBeingDragged;
+	private HBox rightBorderRectangle;
+	private Label mediaNameLabel;
 
 	public TimeLineXYChartData(ApplicationController applicationController, model.common.Node node, TemporalChain temporalChainModel,
 							   TemporalViewPane temporalViewPane, TemporalChainPane temporalChainPane, RepositoryPane repositoryPane,
-							   int line, StevePane stevePane, TimeLineChart<Number, String> timeLineChart) {
+							   int line, SteveScene steveScene, TimeLineChart<Number, String> timeLineChart) {
 
 		this.applicationController = applicationController;
-		this.applicationNode = node;
+		this.node = node;
 		this.temporalChainModel = temporalChainModel;
 		this.line = line;
 		this.temporalViewPane = temporalViewPane;
 		this.temporalChainPane = temporalChainPane;
 		this.timeLineChart = timeLineChart;
 		this.repositoryPane = repositoryPane;
-		this.stevePane = stevePane;
+		this.steveScene = steveScene;
 		wasDragged = false;
+		isBorderBeingDragged = false;
 		this.repositoryMediaList = repositoryPane.getRepositoryMediaList();
+
+		currentTimePopup = new ReturnMessage(55, 30);
 
 		temporalChainModel.addObserver(this);
 
@@ -103,22 +111,33 @@ public class TimeLineXYChartData implements Observer {
 
 		contextMenu = new ContextMenu();
 
-		menuItemDeleteInteractivity = new MenuItem(Language.translate("delete.interactivity"));
-		menuItemEditInteractivity = new MenuItem(Language.translate("edit.interactivity"));
-		menuItemAddInteractivity = new MenuItem(Language.translate("add.interactivity"));
+		menuItemDeleteInteractivity = new MenuItem(Language.translate("delete.user.interaction"));
+		menuItemEditInteractivity = new MenuItem(Language.translate("edit.user.interaction"));
+		menuItemAddInteractivity = new MenuItem(Language.translate("add.user.interaction"));
 		menuItemAutoSensoryEffects = new MenuItem(Language.translate("add.autoSensoryEffects"));
 		menuItemSeparator = new SeparatorMenuItem();
-		menuItemDeleteMedia = new MenuItem(Language.translate("delete.media.context.menu"));
+		menuItemDeleteNode = new MenuItem();
 
-		contextMenu.getItems().addAll(menuItemDeleteMedia, menuItemSeparator, menuItemDeleteInteractivity,
-				menuItemEditInteractivity, menuItemAddInteractivity, menuItemAutoSensoryEffects);
+		if(node instanceof MediaNode){
+
+			menuItemDeleteNode.setText(Language.translate("delete.media.context.menu"));
+
+			contextMenu.getItems().addAll(menuItemDeleteNode, menuItemSeparator, menuItemDeleteInteractivity,
+					menuItemEditInteractivity, menuItemAddInteractivity);
+
+			if(((MediaNode) node).type == MediaType.VIDEO){
+				contextMenu.getItems().add(new SeparatorMenuItem());
+				contextMenu.getItems().add(menuItemAutoSensoryEffects);
+			}
+
+		}else {
+			menuItemDeleteNode.setText(Language.translate("delete.effect.context.menu"));
+			contextMenu.getItems().addAll(menuItemDeleteNode);
+		}
 
 		createMenuItemActions(applicationController, node, temporalChainModel);
 
 	}
-
-	// TESTE
-	@SuppressWarnings("restriction")
 
 	private void createMenuItemActions(ApplicationController applicationController, model.common.Node node,
 									   TemporalChain temporalChainModel) {
@@ -133,7 +152,7 @@ public class TimeLineXYChartData implements Observer {
 					if (relation instanceof Interactivity) {
 
 						Interactivity interactivityRelation = (Interactivity) relation;
-						if (interactivityRelation.getMasterNode() == node) {
+						if (interactivityRelation.getPrimaryNode() == node) {
 							applicationController.removeInteractivityRelation(temporalChainModel, interactivityRelation);
 							break;
 						}
@@ -180,7 +199,7 @@ public class TimeLineXYChartData implements Observer {
 					if (relation instanceof Interactivity) {
 
 						Interactivity interactivityRelation = (Interactivity) relation;
-						if (interactivityRelation.getMasterNode() == firstSelectedMedia) {
+						if (interactivityRelation.getPrimaryNode() == firstSelectedMedia) {
 							interactivityToLoad = interactivityRelation;
 							break;
 						}
@@ -207,17 +226,18 @@ public class TimeLineXYChartData implements Observer {
 
 				// TODO exibir alerta dizendo que nao pode criar interatividade com efeito
 				InteractiveMediaWindow interactiveMediaWindow = new InteractiveMediaWindow(applicationController, temporalViewPane,
-						(Media) node, nodeListDuringInteractivityTime);
+						(MediaNode) node, nodeListDuringInteractivityTime);
 				interactiveMediaWindow.showAndWait();
 
 			}
 		});
 
-		menuItemDeleteMedia.setOnAction(new EventHandler<ActionEvent>() {
+		menuItemDeleteNode.setOnAction(new EventHandler<ActionEvent>() {
 
 			@Override
 			public void handle(ActionEvent event) {
 				applicationController.removeMediaTemporalChain(node, temporalChainModel, true);
+				applicationController.removeNodeOfSpatialView(node);
 			}
 		});
 
@@ -233,41 +253,44 @@ public class TimeLineXYChartData implements Observer {
 				}
 
 				ExtractEffectsSelectionWindow extractEffectsSelectionWindow = new ExtractEffectsSelectionWindow(
-						applicationController, temporalViewPane, (Media) node);
+						applicationController, temporalViewPane, (MediaNode) node);
 				extractEffectsSelectionWindow.showAndWait();
+				if(!extractEffectsSelectionWindow.getHasDiscarded()){
 
-				effectExtractionLoadingDialog = new InputDialog(Language.translate("extracting.effects"),
-						null, null, null, null,
-						null, 120, 350);
-				effectExtractionLoadingDialog.show();
-				effectExtractionLoadingDialog.setProgressIndicator();
+					effectExtractionLoadingDialog = new InputDialog(Language.translate("extracting.effects"),
+							null, null, null, null,
+							null, 120, 350);
+					effectExtractionLoadingDialog.show();
+					effectExtractionLoadingDialog.setProgressIndicator();
 
-				List<SensoryEffectType> selectedSensoryEffects = extractEffectsSelectionWindow.getSelectedSensoryEffects();
+					List<SensoryEffectType> selectedSensoryEffects = extractEffectsSelectionWindow.getSelectedSensoryEffects();
 
-				sensoryEffectExtractionService  = new SensoryEffectExtractionService(applicationNode, selectedSensoryEffects);
-				Thread effectExtractionServiceThread = new Thread(sensoryEffectExtractionService);
-				effectExtractionServiceThread.setDaemon(true);
-				effectExtractionServiceThread.start();
+					sensoryEffectExtractionService  = new SensoryEffectExtractionService(TimeLineXYChartData.this.node, selectedSensoryEffects);
+					Thread effectExtractionServiceThread = new Thread(sensoryEffectExtractionService);
+					effectExtractionServiceThread.setDaemon(true);
+					effectExtractionServiceThread.start();
 
-				Thread callerbackerThread = new Thread(new Runnable() {
-					@Override
-					public void run() {
-						try {
-							effectExtractionServiceThread.join();
-							Platform.runLater(new Runnable() {
-								@Override public void run() {
-									event.consume();
-									callbackFromEffectExtractionService();
-								}
-							});
+					Thread callerbackerThread = new Thread(new Runnable() {
+						@Override
+						public void run() {
+							try {
+								effectExtractionServiceThread.join();
+								Platform.runLater(new Runnable() {
+									@Override public void run() {
+										event.consume();
+										callbackFromEffectExtractionService();
+									}
+								});
+							}
+							catch ( InterruptedException e ) {
+								e.printStackTrace();
+							}
 						}
-						catch ( InterruptedException e ) {
-							e.printStackTrace();
-						}
-					}
-				});
+					});
 
-				callerbackerThread.start();
+					callerbackerThread.start();
+
+				}
 
 			}
 
@@ -295,7 +318,7 @@ public class TimeLineXYChartData implements Observer {
 		int[][] effectActivationMatrix = sEExtractionServiceResponse.getEffectActivationMatrix();
 		List<SensoryEffectConcept> sensoryEffectsConceptList = sEExtractionServiceResponse.getSensoryEffectsConceptList();
 
-		final int qtdSegs = applicationNode.getDuration().intValue();
+		final int qtdSegs = node.getDuration().intValue();
 		final int qtdSensoryEffects = sensoryEffectsConceptList.size();
 
 		// percorrer cada vetor, encontrar momentos de início e fim e gerar um efeito
@@ -322,10 +345,10 @@ public class TimeLineXYChartData implements Observer {
 					break;
 				else if (j != end) {
 					addSensoryEffect((SensoryEffectType) sensoryEffectsConceptList.get(i).getFirst(),
-							applicationNode.getBegin() + j, 0.00 + (end - j)); // (end - j) me dá a duração do
+							node.getBegin() + j, 0.00 + (end - j)); // (end - j) me dá a duração do
 					// efeito
 					System.out.println(sensoryEffectsConceptList.get(i).getFirst() + " inicia em : "
-							+ (applicationNode.getBegin() + j) + " e tem duracao de:" + (0.00 + (end - j)));
+							+ (node.getBegin() + j) + " e tem duracao de:" + (0.00 + (end - j)));
 
 				}
 				// anda com j até o próximo momento de início desse efeito.
@@ -360,32 +383,31 @@ public class TimeLineXYChartData implements Observer {
 	private void addSensoryEffect(SensoryEffectType seType, Double start, Double end) {
 
 		SensoryEffectType NEWsensoryEffectType = seType;
-		SensoryEffect NEWdroppedSensoryEffect = new SensoryEffect();
+		SensoryEffectNode NEWdroppedSensoryEffectNode = new SensoryEffectNode(NEWsensoryEffectType);
 		int NEWduplicatedEffectCount;
 
-		NEWdroppedSensoryEffect.setType(NEWsensoryEffectType);
-		NEWdroppedSensoryEffect.setName(NEWsensoryEffectType.toString());
-		NEWdroppedSensoryEffect.setParentTemporalChain(temporalChainModel);
+		NEWdroppedSensoryEffectNode.setName(NEWsensoryEffectType.toString());
+		NEWdroppedSensoryEffectNode.setParentTemporalChain(temporalChainModel);
 
-		NEWduplicatedEffectCount = getDuplicatedNodeCount(NEWdroppedSensoryEffect);
+		NEWduplicatedEffectCount = getDuplicatedNodeCount(NEWdroppedSensoryEffectNode);
 		if (NEWduplicatedEffectCount > 0) {
-			NEWdroppedSensoryEffect.setName(NEWsensoryEffectType.toString() + "_" + NEWduplicatedEffectCount++);
+			NEWdroppedSensoryEffectNode.setName(NEWsensoryEffectType.toString() + "_" + NEWduplicatedEffectCount++);
 		}
 
 		Double NEWdroppedTime = start;
 		NEWdroppedTime = MediaUtil.approximateDouble(start);
-		NEWdroppedSensoryEffect.setBegin(NEWdroppedTime);
-		NEWdroppedSensoryEffect.setEnd(NEWdroppedTime + end);
+		NEWdroppedSensoryEffectNode.setBegin(NEWdroppedTime);
+		NEWdroppedSensoryEffectNode.setEnd(NEWdroppedTime + end);
 
-		applicationController.addNodeTemporalChain(NEWdroppedSensoryEffect, temporalChainModel);
+		applicationController.addNodeTemporalChain(NEWdroppedSensoryEffectNode, temporalChainModel);
 
 	}
 
 	private void createXYChartData() {
 
 		xyChartData = new XYChart.Data<Number, String>();
-		xyChartData.setExtraValue(applicationNode.getBegin());
-		xyChartData.setXValue(applicationNode.getEnd());
+		xyChartData.setExtraValue(node.getBegin());
+		xyChartData.setXValue(node.getEnd());
 		xyChartData.setYValue(String.valueOf(line));
 		xyChartData.setNode(createNode());
 
@@ -393,99 +415,48 @@ public class TimeLineXYChartData implements Observer {
 
 	private HBox createNode() {
 
+		rightBorderRectangle = new HBox();
+		rightBorderRectangle.setId("right-border-rectangle");
+		rightBorderRectangle.setMinWidth(10);
+		rightBorderRectangle.setMaxWidth(10);
+
+		createMouseEventInRightBorderForConsuming(rightBorderRectangle);
+		createEventForChangingDuration(rightBorderRectangle);
+
 		containerNode = new HBox();
 		containerNode.setId("temporal-media-container");
 
 		nameInteractiveIconContainer = new VBox();
 		nameInteractiveIconContainer.setId("name-interactive-icon-container");
 		nameInteractiveIconContainer.setAlignment(Pos.CENTER_RIGHT);
-		Label mediaName = new Label(applicationNode.getName());
-		mediaName.setId("media-name");
-		nameInteractiveIconContainer.getChildren().add(mediaName);
+		mediaNameLabel = new Label(node.getName());
+		mediaNameLabel.setId("media-name-label");
+
+		if (node instanceof MediaNode && ((MediaNode) node).isContinousMedia()) {
+			mediaNameLabel.setStyle("-fx-background-radius: 0 8 8 0;");
+		}
+
+		nameInteractiveIconContainer.getChildren().add(mediaNameLabel);
 
 		mediaImageClip = new Rectangle();
-		mediaImageClip.setId("media-image");
 		mediaImageClip.setArcHeight(16);
 		mediaImageClip.setArcWidth(16);
 
-		if (applicationNode instanceof Media) {
-			imageView = ((Media) applicationNode).generateMediaIcon();
+		if (node instanceof MediaNode) {
+			imageView = ((MediaNode) node).generateMediaIcon();
 		} else {
-			imageView = ((SensoryEffect) applicationNode).generateEffectIcon();
+			imageView = ((SensoryEffectNode) node).generateEffectIcon();
 		}
 
 		imageView.setClip(mediaImageClip);
 
-		if (applicationNode.isInteractive()) {
-			iButton = new Button();
-			iButton.setId("i-button");
-
-			iButton.setOnAction(new EventHandler<ActionEvent>() {
-
-				@Override
-				public void handle(ActionEvent event) {
-
-					Interactivity<Media> interactivityRelation = null;
-
-					for (TemporalRelation relation : temporalChainModel.getRelationList()) {
-
-						if (relation instanceof Interactivity) {
-
-							interactivityRelation = (Interactivity) relation;
-							if (interactivityRelation.getMasterNode() == applicationNode) {
-								applicationController.removeInteractivityRelation(temporalChainModel, interactivityRelation);
-								break;
-							}
-
-						}
-
-					}
-
-					for (XYChart.Data<Number, String> xyChartData : temporalChainPane.getSerie().getData()) {
-
-						HBox containerNode = (HBox) xyChartData.getNode();
-						VBox nameInteractiveIconContainer = (VBox) containerNode.getChildren().get(1);
-						Label mediaLabel = (Label) nameInteractiveIconContainer.getChildren().get(0);
-
-						for (model.common.Node media : interactivityRelation.getSlaveNodeList()) {
-
-							if (mediaLabel.getText().equalsIgnoreCase(media.getName())) {
-
-								if (!containerNode.getStylesheets()
-										.contains("styles/temporalViewPane/borderOfMediaToBeStopped.css")) {
-
-									containerNode.getStylesheets()
-											.add("styles/temporalViewPane/borderOfMediaToBeStopped.css");
-									ImageView imageView = (ImageView) containerNode.getChildren().get(0);
-									Rectangle mediaImageClip = (Rectangle) imageView.getClip();
-									mediaImageClip.setHeight(mediaImageClip.getHeight() - 5);
-
-								}
-
-							}
-
-						}
-
-					}
-
-				}
-
-			});
-			nameInteractiveIconContainer.getChildren().add(iButton);
-		}
-
 		containerNode.heightProperty().addListener(new ChangeListener() {
 			@Override
 			public void changed(ObservableValue o, Object oldVal, Object newVal) {
-
 				imageView.setFitHeight((double) newVal);
-
-				if (containerNode.getStylesheets().isEmpty()) {
-					mediaImageClip.setHeight((double) newVal);
-				} else {
-					mediaImageClip.setHeight((double) newVal - 5);
-				}
-
+				rightBorderRectangle.setPrefHeight((double) newVal);
+				mediaImageClip.setHeight((double) newVal);
+				mediaNameLabel.setPrefHeight((double) newVal);
 			}
 		});
 		containerNode.widthProperty().addListener(new ChangeListener() {
@@ -493,7 +464,7 @@ public class TimeLineXYChartData implements Observer {
 			public void changed(ObservableValue o, Object oldVal, Object newVal) {
 				imageView.setFitWidth((double) newVal);
 				nameInteractiveIconContainer.setPrefWidth((double) newVal);
-				mediaName.setPrefWidth((double) newVal);
+				mediaNameLabel.setPrefWidth((double) newVal);
 				mediaImageClip.setWidth((double) newVal);
 			}
 		});
@@ -501,20 +472,127 @@ public class TimeLineXYChartData implements Observer {
 		containerNode.getChildren().add(imageView);
 		containerNode.getChildren().add(nameInteractiveIconContainer);
 
+		containerIButton = new HBox();
+		containerIButton.setId("i-button-container");
+		iButton = new Button();
+		iButton.setId("i-button");
+		iButton.setTooltip(new Tooltip(Language.translate("edit.user.interaction")));
+		iButton.setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent event) {
+				menuItemEditInteractivity.fire();
+			}
+
+		});
+
+		containerNode.getChildren().add(containerIButton);
+
+		if (node.isInteractive()) {
+			containerIButton.getChildren().add(iButton);
+		}
+
+		if ((node instanceof MediaNode && !((MediaNode) node).isContinousMedia())
+				|| node instanceof SensoryEffectNode) {
+			containerNode.getChildren().add(rightBorderRectangle);
+		}
+
 		setListenerEvents(containerNode, repositoryPane);
 
 		return containerNode;
 
 	}
 
-	private void setListenerEvents(HBox node, RepositoryPane repositoryPane) {
+	private void createMouseEventInRightBorderForConsuming(HBox rightBorderRectangle){
 
-		node.setOnMousePressed(new EventHandler<MouseEvent>() {
+		rightBorderRectangle.setOnMousePressed(mouseEvent -> {
+			mouseEvent.consume();
+		});
+
+		rightBorderRectangle.setOnMouseClicked(mouseEvent -> {
+			mouseEvent.consume();
+		});
+
+	}
+
+	private void createEventForChangingDuration(HBox rightBorderRectangle) {
+
+		rightBorderRectangle.setOnMouseEntered(mouseEvent -> {
+			ApplicationController.getInstance().getSteveScene().setCursor(Cursor.H_RESIZE);
+			mouseEvent.consume();
+		});
+
+		rightBorderRectangle.setOnMouseExited(mouseEvent -> {
+
+			if(!isBorderBeingDragged){
+				ApplicationController.getInstance().getSteveScene().setCursor(Cursor.DEFAULT);
+			}
+			mouseEvent.consume();
+
+		});
+
+		rightBorderRectangle.setOnMouseReleased(mouseEvent -> {
+
+			isBorderBeingDragged = false;
+			ApplicationController.getInstance().getSteveScene().setCursor(Cursor.DEFAULT);
+			currentTimePopup.close();
+
+			Double newValue = timeLineChart.getXAxis().getValueForDisplay(mouseEvent.getSceneX()).doubleValue();
+			newValue = MediaUtil.approximateDouble(newValue);
+
+			if(!node.getEnd().equals(newValue)){
+				ApplicationController.getInstance().updateNodeEndTime(node, newValue, false);
+			}
+
+			mouseEvent.consume();
+
+		});
+
+		rightBorderRectangle.setOnMouseDragged(mouseEvent -> {
+
+			isBorderBeingDragged = true;
+			ApplicationController.getInstance().getSteveScene().setCursor(Cursor.H_RESIZE);
+
+			containerNode.toFront();
+
+			Double currentTimeWhileDragging = timeLineChart.getXAxis().getValueForDisplay(mouseEvent.getSceneX()).doubleValue();
+			currentTimeWhileDragging = MediaUtil.approximateDouble(currentTimeWhileDragging);
+
+			xyChartData.setXValue(currentTimeWhileDragging);
+
+			currentTimePopup.setMessage(String.valueOf(currentTimeWhileDragging));
+			currentTimePopup.setCursor(Cursor.H_RESIZE);
+			currentTimePopup.setX(mouseEvent.getSceneX());
+			currentTimePopup.setY(mouseEvent.getSceneY() + currentTimePopup.getHeight());
+			currentTimePopup.show();
+
+			mouseEvent.consume();
+
+		});
+
+	}
+
+	private void setListenerEvents(HBox containerNode, RepositoryPane repositoryPane) {
+
+		containerNode.setOnMouseExited(mouseEvent -> {
+			if(!wasDragged) {
+				ApplicationController.getInstance().getSteveScene().setCursor(Cursor.DEFAULT);
+			}
+
+		});
+		containerNode.setOnMouseEntered(mouseEvent -> {
+
+			if(!wasDragged) {
+				ApplicationController.getInstance().getSteveScene().setCursor(Cursor.OPEN_HAND);
+			}
+
+		});
+		containerNode.setOnMousePressed(new EventHandler<MouseEvent>() {
 
 			@Override
 			public void handle(MouseEvent mouseEvent) {
-
-				node.requestFocus();
+				containerNode.requestFocus();
+				ApplicationController.getInstance().getSteveScene().setCursor(Cursor.CLOSED_HAND);
 
 				for (Node repositoryMediaItemContainer : repositoryPane.getRepositoryMediaItemContainerListPane()
 						.getAllTypes()) {
@@ -522,51 +600,42 @@ public class TimeLineXYChartData implements Observer {
 					RepositoryMediaItemContainer repoMediaItemContainer = (RepositoryMediaItemContainer) repositoryMediaItemContainer;
 					repoMediaItemContainer.setSelected(false);
 					repoMediaItemContainer.getStylesheets()
-							.remove("styles/temporalViewPane/mousePressedRepositoryMedia.css");
+							.remove("styles/repositoryPane/mousePressedRepositoryMedia.css");
 
 				}
 
-				if (stevePane.isMetaDown()) {
+				if (steveScene.isMetaDown()) {
 
-					if (!temporalViewPane.getSelectedNodeList().contains(applicationNode)) {
-						temporalViewPane.addSelectedNode(applicationNode);
+					if (!temporalViewPane.getSelectedNodeList().contains(TimeLineXYChartData.this.node)) {
+						temporalViewPane.addSelectedNode(TimeLineXYChartData.this.node);
 					}
 
-					if (applicationNode == temporalViewPane.getFirstSelectedNode()) {
+					if (TimeLineXYChartData.this.node == temporalViewPane.getFirstSelectedNode()) {
 
-						if (node.getStylesheets().isEmpty()) {
-							mediaImageClip.setHeight(containerNode.getHeight() - 5);
-							node.getStylesheets().add("styles/temporalViewPane/mousePressedTemporalMediaNode.css");
+						if (containerNode.getStylesheets().isEmpty()) {
+							containerNode.getStylesheets().add("styles/temporalViewPane/mousePressedTemporalMediaNode.css");
 						}
 
 					} else {
 
-						if (node.getStylesheets().isEmpty()) {
-							mediaImageClip.setHeight(containerNode.getHeight() - 5);
-							node.getStylesheets()
-									.add("styles/temporalViewPane/mousePressedSlaveTemporalMediaNode.css");
+						if (containerNode.getStylesheets().isEmpty()) {
+							containerNode.getStylesheets()
+									.add("styles/temporalViewPane/mousePressedSecondaryTemporalMediaNode.css");
 						}
 
 					}
 
 				} else {
 
-					temporalViewPane.clearSelectedMedia();
-					temporalViewPane.addSelectedNode(applicationNode);
+					temporalViewPane.clearSelectedNodeList();
+					temporalViewPane.addSelectedNode(TimeLineXYChartData.this.node);
 
-					if (node.getStylesheets().remove("styles/temporalViewPane/borderOfMediaToBeStopped.css")
-							|| node.getStylesheets()
-							.remove("styles/temporalViewPane/mousePressedSlaveTemporalMediaNode.css")
-							|| node.getStylesheets()
+					if (containerNode.getStylesheets()
+							.remove("styles/temporalViewPane/mousePressedSecondaryTemporalMediaNode.css")
+							|| containerNode.getStylesheets()
 							.remove("styles/temporalViewPane/mousePressedTemporalMediaNode.css")) {
-
-						mediaImageClip.setHeight(mediaImageClip.getHeight() + 5);
-
 					}
-
-					node.getStylesheets().add("styles/temporalViewPane/mousePressedTemporalMediaNode.css");
-					mediaImageClip.setHeight(mediaImageClip.getHeight() - 5);
-
+					containerNode.getStylesheets().add("styles/temporalViewPane/mousePressedTemporalMediaNode.css");
 				}
 
 				for (Tab temporalTab : temporalViewPane.getTemporalChainTabPane().getTabs()) {
@@ -581,20 +650,12 @@ public class TimeLineXYChartData implements Observer {
 
 								boolean styleRemoved = false;
 								if (timeLineXYChartData.getContainerNode().getStylesheets().remove(
-										"styles/temporalViewPane/mousePressedSlaveTemporalMediaNode.css")) {
+										"styles/temporalViewPane/mousePressedSecondaryTemporalMediaNode.css")) {
 									styleRemoved = true;
 								}
 								if (timeLineXYChartData.getContainerNode().getStylesheets()
 										.remove("styles/temporalViewPane/mousePressedTemporalMediaNode.css")) {
 									styleRemoved = true;
-								}
-								if (timeLineXYChartData.getContainerNode().getStylesheets()
-										.remove("styles/temporalViewPane/borderOfMediaToBeStopped.css")) {
-									styleRemoved = true;
-								}
-								if (styleRemoved) {
-									timeLineXYChartData.getMediaImageClip()
-											.setHeight(timeLineXYChartData.getMediaImageClip().getHeight() + 5);
 								}
 
 							}
@@ -609,26 +670,39 @@ public class TimeLineXYChartData implements Observer {
 
 		});
 
-		node.setOnMouseDragged(new EventHandler<MouseEvent>() {
+		containerNode.setOnMouseDragged(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent mouseEvent) {
-				node.setTranslateX(mouseEvent.getSceneX() - node.getLayoutX());
-				node.toFront();
+				containerNode.setTranslateX(mouseEvent.getSceneX() - containerNode.getLayoutX());
+				containerNode.toFront();
+
+				Double currentTimeWhileDragging = timeLineChart.getXAxis().getValueForDisplay(mouseEvent.getSceneX()).doubleValue();
+				currentTimeWhileDragging = MediaUtil.approximateDouble(currentTimeWhileDragging);
+
+				currentTimePopup.setMessage(String.valueOf(currentTimeWhileDragging));
+				currentTimePopup.setCursor(Cursor.CLOSED_HAND);
+				currentTimePopup.setX(mouseEvent.getSceneX() - 52);
+				currentTimePopup.setY(mouseEvent.getSceneY() + currentTimePopup.getHeight());
+				currentTimePopup.show();
+
 				wasDragged = true;
 			}
 
 		});
-		node.setOnMouseReleased(new EventHandler<MouseEvent>() {
+		containerNode.setOnMouseReleased(new EventHandler<MouseEvent>() {
 
 			@Override
 			public void handle(MouseEvent event) {
+
+				currentTimePopup.close();
+				ApplicationController.getInstance().getSteveScene().setCursor(Cursor.OPEN_HAND);
 
 				if (wasDragged) {
 
 					Double droppedTime = timeLineChart.getXAxis().getValueForDisplay(event.getSceneX()).doubleValue();
 					droppedTime = MediaUtil.approximateDouble(droppedTime);
 
-					applicationController.dragMediaTemporalChain(temporalChainModel, applicationNode, droppedTime);
+					applicationController.dragMediaTemporalChain(temporalChainModel, TimeLineXYChartData.this.node, droppedTime);
 
 					wasDragged = false;
 				}
@@ -637,7 +711,7 @@ public class TimeLineXYChartData implements Observer {
 
 		});
 
-		node.setOnKeyReleased(new EventHandler<KeyEvent>() {
+		containerNode.setOnKeyReleased(new EventHandler<KeyEvent>() {
 
 			@Override
 			public void handle(KeyEvent event) {
@@ -648,8 +722,10 @@ public class TimeLineXYChartData implements Observer {
 
 						model.common.Node node = temporalViewPane.getSelectedNodeList().get(i);
 						applicationController.removeMediaTemporalChain(node, temporalChainModel, true);
-
+						applicationController.removeNodeOfSpatialView(node);
 					}
+
+					temporalViewPane.clearSelectedNodeList();
 
 				}
 
@@ -657,26 +733,34 @@ public class TimeLineXYChartData implements Observer {
 
 		});
 
-		node.setOnMouseClicked(new EventHandler<MouseEvent>() {
+		containerNode.setOnMouseClicked(new EventHandler<MouseEvent>() {
 
 			@Override
 			public void handle(MouseEvent mouseEvent) {
 
 				if (mouseEvent.getButton() == MouseButton.SECONDARY && !contextMenu.isShowing()) {
 
-					if (!applicationNode.isInteractive()) {
+					if (node instanceof MediaNode && !node.isInteractive()) {
 						menuItemDeleteInteractivity.setDisable(true);
-						menuItemEditInteractivity.setDisable(true);
-						menuItemAddInteractivity.setDisable(false);
-					} else {
-						menuItemDeleteInteractivity.setDisable(false);
-						menuItemEditInteractivity.setDisable(false);
-						menuItemAddInteractivity.setDisable(true);
-					}
-					// TODO: Verificar se é midia
-					menuItemAutoSensoryEffects.setDisable(false);
+						menuItemDeleteInteractivity.setStyle("-fx-opacity: 50%");
 
-					contextMenu.show(containerNode, mouseEvent.getScreenX(), mouseEvent.getScreenY());
+						menuItemEditInteractivity.setDisable(true);
+						menuItemEditInteractivity.setStyle("-fx-opacity: 50%");
+
+						menuItemAddInteractivity.setDisable(false);
+						menuItemAddInteractivity.setStyle("-fx-opacity: 100%");
+					} else if(node instanceof MediaNode && node.isInteractive()){
+						menuItemDeleteInteractivity.setDisable(false);
+						menuItemDeleteInteractivity.setStyle("-fx-opacity: 100%");
+
+						menuItemEditInteractivity.setDisable(false);
+						menuItemEditInteractivity.setStyle("-fx-opacity: 100%");
+
+						menuItemAddInteractivity.setDisable(true);
+						menuItemAddInteractivity.setStyle("-fx-opacity: 50%");
+					}
+
+					contextMenu.show(TimeLineXYChartData.this.containerNode, mouseEvent.getScreenX(), mouseEvent.getScreenY());
 
 				} else {
 					contextMenu.hide();
@@ -693,7 +777,7 @@ public class TimeLineXYChartData implements Observer {
 	}
 
 	public model.common.Node getNode() {
-		return applicationNode;
+		return node;
 	}
 
 	public HBox getContainerNode() {
@@ -708,6 +792,10 @@ public class TimeLineXYChartData implements Observer {
 		return timeLineChart;
 	}
 
+	public Label getMediaNameLabel() {
+		return mediaNameLabel;
+	}
+
 	@Override
 	public void update(Observable observable, Object arg) {
 
@@ -719,77 +807,19 @@ public class TimeLineXYChartData implements Observer {
 
 				case ADD_INTERACTIVITY_RELATION:
 
-					Interactivity<Media> interactivityRelation = (Interactivity<Media>) operation.getOperating();
+					Interactivity<MediaNode> interactivityRelation = (Interactivity<MediaNode>) operation.getOperating();
 
-					if (interactivityRelation.getMasterNode() == applicationNode) {
-
-						iButton = new Button();
-						iButton.setId("i-button");
-						iButton.setTooltip(new Tooltip(Language.translate("edit.interactivity")));
-
-						iButton.setOnAction(new EventHandler<ActionEvent>() {
-
-							@Override
-							public void handle(ActionEvent event) {
-								menuItemEditInteractivity.fire();
-
-								// INFO caso decida por mostrar as bordas da interatividade na interface e
-								// remover a opcao de editar por essa botao
-								/*
-								 * for(XYChart.Data<Number, String> xyChartData :
-								 * temporalChainPane.getSerie().getData()){
-								 *
-								 * HBox containerNode = (HBox) xyChartData.getNode(); VBox
-								 * nameInteractiveIconContainer = (VBox) containerNode.getChildren().get(1);
-								 * Label mediaLabel = (Label) nameInteractiveIconContainer.getChildren().get(0);
-								 *
-								 * for(Media media : interactivityRelation.getSlaveMediaList()){
-								 *
-								 * if(interactivityRelation.getTemporalChainList().contains(temporalChainPane.
-								 * getTemporalChainModel())){ temporalChainPane.getParentTab().
-								 * setStyle("-fx-border-color: #00BFA5;-fx-border-width: 2; -fx-border-radius: 8; -fx-padding: -5, -5, -5, -5;"
-								 * ); }
-								 *
-								 * if(mediaLabel.getText().equalsIgnoreCase(media.getName())){
-								 *
-								 * if(!containerNode.getStylesheets().contains(
-								 * "view/temporalViewPane/styles/borderOfMediaToBeStopped.css")){
-								 *
-								 * containerNode.getStylesheets().add(
-								 * "view/temporalViewPane/styles/borderOfMediaToBeStopped.css"); ImageView
-								 * imageView = (ImageView) containerNode.getChildren().get(0); Rectangle
-								 * mediaImageClip = (Rectangle) imageView.getClip();
-								 * mediaImageClip.setHeight(mediaImageClip.getHeight()-5);
-								 *
-								 * }
-								 *
-								 * }
-								 *
-								 * }
-								 *
-								 * }
-								 */
-
-							}
-
-						});
-
-						nameInteractiveIconContainer.getChildren().add(iButton);
-
-					}
-
-					if (interactivityRelation.getSlaveNodeList().contains(applicationNode)) {
-						containerNode.getStylesheets().add("styles/temporalViewPane/borderOfMediaToBeStopped.css");
-						mediaImageClip.setHeight(mediaImageClip.getHeight() - 5);
+					if (interactivityRelation.getPrimaryNode() == node) {
+						containerIButton.getChildren().add(iButton);
 					}
 
 					break;
 
 				case REMOVE_INTERACTIVITY_RELATION:
 
-					interactivityRelation = (Interactivity<Media>) operation.getOperating();
+					interactivityRelation = (Interactivity<MediaNode>) operation.getOperating();
 
-					if (interactivityRelation.getMasterNode().getName().equalsIgnoreCase(applicationNode.getName())) {
+					if (interactivityRelation.getPrimaryNode().getName().equalsIgnoreCase(node.getName())) {
 
 						nameInteractiveIconContainer.getChildren().remove(iButton);
 

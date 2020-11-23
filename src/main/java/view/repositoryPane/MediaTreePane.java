@@ -6,7 +6,7 @@ import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import model.common.Media;
+import model.common.MediaNode;
 
 /**
  *
@@ -62,39 +62,39 @@ public class MediaTreePane extends TreeView<Object>{
         
     }
     
-	public void add(Media media) {
+	public void add(MediaNode mediaNode) {
       
 		ImageView importedMediaIcon = new ImageView(); 
     	TreeItem<Object> importedMediaTreeItem;
 		
-        switch(media.getType()){
+        switch(mediaNode.getType()){
             case IMAGE:
             	importedMediaIcon.setImage(new Image(getClass().getResourceAsStream("/images/repositoryPane/imageTreeItem.png")));
-            	importedMediaTreeItem = new TreeItem<Object>(media, importedMediaIcon);
+            	importedMediaTreeItem = new TreeItem<Object>(mediaNode, importedMediaIcon);
                 image.getChildren().add(importedMediaTreeItem);
                 break;
                 
             case VIDEO:
             	importedMediaIcon.setImage(new Image(getClass().getResourceAsStream("/images/repositoryPane/videoTreeItem.png")));
-            	importedMediaTreeItem = new TreeItem<Object>(media, importedMediaIcon);
+            	importedMediaTreeItem = new TreeItem<Object>(mediaNode, importedMediaIcon);
                 video.getChildren().add(importedMediaTreeItem);
                 break;
                 
             case AUDIO:
             	importedMediaIcon.setImage(new Image(getClass().getResourceAsStream("/images/repositoryPane/audioTreeItem.png")));
-            	importedMediaTreeItem = new TreeItem<Object>(media, importedMediaIcon);
+            	importedMediaTreeItem = new TreeItem<Object>(mediaNode, importedMediaIcon);
                 audio.getChildren().add(importedMediaTreeItem);
                 break;
                 
             case TEXT:
             	importedMediaIcon.setImage(new Image(getClass().getResourceAsStream("/images/repositoryPane/textTreeItem.png")));
-            	importedMediaTreeItem = new TreeItem<Object>(media, importedMediaIcon);
+            	importedMediaTreeItem = new TreeItem<Object>(mediaNode, importedMediaIcon);
                 text.getChildren().add(importedMediaTreeItem);
                 break;
                 
             case APPLICATION:
             	importedMediaIcon.setImage(new Image(getClass().getResourceAsStream("/images/repositoryPane/applicationTreeItem.png")));
-            	importedMediaTreeItem = new TreeItem<Object>(media, importedMediaIcon);
+            	importedMediaTreeItem = new TreeItem<Object>(mediaNode, importedMediaIcon);
                 application.getChildren().add(importedMediaTreeItem);
                 break;
                 
@@ -102,12 +102,12 @@ public class MediaTreePane extends TreeView<Object>{
     }
 	
 	public void remove(Object media) {
-		Media selectedMedia = (Media) media;
-        switch(selectedMedia.type){
+		MediaNode selectedMediaNode = (MediaNode) media;
+        switch(selectedMediaNode.type){
             case IMAGE:
             	ObservableList<TreeItem<Object>> imageList = image.getChildren();
             	for(TreeItem<Object> mediaTreeItem : imageList){
-            		if(mediaTreeItem.getValue().toString().equalsIgnoreCase(selectedMedia.getName())){
+            		if(mediaTreeItem.getValue().toString().equalsIgnoreCase(selectedMediaNode.getName())){
             			image.getChildren().remove(mediaTreeItem);
             			break;
             		}
@@ -117,7 +117,7 @@ public class MediaTreePane extends TreeView<Object>{
             case VIDEO:
             	ObservableList<TreeItem<Object>> videoList = video.getChildren();
             	for(TreeItem<Object> mediaTreeItem : videoList){
-            		if(mediaTreeItem.getValue().toString().equalsIgnoreCase(selectedMedia.getName())){
+            		if(mediaTreeItem.getValue().toString().equalsIgnoreCase(selectedMediaNode.getName())){
             			video.getChildren().remove(mediaTreeItem);
             			break;
             		}
@@ -127,7 +127,7 @@ public class MediaTreePane extends TreeView<Object>{
             case AUDIO:
             	ObservableList<TreeItem<Object>> audioList = audio.getChildren();
             	for(TreeItem<Object> mediaTreeItem : audioList){
-            		if(mediaTreeItem.getValue().toString().equalsIgnoreCase(selectedMedia.getName())){
+            		if(mediaTreeItem.getValue().toString().equalsIgnoreCase(selectedMediaNode.getName())){
             			audio.getChildren().remove(mediaTreeItem);
             			break;
             		}
@@ -137,7 +137,7 @@ public class MediaTreePane extends TreeView<Object>{
             case TEXT:
             	ObservableList<TreeItem<Object>> textList = text.getChildren();
             	for(TreeItem<Object> mediaTreeItem : textList){
-            		if(mediaTreeItem.getValue().toString().equalsIgnoreCase(selectedMedia.getName())){
+            		if(mediaTreeItem.getValue().toString().equalsIgnoreCase(selectedMediaNode.getName())){
             			text.getChildren().remove(mediaTreeItem);
             			break;
             		}
@@ -147,7 +147,7 @@ public class MediaTreePane extends TreeView<Object>{
             case APPLICATION:
             	ObservableList<TreeItem<Object>> othersList = application.getChildren();
             	for(TreeItem<Object> mediaTreeItem : othersList){
-            		if(mediaTreeItem.getValue().toString().equalsIgnoreCase(selectedMedia.getName())){
+            		if(mediaTreeItem.getValue().toString().equalsIgnoreCase(selectedMediaNode.getName())){
             			application.getChildren().remove(mediaTreeItem);
             			break;
             		}
@@ -165,12 +165,12 @@ public class MediaTreePane extends TreeView<Object>{
         application.getChildren().clear();
 	}
 
-	public Media getSelectedMedia() {
+	public MediaNode getSelectedMedia() {
 		
 		if(getSelectionModel().getSelectedItem() != null){
 			
-			if(getSelectionModel().getSelectedItem().getValue() instanceof Media){
-				return (Media) getSelectionModel().getSelectedItem().getValue();
+			if(getSelectionModel().getSelectedItem().getValue() instanceof MediaNode){
+				return (MediaNode) getSelectionModel().getSelectedItem().getValue();
 			}else {
 				return null;
 			}

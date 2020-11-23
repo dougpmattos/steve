@@ -23,27 +23,24 @@
 
 /*******************************************************************************
  *                                                                             *
- * Menu Item                                                       			   *
- *                                                                             *
- ******************************************************************************/
-
-.menu-item {
-    -fx-background-color: #102027;
-}
-.menu-item:focused {
-     -fx-background-color: #00BFA5;
-}
-
-
-/*******************************************************************************
- *                                                                             *
- * PopupMenu                                                                   *
+ * PopupMenu and Menu Item                                                     *
  *                                                                             *
  ******************************************************************************/
  
 .context-menu {
     -fx-padding: 0;
 }
+
+.menu-item:hover {
+    -fx-background-color: linear-gradient(from 20% 20% to 100% 100%, derive(#37474f, 10%), derive(#102027, 10%));
+}
+.menu-item:focused{
+    -fx-background-color: linear-gradient(from 20% 20% to 100% 100%, derive(#37474f, 10%), derive(#102027, 10%));
+}
+.menu-item {
+    -fx-background-color: #102027;
+}
+
 
 /*******************************************************************************
  *                                                                             *
@@ -384,14 +381,19 @@
 #title-hbox{
 	-fx-padding: 0px 0px 0px 20px;
 }
+
 #save-button{
  	-fx-background-color: #102027;
  	-fx-text-fill: #FFFFFF;
 }
 #save-button:hover{
-	-fx-background-color: #00BFA5;
-	-fx-background-radius: 0;
+    -fx-background-color: linear-gradient(from 20% 20% to 100% 100%, derive(#37474f, 10%), derive(#102027, 10%));
+    -fx-background-radius: 4;
 }
+#save-button:pressed{
+     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);
+}
+
 #close-button {
     -fx-graphic: url("../../images/common/close.png");
     -fx-background-color: transparent;
@@ -399,9 +401,13 @@
     -fx-background-radius: 0;
 }
 #close-button:hover{
-	-fx-background-color: #00BFA5;
-	-fx-background-radius: 0;
+    -fx-background-color: linear-gradient(from 20% 20% to 100% 100%, derive(#37474f, 10%), derive(#102027, 10%));
+    -fx-background-radius: 4;
 }
+#close-button:pressed{
+     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);
+}
+
 #tool-bar-pane{
 	-fx-background-color: #102027;
 	-fx-padding: 10px 20px 10px 20px;

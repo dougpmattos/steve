@@ -25,7 +25,7 @@ import controller.ApplicationController;
  *
  * @author Douglas
  */
-public class StevePane extends Scene{
+public class SteveScene extends Scene{
 	
 	private static final int STEVE_HEIGHT = 768;
 	private static final int STEVE_WITDH = 1366;
@@ -47,7 +47,7 @@ public class StevePane extends Scene{
     
     private BorderPane containerBorderPane = new BorderPane();
     
-    public StevePane(ApplicationController applicationController, RepositoryMediaList repositoryMediaList, SpatialTemporalApplication spatialTemporalApplication) throws XMLException, IOException  {
+    public SteveScene(ApplicationController applicationController, RepositoryMediaList repositoryMediaList, SpatialTemporalApplication spatialTemporalApplication) throws XMLException, IOException  {
     	
     	super(new BorderPane());
     	setRoot(containerBorderPane);
@@ -138,5 +138,6 @@ public class StevePane extends Scene{
 	public SpatialViewPane getSpatialViewPane(){
 		return spatialViewPane;
 	}
+
 
 }

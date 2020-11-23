@@ -1,12 +1,7 @@
 package view.spatialViewPane;
 
-import br.uff.midiacom.ana.util.exception.XMLException;
-import javafx.beans.binding.Bindings;
-import javafx.beans.property.SimpleStringProperty;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.geometry.Pos;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -15,18 +10,21 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
-import model.common.Media;
+import model.common.MediaNode;
+import model.common.Node;
+import model.common.SensoryEffectNode;
 import view.common.Language;
 import controller.ApplicationController;
 import view.common.dialogs.MessageDialog;
-
-import java.io.IOException;
 
 public class TemporalMediaInfoPane extends ScrollPane{
 
 	private boolean isLinked = false;
 	private ApplicationController applicationController;
-	private Media media;
+	private Node node;
+	private MediaNode mediaNode;
+	private SensoryEffectNode sensoryEffectNode;
+	private boolean isSensoryEffect;
 	
 	private TextField nameTextField;
 	private TextField typeTextField;
@@ -34,14 +32,23 @@ public class TemporalMediaInfoPane extends ScrollPane{
 	private TextField endTimeTextField;
 	private TextField durationTextField;
 	private CheckBox interactiveTextField;
+	private TextField priorityTextField;
 	private Button linkButton;
 
 	private GridPane infoPropertyGridPane;
 	
-	public TemporalMediaInfoPane(ApplicationController applicationController, Media media){
+	public TemporalMediaInfoPane(ApplicationController applicationController, Node node){
 		
 		this.applicationController = applicationController;
-		this.media = media;
+
+		this.node = node;
+
+		if(node instanceof MediaNode){
+			this.mediaNode = (MediaNode) node;
+		}else if(node instanceof SensoryEffectNode){
+			this.sensoryEffectNode = (SensoryEffectNode) node;
+			isSensoryEffect = true;
+		}
 	
 		setId("temporal-info-pane");
 		
@@ -50,18 +57,28 @@ public class TemporalMediaInfoPane extends ScrollPane{
 		Label startTimeLabel = new Label(Language.translate("start.time"));
 		Label endTimeLabel = new Label(Language.translate("end.time"));
 		Label durationLabel = new Label(Language.translate("duration"));
+		Label priorityLabel = new Label(Language.translate("priority"));
 		nameLabel.setId("spatial-view-label");
 		typeLabel.setId("spatial-view-label");
-		startTimeLabel.setId("spatial-view-label");
-		endTimeLabel.setId("spatial-view-label");
+		startTimeLabel.setId("spatial-view-label-time");
+		endTimeLabel.setId("spatial-view-label-time");
 		durationLabel.setId("spatial-view-label");
+		durationLabel.setDisable(true);
+		priorityLabel.setId("spatial-view-label");
 		
 		nameTextField = new TextField();
 		typeTextField = new TextField();
 		startTimeTextField = new TextField();
 		endTimeTextField = new TextField();
 		durationTextField = new TextField();
-		interactiveTextField =new CheckBox(Language.translate("interactive"));
+		durationTextField.setDisable(true);
+
+		if(!isSensoryEffect){
+			interactiveTextField =new CheckBox(Language.translate("interactive"));
+		}else{
+			priorityTextField = new TextField();
+		}
+
 		linkButton = new Button();
 
 		nameTextField.setId("name-text-field");
@@ -69,15 +86,31 @@ public class TemporalMediaInfoPane extends ScrollPane{
 		startTimeTextField.setId("start-text-field");
 		endTimeTextField.setId("end-text-field");
 		durationTextField.setId("duration-text-field");
+		if(isSensoryEffect){
+			priorityTextField.setId("priority-text-field");
+		}
 		nameTextField.setEditable(false);
 		typeTextField.setEditable(false);
 		startTimeTextField.setEditable(true);
 		endTimeTextField.setEditable(true);
 		durationTextField.setEditable(true);
-		interactiveTextField.setDisable(true);
+		if(!isSensoryEffect){
+			interactiveTextField.setDisable(true);
+		}else {
+			priorityTextField.setEditable(true);
+		}
 		linkButton.setId("link-button");
 		linkButton.setTooltip(new Tooltip(Language.translate("link.start.end")));
-		
+
+		if(node instanceof MediaNode){
+			MediaNode mediaNode = (MediaNode) node;
+			if(mediaNode.isContinousMedia()){
+				startTimeTextField.setDisable(true);
+				endTimeTextField.setDisable(true);
+				linkButton.setDisable(true);
+			}
+		}
+
 		infoPropertyGridPane = new GridPane();
 		infoPropertyGridPane.setId("info-property-grid-pane");
 		infoPropertyGridPane.add(nameLabel, 0, 0);
@@ -91,7 +124,12 @@ public class TemporalMediaInfoPane extends ScrollPane{
 		infoPropertyGridPane.add(endTimeTextField, 10, 2);
 		infoPropertyGridPane.add(durationLabel, 0, 4);
 		infoPropertyGridPane.add(durationTextField, 1, 4);
-		infoPropertyGridPane.add(interactiveTextField, 0, 6, 10, 1);
+		if(!isSensoryEffect){
+			infoPropertyGridPane.add(interactiveTextField, 0, 6, 10, 1);
+		}else{
+			infoPropertyGridPane.add(priorityLabel, 0, 6, 10, 1);
+			infoPropertyGridPane.add(priorityTextField, 1, 6, 10, 1);
+		}
 		
 		VBox infoPaneContainerVBox = new VBox();
 		infoPaneContainerVBox.setId("info-pane-vbox");
@@ -116,7 +154,7 @@ public class TemporalMediaInfoPane extends ScrollPane{
 
 					Double newValue = Double.parseDouble(getStartTimeValue());
 
-					if(newValue > media.getEnd() && !isLinked){
+					if(newValue > node.getEnd() && !isLinked){
 
 						MessageDialog warningMessageDialog = new MessageDialog(Language.translate("begin.greater.than.end"),
 								"OK", 130);
@@ -124,18 +162,12 @@ public class TemporalMediaInfoPane extends ScrollPane{
 
 					}else {
 
-						if(!media.getBegin().equals(newValue)){
-							try {
-								ApplicationController.getInstance().updateNodeStartTime(media, newValue, isLinked);
-							} catch (IOException e) {
-								e.printStackTrace();
-							} catch (XMLException e) {
-								e.printStackTrace();
-							}
+						if(!node.getBegin().equals(newValue)){
+								ApplicationController.getInstance().updateNodeStartTime(node, newValue, isLinked);
 						}
-						endTimeTextField.setText(String.valueOf(media.getEnd()));
+						endTimeTextField.setText(String.valueOf(node.getEnd()));
 						if(!isLinked){
-							durationTextField.setText(String.valueOf(media.getDuration()));
+							durationTextField.setText(String.valueOf(node.getDuration()));
 						}
 						endTimeTextField.requestFocus();
 
@@ -154,9 +186,9 @@ public class TemporalMediaInfoPane extends ScrollPane{
 				if(event.getCode().equals(KeyCode.ENTER) || event.getCode().equals(KeyCode.TAB)) {
 
 					Double newValue = Double.parseDouble(getEndTimeValue());
-					Double isLinkedNewBeginFromNewEnd = newValue - media.getDuration();
+					Double isLinkedNewBeginFromNewEnd = newValue - node.getDuration();
 
-					if(newValue < media.getBegin() && !isLinked){
+					if(newValue < node.getBegin() && !isLinked){
 
 						MessageDialog warningMessageDialog = new MessageDialog(Language.translate("end.less.than.begin"),
 								"OK", 130);
@@ -170,18 +202,12 @@ public class TemporalMediaInfoPane extends ScrollPane{
 
 					}else {
 
-							if(!media.getEnd().equals(newValue)){
-								try {
-									ApplicationController.getInstance().updateNodeEndTime(media, newValue, isLinked);
-								} catch (IOException e) {
-									e.printStackTrace();
-								} catch (XMLException e) {
-									e.printStackTrace();
-								}
+							if(!node.getEnd().equals(newValue)){
+								ApplicationController.getInstance().updateNodeEndTime(node, newValue, isLinked);
 							}
-							startTimeTextField.setText(String.valueOf(media.getBegin()));
+							startTimeTextField.setText(String.valueOf(node.getBegin()));
 							if(!isLinked){
-								durationTextField.setText(String.valueOf(media.getDuration()));
+								durationTextField.setText(String.valueOf(node.getDuration()));
 							}
 							durationTextField.requestFocus();
 
@@ -198,16 +224,10 @@ public class TemporalMediaInfoPane extends ScrollPane{
 			public void handle(KeyEvent event) {
 				if(event.getCode().equals(KeyCode.ENTER) || event.getCode().equals(KeyCode.TAB)) {
 					Double newValue = Double.parseDouble(getDurationValue());
-					if(!media.getDuration().equals(newValue)){
-						try {
-							ApplicationController.getInstance().updateNodeDurationTime(media, newValue);
-						} catch (IOException e) {
-							e.printStackTrace();
-						} catch (XMLException e) {
-							e.printStackTrace();
-						}
+					if(!node.getDuration().equals(newValue)){
+						ApplicationController.getInstance().updateNodeDurationTime(node, newValue);
 					}
-					endTimeTextField.setText(String.valueOf(media.getEnd()));
+					endTimeTextField.setText(String.valueOf(node.getEnd()));
 					startTimeTextField.requestFocus();
 				}
 			}
@@ -292,6 +312,10 @@ public class TemporalMediaInfoPane extends ScrollPane{
 	public void setDurationValue(String value){
 		this.durationTextField.setText(value);
 	}
+
+	public void setPriorityValue(String value){
+		this.priorityTextField.setText(value);
+	}
 	
 	public String getDurationValue(){
 		return durationTextField.getText();
@@ -307,18 +331,22 @@ public class TemporalMediaInfoPane extends ScrollPane{
 	
 	private void populateInfoPane(){
 		
-		setNameValue(media.getName());
-		setTypeValue(media.getType().toString());
-		setStartTimeValue(Double.toString(media.getBegin()));
-		setEndTimeValue(Double.toString(media.getEnd()));
-		setDurationValue(Double.toString(media.getDuration()));
-		setInteractiveValue(media.isInteractive());
+		setNameValue(node.getName());
+		setTypeValue(node.getType().toString());
+		setStartTimeValue(Double.toString(node.getBegin()));
+		setEndTimeValue(Double.toString(node.getEnd()));
+		setDurationValue(Double.toString(node.getDuration()));
+		if(!isSensoryEffect){
+			setInteractiveValue(mediaNode.isInteractive());
+		}else{
+			setPriorityValue(Double.toString(sensoryEffectNode.getPresentationProperty().getPriority()));
+		}
 		
 	}
 	
 	public void populateInfoPropertyJavaBean(){
 		
-		applicationController.populateTemporalInfoPropertyJavaBean(this, media);
+		applicationController.populateTemporalInfoPropertyJavaBean(this, mediaNode);
 		
 	}
 	

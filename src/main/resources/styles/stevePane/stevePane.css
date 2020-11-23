@@ -28,7 +28,8 @@ https://material.io/tools/color/#!/?view.left=1&view.right=1&primary.color
     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);
 }
 .menu-bar > .container > .menu-button:hover, .menu-bar > .container > .menu-button:focused, .menu-bar > .container > .menu-button:showing {
-    -fx-background-color: #00BFA5;
+    -fx-background-color: linear-gradient(from 20% 20% to 100% 100%, derive(#37474f, 10%), derive(#102027, 10%));
+    -fx-background-radius: 4;
 }
 
 
@@ -41,9 +42,6 @@ https://material.io/tools/color/#!/?view.left=1&view.right=1&primary.color
 .menu-item {
     -fx-background-color: #102027;
 }
-.menu-item:focused {
-     -fx-background-color: #00BFA5;
-}
 
 
 /*******************************************************************************
@@ -54,6 +52,12 @@ https://material.io/tools/color/#!/?view.left=1&view.right=1&primary.color
  
 .context-menu {
     -fx-padding: 0;
+}
+.menu-item:hover {
+    -fx-background-color: linear-gradient(from 20% 20% to 100% 100%, derive(#37474f, 10%), derive(#102027, 10%));
+}
+.menu-item:focused{
+    -fx-background-color: linear-gradient(from 20% 20% to 100% 100%, derive(#37474f, 10%), derive(#102027, 10%));
 }
 
 /*******************************************************************************

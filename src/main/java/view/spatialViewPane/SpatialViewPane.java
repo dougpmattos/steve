@@ -10,7 +10,9 @@ import javafx.scene.control.SplitPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.HBox;
-import model.common.Media;
+import javafx.scene.shape.Path;
+import model.common.MediaNode;
+import model.common.SensoryEffectNode;
 import model.common.SpatialTemporalApplication;
 import model.repository.RepositoryMediaList;
 import model.repository.enums.RepositoryOperator;
@@ -32,7 +34,8 @@ public class SpatialViewPane extends SplitPane implements view.common.Observer, 
 	private ApplicationController applicationController;
 	
 	private DisplayPane displayPane;
-	private PropertyPane propertyPane;
+	private MediaPropertyPane mediaPropertyPane;
+	private EffectPropertyPaneContainer effectPropertyPaneContainer;
 	private TemporalMediaInfoPane temporalMediaInfoPane;
 	private RepositoryMediaInfoPane repositoryMediaInfoPane;
 	private Tab propertyTab;
@@ -76,9 +79,9 @@ public class SpatialViewPane extends SplitPane implements view.common.Observer, 
     		
 	    		case SELECT_REPOSITORY_MEDIA:
 	    			
-	    			if(obj instanceof Media){
-	    				Media selectedMedia = (Media) obj;
-	    				createMediaInfoTabPane(applicationController, selectedMedia);
+	    			if(obj instanceof MediaNode){
+	    				MediaNode selectedMediaNode = (MediaNode) obj;
+	    				createMediaInfoTabPane(applicationController, selectedMediaNode);
 	    			}
 	    			
 	    			break;
@@ -96,14 +99,17 @@ public class SpatialViewPane extends SplitPane implements view.common.Observer, 
     		
 				case SELECT_TEMPORAL_MEDIA:
 					
-					if(obj instanceof Media){
-						Media selectedMedia = (Media) obj;
-						createPropertyInfoTabPane(applicationController, selectedMedia);
+					if(obj instanceof MediaNode){
+						MediaNode selectedMediaNode = (MediaNode) obj;
+						createMediaPropertyInfoTabPane(applicationController, selectedMediaNode);
+					}else if(obj instanceof SensoryEffectNode){
+						SensoryEffectNode selectedEffect = (SensoryEffectNode) obj;
+						createEffectPropertyInfoTabPane(applicationController, selectedEffect);
 					}
 					
 					break;
 				
-				case CLEAR_SELECTION_TEMPORAL_MEDIA:
+				case CLEAR_SELECTION_TEMPORAL_NODE:
 					
 					getItems().clear();
 			    	getItems().addAll(labelContainer, displayPane);
@@ -119,16 +125,40 @@ public class SpatialViewPane extends SplitPane implements view.common.Observer, 
     	}
 	
 	}
-    
-	private void createPropertyInfoTabPane(ApplicationController applicationController, Media media) {
+
+	private void createEffectPropertyInfoTabPane(ApplicationController applicationController, SensoryEffectNode sensoryEffectNode) {
+
+		effectPropertyPaneContainer = new EffectPropertyPaneContainer(applicationController, sensoryEffectNode);
+		temporalMediaInfoPane = new TemporalMediaInfoPane(applicationController, sensoryEffectNode);
+
+		propertyTab = new Tab();
+		propertyTab.setText(Language.translate("PROPERTIES"));
+		propertyTab.setClosable(false);
+		propertyTab.setContent(effectPropertyPaneContainer);
+		infoTab = new Tab();
+		infoTab.setText(Language.translate("INFO"));
+		infoTab.setClosable(false);
+		infoTab.setContent(temporalMediaInfoPane);
+
+		propertyInfoTabPane = new TabPane();
+
+		propertyInfoTabPane.getTabs().add(propertyTab);
+		propertyInfoTabPane.getTabs().add(infoTab);
+
+		getItems().clear();
+		getItems().addAll(propertyInfoTabPane, displayPane);
+
+	}
+
+	private void createMediaPropertyInfoTabPane(ApplicationController applicationController, MediaNode mediaNode) {
 		
-		propertyPane = new PropertyPane(applicationController, media);
-    	temporalMediaInfoPane = new TemporalMediaInfoPane(applicationController, media);
+		mediaPropertyPane = new MediaPropertyPane(applicationController, mediaNode);
+    	temporalMediaInfoPane = new TemporalMediaInfoPane(applicationController, mediaNode);
     	
     	propertyTab = new Tab();
     	propertyTab.setText(Language.translate("PROPERTIES"));
     	propertyTab.setClosable(false); 
-    	propertyTab.setContent(propertyPane);
+    	propertyTab.setContent(mediaPropertyPane);
     	infoTab = new Tab();
     	infoTab.setText(Language.translate("INFO"));
     	infoTab.setClosable(false); 
@@ -141,14 +171,13 @@ public class SpatialViewPane extends SplitPane implements view.common.Observer, 
     	
     	getItems().clear();
     	getItems().addAll(propertyInfoTabPane, displayPane);
-//    	getItems().addAll(propertyInfoTabPane);
     	
 	}
 	
-	private void createMediaInfoTabPane(ApplicationController applicationController, Media media) {
+	private void createMediaInfoTabPane(ApplicationController applicationController, MediaNode mediaNode) {
 		
-		repositoryMediaInfoPane = new RepositoryMediaInfoPane(applicationController, media);
-    	
+		repositoryMediaInfoPane = new RepositoryMediaInfoPane(applicationController, mediaNode);
+
     	infoTab = new Tab();
     	infoTab.setText(Language.translate("INFO"));
     	infoTab.setClosable(false); 
@@ -169,7 +198,7 @@ public class SpatialViewPane extends SplitPane implements view.common.Observer, 
 		if(o instanceof RepositoryMediaList){
 			
 			Operation<RepositoryOperator> operation = (Operation<RepositoryOperator>) arg;
-			Media media = (Media) operation.getOperating();
+			MediaNode mediaNode = (MediaNode) operation.getOperating();
 
 			switch(operation.getOperator()){
 			
@@ -202,5 +231,21 @@ public class SpatialViewPane extends SplitPane implements view.common.Observer, 
 	public DisplayPane getDisplayPane(){
 		return displayPane;
 	}
-    
+
+	public void removeNodeOfSpatialView(model.common.Node node) {
+
+		getItems().clear();
+
+		if(!displayPane.getScreen().getChildren().isEmpty()){
+			if(node instanceof SensoryEffectNode){
+				displayPane.getControlButtonPane().getEffectIconsContainer().getChildren().remove(node.getExecutionObject());
+			}else{
+				displayPane.getScreen().getChildren().remove(node.getExecutionObject());
+			}
+			node.setIsPLayingInPreview(false);
+		}
+
+		getItems().addAll(labelContainer, displayPane);
+
+	}
 }

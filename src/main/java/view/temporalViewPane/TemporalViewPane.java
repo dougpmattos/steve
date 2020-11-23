@@ -14,9 +14,10 @@ import javafx.scene.control.TabPane;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
-import model.common.Media;
+import model.common.MediaNode;
 import model.common.Node;
 import model.common.SpatialTemporalApplication;
+import model.common.enums.SensoryEffectType;
 import model.repository.RepositoryMediaList;
 import model.temporalView.Interactivity;
 import model.temporalView.TemporalChain;
@@ -25,7 +26,7 @@ import model.utility.Operation;
 import view.common.Language;
 import view.repositoryPane.RepositoryPane;
 import view.sensoryEffectsPane.SensoryEffectsPane;
-import view.stevePane.StevePane;
+import view.stevePane.SteveScene;
 import controller.ApplicationController;
 
 @SuppressWarnings("unchecked")
@@ -42,12 +43,12 @@ public class TemporalViewPane extends BorderPane implements Observer, view.commo
 	private ArrayList<view.common.Observer> observers;
 	private Node firstSelectedNode;
 	private ArrayList<Node> selectedNodeList = new ArrayList<Node>();
-	private StevePane stevePane;
+	private SteveScene steveScene;
 	private StackPane tabAddButtonContainer;
 	private Button tabAddButton;
 	private SensoryEffectsPane sensoryEffectsPane;
-	
-	public TemporalViewPane(ApplicationController applicationController, SpatialTemporalApplication spatialTemporalApplication, RepositoryPane repositoryPane, StevePane stevePane, RepositoryMediaList repositoryMediaList){
+
+	public TemporalViewPane(ApplicationController applicationController, SpatialTemporalApplication spatialTemporalApplication, RepositoryPane repositoryPane, SteveScene steveScene, RepositoryMediaList repositoryMediaList){
 		
 		setId("temporal-view-pane");
 		getStylesheets().add("styles/temporalViewPane/temporalViewPane.css");
@@ -55,7 +56,7 @@ public class TemporalViewPane extends BorderPane implements Observer, view.commo
 		this.spatialTemporalApplication = spatialTemporalApplication;
 		this.repositoryPane = repositoryPane;
 		this.repositoryMediaList = repositoryMediaList;
-		this.stevePane = stevePane;
+		this.steveScene = steveScene;
 		
 		sensoryEffectsPane = new SensoryEffectsPane(applicationController, temporalChainTabPane, this, repositoryMediaList);
 		temporalViewButtonPane = new TemporalViewButtonPane(applicationController, temporalChainTabPane, this, repositoryMediaList);
@@ -65,7 +66,7 @@ public class TemporalViewPane extends BorderPane implements Observer, view.commo
 		setTop(sensoryEffectsPane);
 	    setCenter(tabAddButtonContainer);
 	    setBottom(temporalViewButtonPane);
-	    
+
 	    observers = new ArrayList<view.common.Observer>();
 	    
 	    spatialTemporalApplication.addObserver(this);
@@ -103,7 +104,7 @@ public class TemporalViewPane extends BorderPane implements Observer, view.commo
 
 	public void addTemporalChainPane(TemporalChain temporalChainModel) {
 		
-		TemporalChainPane temporalChainPane = new TemporalChainPane(applicationController, spatialTemporalApplication, temporalChainModel, this, repositoryPane, stevePane);
+		TemporalChainPane temporalChainPane = new TemporalChainPane(applicationController, spatialTemporalApplication, temporalChainModel, this, repositoryPane, steveScene);
 		temporalChainModel.addObserver(this);
 
 		Tab newTemporalChainTab = new Tab();
@@ -147,7 +148,7 @@ public class TemporalViewPane extends BorderPane implements Observer, view.commo
 			@Override
 			public void handle(Event event) {
 				
-				clearSelectedMedia();
+				clearSelectedNodeList();
 	        	
 	        	for(Tab temporalTab : getTemporalChainTabPane().getTabs()){
 	        		
@@ -157,17 +158,11 @@ public class TemporalViewPane extends BorderPane implements Observer, view.commo
 					for(ArrayList<TimeLineXYChartData> timeLineXYChartDataList : temporalChainPane.getTimeLineXYChartDataLineList()){
 						for(TimeLineXYChartData timeLineXYChartData : timeLineXYChartDataList){
 							boolean styleRemoved = false;
-							if(timeLineXYChartData.getContainerNode().getStylesheets().remove("styles/temporalViewPane/mousePressedSlaveTemporalMediaNode.css")){
+							if(timeLineXYChartData.getContainerNode().getStylesheets().remove("styles/temporalViewPane/mousePressedSecondaryTemporalMediaNode.css")){
 								styleRemoved = true;
 							}
 							if(timeLineXYChartData.getContainerNode().getStylesheets().remove("styles/temporalViewPane/mousePressedTemporalMediaNode.css")){
 								styleRemoved = true;
-							}
-							if(timeLineXYChartData.getContainerNode().getStylesheets().remove("styles/temporalViewPane/borderOfMediaToBeStopped.css")){
-								styleRemoved = true;
-							}
-							if(styleRemoved){
-								timeLineXYChartData.getMediaImageClip().setHeight(timeLineXYChartData.getMediaImageClip().getHeight()+5);
 							}
 						}
 					}	
@@ -176,7 +171,7 @@ public class TemporalViewPane extends BorderPane implements Observer, view.commo
 			}
 			
 		});
-		
+
 	}
 	
 	private void clearTemporalChainTabPane() {
@@ -221,7 +216,7 @@ public class TemporalViewPane extends BorderPane implements Observer, view.commo
 			
 		        case ADD_INTERACTIVITY_RELATION:
 		        	
-		        	Interactivity<Media> interactivityRelation = (Interactivity<Media>) operation.getOperating();
+		        	Interactivity<MediaNode> interactivityRelation = (Interactivity<MediaNode>) operation.getOperating();
 		        	
 		        	for(Tab tab : getTemporalChainTabPane().getTabs()){
 		        		TemporalChainPane temporalChainPane = (TemporalChainPane) tab.getContent();
@@ -281,11 +276,11 @@ public class TemporalViewPane extends BorderPane implements Observer, view.commo
 		
 	}
 
-	public void  clearSelectedMedia(){
+	public void clearSelectedNodeList(){
 		
 		selectedNodeList.clear();
 		this.firstSelectedNode = null;
-		notifyObservers(TemporalViewOperator.CLEAR_SELECTION_TEMPORAL_MEDIA);
+		notifyObservers(TemporalViewOperator.CLEAR_SELECTION_TEMPORAL_NODE);
 		
 	}
 
@@ -308,6 +303,10 @@ public class TemporalViewPane extends BorderPane implements Observer, view.commo
 	
 	public SpatialTemporalApplication getSpatialTemporalApplication() {
 		return spatialTemporalApplication;
+	}
+
+	public SensoryEffectsPane getSensoryEffectsPane() {
+		return sensoryEffectsPane;
 	}
 
 }

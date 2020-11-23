@@ -11,7 +11,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
-import model.common.Media;
+import model.common.MediaNode;
 import model.spatialView.media.CropProperty;
 import model.spatialView.media.enums.Size;
 import controller.ApplicationController;
@@ -19,7 +19,7 @@ import controller.ApplicationController;
 public class CropPane extends VBox {
 
 	private ApplicationController applicationController;
-	private Media media;
+	private MediaNode mediaNode;
 	
 	private TextField left;
 	private TextField right;
@@ -34,12 +34,12 @@ public class CropPane extends VBox {
 	private BorderPane titleButtonBorderPane;
 	private GridPane cropPropertyGridPane;
 	
-	public CropPane(ApplicationController applicationController, Media media){
+	public CropPane(ApplicationController applicationController, MediaNode mediaNode){
 		
 		setId("crop-vbox");
 		
 		this.applicationController = applicationController;
-		this.media = media;
+		this.mediaNode = mediaNode;
 		
 		Text title = new Text(Language.translate("crop"));
 		title.setId("crop-title");
@@ -159,7 +159,7 @@ public class CropPane extends VBox {
 	
 	private void populateCropPane(){
 		
-		CropProperty cropProperty = media.getPresentationProperty().getCropProperty();
+		CropProperty cropProperty = mediaNode.getPresentationProperty().getCropProperty();
 		
 		setLeftValue(cropProperty.getLeft());
 		setRightValue(cropProperty.getRight());
@@ -170,7 +170,7 @@ public class CropPane extends VBox {
 
 	public void populateCropPropertyJavaBean() {
 		
-		applicationController.populateCropPropertyJavaBean(this, media);
+		applicationController.populateCropPropertyJavaBean(this, mediaNode);
 		
 	}
 	

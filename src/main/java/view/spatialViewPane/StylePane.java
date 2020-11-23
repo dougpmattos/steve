@@ -1,5 +1,6 @@
 package view.spatialViewPane;
 
+import model.common.MediaNode;
 import view.common.Language;
 import view.common.customComponents.SliderButton;
 import javafx.collections.FXCollections;
@@ -14,7 +15,6 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
-import model.common.Media;
 import model.common.enums.MediaType;
 import model.spatialView.media.StyleProperty;
 import model.spatialView.media.TextStyleProperty;
@@ -26,7 +26,7 @@ import controller.ApplicationController;
 public class StylePane extends VBox {
 
 	private ApplicationController applicationController;
-	private Media media;
+	private MediaNode mediaNode;
 	
 	private SliderButton transparency;
 	private ChoiceBox<FontFamily> fontFamily;
@@ -39,12 +39,12 @@ public class StylePane extends VBox {
 	private BorderPane titleImageBorderPane;
 	private GridPane stylePropertyGridPane;
 	
-	public StylePane(ApplicationController applicationController, Media media){
+	public StylePane(ApplicationController applicationController, MediaNode mediaNode){
 		
 		setId("style-vbox");
 		
 		this.applicationController = applicationController;
-		this.media = media;
+		this.mediaNode = mediaNode;
 		
 		Text title = new Text(Language.translate("style"));
 		title.setId("style-title");
@@ -67,7 +67,7 @@ public class StylePane extends VBox {
 		stylePropertyGridPane.add(transparencyLabel, 0, 0);
 		stylePropertyGridPane.add(transparency, 1, 0, 2, 1);
 	
-		createFieldsTextMedia(media);
+		createFieldsTextMedia(mediaNode);
 		
 		getChildren().add(titleImageBorderPane);
 		getChildren().add(stylePropertyGridPane);
@@ -76,9 +76,9 @@ public class StylePane extends VBox {
 		
 	}
 
-	private void createFieldsTextMedia(Media media) {
+	private void createFieldsTextMedia(MediaNode mediaNode) {
 		
-		if(media.getType().equals(MediaType.TEXT)){
+		if(mediaNode.getType().equals(MediaType.TEXT)){
 			
 			Label fontFamilyLabel = new Label(Language.translate("font.family"));
 			Label fontSizeLabel = new Label(Language.translate("font.size"));
@@ -166,9 +166,9 @@ public class StylePane extends VBox {
 	
 	private void populateStylePane(){
 		
-		if(media.getType().equals(MediaType.TEXT)){
+		if(mediaNode.getType().equals(MediaType.TEXT)){
 			
-			TextStyleProperty textStyleProperty = media.getPresentationProperty().getTextStyleProperty();
+			TextStyleProperty textStyleProperty = mediaNode.getPresentationProperty().getTextStyleProperty();
 			
 			setTransparency(textStyleProperty.getTransparency());
 			setFontFamilyValue(textStyleProperty.getFontFamily());
@@ -179,7 +179,7 @@ public class StylePane extends VBox {
 			
 		} else{
 			
-			StyleProperty styleProperty = media.getPresentationProperty().getStyleProperty();
+			StyleProperty styleProperty = mediaNode.getPresentationProperty().getStyleProperty();
 			setTransparency(styleProperty.getTransparency());
 			
 		}
@@ -188,13 +188,13 @@ public class StylePane extends VBox {
 
 	public void populateStylePropertyJavaBean() {
 		
-		if(media.getType().equals(MediaType.TEXT)){
+		if(mediaNode.getType().equals(MediaType.TEXT)){
 			
-			applicationController.populateTextStylePropertyJavaBean(this, media);
+			applicationController.populateTextStylePropertyJavaBean(this, mediaNode);
 			
 		} else{
 			
-			applicationController.populateStylePropertyJavaBean(this, media);
+			applicationController.populateStylePropertyJavaBean(this, mediaNode);
 			
 		}
 		

@@ -23,7 +23,7 @@ import view.spatialViewPane.TemporalMediaInfoPane;
  * @author Douglas
  */
 
-public class Media extends Node<MediaType> implements Serializable{
+public class MediaNode extends Node<MediaType> implements Serializable{
 	
 	private static final long serialVersionUID = 2375510094294210628L;
 	
@@ -36,7 +36,7 @@ public class Media extends Node<MediaType> implements Serializable{
     private ArrayList<TimeSegment> timeSegmentList = new ArrayList<TimeSegment>();
     private MimeType mimeType;
 
-	public Media(){
+	public MediaNode(){
        
 	}
 	
@@ -52,6 +52,16 @@ public class Media extends Node<MediaType> implements Serializable{
 	    	   setImplicitDuration();
 	    }
 	    
+	}
+
+	public boolean isContinousMedia(){
+
+		if((type == MediaType.AUDIO)||(type == MediaType.VIDEO)){
+			return true;
+		}else{
+			return false;
+		}
+
 	}
 	
 	public String getNCLName(){
@@ -155,7 +165,7 @@ public class Media extends Node<MediaType> implements Serializable{
 	           
 	       } catch (Exception ex) {
 	    	   
-	           Logger.getLogger(Media.class.getName()).log(Level.SEVERE, null, ex);
+	           Logger.getLogger(MediaNode.class.getName()).log(Level.SEVERE, null, ex);
 	           MessageDialog messageDialog = new MessageDialog(ex.getMessage(), "OK", 150);
 	           messageDialog.showAndWait();
 	           return null;
@@ -196,7 +206,7 @@ public class Media extends Node<MediaType> implements Serializable{
            
        } catch (Exception ex) {
     	   
-           Logger.getLogger(Media.class.getName()).log(Level.SEVERE, null, ex);
+           Logger.getLogger(MediaNode.class.getName()).log(Level.SEVERE, null, ex);
            return null;
            
        }

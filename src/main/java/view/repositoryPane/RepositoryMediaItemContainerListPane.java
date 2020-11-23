@@ -8,7 +8,7 @@ import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.FlowPane;
-import model.common.Media;
+import model.common.MediaNode;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -114,56 +114,56 @@ public class RepositoryMediaItemContainerListPane extends ScrollPane implements 
 		
 	}
 	
-	public void add(Media media){
+	public void add(MediaNode mediaNode){
 		
-		allTypes.getChildren().add(createRepositoryMediaItem(media));
+		allTypes.getChildren().add(createRepositoryMediaItem(mediaNode));
 		
-		switch(media.getType()){
+		switch(mediaNode.getType()){
 		    case IMAGE:
-		        image.getChildren().add(createRepositoryMediaItem(media));
+		        image.getChildren().add(createRepositoryMediaItem(mediaNode));
 		        break;
 		        
 		    case VIDEO:
-		    	video.getChildren().add(createRepositoryMediaItem(media));
+		    	video.getChildren().add(createRepositoryMediaItem(mediaNode));
 		        break;
 		        
 		    case AUDIO:
-		    	audio.getChildren().add(createRepositoryMediaItem(media));
+		    	audio.getChildren().add(createRepositoryMediaItem(mediaNode));
 		        break;
 		        
 		    case TEXT:
-		    	text.getChildren().add(createRepositoryMediaItem(media));
+		    	text.getChildren().add(createRepositoryMediaItem(mediaNode));
 		        break;
 		        
 		    case APPLICATION:
-		    	application.getChildren().add(createRepositoryMediaItem(media));
+		    	application.getChildren().add(createRepositoryMediaItem(mediaNode));
 		        break;
 		}
 		
 		
 	}
 	
-	public void remove(Media media){
+	public void remove(MediaNode mediaNode){
 		
 		Iterator it = allTypes.getChildren().iterator();
     	Boolean mediaFound = false;
     	RepositoryMediaItemContainer repositoryMedia = null;
     	while(!mediaFound && it.hasNext()){
     		repositoryMedia = (RepositoryMediaItemContainer) it.next();
-    		if(repositoryMedia.getMedia().equals(media)){
+    		if(repositoryMedia.getMediaNode().equals(mediaNode)){
     			mediaFound = true;
     		}
     	}
     	allTypes.getChildren().remove(repositoryMedia);
 		
-		switch(media.getType()){
+		switch(mediaNode.getType()){
 		    case IMAGE:
 		    	Iterator imageIt = image.getChildren().iterator();
 		    	Boolean mediaImageFound = false;
 		    	RepositoryMediaItemContainer repositoryImageMedia = null;
 		    	while(!mediaImageFound && imageIt.hasNext()){
 		    		repositoryImageMedia = (RepositoryMediaItemContainer) imageIt.next();
-		    		if(repositoryImageMedia.getMedia().equals(media)){
+		    		if(repositoryImageMedia.getMediaNode().equals(mediaNode)){
 		    			mediaImageFound = true;
 		    		}
 		    	}
@@ -176,7 +176,7 @@ public class RepositoryMediaItemContainerListPane extends ScrollPane implements 
 		    	RepositoryMediaItemContainer repositoryVideoMedia = null;
 		    	while(!mediaVideoFound && videoIt.hasNext()){
 		    		repositoryVideoMedia = (RepositoryMediaItemContainer) videoIt.next();
-		    		if(repositoryVideoMedia.getMedia().equals(media)){
+		    		if(repositoryVideoMedia.getMediaNode().equals(mediaNode)){
 		    			mediaVideoFound = true;
 		    		}
 		    	}
@@ -189,7 +189,7 @@ public class RepositoryMediaItemContainerListPane extends ScrollPane implements 
 		    	RepositoryMediaItemContainer repositoryAudioMedia = null;
 		    	while(!mediaAudioFound && audioIt.hasNext()){
 		    		repositoryAudioMedia = (RepositoryMediaItemContainer) audioIt.next();
-		    		if(repositoryAudioMedia.getMedia().equals(media)){
+		    		if(repositoryAudioMedia.getMediaNode().equals(mediaNode)){
 		    			mediaAudioFound = true;
 		    		}
 		    	}
@@ -202,7 +202,7 @@ public class RepositoryMediaItemContainerListPane extends ScrollPane implements 
 		    	RepositoryMediaItemContainer repositoryTextMedia = null;
 		    	while(!mediaTextFound && textIt.hasNext()){
 		    		repositoryTextMedia = (RepositoryMediaItemContainer) textIt.next();
-		    		if(repositoryTextMedia.getMedia().equals(media)){
+		    		if(repositoryTextMedia.getMediaNode().equals(mediaNode)){
 		    			mediaTextFound = true;
 		    		}
 		    	}
@@ -215,7 +215,7 @@ public class RepositoryMediaItemContainerListPane extends ScrollPane implements 
 		    	RepositoryMediaItemContainer repositoryApplicationMedia = null;
 		    	while(!mediaApplicationFound && applicationIt.hasNext()){
 		    		repositoryApplicationMedia = (RepositoryMediaItemContainer) applicationIt.next();
-		    		if(repositoryApplicationMedia.getMedia().equals(media)){
+		    		if(repositoryApplicationMedia.getMediaNode().equals(mediaNode)){
 		    			mediaApplicationFound = true;
 		    		}
 		    	}
@@ -227,9 +227,9 @@ public class RepositoryMediaItemContainerListPane extends ScrollPane implements 
 		
 	}
 
-	private RepositoryMediaItemContainer createRepositoryMediaItem(Media media) {
+	private RepositoryMediaItemContainer createRepositoryMediaItem(MediaNode mediaNode) {
 		
-		RepositoryMediaItemContainer repositoryMediaItemContainer = new RepositoryMediaItemContainer(media, this, temporalViewPane);
+		RepositoryMediaItemContainer repositoryMediaItemContainer = new RepositoryMediaItemContainer(mediaNode, this, temporalViewPane);
 		
 		repositoryMediaItemContainer.addObserver(this);
 		
@@ -261,47 +261,47 @@ public class RepositoryMediaItemContainerListPane extends ScrollPane implements 
 		return application.getChildren();
 	}
 
-	public Media getSelectedMedia() {
+	public MediaNode getSelectedMedia() {
 		
 		for(Node node : getAllTypes()){
 			RepositoryMediaItemContainer repositoryMediaItemContainer = (RepositoryMediaItemContainer) node;
 			if(repositoryMediaItemContainer.getSelected()){
-				return repositoryMediaItemContainer.getMedia();
+				return repositoryMediaItemContainer.getMediaNode();
 			}
 		}
 		
 		for(Node node : getImages()){
 			RepositoryMediaItemContainer repositoryMediaItemContainer = (RepositoryMediaItemContainer) node;
 			if(repositoryMediaItemContainer.getSelected()){
-				return repositoryMediaItemContainer.getMedia();
+				return repositoryMediaItemContainer.getMediaNode();
 			}
 		}
 		
 		for(Node node : getVideos()){
 			RepositoryMediaItemContainer repositoryMediaItemContainer = (RepositoryMediaItemContainer) node;
 			if(repositoryMediaItemContainer.getSelected()){
-				return repositoryMediaItemContainer.getMedia();
+				return repositoryMediaItemContainer.getMediaNode();
 			}
 		}
 		
 		for(Node node : getAudios()){
 			RepositoryMediaItemContainer repositoryMediaItemContainer = (RepositoryMediaItemContainer) node;
 			if(repositoryMediaItemContainer.getSelected()){
-				return repositoryMediaItemContainer.getMedia();
+				return repositoryMediaItemContainer.getMediaNode();
 			}
 		}
 		
 		for(Node node : getTexts()){
 			RepositoryMediaItemContainer repositoryMediaItemContainer = (RepositoryMediaItemContainer) node;
 			if(repositoryMediaItemContainer.getSelected()){
-				return repositoryMediaItemContainer.getMedia();
+				return repositoryMediaItemContainer.getMediaNode();
 			}
 		}
 		
 		for(Node node : getApplications()){
 			RepositoryMediaItemContainer repositoryMediaItemContainer = (RepositoryMediaItemContainer) node;
 			if(repositoryMediaItemContainer.getSelected()){
-				return repositoryMediaItemContainer.getMedia();
+				return repositoryMediaItemContainer.getMediaNode();
 			}
 		}
 		

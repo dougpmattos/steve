@@ -13,7 +13,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.stage.FileChooser;
 import model.NCLSupport.enums.ImportedNCLCausalConnectorType;
-import model.common.Media;
+import model.common.MediaNode;
 import model.common.Node;
 import model.common.SpatialTemporalApplication;
 import model.spatialView.media.MediaPositionProperty;
@@ -96,7 +96,7 @@ public class NCLExportEventHandler implements EventHandler<ActionEvent>{
 			
 			if(!temporalChains.isEmpty()){
 				
-				InputDialog showContinueQuestionInputDialog = new InputDialog(Language.translate("master.media.of.the.following.temporal.chain.will.be.moved.to.instant.0s.in.the.ncl.document"), 
+				InputDialog showContinueQuestionInputDialog = new InputDialog(Language.translate("primary.media.of.the.following.temporal.chain.will.be.moved.to.instant.0s.in.the.ncl.document"),
 						temporalChains + "\n" + Language.translate("would.you.like.to.continue.exporting.to.NCL"), "yes","no", null, 250);
 				
 				String answer = showContinueQuestionInputDialog.showAndWaitAndReturn();
@@ -121,7 +121,7 @@ public class NCLExportEventHandler implements EventHandler<ActionEvent>{
 		
 		ArrayList<TemporalChain> temporalChainList = spatialTemporalApplication.getTemporalChainList();
 		
-		if(temporalChainList.size() == 1 && temporalChainList.get(0).getMediaAllList().isEmpty()){
+		if(temporalChainList.size() == 1 && temporalChainList.get(0).getMediaNodeAllList().isEmpty()){
 			return true;
 		} else{
 			return false;
@@ -275,10 +275,10 @@ public class NCLExportEventHandler implements EventHandler<ActionEvent>{
 			NCLPort nclPort = new NCLPort();
 			
 			if(temporalChain.getMasterNode() != null){
-				nclPort.setId("port_" + ((Media)temporalChain.getMasterNode()).getNCLName());
-				NCLRegion nclRegion = createNCLRegion(nclRegBase, (Media)temporalChain.getMasterNode());
-			    NCLDescriptor nclDescriptor = createNCLDescriptor(nclDescBase, temporalChain, (Media)temporalChain.getMasterNode(), nclRegion);
-			    NCLMedia nclMedia = createNCLMedia((Media)temporalChain.getMasterNode(), nclDescriptor);
+				nclPort.setId("port_" + ((MediaNode)temporalChain.getMasterNode()).getNCLName());
+				NCLRegion nclRegion = createNCLRegion(nclRegBase, (MediaNode)temporalChain.getMasterNode());
+			    NCLDescriptor nclDescriptor = createNCLDescriptor(nclDescBase, temporalChain, (MediaNode)temporalChain.getMasterNode(), nclRegion);
+			    NCLMedia nclMedia = createNCLMedia((MediaNode)temporalChain.getMasterNode(), nclDescriptor);
 			    nclPort.setComponent(nclMedia);
 			}
 		    
@@ -291,11 +291,11 @@ public class NCLExportEventHandler implements EventHandler<ActionEvent>{
 			NCLRegionBase nclRegBase, NCLDescriptorBase nclDescBase,
 			TemporalChain temporalChain) throws XMLException {
 		
-		for(Media media :  temporalChain.getMediaAllList()){
+		for(MediaNode mediaNode :  temporalChain.getMediaNodeAllList()){
 			
-			NCLRegion nclRegion = createNCLRegion(nclRegBase, media);
-			NCLDescriptor nclDescriptor = createNCLDescriptor(nclDescBase, temporalChain, media, nclRegion);
-			NCLMedia nclMedia = createNCLMedia(media, nclDescriptor);
+			NCLRegion nclRegion = createNCLRegion(nclRegBase, mediaNode);
+			NCLDescriptor nclDescriptor = createNCLDescriptor(nclDescBase, temporalChain, mediaNode, nclRegion);
+			NCLMedia nclMedia = createNCLMedia(mediaNode, nclDescriptor);
 			
 			nclRegBase.addRegion(nclRegion);
 			nclDescBase.addDescriptor(nclDescriptor);
@@ -339,13 +339,13 @@ public class NCLExportEventHandler implements EventHandler<ActionEvent>{
 						
 						conditionNCLBind = new NCLBind();
 						conditionNCLBind.setRole(importedNCLCausalConnector.findRole(NCLDefaultConditionRole.ONBEGIN.toString()));
-						conditionNCLBind.setComponent(nclBody.findNode(((Media)synchronousRelation.getMasterNode()).getNCLName()));
+						conditionNCLBind.setComponent(nclBody.findNode(((MediaNode)synchronousRelation.getPrimaryNode()).getNCLName()));
 						nclLink.addBind(conditionNCLBind);
 						
-						for(Node slaveMedia : synchronousRelation.getSlaveNodeList()){
+						for(Node slaveMedia : synchronousRelation.getSecondaryNodeList()){
 							NCLBind startNCLBind = new NCLBind();
 			    			startNCLBind.setRole(importedNCLCausalConnector.findRole(NCLDefaultActionRole.START.toString()));
-			    			startNCLBind.setComponent(nclBody.findNode(((Media)slaveMedia).getNCLName()));
+			    			startNCLBind.setComponent(nclBody.findNode(((MediaNode)slaveMedia).getNCLName()));
 			    			nclLink.addBind(startNCLBind);
 						}
 						
@@ -366,13 +366,13 @@ public class NCLExportEventHandler implements EventHandler<ActionEvent>{
 						
 						conditionNCLBind = new NCLBind();
 						conditionNCLBind.setRole(importedNCLCausalConnector.findRole(NCLDefaultConditionRole.ONBEGIN.toString()));
-						conditionNCLBind.setComponent(nclBody.findNode(((Media)synchronousRelation.getMasterNode()).getNCLName()));
+						conditionNCLBind.setComponent(nclBody.findNode(((MediaNode)synchronousRelation.getPrimaryNode()).getNCLName()));
 						nclLink.addBind(conditionNCLBind);
 						
-						for(Node slaveMedia : synchronousRelation.getSlaveNodeList()){
+						for(Node slaveMedia : synchronousRelation.getSecondaryNodeList()){
 							NCLBind startNCLBind = new NCLBind();
 			    			startNCLBind.setRole(importedNCLCausalConnector.findRole(NCLDefaultActionRole.START.toString()));
-			    			startNCLBind.setComponent(nclBody.findNode(((Media)slaveMedia).getNCLName()));
+			    			startNCLBind.setComponent(nclBody.findNode(((MediaNode)slaveMedia).getNCLName()));
 			    			nclLink.addBind(startNCLBind);
 						}
 						
@@ -398,13 +398,13 @@ public class NCLExportEventHandler implements EventHandler<ActionEvent>{
 						
 						conditionNCLBind = new NCLBind();
 						conditionNCLBind.setRole(importedNCLCausalConnector.findRole(NCLDefaultConditionRole.ONEND.toString()));
-						conditionNCLBind.setComponent(nclBody.findNode(((Media)synchronousRelation.getMasterNode()).getNCLName()));
+						conditionNCLBind.setComponent(nclBody.findNode(((MediaNode)synchronousRelation.getPrimaryNode()).getNCLName()));
 						nclLink.addBind(conditionNCLBind);
 						
-						for(Node slaveMedia : synchronousRelation.getSlaveNodeList()){
+						for(Node slaveMedia : synchronousRelation.getSecondaryNodeList()){
 							NCLBind startNCLBind = new NCLBind();
 			    			startNCLBind.setRole(importedNCLCausalConnector.findRole(NCLDefaultActionRole.STOP.toString()));
-			    			startNCLBind.setComponent(nclBody.findNode(((Media)slaveMedia).getNCLName()));
+			    			startNCLBind.setComponent(nclBody.findNode(((MediaNode)slaveMedia).getNCLName()));
 			    			nclLink.addBind(startNCLBind);
 						}
 						
@@ -425,13 +425,13 @@ public class NCLExportEventHandler implements EventHandler<ActionEvent>{
 						
 						conditionNCLBind = new NCLBind();
 						conditionNCLBind.setRole(importedNCLCausalConnector.findRole(NCLDefaultConditionRole.ONEND.toString()));
-						conditionNCLBind.setComponent(nclBody.findNode(((Media)synchronousRelation.getMasterNode()).getNCLName()));
+						conditionNCLBind.setComponent(nclBody.findNode(((MediaNode)synchronousRelation.getPrimaryNode()).getNCLName()));
 						nclLink.addBind(conditionNCLBind);
 						
-						for(Node slaveMedia : synchronousRelation.getSlaveNodeList()){
+						for(Node slaveMedia : synchronousRelation.getSecondaryNodeList()){
 							NCLBind startNCLBind = new NCLBind();
 			    			startNCLBind.setRole(importedNCLCausalConnector.findRole(NCLDefaultActionRole.STOP.toString()));
-			    			startNCLBind.setComponent(nclBody.findNode(((Media)slaveMedia).getNCLName()));
+			    			startNCLBind.setComponent(nclBody.findNode(((MediaNode)slaveMedia).getNCLName()));
 			    			nclLink.addBind(startNCLBind);
 						}
 						
@@ -457,13 +457,13 @@ public class NCLExportEventHandler implements EventHandler<ActionEvent>{
 						
 						conditionNCLBind = new NCLBind();
 						conditionNCLBind.setRole(importedNCLCausalConnector.findRole(NCLDefaultConditionRole.ONEND.toString()));
-						conditionNCLBind.setComponent(nclBody.findNode(((Media)synchronousRelation.getMasterNode()).getNCLName()));
+						conditionNCLBind.setComponent(nclBody.findNode(((MediaNode)synchronousRelation.getPrimaryNode()).getNCLName()));
 						nclLink.addBind(conditionNCLBind);
 						
-						for(Node slaveMedia : synchronousRelation.getSlaveNodeList()){
+						for(Node slaveMedia : synchronousRelation.getSecondaryNodeList()){
 							NCLBind startNCLBind = new NCLBind();
 			    			startNCLBind.setRole(importedNCLCausalConnector.findRole(NCLDefaultActionRole.START.toString()));
-			    			startNCLBind.setComponent(nclBody.findNode(((Media)slaveMedia).getNCLName()));
+			    			startNCLBind.setComponent(nclBody.findNode(((MediaNode)slaveMedia).getNCLName()));
 			    			nclLink.addBind(startNCLBind);
 						}
 						
@@ -484,13 +484,13 @@ public class NCLExportEventHandler implements EventHandler<ActionEvent>{
 						
 						conditionNCLBind = new NCLBind();
 						conditionNCLBind.setRole(importedNCLCausalConnector.findRole(NCLDefaultConditionRole.ONEND.toString()));
-						conditionNCLBind.setComponent(nclBody.findNode(((Media)synchronousRelation.getMasterNode()).getNCLName()));
+						conditionNCLBind.setComponent(nclBody.findNode(((MediaNode)synchronousRelation.getPrimaryNode()).getNCLName()));
 						nclLink.addBind(conditionNCLBind);
 						
-						for(Node slaveMedia : synchronousRelation.getSlaveNodeList()){
+						for(Node slaveMedia : synchronousRelation.getSecondaryNodeList()){
 							NCLBind startNCLBind = new NCLBind();
 			    			startNCLBind.setRole(importedNCLCausalConnector.findRole(NCLDefaultActionRole.START.toString()));
-			    			startNCLBind.setComponent(nclBody.findNode(((Media)slaveMedia).getNCLName()));
+			    			startNCLBind.setComponent(nclBody.findNode(((MediaNode)slaveMedia).getNCLName()));
 			    			nclLink.addBind(startNCLBind);
 						}
 						
@@ -517,13 +517,13 @@ public class NCLExportEventHandler implements EventHandler<ActionEvent>{
 						
 						conditionNCLBind = new NCLBind();
 						conditionNCLBind.setRole(importedNCLCausalConnector.findRole(NCLDefaultConditionRole.ONBEGIN.toString()));
-						conditionNCLBind.setComponent(nclBody.findNode(((Media)synchronousRelation.getMasterNode()).getNCLName()));
+						conditionNCLBind.setComponent(nclBody.findNode(((MediaNode)synchronousRelation.getPrimaryNode()).getNCLName()));
 						nclLink.addBind(conditionNCLBind);
 						
-						for(Node slaveMedia : synchronousRelation.getSlaveNodeList()){
+						for(Node slaveMedia : synchronousRelation.getSecondaryNodeList()){
 							NCLBind startNCLBind = new NCLBind();
 			    			startNCLBind.setRole(importedNCLCausalConnector.findRole(NCLDefaultActionRole.STOP.toString()));
-			    			startNCLBind.setComponent(nclBody.findNode(((Media)slaveMedia).getNCLName()));
+			    			startNCLBind.setComponent(nclBody.findNode(((MediaNode)slaveMedia).getNCLName()));
 			    			nclLink.addBind(startNCLBind);
 						}
 						
@@ -545,13 +545,13 @@ public class NCLExportEventHandler implements EventHandler<ActionEvent>{
 						
 						conditionNCLBind = new NCLBind();
 						conditionNCLBind.setRole(importedNCLCausalConnector.findRole(NCLDefaultConditionRole.ONBEGIN.toString()));
-						conditionNCLBind.setComponent(nclBody.findNode(((Media)synchronousRelation.getMasterNode()).getNCLName()));
+						conditionNCLBind.setComponent(nclBody.findNode(((MediaNode)synchronousRelation.getPrimaryNode()).getNCLName()));
 						nclLink.addBind(conditionNCLBind);
 						
-						for(Node slaveMedia : synchronousRelation.getSlaveNodeList()){
+						for(Node slaveMedia : synchronousRelation.getSecondaryNodeList()){
 							NCLBind startNCLBind = new NCLBind();
 			    			startNCLBind.setRole(importedNCLCausalConnector.findRole(NCLDefaultActionRole.STOP.toString()));
-			    			startNCLBind.setComponent(nclBody.findNode(((Media)slaveMedia).getNCLName()));
+			    			startNCLBind.setComponent(nclBody.findNode(((MediaNode)slaveMedia).getNCLName()));
 			    			nclLink.addBind(startNCLBind);
 						}
 						
@@ -566,12 +566,12 @@ public class NCLExportEventHandler implements EventHandler<ActionEvent>{
 					
 					case BEFORE:
 						
-						for(int i  = 0; i < synchronousRelation.getSlaveNodeList().size(); i++){
+						for(int i = 0; i < synchronousRelation.getSecondaryNodeList().size(); i++){
 							
 							NCLLink beforeNCLLink = new NCLLink<>();
 							beforeNCLLink.setId("link_" + synchronousRelation.getId() + i);
 							
-							Media slaveMedia = (Media)synchronousRelation.getSlaveNodeList().get(i);
+							MediaNode slaveMediaNode = (MediaNode)synchronousRelation.getSecondaryNodeList().get(i);
 			
 							importedNCLCausalConnector = nclConnectorBaseOfImportedBase.getCausalConnector(ImportedNCLCausalConnectorType.ONEND_START_DELAY.getDescription());
 
@@ -586,16 +586,16 @@ public class NCLExportEventHandler implements EventHandler<ActionEvent>{
 							conditionNCLBind.setRole(importedNCLCausalConnector.findRole(NCLDefaultConditionRole.ONEND.toString()));
 							
 							if(i == 0){
-								conditionNCLBind.setComponent(nclBody.findNode(((Media)synchronousRelation.getMasterNode()).getNCLName()));
+								conditionNCLBind.setComponent(nclBody.findNode(((MediaNode)synchronousRelation.getPrimaryNode()).getNCLName()));
 							}else {
-								conditionNCLBind.setComponent(nclBody.findNode(((Media)synchronousRelation.getSlaveNodeList().get(i-1)).getNCLName()));
+								conditionNCLBind.setComponent(nclBody.findNode(((MediaNode)synchronousRelation.getSecondaryNodeList().get(i-1)).getNCLName()));
 							}
 							
 							beforeNCLLink.addBind(conditionNCLBind);
 						
 							NCLBind startNCLBind = new NCLBind();
 			    			startNCLBind.setRole(importedNCLCausalConnector.findRole(NCLDefaultActionRole.START.toString()));
-			    			startNCLBind.setComponent(nclBody.findNode(slaveMedia.getNCLName()));
+			    			startNCLBind.setComponent(nclBody.findNode(slaveMediaNode.getNCLName()));
 			    			beforeNCLLink.addBind(startNCLBind);
 						
 							nclLinkParamDelay = new NCLLinkParam();
@@ -613,7 +613,7 @@ public class NCLExportEventHandler implements EventHandler<ActionEvent>{
 				
 			} else if(relation instanceof Interactivity){
 				
-				Interactivity<Media> interactivityRelation = (Interactivity<Media>) relation;
+				Interactivity<MediaNode> interactivityRelation = (Interactivity<MediaNode>) relation;
 				
 				NCLLink nclLink = new NCLLink<>();
 				nclLink.setId("link_" + interactivityRelation.getId());
@@ -631,7 +631,7 @@ public class NCLExportEventHandler implements EventHandler<ActionEvent>{
 					
 					conditionNCLBind = new NCLBind();
 					conditionNCLBind.setRole(importedNCLCausalConnector.findRole(NCLDefaultConditionRole.ONSELECTION.toString()));
-					conditionNCLBind.setComponent(nclBody.findNode(((Media)interactivityRelation.getMasterNode()).getNCLName()));
+					conditionNCLBind.setComponent(nclBody.findNode(((MediaNode)interactivityRelation.getPrimaryNode()).getNCLName()));
 					NCLBindParam nclBindParam = new NCLBindParam();
 					nclBindParam.setName(importedNCLCausalConnector.getConnectorParam("interactivityKey"));
 					nclBindParam.setValue(interactivityRelation.getInteractivityKey().toString().toUpperCase());
@@ -641,14 +641,14 @@ public class NCLExportEventHandler implements EventHandler<ActionEvent>{
 					for(TemporalChain temporalChainToBeStarted : interactivityRelation.getTemporalChainList()){
 						NCLBind startNCLBind = new NCLBind();
 		    			startNCLBind.setRole(importedNCLCausalConnector.findRole(NCLDefaultActionRole.START.toString()));
-		    			startNCLBind.setComponent(nclBody.findNode(((Media)temporalChainToBeStarted.getMasterNode()).getNCLName()));
+		    			startNCLBind.setComponent(nclBody.findNode(((MediaNode)temporalChainToBeStarted.getMasterNode()).getNCLName()));
 		    			nclLink.addBind(startNCLBind);
 					}
 					
-					for(Node slaveMedia : interactivityRelation.getSlaveNodeList()){
+					for(Node slaveMedia : interactivityRelation.getSecondaryNodeList()){
 						NCLBind stopNCLBind = new NCLBind();
 		    			stopNCLBind.setRole(importedNCLCausalConnector.findRole(NCLDefaultActionRole.STOP.toString()));
-		    			stopNCLBind.setComponent(nclBody.findNode(((Media)slaveMedia).getNCLName()));
+		    			stopNCLBind.setComponent(nclBody.findNode(((MediaNode)slaveMedia).getNCLName()));
 		    			nclLink.addBind(stopNCLBind);
 					}
 					
@@ -665,7 +665,7 @@ public class NCLExportEventHandler implements EventHandler<ActionEvent>{
 					
 					conditionNCLBind = new NCLBind();
 					conditionNCLBind.setRole(importedNCLCausalConnector.findRole(NCLDefaultConditionRole.ONSELECTION.toString()));
-					conditionNCLBind.setComponent(nclBody.findNode(((Media)interactivityRelation.getMasterNode()).getNCLName()));
+					conditionNCLBind.setComponent(nclBody.findNode(((MediaNode)interactivityRelation.getPrimaryNode()).getNCLName()));
 					
 					NCLBindParam nclBindParam = new NCLBindParam();
 					nclBindParam.setName(importedNCLCausalConnector.getConnectorParam("interactivityKey"));
@@ -676,14 +676,14 @@ public class NCLExportEventHandler implements EventHandler<ActionEvent>{
 					for(TemporalChain temporalChainToBeStarted : interactivityRelation.getTemporalChainList()){
 						NCLBind startNCLBind = new NCLBind();
 		    			startNCLBind.setRole(importedNCLCausalConnector.findRole(NCLDefaultActionRole.START.toString()));
-		    			startNCLBind.setComponent(nclBody.findNode(((Media)temporalChainToBeStarted.getMasterNode()).getNCLName()));
+		    			startNCLBind.setComponent(nclBody.findNode(((MediaNode)temporalChainToBeStarted.getMasterNode()).getNCLName()));
 		    			nclLink.addBind(startNCLBind);
 					}
 					
-					for(Node slaveMedia : interactivityRelation.getSlaveNodeList()){
+					for(Node slaveMedia : interactivityRelation.getSecondaryNodeList()){
 						NCLBind stopNCLBind = new NCLBind();
 		    			stopNCLBind.setRole(importedNCLCausalConnector.findRole(NCLDefaultActionRole.STOP.toString()));
-		    			stopNCLBind.setComponent(nclBody.findNode(((Media)slaveMedia).getNCLName()));
+		    			stopNCLBind.setComponent(nclBody.findNode(((MediaNode)slaveMedia).getNCLName()));
 		    			nclLink.addBind(stopNCLBind);
 					}
 					
@@ -720,9 +720,9 @@ public class NCLExportEventHandler implements EventHandler<ActionEvent>{
 
 		int relationNumber = temporalChain.getRelationList().size();
 		
-		for(Media media :  temporalChain.getMediaAllList()){
+		for(MediaNode mediaNode :  temporalChain.getMediaNodeAllList()){
 			
-			if(!media.equals(temporalChain.getMasterNode()) && !isThereRelationStartsMedia(media, temporalChain)){
+			if(!mediaNode.equals(temporalChain.getMasterNode()) && !isThereRelationStartsMedia(mediaNode, temporalChain)){
 				
 				NCLLink nclLink = new NCLLink<>();
 				nclLink.setId("link_" + relationNumber++);
@@ -738,17 +738,17 @@ public class NCLExportEventHandler implements EventHandler<ActionEvent>{
 				
 				conditionNCLBind = new NCLBind();
 				conditionNCLBind.setRole(importedNCLCausalConnector.findRole(NCLDefaultConditionRole.ONBEGIN.toString()));
-				conditionNCLBind.setComponent(nclBody.findNode(((Media)temporalChain.getMasterNode()).getNCLName()));
+				conditionNCLBind.setComponent(nclBody.findNode(((MediaNode)temporalChain.getMasterNode()).getNCLName()));
 				nclLink.addBind(conditionNCLBind);
 
 				NCLBind startNCLBind = new NCLBind();
     			startNCLBind.setRole(importedNCLCausalConnector.findRole(NCLDefaultActionRole.START.toString()));
-    			startNCLBind.setComponent(nclBody.findNode(media.getNCLName()));
+    			startNCLBind.setComponent(nclBody.findNode(mediaNode.getNCLName()));
     			nclLink.addBind(startNCLBind);
 				
 				nclLinkParamDelay = new NCLLinkParam();
 				nclLinkParamDelay.setName(importedNCLCausalConnector.getConnectorParam(DELAY));
-				nclLinkParamDelay.setValue(new TimeType(getDelayBetweenMasterAndSlave(media, temporalChain)));
+				nclLinkParamDelay.setValue(new TimeType(getDelayBetweenMasterAndSlave(mediaNode, temporalChain)));
 				nclLink.addLinkParam(nclLinkParamDelay);
 				
 				nclBody.addLink(nclLink);
@@ -759,16 +759,16 @@ public class NCLExportEventHandler implements EventHandler<ActionEvent>{
 
 	}
 	
-	private Double getDelayBetweenMasterAndSlave(Media media, TemporalChain temporalChain){
+	private Double getDelayBetweenMasterAndSlave(MediaNode mediaNode, TemporalChain temporalChain){
 		
-		Double mediaBegin = media.getBegin();
+		Double mediaBegin = mediaNode.getBegin();
 		Double masterMediaBegin = temporalChain.getMasterNode().getBegin();
 	
 		return mediaBegin - masterMediaBegin;
 		
 	}
 	
-	private boolean isThereRelationStartsMedia(Media media, TemporalChain temporalChain){
+	private boolean isThereRelationStartsMedia(MediaNode mediaNode, TemporalChain temporalChain){
 
 		for(TemporalRelation relation :  temporalChain.getRelationList()){
 			
@@ -780,7 +780,7 @@ public class NCLExportEventHandler implements EventHandler<ActionEvent>{
 				if(relationType == TemporalRelationType.STARTS || relationType == TemporalRelationType.STARTS_DELAY ||relationType == TemporalRelationType.MEETS
 						   || relationType == TemporalRelationType.MEETS_DELAY || relationType == TemporalRelationType.BEFORE){
 					
-					if(synchronousRelation.getSlaveNodeList().contains(media)){
+					if(synchronousRelation.getSecondaryNodeList().contains(mediaNode)){
 						 return true;
 					}
 					
@@ -794,36 +794,36 @@ public class NCLExportEventHandler implements EventHandler<ActionEvent>{
 		
 	}
 	
-	private NCLMedia createNCLMedia(Media media, NCLDescriptor nclDescriptor) throws XMLException {
+	private NCLMedia createNCLMedia(MediaNode mediaNode, NCLDescriptor nclDescriptor) throws XMLException {
 		
 		NCLMedia nclMedia = new NCLMedia();
-		nclMedia.setId(media.getNCLName());
-		nclMedia.setSrc(new SrcType("media/" + media.getFile().getAbsoluteFile().getName()));
-		if(media.getMimeType() != null){
-			nclMedia.setType(NCLMimeType.getEnumType(media.getMimeType().toString()));
+		nclMedia.setId(mediaNode.getNCLName());
+		nclMedia.setSrc(new SrcType("media/" + mediaNode.getFile().getAbsoluteFile().getName()));
+		if(mediaNode.getMimeType() != null){
+			nclMedia.setType(NCLMimeType.getEnumType(mediaNode.getMimeType().toString()));
 		}
 		nclMedia.setDescriptor(nclDescriptor);
 		return nclMedia;
 		
 	}
 
-	private NCLDescriptor createNCLDescriptor(NCLDescriptorBase nclDescBase, TemporalChain temporalChain, Media media, NCLRegion nclRegion) throws XMLException {
+	private NCLDescriptor createNCLDescriptor(NCLDescriptorBase nclDescBase, TemporalChain temporalChain, MediaNode mediaNode, NCLRegion nclRegion) throws XMLException {
 		
 		NCLDescriptor nclDescriptor = new NCLDescriptor();
-		nclDescriptor.setId("desc_" + media.getNCLName());
+		nclDescriptor.setId("desc_" + mediaNode.getNCLName());
 		nclDescriptor.setRegion(nclRegion);
-		if(!isThereRelationFinishesMedia(media, temporalChain)){
-			nclDescriptor.setExplicitDur(new TimeType(media.getDuration()));
+		if(!isThereRelationFinishesMedia(mediaNode, temporalChain)){
+			nclDescriptor.setExplicitDur(new TimeType(mediaNode.getDuration()));
 		}
 		NCLDescriptorParam transparencyParam = new NCLDescriptorParam();
 		transparencyParam.setName(NCLAttributes.TRANSPARENCY);
-		transparencyParam.setValue(media.getPresentationProperty().getStyleProperty().getTransparency()/100);
+		transparencyParam.setValue(mediaNode.getPresentationProperty().getStyleProperty().getTransparency()/100);
 
 		NCLDescriptorParam fitParam = new NCLDescriptorParam();
 		fitParam.setName(NCLAttributes.FIT);
-		AspectRatio aspectRatio = media.getPresentationProperty().getSizeProperty().getAspectRatio();
+		AspectRatio aspectRatio = mediaNode.getPresentationProperty().getSizeProperty().getAspectRatio();
 		//if(aspectRatio != AspectRatio.NONE){
-		fitParam.setValue(media.getPresentationProperty().getSizeProperty().getAspectRatio().toString().toLowerCase());
+		fitParam.setValue(mediaNode.getPresentationProperty().getSizeProperty().getAspectRatio().toString().toLowerCase());
 		//}
 		
 		nclDescriptor.addDescriptorParam(transparencyParam);
@@ -833,13 +833,13 @@ public class NCLExportEventHandler implements EventHandler<ActionEvent>{
 		
 	}
 
-	private NCLRegion createNCLRegion(NCLRegionBase nclRegBase, Media media) throws XMLException { 
+	private NCLRegion createNCLRegion(NCLRegionBase nclRegBase, MediaNode mediaNode) throws XMLException {
 		
 		NCLRegion nclRegion = new NCLRegion();
-		nclRegion.setId("rg_" + media.getNCLName());
+		nclRegion.setId("rg_" + mediaNode.getNCLName());
 		
-		MediaPositionProperty mediaPositionProperty= media.getPresentationProperty().getPositionProperty();
-		SizeProperty mediaSizeProperty = media.getPresentationProperty().getSizeProperty();
+		MediaPositionProperty mediaPositionProperty= mediaNode.getPresentationProperty().getPositionProperty();
+		SizeProperty mediaSizeProperty = mediaNode.getPresentationProperty().getSizeProperty();
 		
 		nclRegion.setLeft(treatPositionSizeValue(mediaPositionProperty.getLeft()));
 		nclRegion.setRight(treatPositionSizeValue(mediaPositionProperty.getRight()));
@@ -853,7 +853,7 @@ public class NCLExportEventHandler implements EventHandler<ActionEvent>{
 		
 	}
 	
-	private Boolean isThereRelationFinishesMedia(Media media, TemporalChain temporalChain){
+	private Boolean isThereRelationFinishesMedia(MediaNode mediaNode, TemporalChain temporalChain){
 
 		for(TemporalRelation relation :  temporalChain.getRelationList()){
 			
@@ -865,7 +865,7 @@ public class NCLExportEventHandler implements EventHandler<ActionEvent>{
 				if(relationType.equals(TemporalRelationType.MET_BY) || relationType.equals(TemporalRelationType.MET_BY_DELAY)
 				   || relationType.equals(TemporalRelationType.FINISHES) || relationType.equals(TemporalRelationType.FINISHES_DELAY)){
 					
-					if(synchronousRelation.getSlaveNodeList().contains(media)){
+					if(synchronousRelation.getSecondaryNodeList().contains(mediaNode)){
 						 return true;
 					}
 					
@@ -949,11 +949,11 @@ public class NCLExportEventHandler implements EventHandler<ActionEvent>{
 		
 		for(TemporalChain temporalChain : spatialTemporalApplication.getTemporalChainList()){
 			
-			for(Media media :  temporalChain.getMediaAllList()){
+			for(MediaNode mediaNode :  temporalChain.getMediaNodeAllList()){
 
-			    fileInputStream = new FileInputStream(media.getFile());
+			    fileInputStream = new FileInputStream(mediaNode.getFile());
 				FileChannel sourceChannel = fileInputStream.getChannel();
-				fileOutputStream = new FileOutputStream(new File(mediaDir + "/" + media.getFile().getAbsoluteFile().getName()));
+				fileOutputStream = new FileOutputStream(new File(mediaDir + "/" + mediaNode.getFile().getAbsoluteFile().getName()));
 				FileChannel destChannel = fileOutputStream.getChannel();
 		        destChannel.transferFrom(sourceChannel, 0, sourceChannel.size());
 		        sourceChannel.close();

@@ -14,39 +14,39 @@ public abstract class TemporalRelation extends Relation implements Serializable 
 
 	private static final long serialVersionUID = 3044752885230388480L;
 	
-	private Node masterNode;
-	private ArrayList<Node> slaveNodeList = new ArrayList<Node>();
+	private Node primaryNode;
+	private ArrayList<Node> secondaryNodeList = new ArrayList<Node>();
 	private Boolean explicit = false;
 	
 	public TemporalRelation(){
 		
 	}
 	
-	public void setMasterNode(Node masterNode) {
-		this.masterNode = masterNode;
+	public void setPrimaryNode(Node primaryNode) {
+		this.primaryNode = primaryNode;
 	}
 	
-	public Node getMasterNode() {
-		return masterNode;
+	public Node getPrimaryNode() {
+		return primaryNode;
 	}
 	
-	public void addSlaveNode(Node slaveNode) {
-		slaveNodeList.add(slaveNode);
+	public void addSecondaryNode(Node secondaryNode) {
+		secondaryNodeList.add(secondaryNode);
 	}
 	
-	public void removeSlaveNode(Node slaveNode) {
+	public void removeSlaveNode(Node secondaryNode) {
 		
-		if(slaveNodeList.remove(slaveNode)){
+		if(secondaryNodeList.remove(secondaryNode)){
 			
 			setChanged();
-			Operation<TemporalViewOperator> operation = new Operation<TemporalViewOperator>(TemporalViewOperator.REMOVE_SLAVE_NODE_OF_SYNC_RELATION, slaveNode, this);
+			Operation<TemporalViewOperator> operation = new Operation<TemporalViewOperator>(TemporalViewOperator.REMOVE_SECONDARY_NODE_OF_SYNC_RELATION, secondaryNode, this);
 	        notifyObservers(operation);
 	        
 		}
 	}
 
-	public ArrayList<Node> getSlaveNodeList() {
-		return slaveNodeList;
+	public ArrayList<Node> getSecondaryNodeList() {
+		return secondaryNodeList;
 	}
 	
 	public void setExplicit(Boolean explicit){

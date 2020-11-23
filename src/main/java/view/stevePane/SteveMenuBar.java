@@ -11,6 +11,8 @@ import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.Tab;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
@@ -27,6 +29,7 @@ import org.slf4j.LoggerFactory;
 
 import model.common.CommonMethods;
 import view.common.Language;
+import view.common.dialogs.InputDialog;
 import view.common.dialogs.MessageDialog;
 import view.temporalViewPane.TemporalChainPane;
 import view.temporalViewPane.TemporalViewPane;
@@ -125,14 +128,14 @@ public class SteveMenuBar extends MenuBar{
 		
 		menuItemAbout.setOnAction(new EventHandler<ActionEvent>() {
 		    public void handle(ActionEvent t) {
-		    	
-		    	MessageDialog messageDialog = new MessageDialog("STEVE", "Spatio-Temporal View Editor - Version 3.0-0" + "\n"
-		    			+ "Copyright 2017 Douglas Paulo de Mattos. MidiaCom Lab. UFF." + "\n"
-		    			+ "All rights reserved." + "\n"
-		    			+ "This product includes software developed by other MidiaCom Lab projects (aNa and NCL4WEB)." + "\n"
+
+				InputDialog inputDialog = new InputDialog("STEVE", "Spatio-Temporal View Editor - Version 3.0-0" + "\n\n"
+		    			+ "Copyright 2020. Douglas Paulo de Mattos. MidiaCom Lab-UFF." + "\n\n"
+		    			+ "All rights reserved." + "\n\n"
+		    			+ "This product includes software developed by other MidiaCom Lab projects (aNa and NCL4WEB)." + "\n\n"
 		    			+ "https://www.aNa.com.br" + "\n"
-		    			+ "https://www.NCL4WEB.com.br", "OK", 300);
-	            messageDialog.showAndWait();
+		    			+ "https://www.NCL4WEB.com.br", "OK",null, null, 320);
+				inputDialog.showAndWait();
 	            
 		    }
 		});
@@ -263,8 +266,6 @@ public class SteveMenuBar extends MenuBar{
 							if(timeLineXYChartData.getContainerNode().getStylesheets().isEmpty()){
 								timeLineXYChartData.getContainerNode().requestFocus();
 								timeLineXYChartData.getContainerNode().getStylesheets().add("styles/temporalViewPane/mousePressedTemporalMediaNode.css");
-								Rectangle mediaImageClip = (Rectangle) timeLineXYChartData.getContainerNode().getChildren().get(0).getClip();
-								mediaImageClip.setHeight(mediaImageClip.getHeight()-5);
 							}
 							
 						}
@@ -324,6 +325,7 @@ public class SteveMenuBar extends MenuBar{
 		
 		menuItemHelpContents= new MenuItem (Language.translate("help.contents"));
 		menuItemAbout= new MenuItem (Language.translate("about"));
+		menuItemAbout.setAccelerator(new KeyCodeCombination(KeyCode.A, KeyCombination.SHIFT_DOWN));
 		
 	}
 
@@ -352,59 +354,59 @@ public class SteveMenuBar extends MenuBar{
 	private void createEditMenuItems() {
 		
 		menuItemUndo= new MenuItem (Language.translate("undo"));
-		menuItemUndo.setAccelerator(KeyCombination.keyCombination("Ctrl+Z"));
+		menuItemUndo.setAccelerator(new KeyCodeCombination(KeyCode.Z, KeyCombination.CONTROL_DOWN));
 		
 		menuItemRedo = new MenuItem (Language.translate("redo"));
-		menuItemRedo.setAccelerator(KeyCombination.keyCombination("Ctrl+Y"));
+		menuItemRedo.setAccelerator(new KeyCodeCombination(KeyCode.Y, KeyCombination.CONTROL_DOWN));
 		
 		menuItemCut = new MenuItem (Language.translate("cut"));
-		menuItemCut.setAccelerator(KeyCombination.keyCombination("Ctrl+X"));
+		menuItemCut.setAccelerator(new KeyCodeCombination(KeyCode.X, KeyCombination.CONTROL_DOWN));
 		
 		menuItemCopy = new MenuItem (Language.translate("copy"));
-		menuItemCopy.setAccelerator(KeyCombination.keyCombination("Ctrl+C"));
+		menuItemCopy.setAccelerator(new KeyCodeCombination(KeyCode.C, KeyCombination.CONTROL_DOWN));
 		
 		menuItemPaste = new MenuItem (Language.translate("paste"));
-		menuItemPaste.setAccelerator(KeyCombination.keyCombination("Ctrl+V"));
+		menuItemPaste.setAccelerator(new KeyCodeCombination(KeyCode.V, KeyCombination.CONTROL_DOWN));
 		
 		menuItemDelete = new MenuItem (Language.translate("delete"));
-		menuItemDelete.setAccelerator(KeyCombination.keyCombination("Delete"));
+		menuItemDelete.setAccelerator(new KeyCodeCombination(KeyCode.DELETE, KeyCombination.CONTROL_DOWN));
 		
 		menuItemPreferences = new MenuItem (Language.translate("preferences"));
-		menuItemPreferences.setAccelerator(KeyCombination.keyCombination("⌘,"));
+		menuItemPreferences.setAccelerator(new KeyCodeCombination(KeyCode.P, KeyCombination.CONTROL_DOWN));
 		
 		menuItemSelectAll = new MenuItem (Language.translate("select.all"));
-		menuItemSelectAll.setAccelerator(KeyCombination.keyCombination("Ctrl+A"));
+		menuItemSelectAll.setAccelerator(new KeyCodeCombination(KeyCode.A, KeyCombination.CONTROL_DOWN));
 		
 	}
 
 	private void createFileMenuItems() {
 		
 		menuItemNew = new MenuItem (Language.translate("new.project"));
-		menuItemNew.setAccelerator(KeyCombination.keyCombination("Ctrl+N"));
+		menuItemNew.setAccelerator(new KeyCodeCombination(KeyCode.N, KeyCombination.CONTROL_DOWN));
 		
 		menuItemOpen = new MenuItem (Language.translate("open.project"));
-		menuItemOpen.setAccelerator(KeyCombination.keyCombination("Ctrl+O"));
+		menuItemOpen.setAccelerator(new KeyCodeCombination(KeyCode.O, KeyCombination.CONTROL_DOWN));
 		
 		menuItemClose = new MenuItem (Language.translate("close"));
-		menuItemClose.setAccelerator(KeyCombination.keyCombination("Ctrl+W"));
+		menuItemClose.setAccelerator(new KeyCodeCombination(KeyCode.W, KeyCombination.CONTROL_DOWN));
 		
 		menuItemSave = new MenuItem (Language.translate("save.project"));
-		menuItemSave.setAccelerator(KeyCombination.keyCombination("Ctrl+S"));
+		menuItemSave.setAccelerator(new KeyCodeCombination(KeyCode.S, KeyCombination.CONTROL_DOWN));
 		
 		menuItemImportNCL = new MenuItem (Language.translate("import.ncl.document"));
-		menuItemImportNCL.setAccelerator(KeyCombination.keyCombination("Ctrl+I"));
+		menuItemImportNCL.setAccelerator(new KeyCodeCombination(KeyCode.I, KeyCombination.CONTROL_DOWN));
 		
 		menuItemExportNCL = new MenuItem (Language.translate("export.ncl.document"));
-		menuItemExportNCL.setAccelerator(KeyCombination.keyCombination("Ctrl+E"));
+		menuItemExportNCL.setAccelerator(new KeyCodeCombination(KeyCode.E, KeyCombination.CONTROL_DOWN));
 		
 		menuItemExportHTML5 = new MenuItem (Language.translate("export.html5.document"));
-		menuItemExportHTML5.setAccelerator(KeyCombination.keyCombination("Ctrl+H"));
+		menuItemExportHTML5.setAccelerator(new KeyCodeCombination(KeyCode.H, KeyCombination.CONTROL_DOWN));
 		
 		menuItemRun = new MenuItem (Language.translate("run.application"));
-		menuItemRun.setAccelerator(KeyCombination.keyCombination("Ctrl+R"));
+		menuItemRun.setAccelerator(new KeyCodeCombination(KeyCode.R, KeyCombination.CONTROL_DOWN));
 		
 		menuItemExit = new MenuItem (Language.translate("exit"));
-		menuItemExit.setAccelerator(KeyCombination.keyCombination("Ctrl+Q"));
+		menuItemExit.setAccelerator(new KeyCodeCombination(KeyCode.Q, KeyCombination.CONTROL_DOWN));
 		
 	}
 	

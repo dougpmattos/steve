@@ -26,135 +26,175 @@
  * Alignment Buttons                                                           *
  *                                                                             *
  ******************************************************************************/
- 
+
 #meets-button{
 	-fx-graphic: url("../../images/temporalViewPane/meets.png");
 	-fx-background-color: transparent;
-    -fx-padding: 10;
+    -fx-padding: 6;
 }
 #meets-button:hover{
-    -fx-background-color: #00BFA5;
-    -fx-background-radius: 0;
+    -fx-background-color: linear-gradient(from 20% 20% to 100% 100%, derive(#37474f, 10%), derive(#102027, 10%));
+    -fx-background-radius: 4;
+}
+#meets-button:pressed{
+	-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);
 }
 
 #meets-delay-button{
 	-fx-graphic: url("../../images/temporalViewPane/meets_delay.png");
 	-fx-background-color: transparent;
-    -fx-padding: 0;
+    -fx-padding: 6;
 }
 #meets-delay-button:hover{
-    -fx-background-color: #00BFA5;
-    -fx-background-radius: 0;
+     -fx-background-color: linear-gradient(from 20% 20% to 100% 100%, derive(#37474f, 10%), derive(#102027, 10%));
+     -fx-background-radius: 4;
+}
+#meets-delay-button:pressed{
+     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);
 }
 
 #met-by-button{
 	-fx-graphic: url("../../images/temporalViewPane/met_by.png");
 	-fx-background-color: transparent;
-    -fx-padding: 0;
+    -fx-padding: 6;
 }
 #met-by-button:hover{
-    -fx-background-color: #00BFA5;
-    -fx-background-radius: 0;
+    -fx-background-color: linear-gradient(from 20% 20% to 100% 100%, derive(#37474f, 10%), derive(#102027, 10%));
+    -fx-background-radius: 4;
+}
+#met-by-button:pressed{
+     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);
 }
 
 #starts-button{
 	-fx-graphic: url("../../images/temporalViewPane/starts.png");
 	-fx-background-color: transparent;
-    -fx-padding: 0;
+    -fx-padding: 6;
 }
 #starts-button:hover{
-    -fx-background-color: #00BFA5;
-    -fx-background-radius: 0;
+    -fx-background-color: linear-gradient(from 20% 20% to 100% 100%, derive(#37474f, 10%), derive(#102027, 10%));
+    -fx-background-radius: 4;
+}
+#start-button:pressed{
+     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);
 }
 
 #finishes-button{
 	-fx-graphic: url("../../images/temporalViewPane/finishes.png");
 	-fx-background-color: transparent;
-    -fx-padding: 0;
+    -fx-padding: 6;
 }
 #finishes-button:hover{
-    -fx-background-color: #00BFA5;
-    -fx-background-radius: 0;
+    -fx-background-color: linear-gradient(from 20% 20% to 100% 100%, derive(#37474f, 10%), derive(#102027, 10%));
+    -fx-background-radius: 4;
+}
+#finishes-button:pressed{
+     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);
 }
 
 #before-button{
 	-fx-graphic: url("../../images/temporalViewPane/before.png");
 	-fx-background-color: transparent;
-    -fx-padding: 0;
+    -fx-padding: 6;
 }
 #before-button:hover{
-    -fx-background-color: #00BFA5;
-    -fx-background-radius: 0;
+    -fx-background-color: linear-gradient(from 20% 20% to 100% 100%, derive(#37474f, 10%), derive(#102027, 10%));
+    -fx-background-radius: 4;
+}
+#before-button:pressed{
+     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);
 }
 
 #starts-delay-button{
 	-fx-graphic: url("../../images/temporalViewPane/starts_delay.png");
 	-fx-background-color: transparent;
-    -fx-padding: 0;
+    -fx-padding: 6;
 }
 #starts-delay-button:hover{
-    -fx-background-color: #00BFA5;
-    -fx-background-radius: 0;
+    -fx-background-color: linear-gradient(from 20% 20% to 100% 100%, derive(#37474f, 10%), derive(#102027, 10%));
+    -fx-background-radius: 4;
+}
+#starts-delay-button:pressed{
+     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);
 }
 
 #finishes-delay-button{
 	-fx-graphic: url("../../images/temporalViewPane/finishes_delay.png");
 	-fx-background-color: transparent;
-    -fx-padding: 0;
+    -fx-padding: 6;
 }
 #finishes-delay-button:hover{
-    -fx-background-color: #00BFA5;
-    -fx-background-radius: 0;
+    -fx-background-color: linear-gradient(from 20% 20% to 100% 100%, derive(#37474f, 10%), derive(#102027, 10%));
+    -fx-background-radius: 4;
+}
+#finishes-delay-button:pressed{
+     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);
 }
 
 #met-by-delay-button{
 	-fx-graphic: url("../../images/temporalViewPane/met_by_delay.png");
 	-fx-background-color: transparent;
-    -fx-padding: 0;
+    -fx-padding: 6;
 }
 #met-by-delay-button:hover{
-    -fx-background-color: #00BFA5;
-    -fx-background-radius: 0;
+    -fx-background-color: linear-gradient(from 20% 20% to 100% 100%, derive(#37474f, 10%), derive(#102027, 10%));
+    -fx-background-radius: 4;
+}
+#met-by-delay-button:pressed{
+     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);
 }
 
 #during-button{
 	-fx-graphic: url("../../images/temporalViewPane/during.png");
 	-fx-background-color: transparent;
-    -fx-padding: 0;
+    -fx-padding: 6;
 }
 #during-button:hover{
-    -fx-background-color: #00BFA5;
-    -fx-background-radius: 0;
+    -fx-background-color: linear-gradient(from 20% 20% to 100% 100%, derive(#37474f, 10%), derive(#102027, 10%));
+    -fx-background-radius: 4;
 }
+#during-button:pressed{
+     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);
+}
+
 
 #equals-button{
 	-fx-graphic: url("../../images/temporalViewPane/equals.png");
 	-fx-background-color: transparent;
-    -fx-padding: 0;
+    -fx-padding: 6;
 }
 #equals-button:hover{
-    -fx-background-color: #00BFA5;
-    -fx-background-radius: 0;
+    -fx-background-color: linear-gradient(from 20% 20% to 100% 100%, derive(#37474f, 10%), derive(#102027, 10%));
+    -fx-background-radius: 4;
+}
+#equals-button:pressed{
+     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);
 }
 
 #finishes-delay-finishes-button{
 	-fx-graphic: url("../../images/temporalViewPane/finishes_delay_finishes.png");
 	-fx-background-color: transparent;
-    -fx-padding: 0;
+    -fx-padding: 6;
 }
 #finishes-delay-finishes-button:hover{
-    -fx-background-color: #00BFA5;
-    -fx-background-radius: 0;
+    -fx-background-color: linear-gradient(from 20% 20% to 100% 100%, derive(#37474f, 10%), derive(#102027, 10%));
+    -fx-background-radius: 4;
+}
+#finishes-delay-finishes-button:pressed{
+     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);
 }
 
 #overlaps-button{
 	-fx-graphic: url("../../images/temporalViewPane/overlaps.png");
 	-fx-background-color: transparent;
-    -fx-padding: 0;
+    -fx-padding: 6;
 }
 #overlaps-button:hover{
-    -fx-background-color: #00BFA5;
-    -fx-background-radius: 0;
+    -fx-background-color: linear-gradient(from 20% 20% to 100% 100%, derive(#37474f, 10%), derive(#102027, 10%));
+    -fx-background-radius: 4;
+}
+#overlaps-button:pressed{
+     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);
 }
 
 /*******************************************************************************

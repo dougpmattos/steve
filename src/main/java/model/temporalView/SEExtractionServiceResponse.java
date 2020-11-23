@@ -50,7 +50,7 @@ public class SEExtractionServiceResponse {
                     break;
                 case WATER_SPRAYER:
                     sensoryEffectsConceptList
-                            .add(new SensoryEffectConcept(SensoryEffectType.WATER_SPRAYER, new String[] { "rain", "waves" }));
+                            .add(new SensoryEffectConcept(SensoryEffectType.WATER_SPRAYER, new String[] { "waves" }));
                     break;
                 case VIBRATION:
                     sensoryEffectsConceptList
@@ -75,9 +75,9 @@ public class SEExtractionServiceResponse {
                 case FOG:
                     sensoryEffectsConceptList.add(new SensoryEffectConcept(SensoryEffectType.FOG, new String[] { "fog", "clouds" }));
                     break;
-                case FLASH_LIGHT:
+                case FLASH:
                     sensoryEffectsConceptList
-                            .add(new SensoryEffectConcept(SensoryEffectType.FLASH_LIGHT, new String[] { "lightning", "gunshot" }));
+                            .add(new SensoryEffectConcept(SensoryEffectType.FLASH, new String[] { "lightning", "gunshot" }));
                     break;
                 case RAINSTORM:
                     sensoryEffectsConceptList.add(new SensoryEffectConcept(SensoryEffectType.RAINSTORM, new String[] { "storm" }));

@@ -9,14 +9,14 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
-import model.common.Media;
+import model.common.MediaNode;
 import model.spatialView.media.LevelProperty;
 import controller.ApplicationController;
 
 public class LevelPane extends VBox {
 
 	private ApplicationController applicationController;
-	private Media media;
+	private MediaNode mediaNode;
 	
 	private SliderButton volume;
 	private SliderButton balance;
@@ -27,12 +27,12 @@ public class LevelPane extends VBox {
 	private BorderPane titleImageBorderPane;
 	private GridPane levelPropertyGridPane;
 	
-	public LevelPane(ApplicationController applicationController, Media media){
+	public LevelPane(ApplicationController applicationController, MediaNode mediaNode){
 		
 		setId("level-vbox");
 		
 		this.applicationController = applicationController;
-		this.media = media;
+		this.mediaNode = mediaNode;
 		
 		Text title = new Text(Language.translate("levels"));
 		title.setId("level-title");
@@ -113,7 +113,7 @@ public class LevelPane extends VBox {
 
 	private void populateLevelPane() {
 		
-		LevelProperty levelProperty = media.getPresentationProperty().getLevelProperty();
+		LevelProperty levelProperty = mediaNode.getPresentationProperty().getLevelProperty();
 
 		setVolume(levelProperty.getVolume());
 		setBalance(levelProperty.getBalance());
@@ -124,7 +124,7 @@ public class LevelPane extends VBox {
 	
 	public void populateLevelPropertyJavaBean() {
 		
-		applicationController.populateLevelPropertyJavaBean(this, media);
+		applicationController.populateLevelPropertyJavaBean(this, mediaNode);
 		
 	}
 	

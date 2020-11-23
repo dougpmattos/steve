@@ -9,6 +9,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -42,15 +43,15 @@ public class LoadingWindow extends Stage {
 
         containerBorderPane.setId("container-border-pane");
 
-        ImageView icon = new ImageView(new Image(getClass().getResourceAsStream("/images/loadingWindow/loadingScreen.png")));
-        icon.setPreserveRatio(true);
-        icon.setSmooth(true);
-        icon.fitWidthProperty().bind(containerBorderPane.widthProperty());
-        icon.fitHeightProperty().bind(containerBorderPane.heightProperty());
+        ImageView imageView = new ImageView(new Image(getClass().getResourceAsStream("/images/loadingWindow/loadingScreen.png")));
+        imageView.setPreserveRatio(true);
+        imageView.setSmooth(true);
+        imageView.fitWidthProperty().bind(containerBorderPane.widthProperty());
+        imageView.fitHeightProperty().bind(containerBorderPane.heightProperty());
 
         ProgressBar progressBar = new ProgressBar();
 
-        containerBorderPane.getChildren().addAll(icon, progressBar);
+        containerBorderPane.getChildren().addAll(imageView, progressBar);
         containerBorderPane.setAlignment(progressBar, Pos.CENTER_LEFT);
         StackPane.setMargin(progressBar, new Insets(120,0,0,48));
         containerBorderPane.getStylesheets().add("styles/stevePane/loadingWindow.css");

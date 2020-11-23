@@ -1,5 +1,6 @@
 package view.spatialViewPane;
 
+import model.common.MediaNode;
 import view.common.Language;
 import javafx.collections.FXCollections;
 import javafx.scene.control.Button;
@@ -11,7 +12,6 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
-import model.common.Media;
 import model.spatialView.media.SizeProperty;
 import model.spatialView.media.enums.AspectRatio;
 import model.spatialView.media.enums.Size;
@@ -20,7 +20,7 @@ import controller.ApplicationController;
 public class SizePane extends VBox {
 
 	private ApplicationController applicationController;
-	private Media media;
+	private MediaNode mediaNode;
 	
 	private TextField width;
 	private TextField height;
@@ -32,12 +32,12 @@ public class SizePane extends VBox {
 	private BorderPane titleButtonBorderPane;
 	private GridPane sizePropertyGridPane;
 	
-	public SizePane(ApplicationController applicationController, Media media){
+	public SizePane(ApplicationController applicationController, MediaNode mediaNode){
 		
 		setId("size-vbox");
 		
 		this.applicationController = applicationController;
-		this.media = media;
+		this.mediaNode = mediaNode;
 		
 		Text title = new Text(Language.translate("size"));
 		title.setId("size-title");
@@ -124,7 +124,7 @@ public class SizePane extends VBox {
 	
 	private void populateSizePane(){
 		
-		SizeProperty sizeProperty = media.getPresentationProperty().getSizeProperty();
+		SizeProperty sizeProperty = mediaNode.getPresentationProperty().getSizeProperty();
 
 		setWidthValue(sizeProperty.getWidth());
 		setHeightValue(sizeProperty.getHeight());
@@ -134,7 +134,7 @@ public class SizePane extends VBox {
 	
 	public void populateSizePropertyJavaBean(){
 		
-		applicationController.populateSizePropertyJavaBean(this, media);
+		applicationController.populateSizePropertyJavaBean(this, mediaNode);
 		
 	}
 }	

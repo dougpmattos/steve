@@ -7,10 +7,17 @@
 #container-border-pane{
 	-fx-background-color: #62727b;
 	-fx-background-radius: 20;
+	-fx-background-insets: 5;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);
 }
 #msg-label{
 	-fx-text-fill: #FFFFFF;
 	-fx-font-size: 14;
+}
+
+#msg-label-current-time{
+	-fx-text-fill: #FFFFFF;
+	-fx-font-size: 12;
 }
 
 .progress-bar {

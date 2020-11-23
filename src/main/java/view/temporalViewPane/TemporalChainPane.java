@@ -13,6 +13,7 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
+import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.NumberAxis;
@@ -29,6 +30,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.media.MediaView;
 import javafx.scene.shape.ClosePath;
@@ -37,8 +39,8 @@ import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.Path;
 import javafx.scene.shape.PathElement;
 import javafx.scene.shape.VLineTo;
-import model.common.Media;
-import model.common.SensoryEffect;
+import model.common.MediaNode;
+import model.common.SensoryEffectNode;
 import model.common.SpatialTemporalApplication;
 import model.common.enums.SensoryEffectType;
 import model.temporalView.Interactivity;
@@ -49,21 +51,18 @@ import model.temporalView.enums.TemporalViewOperator;
 import model.utility.MediaUtil;
 import model.utility.Operation;
 import view.common.Language;
+import view.common.dialogs.ReturnMessage;
 import view.repositoryPane.RepositoryPane;
 import view.spatialViewPane.ControlButtonPane;
 import view.spatialViewPane.DisplayPane;
-import view.stevePane.StevePane;
+import view.stevePane.SteveScene;
 import controller.ApplicationController;
 
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public class TemporalChainPane extends StackPane implements Observer{
 
 	private static final int DIFF_INDICATIVE_LINE_AND_TEMPORAL_NODE = 7;
-	private final int ICON_WIDTH = 40;
-
 	private static final double ARROW_DIFF = 7.5;
-
-	private static final double BORDER_DIFF = 0.26;
 
 	private ApplicationController applicationController;
 	
@@ -77,7 +76,7 @@ public class TemporalChainPane extends StackPane implements Observer{
 	private Path indicativeLine;
 	private Path playhead;
 	private ArrayList<ArrayList<TimeLineXYChartData>> timeLineXYChartDataLineList = new ArrayList<ArrayList<TimeLineXYChartData>>();
-	private StevePane stevePane;
+	private SteveScene steveScene;
 	private Tab parentTab;
 	private Boolean hasClickedPlayhead = false;
 	private DisplayPane displayPane;
@@ -85,24 +84,26 @@ public class TemporalChainPane extends StackPane implements Observer{
 	private ContextMenu arrowContextMenu;
 	private MenuItem menuItemDeleteRelation;
 	private StackPane screen;
-	NumberAxis xAxis;
-	CategoryAxis yAxis;
+	private NumberAxis xAxis;
+	private CategoryAxis yAxis;
+	private ReturnMessage currentTimePopup;
 	
-	public TemporalChainPane(ApplicationController applicationController, SpatialTemporalApplication temporalViewModel, TemporalChain temporalChainModel, TemporalViewPane temporalViewPane, RepositoryPane repositoryPane, StevePane stevePane){
+	public TemporalChainPane(ApplicationController applicationController, SpatialTemporalApplication temporalViewModel, TemporalChain temporalChainModel, TemporalViewPane temporalViewPane, RepositoryPane repositoryPane, SteveScene steveScene){
     	
 		xAxis = new NumberAxis();
     	xAxis.setAutoRanging(false);
-    	xAxis.setUpperBound(50);
 
     	yAxis = new CategoryAxis();
     	yAxis.setId("axis-y");
     	yAxisCategoryList.addAll(FXCollections.<String>observableArrayList("4", "3", "2", "1", "0"));
     	yAxis.setCategories(FXCollections.<String>observableArrayList(yAxisCategoryList));
-    	
+
 		timeLineChart = new TimeLineChart<Number, String>(xAxis, yAxis);
 		serie = new XYChart.Series<Number, String>();
 		timeLineChart.getData().addAll(serie);
-		
+
+		currentTimePopup = new ReturnMessage(55, 30);
+
 		getChildren().add(timeLineChart);
 		
     	setId(String.valueOf(temporalChainModel.getId()));
@@ -112,7 +113,7 @@ public class TemporalChainPane extends StackPane implements Observer{
     	this.temporalChainModel = temporalChainModel;
     	this.temporalViewPane = temporalViewPane;
     	this.repositoryPane = repositoryPane;
-    	this.stevePane = stevePane;
+    	this.steveScene = steveScene;
 
     	indicativeLine = new Path();
     	indicativeLine.getElements().addAll(new MoveTo(), new VLineTo());
@@ -131,14 +132,13 @@ public class TemporalChainPane extends StackPane implements Observer{
 				}
 			}
 	    });
-    	
-    	displayPane = stevePane.getSpatialViewPane().getDisplayPane();
+
+		displayPane = steveScene.getSpatialViewPane().getDisplayPane();
 		controlButtonPane = displayPane.getControlButtonPane();
 		screen = displayPane.getScreen();
 
     	createDragAndDropEvent();
     	createMouseEvent();
-    	createListeners();
     	createArrowPopupMenu(applicationController, temporalChainModel);
     	
     	temporalChainModel.addObserver(this);
@@ -149,88 +149,13 @@ public class TemporalChainPane extends StackPane implements Observer{
     	this.applicationController = applicationController;
     	
      }
-
-	private void createListeners(){
-		
-		indicativeLine.translateXProperty().addListener(new ChangeListener<Number>(){
-
-			@Override
-			public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-				
-				if(!controlButtonPane.getIsPlaying() && !controlButtonPane.getHasPaused()) {
-					
-					Double indicativeLine = timeLineChart.getXAxis().getValueForDisplay(newValue.doubleValue()).doubleValue();
-					
-					for(Media media : temporalChainModel.getMediaAllList()){
-						
-						if(media.getBegin() <= indicativeLine && indicativeLine <= media.getEnd()){
-							
-							if(!media.getIsPLayingInPreview()){
-				
-								media.setIsPLayingInPreview(true);
-								Object mediaContent = controlButtonPane.getMediaContent(media);
-								
-								if(mediaContent instanceof MediaView){
-									
-									controlButtonPane.setVideoPresentationProperties((MediaView) mediaContent, media);
-									screen.getChildren().add((MediaView) mediaContent);
-									
-								} else if(mediaContent instanceof ImageView){
-									
-									controlButtonPane.setImagePresentationProperties((ImageView) mediaContent, media);
-									if(screen.getChildren().isEmpty()){
-										
-										screen.getChildren().add((ImageView) mediaContent);
-										
-									} else{
-										boolean inserted = false;
-										for(Node executionObject : screen.getChildren()){
-							    			
-											if(((ImageView) mediaContent).getTranslateZ() < executionObject.getTranslateZ()){
-												screen.getChildren().add(screen.getChildren().indexOf(executionObject), (ImageView) mediaContent);
-												inserted = true;
-												break;
-											}
-											
-							    		}
-										if(!inserted){
-											screen.getChildren().add((ImageView) mediaContent);
-										}
-									}
-
-
-								}
-								
-							} 
-
-						}else {
-							
-							if(media.getIsPLayingInPreview()){
-									
-				    			if(!screen.getChildren().isEmpty()){
-				    				screen.getChildren().remove(media.getExecutionObject());
-									media.setIsPLayingInPreview(false);
-				    			}
-		
-							}	
-						}
-					}
-				}
-
-			}
-			
-		});
-		
-		
-		
-	}
 	
 	private void createDragAndDropEvent() {
-		
+
 		setOnDragDropped(new EventHandler<DragEvent>() {
 			
 			public void handle(DragEvent event) {
-				
+
 				Dragboard dragBoard = event.getDragboard();
 		        Object[] contentTypes = dragBoard.getContentTypes().toArray();
 		        Object droppedNode = dragBoard.getContent((DataFormat) contentTypes[0]);
@@ -238,32 +163,36 @@ public class TemporalChainPane extends StackPane implements Observer{
 		        if(droppedNode instanceof SensoryEffectType) {
 		        	
 		        	SensoryEffectType sensoryEffectType = (SensoryEffectType) dragBoard.getContent((DataFormat) contentTypes[0]);
-		        	SensoryEffect droppedSensoryEffect = new SensoryEffect();
-					droppedSensoryEffect.setParentTemporalChain(temporalChainModel);
+					SensoryEffectNode droppedSensoryEffect = new SensoryEffectNode(sensoryEffectType);
 
 		        	int duplicatedEffectCount;
-		        	
+
 		        	switch(sensoryEffectType){
 		        	
 			            case WIND:
-			            	
+
+							droppedSensoryEffect.setParentTemporalChain(temporalChainModel);
 			            	droppedSensoryEffect.setType(SensoryEffectType.WIND);
-			            	droppedSensoryEffect.setName(SensoryEffectType.WIND.toString());
-			            	
-				        	duplicatedEffectCount = getDuplicatedNodeCount(droppedSensoryEffect);
-					        if(duplicatedEffectCount > 0){
-					        	droppedSensoryEffect.setName(SensoryEffectType.WIND.toString() + "_" + duplicatedEffectCount++);
-					        }
+
+				        	duplicatedEffectCount = getDuplicatedEffectNodeCount(droppedSensoryEffect);
+							duplicatedEffectCount++;
+					        if(duplicatedEffectCount > 1){
+					        	droppedSensoryEffect.setName(SensoryEffectType.WIND.toString() + "_" + duplicatedEffectCount);
+					        }else{
+								droppedSensoryEffect.setName(SensoryEffectType.WIND.toString());
+							}
 					        
 			                break;
 			                
 			            case WATER_SPRAYER:
-			                
+
+							droppedSensoryEffect.setParentTemporalChain(temporalChainModel);
 			            	droppedSensoryEffect.setType(SensoryEffectType.WATER_SPRAYER);
 			            	
-				        	duplicatedEffectCount = getDuplicatedNodeCount(droppedSensoryEffect);
-					        if(duplicatedEffectCount > 0){
-					        	droppedSensoryEffect.setName(SensoryEffectType.WATER_SPRAYER.toString() + "_" + duplicatedEffectCount++);
+				        	duplicatedEffectCount = getDuplicatedEffectNodeCount(droppedSensoryEffect);
+							duplicatedEffectCount++;
+							if(duplicatedEffectCount > 1){
+					        	droppedSensoryEffect.setName(SensoryEffectType.WATER_SPRAYER.toString() + "_" + duplicatedEffectCount);
 					        }else{
 					        	droppedSensoryEffect.setName(SensoryEffectType.WATER_SPRAYER.toString());
 					        }
@@ -271,38 +200,44 @@ public class TemporalChainPane extends StackPane implements Observer{
 			                break;
 			                
 			            case FOG:
-			                
+
+							droppedSensoryEffect.setParentTemporalChain(temporalChainModel);
 			            	droppedSensoryEffect.setType(SensoryEffectType.FOG);
 			            	
-				        	duplicatedEffectCount = getDuplicatedNodeCount(droppedSensoryEffect);
-					        if(duplicatedEffectCount > 0){
-					        	droppedSensoryEffect.setName(SensoryEffectType.FOG.toString() + "_" + duplicatedEffectCount++);
+				        	duplicatedEffectCount = getDuplicatedEffectNodeCount(droppedSensoryEffect);
+							duplicatedEffectCount++;
+							if(duplicatedEffectCount > 1){
+					        	droppedSensoryEffect.setName(SensoryEffectType.FOG.toString() + "_" + duplicatedEffectCount);
 					        }else{
 					        	droppedSensoryEffect.setName(SensoryEffectType.FOG.toString());
 					        }
 					        
 			                break;
 			                
-			            case FLASH_LIGHT:
+			            case FLASH:
+
+							droppedSensoryEffect.setParentTemporalChain(temporalChainModel);
+			            	droppedSensoryEffect.setType(SensoryEffectType.FLASH);
 			            	
-			            	droppedSensoryEffect.setType(SensoryEffectType.FLASH_LIGHT);
-			            	
-				        	duplicatedEffectCount = getDuplicatedNodeCount(droppedSensoryEffect);
-					        if(duplicatedEffectCount > 0){
-					        	droppedSensoryEffect.setName(SensoryEffectType.FLASH_LIGHT.toString() + "_" + duplicatedEffectCount++);
+				        	duplicatedEffectCount = getDuplicatedEffectNodeCount(droppedSensoryEffect);
+							duplicatedEffectCount++;
+							if(duplicatedEffectCount > 1){
+					        	droppedSensoryEffect.setName(SensoryEffectType.FLASH.toString() + "_" + duplicatedEffectCount);
 					        }else{
-					        	droppedSensoryEffect.setName(SensoryEffectType.FLASH_LIGHT.toString());
+					        	droppedSensoryEffect.setName(SensoryEffectType.FLASH.toString());
 					        }
 					        
 			                break;
 			                
 			            case SCENT:
-			            	
+
+							droppedSensoryEffect.setParentTemporalChain(temporalChainModel);
 			            	droppedSensoryEffect.setType(SensoryEffectType.SCENT);
 			            	
-				        	duplicatedEffectCount = getDuplicatedNodeCount(droppedSensoryEffect);
-					        if(duplicatedEffectCount > 0){
-					        	droppedSensoryEffect.setName(SensoryEffectType.SCENT.toString() + "_" + duplicatedEffectCount++);
+				        	duplicatedEffectCount = getDuplicatedEffectNodeCount(droppedSensoryEffect);
+							duplicatedEffectCount++;
+							if(duplicatedEffectCount > 1){
+					        	droppedSensoryEffect.setName(SensoryEffectType.SCENT.toString() + "_" + duplicatedEffectCount);
 					        }else{
 					        	droppedSensoryEffect.setName(SensoryEffectType.SCENT.toString());
 					        }
@@ -310,12 +245,14 @@ public class TemporalChainPane extends StackPane implements Observer{
 			                break;
 			                
 			            case COLD:
-			            	
+
+							droppedSensoryEffect.setParentTemporalChain(temporalChainModel);
 			            	droppedSensoryEffect.setType(SensoryEffectType.COLD);
 			            	
-				        	duplicatedEffectCount = getDuplicatedNodeCount(droppedSensoryEffect);
-					        if(duplicatedEffectCount > 0){
-					        	droppedSensoryEffect.setName(SensoryEffectType.COLD.toString() + "_" + duplicatedEffectCount++);
+				        	duplicatedEffectCount = getDuplicatedEffectNodeCount(droppedSensoryEffect);
+							duplicatedEffectCount++;
+					        if(duplicatedEffectCount > 1){
+					        	droppedSensoryEffect.setName(SensoryEffectType.COLD.toString() + "_" + duplicatedEffectCount);
 					        }else{
 					        	droppedSensoryEffect.setName(SensoryEffectType.COLD.toString());
 					        }
@@ -324,11 +261,13 @@ public class TemporalChainPane extends StackPane implements Observer{
 
 						case HOT:
 
+							droppedSensoryEffect.setParentTemporalChain(temporalChainModel);
 							droppedSensoryEffect.setType(SensoryEffectType.HOT);
 
-							duplicatedEffectCount = getDuplicatedNodeCount(droppedSensoryEffect);
-							if(duplicatedEffectCount > 0){
-								droppedSensoryEffect.setName(SensoryEffectType.HOT.toString() + "_" + duplicatedEffectCount++);
+							duplicatedEffectCount = getDuplicatedEffectNodeCount(droppedSensoryEffect);
+							duplicatedEffectCount++;
+							if(duplicatedEffectCount > 1){
+								droppedSensoryEffect.setName(SensoryEffectType.HOT.toString() + "_" + duplicatedEffectCount);
 							}else{
 								droppedSensoryEffect.setName(SensoryEffectType.HOT.toString());
 							}
@@ -336,12 +275,14 @@ public class TemporalChainPane extends StackPane implements Observer{
 							break;
 			                
 			            case VIBRATION:
-			            	
+
+							droppedSensoryEffect.setParentTemporalChain(temporalChainModel);
 			            	droppedSensoryEffect.setType(SensoryEffectType.VIBRATION);
 			            	
-				        	duplicatedEffectCount = getDuplicatedNodeCount(droppedSensoryEffect);
-					        if(duplicatedEffectCount > 0){
-					        	droppedSensoryEffect.setName(SensoryEffectType.VIBRATION.toString() + "_" + duplicatedEffectCount++);
+				        	duplicatedEffectCount = getDuplicatedEffectNodeCount(droppedSensoryEffect);
+							duplicatedEffectCount++;
+							if(duplicatedEffectCount > 1){
+					        	droppedSensoryEffect.setName(SensoryEffectType.VIBRATION.toString() + "_" + duplicatedEffectCount);
 					        }else{
 					        	droppedSensoryEffect.setName(SensoryEffectType.VIBRATION.toString());
 					        }
@@ -350,11 +291,13 @@ public class TemporalChainPane extends StackPane implements Observer{
 			                
 			            case LIGHT:
 
+							droppedSensoryEffect.setParentTemporalChain(temporalChainModel);
 			            	droppedSensoryEffect.setType(SensoryEffectType.LIGHT);
 			            	
-				        	duplicatedEffectCount = getDuplicatedNodeCount(droppedSensoryEffect);
-					        if(duplicatedEffectCount > 0){
-					        	droppedSensoryEffect.setName(SensoryEffectType.LIGHT.toString() + "_" + duplicatedEffectCount++);
+				        	duplicatedEffectCount = getDuplicatedEffectNodeCount(droppedSensoryEffect);
+							duplicatedEffectCount++;
+							if(duplicatedEffectCount > 1){
+					        	droppedSensoryEffect.setName(SensoryEffectType.LIGHT.toString() + "_" + duplicatedEffectCount);
 					        }else{
 					        	droppedSensoryEffect.setName(SensoryEffectType.LIGHT.toString());
 					        }
@@ -362,12 +305,14 @@ public class TemporalChainPane extends StackPane implements Observer{
 			                break;
 			                
 			            case RAINSTORM:
-			            	
+
+							droppedSensoryEffect.setParentTemporalChain(temporalChainModel);
 			            	droppedSensoryEffect.setType(SensoryEffectType.RAINSTORM);
 			            	
-				        	duplicatedEffectCount = getDuplicatedNodeCount(droppedSensoryEffect);
-					        if(duplicatedEffectCount > 0){
-					        	droppedSensoryEffect.setName(SensoryEffectType.RAINSTORM.toString() + "_" + duplicatedEffectCount++);
+				        	duplicatedEffectCount = getDuplicatedEffectNodeCount(droppedSensoryEffect);
+							duplicatedEffectCount++;
+							if(duplicatedEffectCount > 1){
+					        	droppedSensoryEffect.setName(SensoryEffectType.RAINSTORM.toString() + "_" + duplicatedEffectCount);
 					        }else{
 					        	droppedSensoryEffect.setName(SensoryEffectType.RAINSTORM.toString());
 					        }
@@ -386,11 +331,12 @@ public class TemporalChainPane extends StackPane implements Observer{
 			        		droppedSensoryEffect.setEnd(droppedSensoryEffect.getDuration());
 				        	
 				        	applicationController.setMasterNode(droppedSensoryEffect, temporalChainModel);
+							applicationController.addNodeTemporalChain(droppedSensoryEffect, temporalChainModel);
 			        		
 			        	} else{
 			        	
 			        		Double droppedTime = timeLineChart.getXAxis().getValueForDisplay(event.getX()).doubleValue();
-			        		droppedTime = MediaUtil.approximateDouble(droppedTime - BORDER_DIFF);
+			        		droppedTime = MediaUtil.approximateDouble(droppedTime);
 			        		
 			        		droppedSensoryEffect.setBegin(droppedTime);
 			        		droppedSensoryEffect.setEnd(droppedTime + droppedSensoryEffect.getDuration());
@@ -405,18 +351,19 @@ public class TemporalChainPane extends StackPane implements Observer{
 			        } catch (Exception e){
 			        	
 			        	event.setDropCompleted(false);
-			        	Logger.getLogger(Media.class.getName()).log(Level.SEVERE, null, e);
+			        	Logger.getLogger(MediaNode.class.getName()).log(Level.SEVERE, null, e);
 			        	
 			        }
 		        	 
 		        }else {
 
-		        	Media droppedMedia = (Media) dragBoard.getContent((DataFormat) contentTypes[0]);
-					droppedMedia.setParentTemporalChain(temporalChainModel);
+		        	MediaNode droppedMediaNode = (MediaNode) dragBoard.getContent((DataFormat) contentTypes[0]);
+					droppedMediaNode.setParentTemporalChain(temporalChainModel);
 
-		        	int duplicatedMediaCount = getDuplicatedNodeCount(droppedMedia);
-			        if(duplicatedMediaCount > 0){
-			        	droppedMedia.setName(droppedMedia.getName() + "_" + duplicatedMediaCount++);
+		        	int duplicatedMediaCount = getDuplicatedMediaNodeCount(droppedMediaNode);
+					duplicatedMediaCount++;
+			        if(duplicatedMediaCount > 1){
+			        	droppedMediaNode.setName(droppedMediaNode.getName() + "_" + duplicatedMediaCount);
 			        }
 
 			        try{
@@ -425,20 +372,21 @@ public class TemporalChainPane extends StackPane implements Observer{
 			        		
 			        		Double droppedTime = 0.0;
 				        	
-				        	droppedMedia.setBegin(droppedTime);
-				        	droppedMedia.setEnd(droppedMedia.getDuration());
+				        	droppedMediaNode.setBegin(droppedTime);
+				        	droppedMediaNode.setEnd(droppedMediaNode.getDuration());
 				        	
-				        	applicationController.setMasterNode(droppedMedia, temporalChainModel);
+				        	applicationController.setMasterNode(droppedMediaNode, temporalChainModel);
+							applicationController.addNodeTemporalChain(droppedMediaNode, temporalChainModel);
 			        		
 			        	} else{
 			        	
 			        		Double droppedTime = timeLineChart.getXAxis().getValueForDisplay(event.getX()).doubleValue();
-			        		droppedTime = MediaUtil.approximateDouble(droppedTime - BORDER_DIFF);
+			        		droppedTime = MediaUtil.approximateDouble(droppedTime);
 			        		
-				        	droppedMedia.setBegin(droppedTime);
-				        	droppedMedia.setEnd(droppedTime + droppedMedia.getDuration());
+				        	droppedMediaNode.setBegin(droppedTime);
+				        	droppedMediaNode.setEnd(droppedTime + droppedMediaNode.getDuration());
 				        	
-			        		applicationController.addNodeTemporalChain(droppedMedia, temporalChainModel);
+			        		applicationController.addNodeTemporalChain(droppedMediaNode, temporalChainModel);
 			        		
 			        	}
 			        	
@@ -448,24 +396,38 @@ public class TemporalChainPane extends StackPane implements Observer{
 			        } catch (Exception e){
 			        	
 			        	event.setDropCompleted(false);
-			        	Logger.getLogger(Media.class.getName()).log(Level.SEVERE, null, e);
+			        	Logger.getLogger(MediaNode.class.getName()).log(Level.SEVERE, null, e);
 			        	
 			        }
 		        }
 		        
 			}
 
-			private int getDuplicatedNodeCount(model.common.Node droppedNode) {
-				
-				int i = 0;
-				
-				for(model.common.Node node : temporalChainModel.getNodeAllList()){
-					if(node.getName().equalsIgnoreCase(droppedNode.getName())){
-						i++;
+			private int getDuplicatedMediaNodeCount(MediaNode droppedMediaNode){
+
+				int countSameMedia=0;
+
+				for(MediaNode mediaNode : temporalChainModel.getMediaNodeAllList()){
+					if(mediaNode.getPath().equalsIgnoreCase(droppedMediaNode.getPath())){
+						countSameMedia++;
 					}
 				}
-				
-				return i;
+
+				return countSameMedia;
+
+			}
+
+			private int getDuplicatedEffectNodeCount(SensoryEffectNode droppedEffectNode) {
+
+				int countSameEffect=0;
+
+				for(SensoryEffectNode sensoryEffectNode : temporalChainModel.getSensoryEffectNodeAllList()){
+					if(droppedEffectNode.getType() == sensoryEffectNode.getType()){
+						countSameEffect++;
+					}
+				}
+
+				return countSameEffect;
 				
 			}
 			
@@ -492,6 +454,7 @@ public class TemporalChainPane extends StackPane implements Observer{
 		setOnDragExited(new EventHandler<DragEvent>() {
 			
 			public void handle(DragEvent dragEvent) {
+				currentTimePopup.close();
 				getChildren().remove(indicativeLine);
 	        }  
 			
@@ -501,9 +464,24 @@ public class TemporalChainPane extends StackPane implements Observer{
 			
 			public void handle(DragEvent dragEvent) {
 
-				indicativeLine.setTranslateX(dragEvent.getX());
-				
 				Object[] contentTypes = dragEvent.getDragboard().getContentTypes().toArray();
+
+				indicativeLine.setTranslateX(dragEvent.getX() + DIFF_INDICATIVE_LINE_AND_TEMPORAL_NODE);
+
+				Double currentTimeWhileDragging = timeLineChart.getXAxis().getValueForDisplay(dragEvent.getX()).doubleValue();
+				currentTimeWhileDragging = MediaUtil.approximateDouble(currentTimeWhileDragging);
+
+				currentTimePopup.setMessage(String.valueOf(currentTimeWhileDragging));
+				currentTimePopup.setCursor(Cursor.H_RESIZE);
+				currentTimePopup.setX(dragEvent.getSceneX() + 4);
+
+				if(dragEvent.getDragboard().getContent((DataFormat) contentTypes[0]) instanceof SensoryEffectType) {
+					currentTimePopup.setY(dragEvent.getSceneY() - 5);
+				}else{
+					currentTimePopup.setY(dragEvent.getSceneY() - 15);
+				}
+
+				currentTimePopup.show();
 				
 				if (dragEvent.getDragboard().hasContent((DataFormat) contentTypes[0])) {
                    dragEvent.acceptTransferModes(TransferMode.COPY);
@@ -512,67 +490,111 @@ public class TemporalChainPane extends StackPane implements Observer{
                dragEvent.consume();
 	        }  
 	    });
-		
+
 	}
 	
 	public void createMouseEvent(){
-		
-		setOnMouseEntered(new EventHandler<MouseEvent>() {
+
+		setOnMouseReleased(new EventHandler<MouseEvent>() {
 			
 			public void handle(MouseEvent mouseEvent) {
-				
-				PathElement pathElement = indicativeLine.getElements().get(1);
-				if(pathElement instanceof VLineTo){
-					((VLineTo) pathElement).setY(timeLineChart.getHeight());
-				}
-				getChildren().add(indicativeLine);
-			
+				currentTimePopup.close();
 			}
 		});
-		
-		setOnMouseExited(new EventHandler<MouseEvent>() {
-			
-			public void handle(MouseEvent mouseEvent) {
-				
-				getChildren().remove(indicativeLine);
-				
-				if(!controlButtonPane.getIsPlaying() && !controlButtonPane.getHasPaused()){
-					screen.getChildren().clear();
-					for(Media media : temporalChainModel.getMediaAllList()){
-		    			media.setIsPLayingInPreview(false);
-		    		}
-				}
-
-			}
-	    });
-		
-		setOnMouseMoved(new EventHandler<MouseEvent>() {
-			
-			public void handle(MouseEvent mouseEvent) {
-				indicativeLine.setTranslateX(mouseEvent.getX());
-	        }  
-	    });
-		
-		setOnMouseDragged(new EventHandler<MouseEvent>() {
-			
-			public void handle(MouseEvent mouseEvent) {
-				indicativeLine.setTranslateX(mouseEvent.getX() + DIFF_INDICATIVE_LINE_AND_TEMPORAL_NODE);
-	        }  
-	    });
 		
 		setOnMouseClicked(new EventHandler<MouseEvent>() {
 			
 			public void handle(MouseEvent mouseEvent) {
 				playhead.setTranslateX(mouseEvent.getX() - ARROW_DIFF);
 				hasClickedPlayhead = true;
+				updatePreviewScreen(mouseEvent.getSceneX() - ARROW_DIFF);
 	        }  
 	    });
 		
 	}
 
-	public void updateNodeStartTime(model.common.Node node) {
+	public void updatePreviewScreen(double xPosition){
 
+		if(!controlButtonPane.getIsPlaying() && !controlButtonPane.getHasPaused()) {
 
+					Double currentTimeClicked = timeLineChart.getXAxis().getValueForDisplay(xPosition).doubleValue();
+
+					for(model.common.Node node : temporalChainModel.getNodeAllList()){
+
+						if(node.getBegin() <= currentTimeClicked && currentTimeClicked <= node.getEnd()){
+
+							if(!node.getIsPLayingInPreview()){
+
+								node.setIsPLayingInPreview(true);
+
+								if(node instanceof MediaNode) {
+
+									Object mediaContent = controlButtonPane.getMediaContent((MediaNode) node);
+
+									if(mediaContent instanceof MediaView){
+
+										controlButtonPane.setVideoPresentationProperties((MediaView) mediaContent, (MediaNode) node);
+										screen.getChildren().add((MediaView) mediaContent);
+
+									} else if(mediaContent instanceof ImageView){
+
+										controlButtonPane.setImagePresentationProperties((ImageView) mediaContent, (MediaNode) node);
+										if(screen.getChildren().isEmpty()){
+
+											screen.getChildren().add((ImageView) mediaContent);
+
+										} else{
+											boolean inserted = false;
+											for(Node executionObject : screen.getChildren()){
+
+												if(((ImageView) mediaContent).getTranslateZ() < executionObject.getTranslateZ()){
+													screen.getChildren().add(screen.getChildren().indexOf(executionObject), (ImageView) mediaContent);
+													inserted = true;
+													break;
+												}
+
+											}
+											if(!inserted){
+												screen.getChildren().add((ImageView) mediaContent);
+											}
+										}
+
+									}
+
+								} else if(node instanceof SensoryEffectNode){
+
+									Object nodeContent = controlButtonPane.getSensoryEffectIcon((SensoryEffectNode) node);
+									HBox effectIconsContainer = controlButtonPane.getEffectIconsContainer();
+									effectIconsContainer.getChildren().add((ImageView) nodeContent);
+
+									if(!screen.getChildren().contains(effectIconsContainer)){
+										screen.getChildren().add(effectIconsContainer);
+									}
+
+								}
+
+							}
+
+						}else {
+
+							if(node.getIsPLayingInPreview()){
+
+								if(!screen.getChildren().isEmpty()){
+									if(node instanceof SensoryEffectNode){
+										controlButtonPane.getEffectIconsContainer().getChildren().remove(node.getExecutionObject());
+									}else{
+										screen.getChildren().remove(node.getExecutionObject());
+									}
+									node.setIsPLayingInPreview(false);
+								}
+
+							}
+
+						}
+
+					}
+
+			}
 
 	}
 
@@ -584,9 +606,9 @@ public class TemporalChainPane extends StackPane implements Observer{
 		model.common.Node node;
 		int line;
 		Synchronous syncRelation;
-		Interactivity<Media> interactivityRelation;
+		Interactivity<MediaNode> interactivityRelation;
 		TemporalChain temporalChainModel;
-		DisplayPane displayPane = stevePane.getSpatialViewPane().getDisplayPane();
+		DisplayPane displayPane = steveScene.getSpatialViewPane().getDisplayPane();
 		ControlButtonPane controlButtonPane = displayPane.getControlButtonPane();
 		
 		switch(operation.getOperator()){
@@ -632,7 +654,7 @@ public class TemporalChainPane extends StackPane implements Observer{
 				
 				break;
 			
-			case REMOVE_SLAVE_NODE_OF_SYNC_RELATION:
+			case REMOVE_SECONDARY_NODE_OF_SYNC_RELATION:
 				
 				node = (model.common.Node) operation.getOperating();
 				syncRelation = (Synchronous) operation.getArg();
@@ -657,7 +679,7 @@ public class TemporalChainPane extends StackPane implements Observer{
 	
 		}
 	
-		TimeLineXYChartData timeLineXYChartData = new TimeLineXYChartData(applicationController, node, temporalChainModel, temporalViewPane, this,repositoryPane, line, stevePane, timeLineChart);
+		TimeLineXYChartData timeLineXYChartData = new TimeLineXYChartData(applicationController, node, temporalChainModel, temporalViewPane, this,repositoryPane, line, steveScene, timeLineChart);
 		serie.getData().add(timeLineXYChartData.getXYChartData());
 		
 		if(!timeLineXYChartDataLineList.isEmpty() && line < timeLineXYChartDataLineList.size()){
@@ -688,6 +710,7 @@ public class TemporalChainPane extends StackPane implements Observer{
 			
 			if(timeLineXYChartData.getNode() == node){
 				timeLineXYChartDataLine.remove(timeLineXYChartData);
+				timeLineXYChartData.getContainerNode().getChildren().clear();
 				serie.getData().remove(timeLineXYChartData.getXYChartData());
 				removed = true;
 			}
@@ -749,25 +772,25 @@ public class TemporalChainPane extends StackPane implements Observer{
 				    	//System.out.println("Tamanho do Temporal Chain Pane (X/Y): " + getLayoutBounds());
 				    	
 					}
-					
+
 					//TODO identificar o mestre
 //					for(Media media : syncRelation.getSlaveMediaList()){
-//						
+//
 //						if(mediaLabel.getText().equalsIgnoreCase(media.getName())){
-//							
+//
 //							if(!containerNode.getStylesheets().contains("view/temporalViewPane/styles/borderOfMediaToBeStopped.css")){
-//								
+//
 //								containerNode.getStylesheets().add("view/temporalViewPane/styles/borderOfMediaToBeStopped.css");
 //								ImageView imageView = (ImageView) containerNode.getChildren().get(0);
 //								Rectangle mediaImageClip = (Rectangle) imageView.getClip();
 //								mediaImageClip.setHeight(mediaImageClip.getHeight()-5);
-//								
+//
 //							}
-//							
+//
 //						}
-//						
+//
 //					}
-					
+
 				}*/
 				
 				break;

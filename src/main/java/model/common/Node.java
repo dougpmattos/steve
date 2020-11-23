@@ -1,12 +1,17 @@
 package model.common;
 
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.io.Serializable;
 import java.util.ArrayList;
 
 import javafx.scene.image.ImageView;
 import model.temporalView.TemporalChain;
+import model.utility.MediaUtil;
 
 public class Node<T> implements Serializable {
+
+	private final PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
 
 	private static final long serialVersionUID = 3268239784445533812L;
 
@@ -15,9 +20,10 @@ public class Node<T> implements Serializable {
 
     private Double begin;
     private Double end;
-    public Double duration = 5.0;
+    public Double duration = 10.0;
     private Boolean interactive = false;
     public T type;
+
     private Boolean isPLayingInPreview = false;
     public transient ImageView icon;
     private transient Object executionObject;
@@ -26,7 +32,7 @@ public class Node<T> implements Serializable {
 	public Node(){
     	
     }
-    
+
     public void setName(String name){
 		this.name = name;
 	}
@@ -36,7 +42,7 @@ public class Node<T> implements Serializable {
 	}
 	
 	public void setBegin(Double begin) {
-		   this.begin = begin;
+		   this.begin = MediaUtil.approximateDouble(begin);
 	}
 	
 	public Double getBegin() {
@@ -44,7 +50,9 @@ public class Node<T> implements Serializable {
 	}
 
 	public void setEnd(Double end) {
-		this.end = end;
+		Double oldValue = this.end;
+		this.end = MediaUtil.approximateDouble(end);
+		propertyChangeSupport.firePropertyChange("end", oldValue, end);
 	}
    
 	public Double getEnd() {
@@ -52,7 +60,7 @@ public class Node<T> implements Serializable {
 	}
 	   
 	public void setDuration(Double duration) {
-			this.duration = duration;
+			this.duration = MediaUtil.approximateDouble(duration);
 	}
 		
 	public Double getDuration() {
@@ -105,6 +113,14 @@ public class Node<T> implements Serializable {
 
 	public void setParentTemporalChain(TemporalChain parentTemporalChain) {
 		this.parentTemporalChain = parentTemporalChain;
+	}
+
+	public void addPropertyChangeListener(PropertyChangeListener listener) {
+		propertyChangeSupport.addPropertyChangeListener(listener);
+	}
+
+	public void removePropertyChangeListener(PropertyChangeListener listener) {
+		propertyChangeSupport.removePropertyChangeListener(listener);
 	}
 
 }

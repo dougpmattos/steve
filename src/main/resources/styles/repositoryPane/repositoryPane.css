@@ -79,15 +79,20 @@
 #label-media-item{
 	-fx-background-color: #102027;
 	-fx-alignment: center;
- 	-fx-background-radius: 0;
+ 	-fx-background-radius: 4;
  	-fx-pref-width: 120px;
  	-fx-pref-height: 35px;
 }
 
 #repo-media-item-container{
 	-fx-background-color: #102027;
- 	-fx-background-radius: 0;
+ 	-fx-background-radius: 4;
  	-fx-pref-width: 120px;
+ 	-fx-padding: 6;
+ 	-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 3, 0, 0, 0);
+}
+#repo-media-item-container:hover{
+    -fx-background-color: linear-gradient(from 20% 20% to 100% 100%, derive(#37474f, 10%), derive(#102027, 10%));
 }
 
 #media-repo-label-container{
