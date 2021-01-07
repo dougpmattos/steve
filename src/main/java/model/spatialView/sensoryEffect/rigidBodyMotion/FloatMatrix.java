@@ -1,8 +1,9 @@
 package model.spatialView.sensoryEffect.rigidBodyMotion;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class FloatMatrix {
+public class FloatMatrix implements Serializable {
 
     private ArrayList dim = new ArrayList<Integer>();
     private ArrayList floatVector = new ArrayList<Float>();

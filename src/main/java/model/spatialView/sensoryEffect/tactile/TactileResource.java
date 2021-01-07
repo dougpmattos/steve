@@ -1,6 +1,8 @@
 package model.spatialView.sensoryEffect.tactile;
 
-public class TactileResource {
+import java.io.Serializable;
+
+public class TactileResource implements Serializable {
 
     private String type;
     private String ref;

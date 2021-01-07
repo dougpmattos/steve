@@ -11,7 +11,7 @@ https://material.io/tools/color/#!/?view.left=1&view.right=1&primary.color
 .root{
 	-fx-background: #37474F;
 	-fx-text-fill: #B0BEC5;
-	-fx-font: 13px "Roboto";
+	-fx-font: 13px "Product Sans";
 	-fx-focus-color: transparent;
 	-fx-text-base-color: #B0BEC5;
 }
@@ -58,6 +58,9 @@ https://material.io/tools/color/#!/?view.left=1&view.right=1&primary.color
 }
 .menu-item:focused{
     -fx-background-color: linear-gradient(from 20% 20% to 100% 100%, derive(#37474f, 10%), derive(#102027, 10%));
+}
+.radio-menu-item:checked > .left-container > .radio {
+    -fx-background-color: #B0BEC5;
 }
 
 /*******************************************************************************

@@ -8,7 +8,7 @@ public class LightPresentationProperty extends EffectPresentationProperty {
 
     private IntensityValue intensityValue;
     private IntensityRange intensityRange;
-    private Color color;
+    private transient Color color;
 
     public LightPresentationProperty(){
         intensityValue = new IntensityValue();

@@ -1,6 +1,8 @@
 package model.spatialView.sensoryEffect.commonProperties;
 
-public class IntensityValue {
+import java.io.Serializable;
+
+public class IntensityValue implements Serializable {
 
     private float value;
 

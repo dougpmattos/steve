@@ -4,7 +4,9 @@ import model.spatialView.sensoryEffect.enums.XPositionType;
 import model.spatialView.sensoryEffect.enums.YPositionType;
 import model.spatialView.sensoryEffect.enums.ZPositionType;
 
-public class EffectPositionProperty {
+import java.io.Serializable;
+
+public class EffectPositionProperty implements Serializable {
 
 	private XPositionType xPosition;
 	private YPositionType yPosition;

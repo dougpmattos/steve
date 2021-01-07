@@ -16,6 +16,8 @@ import model.spatialView.sensoryEffect.WindPresentationProperty;
 import view.common.Language;
 import view.enums.WindUnit;
 
+import java.util.function.UnaryOperator;
+
 public class WindPresentationPropertyPane extends SensoryEffectPropertyPane {
 
     private TextField intensityValueTextField;
@@ -71,6 +73,93 @@ public class WindPresentationPropertyPane extends SensoryEffectPropertyPane {
         populatePropertyPane();
 
         createListeners();
+
+        createValidatorListeners();
+
+    }
+
+    private void createValidatorListeners(){
+
+        UnaryOperator<TextFormatter.Change> intensityValueTextFieldFilter = change -> {
+
+            String newTextInput = "";
+            int changeStartIndex = change.getRangeStart();
+
+            if(change.isAdded()){
+                String stringChange = change.getText();
+                StringBuilder sb = new StringBuilder(intensityValueTextField.getText());
+                sb.insert(changeStartIndex, stringChange);
+                newTextInput = sb.toString();
+            }else if(change.isDeleted()){
+                String stringChange = intensityValueTextField.getText().substring(changeStartIndex, changeStartIndex+1);
+                newTextInput = intensityValueTextField.getText().replace(stringChange, "");
+            }
+
+            String regex = "^[0-9]*(\\.)?(\\d{1,2})?$";
+            if (newTextInput.matches(regex)) {
+                return change;
+            }else{
+                change.setText("");
+            }
+            return change;
+        };
+
+        TextFormatter<String> intensityValueTextFormatter = new TextFormatter<>(intensityValueTextFieldFilter);
+        intensityValueTextField.setTextFormatter(intensityValueTextFormatter);
+
+        UnaryOperator<TextFormatter.Change> rangeFromTextFieldFilter = change -> {
+
+            String newTextInput = "";
+            int changeStartIndex = change.getRangeStart();
+
+            if(change.isAdded()){
+                String stringChange = change.getText();
+                StringBuilder sb = new StringBuilder(rangeFromTextField.getText());
+                sb.insert(changeStartIndex, stringChange);
+                newTextInput = sb.toString();
+            }else if(change.isDeleted()){
+                String stringChange = rangeFromTextField.getText().substring(changeStartIndex, changeStartIndex+1);
+                newTextInput = rangeFromTextField.getText().replace(stringChange, "");
+            }
+
+            String regex = "^[0-9]*(\\.)?(\\d{1,2})?$";
+            if (newTextInput.matches(regex)) {
+                return change;
+            }else{
+                change.setText("");
+            }
+            return change;
+        };
+
+        TextFormatter<String> rangeFromTextFormatter = new TextFormatter<>(rangeFromTextFieldFilter);
+        rangeFromTextField.setTextFormatter(rangeFromTextFormatter);
+
+        UnaryOperator<TextFormatter.Change> rangeToTextFieldFilter = change -> {
+
+            String newTextInput = "";
+            int changeStartIndex = change.getRangeStart();
+
+            if(change.isAdded()){
+                String stringChange = change.getText();
+                StringBuilder sb = new StringBuilder(rangeToTextField.getText());
+                sb.insert(changeStartIndex, stringChange);
+                newTextInput = sb.toString();
+            }else if(change.isDeleted()){
+                String stringChange = rangeToTextField.getText().substring(changeStartIndex, changeStartIndex+1);
+                newTextInput = rangeToTextField.getText().replace(stringChange, "");
+            }
+
+            String regex = "^[0-9]*(\\.)?(\\d{1,2})?$";
+            if (newTextInput.matches(regex)) {
+                return change;
+            }else{
+                change.setText("");
+            }
+            return change;
+        };
+
+        TextFormatter<String> rangeToTextFormatter = new TextFormatter<>(rangeToTextFieldFilter);
+        rangeToTextField.setTextFormatter(rangeToTextFormatter);
 
     }
 

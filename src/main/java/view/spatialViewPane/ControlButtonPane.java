@@ -91,7 +91,13 @@ public class ControlButtonPane extends BorderPane{
 			public void changed(ObservableValue<? extends Tab> observable, Tab oldValue, Tab newValue) {
 				
 				stop.fire();
-				TemporalChainPane temporalChainPane = (TemporalChainPane) newValue.getContent();
+				TemporalChainPane temporalChainPane;
+				if(newValue != null){
+					temporalChainPane = (TemporalChainPane) newValue.getContent();
+				}else{
+					temporalChainPane = (TemporalChainPane) oldValue.getContent();
+				}
+
 				selectedTemporalChainPane = temporalChainPane;
 				temporalChainModel = selectedTemporalChainPane.getTemporalChainModel();
 				

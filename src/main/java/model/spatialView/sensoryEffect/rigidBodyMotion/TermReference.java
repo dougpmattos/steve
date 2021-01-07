@@ -1,6 +1,8 @@
 package model.spatialView.sensoryEffect.rigidBodyMotion;
 
-public class TermReference {
+import java.io.Serializable;
+
+public class TermReference implements Serializable {
 
     private String reference;
 

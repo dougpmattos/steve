@@ -1,3 +1,11 @@
+.root{
+	-fx-background: #37474F;
+	-fx-text-fill: #B0BEC5;
+	-fx-font: 13px "Product Sans";
+	-fx-focus-color: transparent;
+	-fx-text-base-color: #B0BEC5;
+}
+
 /*******************************************************************************
  *                                                                             *
  * Specific Elements                                                           *

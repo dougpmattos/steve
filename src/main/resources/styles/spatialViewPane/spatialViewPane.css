@@ -384,6 +384,14 @@
     -fx-text-fill: #FFFFFF;
 }
 
+.choice-box-menu-item > * > .menu-item-radio {
+    /* When we show RadioMenuItems in ChoiceBox, we replace the radio shape with
+       a check mark, which looks much better */
+    -fx-shape: "M0,5H2L4,8L8";
+    -fx-scale-shape: false;
+    -fx-background-color: #FFFFFF;
+}
+
 .choice-box > .open-button {
     -fx-background-color: red;
     -fx-background-insets: 50;

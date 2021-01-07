@@ -1,7 +1,10 @@
 package view.temporalViewPane;
 
 import java.util.ArrayList;
+import java.util.function.UnaryOperator;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -9,14 +12,7 @@ import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.geometry.VPos;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.Separator;
-import javafx.scene.control.Tab;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -40,6 +36,7 @@ import model.temporalView.enums.InteractivityKeyType;
 import model.temporalView.enums.NumericInteractivityKey;
 import model.temporalView.enums.ProgrammingGuideInteractivityKey;
 import model.temporalView.enums.VolumeChangeInteractivityKey;
+import model.utility.MediaUtil;
 import view.common.dialogs.InputDialog;
 import view.common.Language;
 import view.common.dialogs.MessageDialog;
@@ -73,6 +70,8 @@ public class InteractiveMediaWindow extends Stage {
     private ChoiceBox mediaEffectTimelineToBeStartedField;
     private TextField stopDelayField;
     private TextField startDelayField;
+	private Label stopDelayLabel;
+    private Label startDelayLabel;
     
     private Button addNewButton;
     private Button removeMediaButton;
@@ -118,7 +117,7 @@ public class InteractiveMediaWindow extends Stage {
 
     }
     
-    public InteractiveMediaWindow(ApplicationController applicationController, TemporalViewPane temporalViewPane, ArrayList<Node> nodeListDuringInteractivityTime, Interactivity<MediaNode> interactivityToLoad){
+    public InteractiveMediaWindow(ApplicationController applicationController, TemporalViewPane temporalViewPane, ArrayList<Node> nodeListDuringInteractivityTime, Interactivity<Node> interactivityToLoad){
     	
     	setResizable(false);
         initModality(Modality.APPLICATION_MODAL);
@@ -176,7 +175,7 @@ public class InteractiveMediaWindow extends Stage {
 			
     }
     
-    private void populateInteractiveMediaWindow(Interactivity<MediaNode> interactivityToLoad){
+    private void populateInteractiveMediaWindow(Interactivity<Node> interactivityToLoad){
     	
     	interactivityKeyTypeField.setValue(getKeyType(interactivityToLoad.getInteractivityKey()));
         interactivityKeyField.setValue(interactivityToLoad.getInteractivityKey());
@@ -193,7 +192,7 @@ public class InteractiveMediaWindow extends Stage {
         //popula campos mediaToBeStoppedField
         for(int i = 0; i < interactivityToLoad.getSecondaryNodeList().size(); i++){
         	
-        	MediaNode stoppedMediaNode = (MediaNode) interactivityToLoad.getSecondaryNodeList().get(i);
+        	Node stoppedMediaNode = (Node) interactivityToLoad.getSecondaryNodeList().get(i);
         	
         	if(stoppedMediaNode != interactiveMediaNode){
         		
@@ -242,17 +241,17 @@ public class InteractiveMediaWindow extends Stage {
         
         for(int i = 0; i < interactivityToLoad.getSecondaryNodeList().size(); i++){
         	
-        	MediaNode stoppedMediaNode = (MediaNode) interactivityToLoad.getSecondaryNodeList().get(i);
+        	Node stoppedNode = (Node) interactivityToLoad.getSecondaryNodeList().get(i);
         	
-        	if(stoppedMediaNode != interactiveMediaNode){
+        	if(stoppedNode != interactiveMediaNode){
         		
         		for(int j = 0; j < nodeToBeStoppedCloseNewVBoxContainer.getChildren().size(); j++){
         			
         			if (nodeToBeStoppedCloseNewVBoxContainer.getChildren().get(j) instanceof HBox && mediaStoppedRealIndex == j) {
         				
         				HBox mediaCloseHBoxContainer = (HBox) nodeToBeStoppedCloseNewVBoxContainer.getChildren().get(j);
-        			    ChoiceBox<MediaNode> mediaToBeStoppedField = (ChoiceBox<MediaNode>) mediaCloseHBoxContainer.getChildren().get(0);
-        			    mediaToBeStoppedField.setValue(stoppedMediaNode);
+        			    ChoiceBox<Node> mediaToBeStoppedField = (ChoiceBox<Node>) mediaCloseHBoxContainer.getChildren().get(0);
+        			    mediaToBeStoppedField.setValue(stoppedNode);
         			    
         			}
         			
@@ -270,7 +269,7 @@ public class InteractiveMediaWindow extends Stage {
     		ChoiceBox<TemporalChain> choiceBoxField;
 			HBox mediaEffectCloseHBoxContainer = new HBox();
 
-			choiceBoxField = new ChoiceBox<TemporalChain>(FXCollections.observableArrayList(mediaEffectTimelineOptions));
+			choiceBoxField = new ChoiceBox(FXCollections.observableArrayList(mediaEffectTimelineOptions));
 			mediaEffectCloseHBoxContainer.setId("timeline-close-button-hbox-container");
 			mediaEffectCloseHBoxContainer.getChildren().add(choiceBoxField);
 	
@@ -315,7 +314,15 @@ public class InteractiveMediaWindow extends Stage {
     				HBox timelineCloseHBoxContainer = (HBox) mediaEffectTimelineCloseNewVBoxContainer.getChildren().get(j);
     				if(!timelineCloseHBoxContainer.getChildren().isEmpty()){
     					ChoiceBox timelineToBeStartedField = (ChoiceBox) timelineCloseHBoxContainer.getChildren().get(0);
-        			    timelineToBeStartedField.setValue(startedTemporalChain);
+
+    					for(Object item : timelineToBeStartedField.getItems()){
+							if(item instanceof TemporalChain){
+								if(((TemporalChain) item).getName().equalsIgnoreCase(startedTemporalChain.getName())){
+									timelineToBeStartedField.setValue((TemporalChain) item);
+								}
+							}
+						}
+
     				}
 
     			}
@@ -368,11 +375,11 @@ public class InteractiveMediaWindow extends Stage {
 		
 		Label stopActionSubtitle = new Label(Language.translate("stop.action").toUpperCase());
         Label mediaEffectToBeStoppedLabel = new Label(Language.translate("media.effect.to.be.stopped"));
-        Label stopDelayLabel = new Label(Language.translate("delay.to.stop.in.seconds"));
+        stopDelayLabel = new Label(Language.translate("delay.to.stop.in.seconds"));
         
         Label startActionSubtitle = new Label(Language.translate("start.action").toUpperCase());
         Label newMediaEffectTimelineToBeStartedLabel = new Label(Language.translate("media.effect.to.be.started"));
-        Label startDelayLabel = new Label(Language.translate("delay.to.start.in.seconds"));
+        startDelayLabel = new Label(Language.translate("delay.to.start.in.seconds"));
         
         interactivityKeySubtitle.setId("subtitle-label");
         stopActionSubtitle.setId("subtitle-label");
@@ -383,7 +390,7 @@ public class InteractiveMediaWindow extends Stage {
         interactivityKeyLabel.setId("msg-label");
         mediaEffectToBeStoppedLabel.setId("msg-label");
         newMediaEffectTimelineToBeStartedLabel.setId("msg-label");
-        
+
         interactivityKeyTypeField = new ChoiceBox<InteractivityKeyType>(FXCollections.observableArrayList(InteractivityKeyType.values()));
         interactivityKeyField = new ChoiceBox();
         interactiveMediaWillBeStopped  =new CheckBox(Language.translate("interactive.media.will.be.stopped"));
@@ -392,6 +399,60 @@ public class InteractiveMediaWindow extends Stage {
         nodeToBeStoppedField = new ChoiceBox<Node>(FXCollections.observableArrayList(nodeListDuringInteractivityTime));
         stopDelayField = new TextField();
         startDelayField = new TextField();
+
+		UnaryOperator<TextFormatter.Change> stopDelayFieldFilter = change -> {
+
+			String newTextInput = "";
+			int changeStartIndex = change.getRangeStart();
+
+			if(change.isAdded()){
+				String stringChange = change.getText();
+				StringBuilder sb = new StringBuilder(stopDelayField.getText());
+				sb.insert(changeStartIndex, stringChange);
+				newTextInput = sb.toString();
+			}else if(change.isDeleted()){
+				String stringChange = stopDelayField.getText().substring(changeStartIndex, changeStartIndex+1);
+				newTextInput = stopDelayField.getText().replace(stringChange, "");
+			}
+
+			String regex = "^[0-9]*(\\.)?(\\d{1,2})?$";
+			if (newTextInput.matches(regex)) {
+				System.out.println(newTextInput);
+				return change;
+			}else{
+				change.setText("");
+			}
+			return change;
+		};
+
+		UnaryOperator<TextFormatter.Change> startDelayFieldFilter = change -> {
+
+			String newTextInput = "";
+			int changeStartIndex = change.getRangeStart();
+
+			if(change.isAdded()){
+				String stringChange = change.getText();
+				StringBuilder sb = new StringBuilder(startDelayField.getText());
+				sb.insert(changeStartIndex, stringChange);
+				newTextInput = sb.toString();
+			}else if(change.isDeleted()){
+				String stringChange = startDelayField.getText().substring(changeStartIndex, changeStartIndex+1);
+				newTextInput = startDelayField.getText().replace(stringChange, "");
+			}
+
+			String regex = "^[0-9]*(\\.)?(\\d{1,2})?$";
+			if (newTextInput.matches(regex)) {
+				return change;
+			}else{
+				change.setText("");
+			}
+			return change;
+		};
+
+		TextFormatter<String> stopTextFormatter = new TextFormatter<>(stopDelayFieldFilter);
+		TextFormatter<String> startTextFormatter = new TextFormatter<>(startDelayFieldFilter);
+		stopDelayField.setTextFormatter(stopTextFormatter);
+		startDelayField.setTextFormatter(startTextFormatter);
         
         mediaEffectTimelineOptions = FXCollections.observableArrayList(applicationController.getRepositoryMediaList().getAllTypesList());
         mediaEffectTimelineOptions.add(new Separator());
@@ -416,7 +477,10 @@ public class InteractiveMediaWindow extends Stage {
         mediaEffectTimelineToBeStartedField.setId("new-interactive-media-field");
         stopDelayField.setId("input-field");
         startDelayField.setId("input-field");
-        
+
+		startDelayLabel.setDisable(true);
+		startDelayField.setDisable(true);
+
         HBox interactivityKeySeparator = new HBox();
         interactivityKeySeparator.setId("separator");
         VBox interactivityKeySubtitleSeparatorContainer = new VBox();
@@ -487,8 +551,38 @@ public class InteractiveMediaWindow extends Stage {
     }
 
 	private void createActionEvents(GridPane formGridPane, HBox nodeToBeStoppedCloseHBoxContainer, VBox nodeToBeStoppedCloseNewVBoxContainer, HBox mediaEffectTimelineToBeStartedCloseHBoxContainer, VBox mediaEffectTimelineCloseNewVBoxContainer) {
-		
-		interactivityKeyTypeField.setOnAction(new EventHandler<ActionEvent>() {
+
+		interactiveMediaWillBeStopped.selectedProperty().addListener(new ChangeListener<Boolean>(){
+			public void changed(ObservableValue ov, Boolean old_val, Boolean new_val){
+				if(new_val){
+					stopDelayLabel.setDisable(false);
+					stopDelayField.setDisable(false);
+				}else if(!new_val && nodeToBeStoppedField.getValue() == null ){
+					stopDelayLabel.setDisable(true);
+					stopDelayField.setDisable(true);
+				}
+			}
+		});
+
+		nodeToBeStoppedField.getSelectionModel().selectedItemProperty().addListener(
+				(ObservableValue<? extends Node> ov, Node old_val, Node new_val) -> {
+					if(new_val != null){
+						stopDelayLabel.setDisable(false);
+						stopDelayField.setDisable(false);
+					}
+				});
+		mediaEffectTimelineToBeStartedField.getSelectionModel().selectedItemProperty().addListener(
+				(ObservableValue ov, Object old_val, Object new_val) -> {
+					if(new_val != null){
+						startDelayLabel.setDisable(false);
+						startDelayField.setDisable(false);
+					}else{
+						startDelayLabel.setDisable(true);
+						startDelayField.setDisable(true);
+					}
+				});
+
+    	interactivityKeyTypeField.setOnAction(new EventHandler<ActionEvent>() {
 
 			@Override
 			public void handle(ActionEvent event) {
@@ -922,13 +1016,13 @@ public class InteractiveMediaWindow extends Stage {
 				if(stopDelayField.getText().isEmpty()){
 		    		interactivityRelation.setStopDelay(0.0);
 		    	}else {
-		    		interactivityRelation.setStopDelay(Double.valueOf(stopDelayField.getText()));
+		    		interactivityRelation.setStopDelay(MediaUtil.approximateDouble(Double.valueOf(stopDelayField.getText())));
 		    	}
 				
 				if(startDelayField.getText().isEmpty()){
 		    		interactivityRelation.setStartDelay(0.0);
 		    	}else {
-		    		interactivityRelation.setStartDelay(Double.valueOf(startDelayField.getText()));
+		    		interactivityRelation.setStartDelay(MediaUtil.approximateDouble(Double.valueOf(startDelayField.getText())));
 		    	}
 				
 				interactivityRelation.setPrimaryNode(interactiveMediaNode);
@@ -942,7 +1036,13 @@ public class InteractiveMediaWindow extends Stage {
 				
 				InteractiveMediaWindow.this.close();
 
-				String feedbackTitle = Language.translate("user.interaction.created.successfully");
+				String feedbackTitle;
+				if(!isEdition){
+					feedbackTitle = Language.translate("user.interaction.created.successfully");
+				}else{
+					feedbackTitle = Language.translate("user.interaction.updated.successfully");
+				}
+
 				String newTimelineCreatedMessage="";
 				String nodesToBeStartedMessage="";
 				String existingTimelineUsedMessage="";
@@ -963,12 +1063,22 @@ public class InteractiveMediaWindow extends Stage {
 					}
 				}
 
-				String finalFeedbackMessage = newTimelineCreatedMessage + "\n\n" + nodesToBeStartedMessage
-						+ "\n" + existingTimelineUsedMessage + "\n\n" + existingTimelineToBeStartedMessage;
+				String finalFeedbackMessage="";
+				int height = 190;
+				if(!newTimelineCreatedMessage.isEmpty() && !existingTimelineUsedMessage.isEmpty()){
+					finalFeedbackMessage = newTimelineCreatedMessage + "\n\n" + nodesToBeStartedMessage
+							+ "\n" + existingTimelineUsedMessage + "\n\n" + existingTimelineToBeStartedMessage;
+					height = 300;
+				}else if(!newTimelineCreatedMessage.isEmpty() && existingTimelineUsedMessage.isEmpty()){
+					finalFeedbackMessage = newTimelineCreatedMessage + "\n\n" + nodesToBeStartedMessage;
+				}else if(newTimelineCreatedMessage.isEmpty() && !existingTimelineUsedMessage.isEmpty()){
+					finalFeedbackMessage = existingTimelineUsedMessage + "\n\n" +
+							existingTimelineToBeStartedMessage;
+				}
 
-				InputDialog showOkInputDialog = new InputDialog(feedbackTitle, finalFeedbackMessage, "OK", null, null, 300);
+				InputDialog showOkInputDialog = new InputDialog(feedbackTitle, finalFeedbackMessage,
+						"OK", null, null, height);
 				showOkInputDialog.showAndWait();
-				showOkInputDialog.requestFocus();
 				
     		}
     		
@@ -1075,6 +1185,11 @@ public class InteractiveMediaWindow extends Stage {
     				fieldCloseNewVBoxContainer.getChildren().remove(1);
     				fieldCloseHBoxContainer.getChildren().remove(1);
 
+    				if(!interactiveMediaWillBeStopped.isSelected()){
+						stopDelayLabel.setDisable(true);
+						stopDelayField.setDisable(true);
+					}
+
     			}else {
     				
     				fieldCloseNewVBoxContainer.getChildren().remove(fieldCloseHBoxContainer);
@@ -1114,6 +1229,8 @@ public class InteractiveMediaWindow extends Stage {
     	
     					if(choiceBoxField.getProperties().get("previousValue") == null){
 
+							Button removeMediaButton = new Button();
+							removeMediaButton.setId("timeline-to-be-stopped-close-button");
         			    	fieldCloseHBoxContainer.getChildren().add(removeMediaButton);
         			    	
         			    	Button addNewButton = new Button(Language.translate("add.new"));

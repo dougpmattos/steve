@@ -124,23 +124,40 @@ public class TemporalViewPane extends BorderPane implements Observer, view.commo
 		}
 	
 		tabAddButton.setTranslateY(15);
-		
+
+		newTemporalChainTab.setOnCloseRequest(new EventHandler<Event>() {
+			@Override
+			public void handle(Event event) {
+
+				TemporalChainPane temporalChainPaneToBeRemoved = (TemporalChainPane) newTemporalChainTab.getContent();
+				boolean isRemoved = applicationController.removeTemporalChain(temporalChainPaneToBeRemoved.getTemporalChainModel());
+
+				if(isRemoved){
+
+					Double positionX = temporalChainTabPane.getTabMinWidth()*temporalChainTabPane.getTabs().size() + temporalChainTabPane.getTabs().size()*10;
+
+					if(!(positionX + 40 > getWidth())){
+						tabAddButton.setTranslateX(positionX);
+					}
+				}else{
+					event.consume();
+				}
+
+			}
+		});
 		newTemporalChainTab.setOnClosed(new EventHandler<Event>() {
 
 			@Override
 			public void handle(Event event) {
-				
+
 				Double positionX = temporalChainTabPane.getTabMinWidth()*temporalChainTabPane.getTabs().size() + temporalChainTabPane.getTabs().size()*10;
-				
+
 				if(!(positionX + 40 > getWidth())){
-					tabAddButton.setTranslateX(positionX);	
+					tabAddButton.setTranslateX(positionX);
 				}
-				
-				TemporalChainPane temporalChainPaneToBeRemoved = (TemporalChainPane) newTemporalChainTab.getContent();
-				applicationController.removeTemporalChain(temporalChainPaneToBeRemoved.getTemporalChainModel());
-			
+
 			}
-			
+
 		});
 		
 		newTemporalChainTab.setOnSelectionChanged(new EventHandler<Event>() {
@@ -149,6 +166,11 @@ public class TemporalViewPane extends BorderPane implements Observer, view.commo
 			public void handle(Event event) {
 				
 				clearSelectedNodeList();
+				applicationController.getScreen().getChildren().clear();
+				applicationController.getEffectIconsContainer().getChildren().clear();
+				for(model.common.Node node : temporalChainModel.getNodeAllList()){
+					node.setIsPLayingInPreview(false);
+				}
 	        	
 	        	for(Tab temporalTab : getTemporalChainTabPane().getTabs()){
 	        		
@@ -292,6 +314,15 @@ public class TemporalViewPane extends BorderPane implements Observer, view.commo
 		return firstSelectedNode;
 	}
 
+	public ArrayList<Node> getNodeListDuringInteractivityTime(Node node) {
+
+		Tab selectedTab = temporalChainTabPane.getSelectionModel().getSelectedItem();
+		TemporalChainPane temporalChainPane = (TemporalChainPane) selectedTab.getContent();
+
+		return temporalChainPane.getNodeListDuringAnother(node, temporalChainPane);
+
+	}
+
 	public ArrayList<Node> getNodeListDuringInteractivityTime() {
 
 		Tab selectedTab = temporalChainTabPane.getSelectionModel().getSelectedItem();
@@ -307,6 +338,10 @@ public class TemporalViewPane extends BorderPane implements Observer, view.commo
 
 	public SensoryEffectsPane getSensoryEffectsPane() {
 		return sensoryEffectsPane;
+	}
+
+	public TemporalViewButtonPane getTemporalViewButtonPane() {
+		return temporalViewButtonPane;
 	}
 
 }

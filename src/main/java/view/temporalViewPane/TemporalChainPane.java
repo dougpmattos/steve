@@ -607,7 +607,7 @@ public class TemporalChainPane extends StackPane implements Observer{
 		int line;
 		Synchronous syncRelation;
 		Interactivity<MediaNode> interactivityRelation;
-		TemporalChain temporalChainModel;
+		TemporalChain temporalChainModel = null;
 		DisplayPane displayPane = steveScene.getSpatialViewPane().getDisplayPane();
 		ControlButtonPane controlButtonPane = displayPane.getControlButtonPane();
 		
@@ -635,7 +635,13 @@ public class TemporalChainPane extends StackPane implements Observer{
 	            	controlButtonPane.getPlayButton().setDisable(true);
 	            	controlButtonPane.getRunButton().setDisable(true);
 	            }
-	            
+	            if(this.temporalChainModel.getRelationList().isEmpty()){
+	            	if(temporalViewPane.getTemporalViewButtonPane().getShowNodesLinkedCheckBox().isSelected()){
+						temporalViewPane.getTemporalViewButtonPane().getShowNodesLinkedCheckBox().fire();
+					}
+					temporalViewPane.getTemporalViewButtonPane().getShowNodesLinkedCheckBox().setDisable(true);
+				}
+
 	            break;
 	            
 			case ADD_SYNC_RELATION:

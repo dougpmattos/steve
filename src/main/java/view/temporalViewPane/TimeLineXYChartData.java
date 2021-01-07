@@ -1,5 +1,6 @@
 package view.temporalViewPane;
 
+import com.google.common.eventbus.EventBus;
 import controller.ApplicationController;
 import gateway.SensoryEffectExtractionService;
 import javafx.application.Platform;
@@ -21,6 +22,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Rectangle;
 import model.common.MediaNode;
+import model.common.Relation;
 import model.common.SensoryEffectNode;
 import model.common.enums.MediaType;
 import model.common.enums.SensoryEffectType;
@@ -122,8 +124,7 @@ public class TimeLineXYChartData implements Observer {
 
 			menuItemDeleteNode.setText(Language.translate("delete.media.context.menu"));
 
-			contextMenu.getItems().addAll(menuItemDeleteNode, menuItemSeparator, menuItemDeleteInteractivity,
-					menuItemEditInteractivity, menuItemAddInteractivity);
+			contextMenu.getItems().addAll(menuItemDeleteNode, menuItemSeparator, menuItemAddInteractivity);
 
 			if(((MediaNode) node).type == MediaType.VIDEO){
 				contextMenu.getItems().add(new SeparatorMenuItem());
@@ -169,13 +170,9 @@ public class TimeLineXYChartData implements Observer {
 			@Override
 			public void handle(ActionEvent event) {
 
-				// TODO chamar a janela de interatividade populando o form com a info do modelo
-				// ja preecnhida
-
-				model.common.Node firstSelectedMedia = temporalViewPane.getFirstSelectedNode();
 				InteractiveMediaWindow interactiveMediaWindow;
 				ArrayList<model.common.Node> nodeListDuringInteractivityTime = temporalViewPane
-						.getNodeListDuringInteractivityTime();
+						.getNodeListDuringInteractivityTime(node);
 
 				Tab selectedTab = null;
 				for (Tab tab : temporalViewPane.getTemporalChainTabPane().getTabs()) {
@@ -199,7 +196,7 @@ public class TimeLineXYChartData implements Observer {
 					if (relation instanceof Interactivity) {
 
 						Interactivity interactivityRelation = (Interactivity) relation;
-						if (interactivityRelation.getPrimaryNode() == firstSelectedMedia) {
+						if (interactivityRelation.getPrimaryNode() == node) {
 							interactivityToLoad = interactivityRelation;
 							break;
 						}
@@ -425,6 +422,7 @@ public class TimeLineXYChartData implements Observer {
 
 		containerNode = new HBox();
 		containerNode.setId("temporal-media-container");
+		node.setContainerNode(containerNode);
 
 		nameInteractiveIconContainer = new VBox();
 		nameInteractiveIconContainer.setId("name-interactive-icon-container");
@@ -543,6 +541,8 @@ public class TimeLineXYChartData implements Observer {
 			if(!node.getEnd().equals(newValue)){
 				ApplicationController.getInstance().updateNodeEndTime(node, newValue, false);
 			}
+			temporalViewPane.clearSelectedNodeList();
+			temporalViewPane.addSelectedNode(node);
 
 			mouseEvent.consume();
 
@@ -550,23 +550,33 @@ public class TimeLineXYChartData implements Observer {
 
 		rightBorderRectangle.setOnMouseDragged(mouseEvent -> {
 
-			isBorderBeingDragged = true;
-			ApplicationController.getInstance().getSteveScene().setCursor(Cursor.H_RESIZE);
+			if(!isSecondaryNodeEndDefinedByRelation()){
 
-			containerNode.toFront();
+				isBorderBeingDragged = true;
+				ApplicationController.getInstance().getSteveScene().setCursor(Cursor.H_RESIZE);
 
-			Double currentTimeWhileDragging = timeLineChart.getXAxis().getValueForDisplay(mouseEvent.getSceneX()).doubleValue();
-			currentTimeWhileDragging = MediaUtil.approximateDouble(currentTimeWhileDragging);
+				containerNode.toFront();
 
-			xyChartData.setXValue(currentTimeWhileDragging);
+				Double currentTimeWhileDragging = timeLineChart.getXAxis().getValueForDisplay(mouseEvent.getSceneX()).doubleValue();
+				currentTimeWhileDragging = MediaUtil.approximateDouble(currentTimeWhileDragging);
 
-			currentTimePopup.setMessage(String.valueOf(currentTimeWhileDragging));
-			currentTimePopup.setCursor(Cursor.H_RESIZE);
-			currentTimePopup.setX(mouseEvent.getSceneX());
-			currentTimePopup.setY(mouseEvent.getSceneY() + currentTimePopup.getHeight());
-			currentTimePopup.show();
+				xyChartData.setXValue(currentTimeWhileDragging);
 
-			mouseEvent.consume();
+				currentTimePopup.setMessage(String.valueOf(currentTimeWhileDragging));
+				currentTimePopup.setCursor(Cursor.H_RESIZE);
+				currentTimePopup.setX(mouseEvent.getSceneX());
+				currentTimePopup.setY(mouseEvent.getSceneY() + currentTimePopup.getHeight());
+				currentTimePopup.show();
+
+				mouseEvent.consume();
+
+			}else{
+				MessageDialog warningMessageDialog = new MessageDialog(Language.translate("it.is.not.possible.to.edit.end.time"),
+						Language.translate("end.has.already.been.defined"), "OK", 135);
+				warningMessageDialog.showAndWait();
+
+				mouseEvent.consume();
+			}
 
 		});
 
@@ -591,6 +601,7 @@ public class TimeLineXYChartData implements Observer {
 
 			@Override
 			public void handle(MouseEvent mouseEvent) {
+
 				containerNode.requestFocus();
 				ApplicationController.getInstance().getSteveScene().setCursor(Cursor.CLOSED_HAND);
 
@@ -618,10 +629,7 @@ public class TimeLineXYChartData implements Observer {
 
 					} else {
 
-						if (containerNode.getStylesheets().isEmpty()) {
-							containerNode.getStylesheets()
-									.add("styles/temporalViewPane/mousePressedSecondaryTemporalMediaNode.css");
-						}
+						containerNode.getStylesheets().add("styles/temporalViewPane/mousePressedSecondaryTemporalMediaNode.css");
 
 					}
 
@@ -635,7 +643,9 @@ public class TimeLineXYChartData implements Observer {
 							|| containerNode.getStylesheets()
 							.remove("styles/temporalViewPane/mousePressedTemporalMediaNode.css")) {
 					}
+
 					containerNode.getStylesheets().add("styles/temporalViewPane/mousePressedTemporalMediaNode.css");
+
 				}
 
 				for (Tab temporalTab : temporalViewPane.getTemporalChainTabPane().getTabs()) {
@@ -673,19 +683,37 @@ public class TimeLineXYChartData implements Observer {
 		containerNode.setOnMouseDragged(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent mouseEvent) {
-				containerNode.setTranslateX(mouseEvent.getSceneX() - containerNode.getLayoutX());
-				containerNode.toFront();
 
-				Double currentTimeWhileDragging = timeLineChart.getXAxis().getValueForDisplay(mouseEvent.getSceneX()).doubleValue();
-				currentTimeWhileDragging = MediaUtil.approximateDouble(currentTimeWhileDragging);
+				if(!isNodeSecondary()){
 
-				currentTimePopup.setMessage(String.valueOf(currentTimeWhileDragging));
-				currentTimePopup.setCursor(Cursor.CLOSED_HAND);
-				currentTimePopup.setX(mouseEvent.getSceneX() - 52);
-				currentTimePopup.setY(mouseEvent.getSceneY() + currentTimePopup.getHeight());
-				currentTimePopup.show();
+					containerNode.setTranslateX(mouseEvent.getSceneX() - containerNode.getLayoutX());
+					containerNode.toFront();
 
-				wasDragged = true;
+					Double currentTimeWhileDragging = timeLineChart.getXAxis().getValueForDisplay(mouseEvent.getSceneX()).doubleValue();
+					currentTimeWhileDragging = MediaUtil.approximateDouble(currentTimeWhileDragging);
+
+					currentTimePopup.setMessage(String.valueOf(currentTimeWhileDragging));
+					currentTimePopup.setCursor(Cursor.CLOSED_HAND);
+					currentTimePopup.setX(mouseEvent.getSceneX() - 52);
+					currentTimePopup.setY(mouseEvent.getSceneY() + currentTimePopup.getHeight());
+					currentTimePopup.show();
+
+					wasDragged = true;
+
+				}else if(isSecondaryNodeBeginDefinedByRelation() && !isSecondaryNodeEndDefinedByRelation()){
+					MessageDialog warningMessageDialog = new MessageDialog(Language.translate("cannot.be.dragged"),
+							Language.translate("begin.has.already.been.defined"), "OK", 155);
+					warningMessageDialog.showAndWait();
+				}else if(!isSecondaryNodeBeginDefinedByRelation() && isSecondaryNodeEndDefinedByRelation()){
+					MessageDialog warningMessageDialog = new MessageDialog(Language.translate("cannot.be.dragged"),
+							Language.translate("end.has.already.been.defined"), "OK", 155);
+					warningMessageDialog.showAndWait();
+				}else if(isSecondaryNodeBeginDefinedByRelation() && isSecondaryNodeEndDefinedByRelation()){
+					MessageDialog warningMessageDialog = new MessageDialog(Language.translate("cannot.be.dragged"),
+							Language.translate("begin.and.end.have.already.been.defined"), "OK", 155);
+					warningMessageDialog.showAndWait();
+				}
+
 			}
 
 		});
@@ -741,23 +769,21 @@ public class TimeLineXYChartData implements Observer {
 				if (mouseEvent.getButton() == MouseButton.SECONDARY && !contextMenu.isShowing()) {
 
 					if (node instanceof MediaNode && !node.isInteractive()) {
-						menuItemDeleteInteractivity.setDisable(true);
-						menuItemDeleteInteractivity.setStyle("-fx-opacity: 50%");
 
-						menuItemEditInteractivity.setDisable(true);
-						menuItemEditInteractivity.setStyle("-fx-opacity: 50%");
+						contextMenu.getItems().remove(menuItemDeleteInteractivity);
+						contextMenu.getItems().remove(menuItemEditInteractivity);
 
-						menuItemAddInteractivity.setDisable(false);
-						menuItemAddInteractivity.setStyle("-fx-opacity: 100%");
+						if(!contextMenu.getItems().contains(menuItemAddInteractivity)){
+							contextMenu.getItems().add(menuItemAddInteractivity);
+						}
+
 					} else if(node instanceof MediaNode && node.isInteractive()){
-						menuItemDeleteInteractivity.setDisable(false);
-						menuItemDeleteInteractivity.setStyle("-fx-opacity: 100%");
 
-						menuItemEditInteractivity.setDisable(false);
-						menuItemEditInteractivity.setStyle("-fx-opacity: 100%");
+						contextMenu.getItems().remove(menuItemAddInteractivity);
 
-						menuItemAddInteractivity.setDisable(true);
-						menuItemAddInteractivity.setStyle("-fx-opacity: 50%");
+						contextMenu.getItems().add(menuItemDeleteInteractivity);
+						contextMenu.getItems().add(menuItemEditInteractivity);
+
 					}
 
 					contextMenu.show(TimeLineXYChartData.this.containerNode, mouseEvent.getScreenX(), mouseEvent.getScreenY());
@@ -772,6 +798,9 @@ public class TimeLineXYChartData implements Observer {
 
 	}
 
+	private boolean isNodeSecondary(){
+		return !temporalChainModel.getListOfRelationsWhereNodeIsSecondary(node).isEmpty();
+	}
 	public XYChart.Data<Number, String> getXYChartData() {
 		return xyChartData;
 	}
@@ -794,6 +823,50 @@ public class TimeLineXYChartData implements Observer {
 
 	public Label getMediaNameLabel() {
 		return mediaNameLabel;
+	}
+
+	private boolean isSecondaryNodeBeginDefinedByRelation(){
+
+		javafx.scene.Node content = applicationController.getSteveScene().getTemporalViewPane().getTemporalChainTabPane().getSelectionModel().getSelectedItem().getContent();
+		TemporalChainPane temporalChainPane = (TemporalChainPane) content;
+		TemporalChain temporalChainModel = temporalChainPane.getTemporalChainModel();
+
+		ArrayList<TemporalRelation> listOfRelationsWhereNodeIsSecondary = temporalChainModel.getListOfRelationsWhereNodeIsSecondary(node);
+
+		for(TemporalRelation temporalRelation : listOfRelationsWhereNodeIsSecondary){
+
+			Synchronous synchronousRelation = (Synchronous) temporalRelation;
+
+			if(temporalChainModel.relationDefinesBegin(synchronousRelation)){
+				return true;
+			}
+
+		}
+
+		return false;
+
+	}
+
+	private boolean isSecondaryNodeEndDefinedByRelation(){
+
+		javafx.scene.Node content = applicationController.getSteveScene().getTemporalViewPane().getTemporalChainTabPane().getSelectionModel().getSelectedItem().getContent();
+		TemporalChainPane temporalChainPane = (TemporalChainPane) content;
+		TemporalChain temporalChainModel = temporalChainPane.getTemporalChainModel();
+
+		ArrayList<TemporalRelation> listOfRelationsWhereNodeIsSecondary = temporalChainModel.getListOfRelationsWhereNodeIsSecondary(node);
+
+		for(TemporalRelation temporalRelation : listOfRelationsWhereNodeIsSecondary){
+
+			Synchronous synchronousRelation = (Synchronous) temporalRelation;
+
+			if(temporalChainModel.relationDefinesEnd(synchronousRelation)){
+				return true;
+			}
+
+		}
+
+		return false;
+
 	}
 
 	@Override
@@ -821,7 +894,7 @@ public class TimeLineXYChartData implements Observer {
 
 					if (interactivityRelation.getPrimaryNode().getName().equalsIgnoreCase(node.getName())) {
 
-						nameInteractiveIconContainer.getChildren().remove(iButton);
+						containerIButton.getChildren().remove(iButton);
 
 					}
 

@@ -1,11 +1,9 @@
 package view.repositoryPane;
 
-import java.awt.*;
 import java.util.ArrayList;
 
 import controller.ApplicationController;
 import javafx.event.EventHandler;
-import javafx.geometry.Rectangle2D;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.SnapshotParameters;
@@ -22,7 +20,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.transform.Scale;
 import model.common.MediaNode;
 import model.repository.enums.RepositoryOperator;
-import model.utility.MediaUtil;
 import view.temporalViewPane.TemporalChainPane;
 import view.temporalViewPane.TemporalViewPane;
 import view.temporalViewPane.TimeLineXYChartData;
@@ -33,6 +30,7 @@ public class RepositoryMediaItemContainer extends BorderPane implements view.com
 	
 	private Label label;
 	private MediaNode mediaNode;
+	private ImageView mediaIcon;
 	private RepositoryMediaItemContainerListPane repositoryMediaItemContainerListPane;
 	private TemporalViewPane temporalViewPane;
 	private Boolean selected;
@@ -51,7 +49,7 @@ public class RepositoryMediaItemContainer extends BorderPane implements view.com
 		label.setId("label-media-item");
 		selected = false;
 
-		ImageView mediaIcon = mediaNode.generateMediaIcon();
+		mediaIcon = mediaNode.generateMediaIcon();
 		mediaIcon.setStyle("-fx-background-radius: 4;");
 		setCenter(mediaIcon);
 		setBottom(label);

@@ -1,6 +1,6 @@
 plugins {
     id 'application'
-    id 'org.openjfx.javafxplugin' version '0.0.8'
+    id 'org.openjfx.javafxplugin' version '0.0.9'
 }
 
 repositories {
@@ -14,7 +14,7 @@ repositories {
 }
 
 javafx {
-    version = "14"
+    version = "15.0.1"
     modules = [ 'javafx.controls', 'javafx.fxml', 'javafx.base', 'javafx.media', 'javafx.web', 'javafx.swing' ]
 }
 

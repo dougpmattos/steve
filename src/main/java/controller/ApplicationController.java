@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.Locale;
 import java.util.prefs.Preferences;
 
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import model.common.*;
 import model.repository.RepositoryMediaList;
@@ -31,6 +33,7 @@ public class ApplicationController {
 
 	private SteveScene steveScene;
 	private static ApplicationController instance;
+	private Stage primaryStage;
 
 	public static ApplicationController getInstance() {
 
@@ -55,11 +58,18 @@ public class ApplicationController {
 		this.setJson();
 
 		this.repositoryMediaList = new RepositoryMediaList();
-		this.spatialTemporalApplication = new SpatialTemporalApplication();
+		this.spatialTemporalApplication = new SpatialTemporalApplication(this);
 
 	}
 
+	public Stage getPrimaryStage() {
+		return primaryStage;
+	}
+
 	public void createView(Stage stage) throws IOException, XMLException {
+
+		this.primaryStage = stage;
+
 		steveScene = new SteveScene(this, repositoryMediaList, spatialTemporalApplication);
 		steveScene.createView(stage);
 	}
@@ -71,7 +81,7 @@ public class ApplicationController {
 
 	public void createNewProject(Stage stage) throws IOException, XMLException {
 		this.repositoryMediaList = new RepositoryMediaList();
-		this.spatialTemporalApplication = new SpatialTemporalApplication();
+		this.spatialTemporalApplication = new SpatialTemporalApplication(this);
 		createView(stage);
 		createMainTemporalView();
 	}
@@ -135,16 +145,22 @@ public class ApplicationController {
 		return spatialTemporalApplication.getTemporalChainList();
 	}
 	
-	public void removeTemporalChain(TemporalChain temporalChain) {
-		spatialTemporalApplication.removeTemporalChain(temporalChain);
+	public boolean removeTemporalChain(TemporalChain temporalChain) {
+		Boolean isRemoveTemporalChainConfirmed = checkInteractivityRelationConsistency(temporalChain);
+		if(isRemoveTemporalChainConfirmed){
+			spatialTemporalApplication.removeTemporalChain(temporalChain);
+			return true;
+		}else{
+			return false;
+		}
 	}
 	
 	public void openExistingRepositoryMediaList(RepositoryMediaList existingRepositoryMediaList) {
 		repositoryMediaList.openExistingRepositoryMediaList(existingRepositoryMediaList);
 	}
 	
-	public void openExistingTemporalView(SpatialTemporalApplication existingTemporalView) {
-		spatialTemporalApplication.openExistingTemporalView(existingTemporalView);
+	public void openExistingSpatialTemporalView(SpatialTemporalApplication existingSpatialTemporalView) {
+		spatialTemporalApplication.openExistingSpatialTemporalView(existingSpatialTemporalView);
 	}
 	
 	public Boolean addRepositoryMedia(MediaNode mediaNode){
@@ -233,8 +249,8 @@ public class ApplicationController {
 	/**
 	 * Update the view and model using TemporalChain's methods.
 	 */
-	public void updateNodeStartTime(Node node, Double newValue, boolean isLinked) {
-		node.getParentTemporalChain().updateNodeStartTimeView(node, newValue, isLinked);
+	public void updateNodeStartTime(Node node, Double newValue, boolean isDrag) {
+		node.getParentTemporalChain().updateNodeStartTimeView(node, newValue, isDrag);
 	}
 
 	/**
@@ -269,6 +285,18 @@ public class ApplicationController {
 
 	public SteveScene getSteveScene() {
 		return steveScene;
+	}
+
+	public Boolean checkInteractivityRelationConsistency(TemporalChain removedTemporalChainModel) {
+		return spatialTemporalApplication.checkInteractivityRelationConsistency(removedTemporalChainModel);
+	}
+
+	public StackPane getScreen(){
+		return steveScene.getSpatialViewPane().getDisplayPane().getScreen();
+	}
+
+	public HBox getEffectIconsContainer(){
+		return steveScene.getSpatialViewPane().getDisplayPane().getControlButtonPane().getEffectIconsContainer();
 	}
 
 }

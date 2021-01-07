@@ -6,6 +6,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
+import model.common.enums.MediaType;
 import model.temporalView.TemporalChain;
 import model.utility.MediaUtil;
 
@@ -27,6 +29,7 @@ public class Node<T> implements Serializable {
     private Boolean isPLayingInPreview = false;
     public transient ImageView icon;
     private transient Object executionObject;
+	public transient HBox containerNode;
 	private TemporalChain parentTemporalChain;
 
 	public Node(){
@@ -121,6 +124,24 @@ public class Node<T> implements Serializable {
 
 	public void removePropertyChangeListener(PropertyChangeListener listener) {
 		propertyChangeSupport.removePropertyChangeListener(listener);
+	}
+
+	public void setContainerNode(HBox containerNode) {
+		this.containerNode = containerNode;
+	}
+
+	public HBox getContainerNode() {
+		return containerNode;
+	}
+
+	public boolean isContinousMedia(){
+
+		if(type == MediaType.VIDEO || type == MediaType.AUDIO){
+			return true;
+		}else{
+			return false;
+		}
+
 	}
 
 }

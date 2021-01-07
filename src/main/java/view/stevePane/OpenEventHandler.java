@@ -17,6 +17,8 @@ import org.slf4j.LoggerFactory;
 import view.common.Language;
 import view.common.dialogs.MessageDialog;
 import controller.ApplicationController;
+import view.common.dialogs.ReturnMessage;
+import view.utility.AnimationUtil;
 
 public class OpenEventHandler implements EventHandler<ActionEvent> {
 
@@ -48,12 +50,18 @@ public class OpenEventHandler implements EventHandler<ActionEvent> {
 			
 			   	FileInputStream fileInputStream = new FileInputStream(file);
 		    	ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
-		    	SpatialTemporalApplication existingTemporalView = (SpatialTemporalApplication) objectInputStream.readObject();
+		    	SpatialTemporalApplication existingSpatialTemporalView = (SpatialTemporalApplication) objectInputStream.readObject();
 		    	RepositoryMediaList existingRepositoryMediaList = (RepositoryMediaList) objectInputStream.readObject();
 		    	objectInputStream.close();
 		    	
 		    	applicationController.openExistingRepositoryMediaList(existingRepositoryMediaList);
-		    	applicationController.openExistingTemporalView(existingTemporalView);
+		    	applicationController.openExistingSpatialTemporalView(existingSpatialTemporalView);
+
+				String message = Language.translate("project.opened.successfully");
+
+				ReturnMessage returnMessage = new ReturnMessage(message, 450);
+				returnMessage.show();
+				AnimationUtil.applyFadeInOut(returnMessage);
                 
 			}
             

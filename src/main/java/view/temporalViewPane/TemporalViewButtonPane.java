@@ -18,6 +18,8 @@ import model.common.MediaNode;
 import model.common.Node;
 import model.repository.RepositoryMediaList;
 import model.temporalView.Synchronous;
+import model.temporalView.TemporalChain;
+import model.temporalView.TemporalRelation;
 import model.temporalView.enums.TemporalRelationType;
 import view.common.dialogs.InputDialog;
 import view.common.Language;
@@ -42,7 +44,7 @@ public class TemporalViewButtonPane extends BorderPane {
 	private Button interactivityButton;
 	private SliderButton zoomButton;
 	private HBox otherButtonPane;
-	private CheckBox showAnchorsLinksButton;
+	private CheckBox showNodesLinkedCheckBox;
 	private HBox alignmentButtonPane;
 	private TemporalViewPane temporalViewPane;
 	private RepositoryMediaList repositoryMediaList;
@@ -123,15 +125,16 @@ public class TemporalViewButtonPane extends BorderPane {
         Label icon = new Label();
 		icon.setId("zoom-icon");
         zoomButton = new SliderButton(0.0, 100.0, 50.0, 150.0, icon, false);
-        showAnchorsLinksButton = new CheckBox(Language.translate("show.relations"));
+        showNodesLinkedCheckBox = new CheckBox(Language.translate("show.nodes.linked"));
        
         otherButtonPane = new HBox();
         otherButtonPane.setId("other-button-pane");
         otherButtonPane.setFillHeight(false);
         //otherButtonPane.getChildren().add(zoomButton);
-        //otherButtonPane.getChildren().add(showAnchorsLinksButton);
+        otherButtonPane.getChildren().add(showNodesLinkedCheckBox);
         zoomButton.setDisable(true);
-        showAnchorsLinksButton.setDisable(true);
+		showNodesLinkedCheckBox.setDisable(true);
+        showNodesLinkedCheckBox.setSelected(false);
 	       
         alignmentButtonPane = new HBox();
         alignmentButtonPane.setId("alignment-pane");
@@ -147,25 +150,25 @@ public class TemporalViewButtonPane extends BorderPane {
         alignmentButtonPane.getChildren().add(duringButton);
         alignmentButtonPane.getChildren().add(overlapsButton);
         alignmentButtonPane.getChildren().add(beforeButton);
-        //alignmentButtonPane.getChildren().add(interactivityButton);
+        alignmentButtonPane.getChildren().add(otherButtonPane);
         
 	}
 	
-	private Boolean masterAndSlaveHaveBeenDefined(){
+	private Boolean masterAndSecondaryHaveBeenDefined(){
 		
-		ArrayList<Node> selectedSlaveNodeList = new ArrayList<Node>();
+		ArrayList<Node> selectedSecondaryNodeList = new ArrayList<Node>();
 		
 		for(Node node : temporalViewPane.getSelectedNodeList()){
     		
     		if(node != temporalViewPane.getFirstSelectedNode()){
     			
-    			selectedSlaveNodeList.add(node);
+    			selectedSecondaryNodeList.add(node);
 
     		}
     		
     	}
 		
-		if((temporalViewPane.getFirstSelectedNode() == null) && (selectedSlaveNodeList.isEmpty())){
+		if((temporalViewPane.getFirstSelectedNode() == null) && (selectedSecondaryNodeList.isEmpty())){
 			
 			MessageDialog messageDialog = new MessageDialog(Language.translate("it.is.not.possible.to.define.alignment"), 
 					Language.translate("please.select.a.media.to.be.the.primary.and.at.least.one.to.be.secondary"), "OK", 250);
@@ -181,7 +184,7 @@ public class TemporalViewButtonPane extends BorderPane {
 			
 			return false;
     		
-    	}else if(selectedSlaveNodeList.isEmpty()){
+    	}else if(selectedSecondaryNodeList.isEmpty()){
     		
     		MessageDialog messageDialog = new MessageDialog(Language.translate("it.is.not.possible.to.define.alignment"), 
 					Language.translate("please.select.at.least.one.media.to.be.secondary"), "OK", 220);
@@ -253,7 +256,7 @@ public class TemporalViewButtonPane extends BorderPane {
 			
 		    public void handle(ActionEvent t) {
 
-		    	if(masterAndSlaveHaveBeenDefined()){
+		    	if(masterAndSecondaryHaveBeenDefined()){
 		    		
 		    		Node relationMasterNode = temporalViewPane.getFirstSelectedNode();
 			    	
@@ -284,7 +287,7 @@ public class TemporalViewButtonPane extends BorderPane {
 			
 		    public void handle(ActionEvent t) {
 		    	
-		    	if(masterAndSlaveHaveBeenDefined()){
+		    	if(masterAndSecondaryHaveBeenDefined()){
 		    		
 		    		Double delay = showDelayInputDialog();
 			    	
@@ -323,7 +326,7 @@ public class TemporalViewButtonPane extends BorderPane {
 			@Override
 			public void handle(ActionEvent event) {
 				
-				if(masterAndSlaveHaveBeenDefined()){
+				if(masterAndSecondaryHaveBeenDefined()){
 					
 					Node relationMasterNode = temporalViewPane.getFirstSelectedNode();
 			    	
@@ -355,7 +358,7 @@ public class TemporalViewButtonPane extends BorderPane {
 			@Override
 			public void handle(ActionEvent event) {
 				
-				if(masterAndSlaveHaveBeenDefined()){
+				if(masterAndSecondaryHaveBeenDefined()){
 					
 					Double delay = showDelayInputDialog();
 			    	
@@ -393,7 +396,7 @@ public class TemporalViewButtonPane extends BorderPane {
 			
 		    public void handle(ActionEvent t) {
 		    	
-		    	if(masterAndSlaveHaveBeenDefined()){
+		    	if(masterAndSecondaryHaveBeenDefined()){
 		    		
 		    		Node relationMasterNode = temporalViewPane.getFirstSelectedNode();
 			    	
@@ -424,7 +427,7 @@ public class TemporalViewButtonPane extends BorderPane {
 			
 		    public void handle(ActionEvent t) {
 		    	
-		    	if(masterAndSlaveHaveBeenDefined()){
+		    	if(masterAndSecondaryHaveBeenDefined()){
 		    		
 		        	Double delay = showDelayInputDialog();
 			    	
@@ -463,7 +466,7 @@ public class TemporalViewButtonPane extends BorderPane {
 			
 		    public void handle(ActionEvent t) {
 		    	
-		    	if(masterAndSlaveHaveBeenDefined()){
+		    	if(masterAndSecondaryHaveBeenDefined()){
 		    		
 		    		Node relationMasterNode = temporalViewPane.getFirstSelectedNode();
 			    	
@@ -494,7 +497,7 @@ public class TemporalViewButtonPane extends BorderPane {
 			
 		    public void handle(ActionEvent t) {
 		    	
-		    	if(masterAndSlaveHaveBeenDefined()){
+		    	if(masterAndSecondaryHaveBeenDefined()){
 		    		
 		    		Double delay = showDelayInputDialog();
 			    	
@@ -532,7 +535,7 @@ public class TemporalViewButtonPane extends BorderPane {
 			
 			 public void handle(ActionEvent t) {
 				
-				 if(masterAndSlaveHaveBeenDefined()){
+				 if(masterAndSecondaryHaveBeenDefined()){
 					 
 						Node relationMasterNode = temporalViewPane.getFirstSelectedNode();
 						 
@@ -596,7 +599,7 @@ public class TemporalViewButtonPane extends BorderPane {
 			
 			 public void handle(ActionEvent t) {
 				 
-				 if(masterAndSlaveHaveBeenDefined()){
+				 if(masterAndSecondaryHaveBeenDefined()){
 					 
 					 startsDelayButton.fire();
 					 finishesDelayButton.fire();
@@ -611,7 +614,7 @@ public class TemporalViewButtonPane extends BorderPane {
 			
 		    public void handle(ActionEvent t) {
 		    	
-		    	if(masterAndSlaveHaveBeenDefined()){
+		    	if(masterAndSecondaryHaveBeenDefined()){
 		    		
 		    		Double delay = showDelayInputDialog();
 			    	
@@ -680,17 +683,79 @@ public class TemporalViewButtonPane extends BorderPane {
 		    
 		});
 		
-		zoomButton.getSlider().valueProperty().addListener(new ChangeListener<Number>() {
-            public void changed(ObservableValue<? extends Number> ov, Number old_val, Number new_val) {
-//            	ScrollPane teste = (ScrollPane) temporalChainTabPane.getTabs().get(0).getContent();
-//            	TemporalChainPane teste2 = (TemporalChainPane) teste.getContent();
-//            	((NumberAxis) teste2.getXAxis()).setUpperBound(25);
-//            	//new_val.doubleValue()
-            }
-        });
-		
+		showNodesLinkedCheckBox.selectedProperty().addListener(new ChangeListener<Boolean>() {
+			@Override
+			public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+				if(newValue){
+					showNodesLinked();
+				}else{
+					hideNodesLinked();
+				}
+			}
+		});
+
 	}
-	
+
+	private void showNodesLinked() {
+
+		javafx.scene.Node content = applicationController.getSteveScene().getTemporalViewPane().getTemporalChainTabPane().getSelectionModel().getSelectedItem().getContent();
+		TemporalChainPane temporalChainPane = (TemporalChainPane) content;
+		TemporalChain temporalChainModel = temporalChainPane.getTemporalChainModel();
+
+		ArrayList<Node> nodeList = temporalChainModel.getNodeAllList();
+
+		for(Node node : nodeList){
+
+			ArrayList<TemporalRelation> listOfRelationsWhereNodeIsMaster = temporalChainModel.getListOfMasterRelations(node);
+			ArrayList<TemporalRelation> listOfRelationsWhereNodeIsSecondary = temporalChainModel.getListOfRelationsWhereNodeIsSecondary(node);
+
+			boolean isPrimary = false;
+			boolean isSecondary = false;
+
+			if(!listOfRelationsWhereNodeIsMaster.isEmpty()){
+				isPrimary = true;
+			}
+			if(!listOfRelationsWhereNodeIsSecondary.isEmpty()){
+				isSecondary = true;
+
+			}
+
+			HBox containerNode = node.getContainerNode();
+			containerNode.getStylesheets().clear();
+			if(containerNode != null){
+				if(isPrimary && isSecondary){
+					containerNode.getStylesheets().add("styles/temporalViewPane/primarySecondaryNodes.css");
+				}else if(isPrimary){
+					containerNode.getStylesheets().add("styles/temporalViewPane/primaryNodes.css");
+				}else if(isSecondary){
+					containerNode.getStylesheets().add("styles/temporalViewPane/secondaryNodes.css");
+				}
+			}
+
+		}
+
+	}
+
+	private void hideNodesLinked() {
+
+		javafx.scene.Node content = applicationController.getSteveScene().getTemporalViewPane().getTemporalChainTabPane().getSelectionModel().getSelectedItem().getContent();
+		TemporalChainPane temporalChainPane = (TemporalChainPane) content;
+		TemporalChain temporalChainModel = temporalChainPane.getTemporalChainModel();
+
+		ArrayList<Node> nodeList = temporalChainModel.getNodeAllList();
+
+		for(Node node : nodeList){
+			HBox containerNode = node.getContainerNode();
+			if(containerNode != null){
+				containerNode.getStylesheets().remove("styles/temporalViewPane/primarySecondaryNodes.css");
+				containerNode.getStylesheets().remove("styles/temporalViewPane/primaryNodes.css");
+				containerNode.getStylesheets().remove("styles/temporalViewPane/secondaryNodes.css");
+			}
+
+		}
+
+	}
+
 	private void addSynchronousRelationToModel(Synchronous synchronousRelation) {
 		
 		Tab selectedTab = null;
@@ -707,6 +772,7 @@ public class TemporalViewButtonPane extends BorderPane {
     	}
     	
 		applicationController.addSynchronousRelation(temporalChainPane.getTemporalChainModel(), synchronousRelation);
+    	showNodesLinkedCheckBox.setDisable(false);
 	}
 	
 	private Double showDelayInputDialog() {
@@ -759,9 +825,9 @@ public class TemporalViewButtonPane extends BorderPane {
 		return delay;
 		
 	}
-	
-	public Boolean isShowAnchorsLinksButtonSelected(){
-		return showAnchorsLinksButton.isSelected();
+
+	public CheckBox getShowNodesLinkedCheckBox() {
+		return showNodesLinkedCheckBox;
 	}
-	
+
 }

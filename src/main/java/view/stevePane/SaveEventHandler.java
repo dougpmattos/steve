@@ -16,17 +16,19 @@ import org.slf4j.LoggerFactory;
 
 import view.common.Language;
 import view.common.dialogs.MessageDialog;
+import view.common.dialogs.ReturnMessage;
+import view.utility.AnimationUtil;
 
 public class SaveEventHandler implements EventHandler<ActionEvent> {
 	
 	final Logger logger = LoggerFactory.getLogger(SaveEventHandler.class);
 	
-	private SpatialTemporalApplication temporalView;
+	private SpatialTemporalApplication spatialTemporalView;
 	private RepositoryMediaList repositoryMediaList;
 	
-	public SaveEventHandler(SpatialTemporalApplication temporalView, RepositoryMediaList repositoryMediaList){
+	public SaveEventHandler(SpatialTemporalApplication spatialTemporalView, RepositoryMediaList repositoryMediaList){
 		
-		this.temporalView = temporalView;
+		this.spatialTemporalView = spatialTemporalView;
 		this.repositoryMediaList = repositoryMediaList;
 		
 	}
@@ -45,10 +47,16 @@ public class SaveEventHandler implements EventHandler<ActionEvent> {
 				file.setExecutable(true);
 			   	FileOutputStream fileOutputStream = new FileOutputStream(file);
 		    	ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
-		    	objectOutputStream.writeObject(temporalView);
+		    	objectOutputStream.writeObject(spatialTemporalView);
 		    	objectOutputStream.writeObject(repositoryMediaList);
 		    	objectOutputStream.close();
-                
+
+				String message = Language.translate("project.saved.successfully");
+
+				ReturnMessage returnMessage = new ReturnMessage(message, 450);
+				returnMessage.show();
+				AnimationUtil.applyFadeInOut(returnMessage);
+
 			}
             
 		} catch (IOException e) {

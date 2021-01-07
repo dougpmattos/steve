@@ -1,5 +1,7 @@
 package view.spatialViewPane;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.*;
@@ -10,16 +12,23 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
+import javafx.stage.Popup;
 import model.common.MediaNode;
 import model.common.Node;
 import model.common.SensoryEffectNode;
+import model.temporalView.Synchronous;
+import model.temporalView.TemporalChain;
+import model.temporalView.TemporalRelation;
 import view.common.Language;
 import controller.ApplicationController;
 import view.common.dialogs.MessageDialog;
+import view.temporalViewPane.TemporalChainPane;
+
+import java.util.ArrayList;
+import java.util.function.UnaryOperator;
 
 public class TemporalMediaInfoPane extends ScrollPane{
 
-	private boolean isLinked = false;
 	private ApplicationController applicationController;
 	private Node node;
 	private MediaNode mediaNode;
@@ -115,13 +124,13 @@ public class TemporalMediaInfoPane extends ScrollPane{
 		infoPropertyGridPane.setId("info-property-grid-pane");
 		infoPropertyGridPane.add(nameLabel, 0, 0);
 		infoPropertyGridPane.add(nameTextField, 1, 0);
-		infoPropertyGridPane.add(typeLabel, 9, 0);
-		infoPropertyGridPane.add(typeTextField, 10, 0);
+		infoPropertyGridPane.add(typeLabel, 4, 0);
+		infoPropertyGridPane.add(typeTextField, 5, 0);
 		infoPropertyGridPane.add(startTimeLabel, 0, 2);
 		infoPropertyGridPane.add(startTimeTextField, 1, 2);
-		infoPropertyGridPane.add(linkButton, 5, 2);
-		infoPropertyGridPane.add(endTimeLabel, 9, 2);
-		infoPropertyGridPane.add(endTimeTextField, 10, 2);
+		//infoPropertyGridPane.add(linkButton, 5, 2);
+		infoPropertyGridPane.add(endTimeLabel, 4, 2);
+		infoPropertyGridPane.add(endTimeTextField, 5, 2);
 		infoPropertyGridPane.add(durationLabel, 0, 4);
 		infoPropertyGridPane.add(durationTextField, 1, 4);
 		if(!isSensoryEffect){
@@ -140,10 +149,186 @@ public class TemporalMediaInfoPane extends ScrollPane{
 		populateInfoPane();
 		
 		createListeners();
+
+		createValidatorListeners();
 		
 	}
 
+	private void createValidatorListeners(){
+
+		UnaryOperator<TextFormatter.Change> startTimeFieldFilter = change -> {
+
+			String newTextInput = "";
+			int changeStartIndex = change.getRangeStart();
+
+			if(!change.isReplaced()){
+
+				if(change.isAdded()){
+					String stringChange = change.getText();
+					StringBuilder sb = new StringBuilder(startTimeTextField.getText());
+					sb.insert(changeStartIndex, stringChange);
+					newTextInput = sb.toString();
+				}else if(change.isDeleted()){
+					String stringChange = startTimeTextField.getText().substring(changeStartIndex, changeStartIndex+1);
+					newTextInput = startTimeTextField.getText().replace(stringChange, "");
+				}
+
+				if(change.isAdded() || change.isDeleted()){
+
+					String regex = "^[0-9]*(\\.)?(\\d{1,2})?$";
+					if (newTextInput.matches(regex)) {
+						return change;
+					}else{
+						change.setText("");
+					}
+
+				}
+
+			}
+
+			return change;
+
+		};
+
+		TextFormatter<String> startTextFormatter = new TextFormatter<>(startTimeFieldFilter);
+		startTimeTextField.setTextFormatter(startTextFormatter);
+
+		UnaryOperator<TextFormatter.Change> endTimeFieldFilter = change -> {
+
+			String newTextInput = "";
+			int changeStartIndex = change.getRangeStart();
+
+			if(!change.isReplaced()) {
+
+				if (change.isAdded()) {
+					String stringChange = change.getText();
+					StringBuilder sb = new StringBuilder(endTimeTextField.getText());
+					sb.insert(changeStartIndex, stringChange);
+					newTextInput = sb.toString();
+				} else if (change.isDeleted()) {
+					String stringChange = endTimeTextField.getText().substring(changeStartIndex, changeStartIndex + 1);
+					newTextInput = endTimeTextField.getText().replace(stringChange, "");
+				}
+
+				if(change.isAdded() || change.isDeleted()){
+
+					String regex = "^[0-9]*(\\.)?(\\d{1,2})?$";
+					if (newTextInput.matches(regex)) {
+						return change;
+					} else {
+						change.setText("");
+					}
+
+				}
+
+			}
+
+			return change;
+
+		};
+
+		TextFormatter<String> endTextFormatter = new TextFormatter<>(endTimeFieldFilter);
+		endTimeTextField.setTextFormatter(endTextFormatter);
+
+		if(priorityTextField != null){
+			UnaryOperator<TextFormatter.Change> priorityFieldFilter = change -> {
+
+				String newTextInput = "";
+				int changeStartIndex = change.getRangeStart();
+
+				if(change.isAdded()){
+					String stringChange = change.getText();
+					StringBuilder sb = new StringBuilder(priorityTextField.getText());
+					sb.insert(changeStartIndex, stringChange);
+					newTextInput = sb.toString();
+				}else if(change.isDeleted()){
+					String stringChange = priorityTextField.getText().substring(changeStartIndex, changeStartIndex+1);
+					newTextInput = priorityTextField.getText().replace(stringChange, "");
+				}
+
+				String regex = "^[0-9]*$";
+				if (newTextInput.matches(regex)) {
+					return change;
+				}else{
+					change.setText("");
+				}
+				return change;
+			};
+
+			TextFormatter<String> priorityTextFormatter = new TextFormatter<>(priorityFieldFilter);
+			priorityTextField.setTextFormatter(priorityTextFormatter);
+		}
+
+	}
+	private boolean updateStartTimeOfNode(){
+
+		boolean wasUpdated = false;
+
+		if(!getStartTimeValue().isEmpty()){
+
+			Double newValue = Double.parseDouble(getStartTimeValue());
+
+			if(newValue < node.getEnd() && !node.getBegin().equals(newValue)){
+
+				ApplicationController.getInstance().updateNodeStartTime(node, newValue, false);
+				durationTextField.setText(String.valueOf(node.getDuration()));
+				wasUpdated = true;
+
+			}
+		}
+
+		return wasUpdated;
+
+	}
+
+	private boolean updateEndTimeOfNode(){
+
+		boolean wasUpdated = false;
+
+		if(!getEndTimeValue().isEmpty()) {
+
+			Double newValue = Double.parseDouble(getEndTimeValue());
+
+			if (newValue > node.getBegin() && !node.getEnd().equals(newValue)) {
+
+				ApplicationController.getInstance().updateNodeEndTime(node, newValue, false);
+				durationTextField.setText(String.valueOf(node.getDuration()));
+				wasUpdated = true;
+
+			}
+		}
+
+		return wasUpdated;
+
+	}
+
 	private void createListeners() {
+
+		startTimeTextField.focusedProperty().addListener(new ChangeListener<Boolean>() {
+			@Override
+			public void changed(ObservableValue<? extends Boolean> observableValue, Boolean oldPropertyValue, Boolean newPropertyValue) {
+
+				if(!isSecondaryNodeBeginDefinedByRelation()){
+					startTimeTextField.setDisable(false);
+					if(!newPropertyValue){
+						if(!updateStartTimeOfNode()){
+							showStartGreaterMessage();
+						}
+					}
+				}else{
+					startTimeTextField.setDisable(true);
+
+					MessageDialog warningMessageDialog = new MessageDialog(Language.translate("it.is.not.possible.to.edit.start.time"),
+							Language.translate("begin.has.already.been.defined"), "OK", 160);
+
+					if(newPropertyValue == true){
+						warningMessageDialog.showAndWait();
+					}
+
+				}
+
+			}
+		});
 
 		startTimeTextField.setOnKeyPressed(new EventHandler<KeyEvent>() {
 
@@ -151,31 +336,38 @@ public class TemporalMediaInfoPane extends ScrollPane{
 			public void handle(KeyEvent event) {
 
 				if(event.getCode().equals(KeyCode.ENTER) || event.getCode().equals(KeyCode.TAB)) {
-
-					Double newValue = Double.parseDouble(getStartTimeValue());
-
-					if(newValue > node.getEnd() && !isLinked){
-
-						MessageDialog warningMessageDialog = new MessageDialog(Language.translate("begin.greater.than.end"),
-								"OK", 130);
-						warningMessageDialog.showAndWait();
-
-					}else {
-
-						if(!node.getBegin().equals(newValue)){
-								ApplicationController.getInstance().updateNodeStartTime(node, newValue, isLinked);
-						}
-						endTimeTextField.setText(String.valueOf(node.getEnd()));
-						if(!isLinked){
-							durationTextField.setText(String.valueOf(node.getDuration()));
-						}
-						endTimeTextField.requestFocus();
-
+					if(!updateStartTimeOfNode()){
+						showStartGreaterMessage();
 					}
-
 				}
 			}
 
+		});
+
+		endTimeTextField.focusedProperty().addListener(new ChangeListener<Boolean>() {
+			@Override
+			public void changed(ObservableValue<? extends Boolean> observableValue, Boolean oldPropertyValue, Boolean newPropertyValue) {
+
+				if(!isSecondaryNodeEndDefinedByRelation()){
+					endTimeTextField.setDisable(false);
+					if(!newPropertyValue){
+						if(!updateEndTimeOfNode()){
+							showEndLessMessage();
+						}
+					}
+				}else{
+					endTimeTextField.setDisable(true);
+
+					MessageDialog warningMessageDialog = new MessageDialog(Language.translate("it.is.not.possible.to.edit.end.time"),
+							Language.translate("end.has.already.been.defined"), "OK", 160);
+
+					if(newPropertyValue == true){
+						warningMessageDialog.showAndWait();
+					}
+
+				}
+
+			}
 		});
 
 		endTimeTextField.setOnKeyPressed(new EventHandler<KeyEvent>() {
@@ -184,35 +376,9 @@ public class TemporalMediaInfoPane extends ScrollPane{
 			public void handle(KeyEvent event) {
 
 				if(event.getCode().equals(KeyCode.ENTER) || event.getCode().equals(KeyCode.TAB)) {
-
-					Double newValue = Double.parseDouble(getEndTimeValue());
-					Double isLinkedNewBeginFromNewEnd = newValue - node.getDuration();
-
-					if(newValue < node.getBegin() && !isLinked){
-
-						MessageDialog warningMessageDialog = new MessageDialog(Language.translate("end.less.than.begin"),
-								"OK", 130);
-						warningMessageDialog.showAndWait();
-
-					}else if(isLinkedNewBeginFromNewEnd < 0 && isLinked) {
-
-						MessageDialog warningMessageDialog = new MessageDialog(Language.translate("start.less.zero"),
-								"OK", 130);
-						warningMessageDialog.showAndWait();
-
-					}else {
-
-							if(!node.getEnd().equals(newValue)){
-								ApplicationController.getInstance().updateNodeEndTime(node, newValue, isLinked);
-							}
-							startTimeTextField.setText(String.valueOf(node.getBegin()));
-							if(!isLinked){
-								durationTextField.setText(String.valueOf(node.getDuration()));
-							}
-							durationTextField.requestFocus();
-
+					if(!updateEndTimeOfNode()){
+						showEndLessMessage();
 					}
-
 				}
 			}
 
@@ -228,55 +394,47 @@ public class TemporalMediaInfoPane extends ScrollPane{
 						ApplicationController.getInstance().updateNodeDurationTime(node, newValue);
 					}
 					endTimeTextField.setText(String.valueOf(node.getEnd()));
-					startTimeTextField.requestFocus();
 				}
 			}
 
-		});
-
-		linkButton.setOnAction(new EventHandler<ActionEvent>() {
-
-			@Override public void handle(ActionEvent e) {
-
-				if(isLinked == true){
-					isLinked = false;
-					linkButton.setGraphic(new ImageView(new Image(getClass().getResourceAsStream("/images/spatialViewPane/link-off-24dp.png"))));
-				}else{
-					isLinked = true;
-					linkButton.setGraphic(new ImageView(new Image(getClass().getResourceAsStream("/images/spatialViewPane/link-on-24dp.png"))));
-				}
-
-			}
-		});
-
-		linkButton.setOnMouseEntered(new EventHandler<MouseEvent>() {
-
-			@Override public void handle(MouseEvent mouseEvent) {
-
-				if(isLinked == true){
-					linkButton.setGraphic(new ImageView(new Image(getClass().getResourceAsStream("/images/spatialViewPane/link-on-24dp-hover.png"))));
-				}else{
-					linkButton.setGraphic(new ImageView(new Image(getClass().getResourceAsStream("/images/spatialViewPane/link-off-24dp-hover.png"))));
-				}
-
-			}
-		});
-
-		linkButton.setOnMouseExited(new EventHandler<MouseEvent>() {
-
-			@Override public void handle(MouseEvent mouseEvent) {
-
-				if(isLinked == true){
-					linkButton.setGraphic(new ImageView(new Image(getClass().getResourceAsStream("/images/spatialViewPane/link-on-24dp.png"))));
-				}else{
-					linkButton.setGraphic(new ImageView(new Image(getClass().getResourceAsStream("/images/spatialViewPane/link-off-24dp.png"))));
-				}
-
-			}
 		});
 		
 	}
-	
+
+	private void showStartGreaterMessage() {
+
+		if(!getStartTimeValue().isEmpty()){
+			Double newValue = Double.parseDouble(getStartTimeValue());
+
+			if(newValue > node.getEnd()){
+
+				startTimeTextField.setText(String.valueOf(node.getBegin()));
+
+				MessageDialog warningMessageDialog = new MessageDialog(Language.translate("it.is.not.possible.to.edit.start.time"),
+						Language.translate("begin.greater.than.end"), "OK", 155);
+				warningMessageDialog.showAndWait();
+
+			}
+		}
+	}
+
+	private void showEndLessMessage() {
+
+		if(!getEndTimeValue().isEmpty()){
+			Double newValue = Double.parseDouble(getEndTimeValue());
+
+			if(newValue < node.getBegin()){
+
+				endTimeTextField.setText(String.valueOf(node.getEnd()));
+
+				MessageDialog warningMessageDialog = new MessageDialog(Language.translate("it.is.not.possible.to.edit.end.time"),
+						Language.translate("end.less.than.begin"), "OK", 155);
+				warningMessageDialog.showAndWait();
+
+			}
+		}
+	}
+
 	public void setNameValue(String value){
 		this.nameTextField.setText(value);
 	}
@@ -339,7 +497,7 @@ public class TemporalMediaInfoPane extends ScrollPane{
 		if(!isSensoryEffect){
 			setInteractiveValue(mediaNode.isInteractive());
 		}else{
-			setPriorityValue(Double.toString(sensoryEffectNode.getPresentationProperty().getPriority()));
+			setPriorityValue(Integer.toString(sensoryEffectNode.getPresentationProperty().getPriority()));
 		}
 		
 	}
@@ -349,5 +507,49 @@ public class TemporalMediaInfoPane extends ScrollPane{
 		applicationController.populateTemporalInfoPropertyJavaBean(this, mediaNode);
 		
 	}
-	
+
+	private boolean isSecondaryNodeBeginDefinedByRelation(){
+
+		javafx.scene.Node content = applicationController.getSteveScene().getTemporalViewPane().getTemporalChainTabPane().getSelectionModel().getSelectedItem().getContent();
+		TemporalChainPane temporalChainPane = (TemporalChainPane) content;
+		TemporalChain temporalChainModel = temporalChainPane.getTemporalChainModel();
+
+		ArrayList<TemporalRelation> listOfRelationsWhereNodeIsSecondary = temporalChainModel.getListOfRelationsWhereNodeIsSecondary(node);
+
+		for(TemporalRelation temporalRelation : listOfRelationsWhereNodeIsSecondary){
+
+			Synchronous synchronousRelation = (Synchronous) temporalRelation;
+
+			if(temporalChainModel.relationDefinesBegin(synchronousRelation)){
+				return true;
+			}
+
+		}
+
+		return false;
+
+	}
+
+	private boolean isSecondaryNodeEndDefinedByRelation(){
+
+		javafx.scene.Node content = applicationController.getSteveScene().getTemporalViewPane().getTemporalChainTabPane().getSelectionModel().getSelectedItem().getContent();
+		TemporalChainPane temporalChainPane = (TemporalChainPane) content;
+		TemporalChain temporalChainModel = temporalChainPane.getTemporalChainModel();
+
+		ArrayList<TemporalRelation> listOfRelationsWhereNodeIsSecondary = temporalChainModel.getListOfRelationsWhereNodeIsSecondary(node);
+
+		for(TemporalRelation temporalRelation : listOfRelationsWhereNodeIsSecondary){
+
+			Synchronous synchronousRelation = (Synchronous) temporalRelation;
+
+			if(temporalChainModel.relationDefinesEnd(synchronousRelation)){
+				return true;
+			}
+
+		}
+
+		return false;
+
+	}
+
 }

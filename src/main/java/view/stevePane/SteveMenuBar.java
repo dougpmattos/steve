@@ -104,7 +104,7 @@ public class SteveMenuBar extends MenuBar{
 		createHelpMenuItemActions();
 		
 		//menuFile.getItems().addAll(menuItemNew, menuItemOpen, new SeparatorMenuItem(), menuItemClose, new SeparatorMenuItem(), menuItemExportNCL, new SeparatorMenuItem(), menuItemExportHTML5, new SeparatorMenuItem(), menuItemRun, new SeparatorMenuItem(), menuItemExit); 
-		menuFile.getItems().addAll(menuItemNew, menuItemOpen, new SeparatorMenuItem(), menuItemExportNCL, new SeparatorMenuItem(), menuItemExportHTML5, new SeparatorMenuItem(), menuItemRun, new SeparatorMenuItem(), menuItemExit);
+		menuFile.getItems().addAll(menuItemNew, menuItemOpen, new SeparatorMenuItem(), menuItemSave, new SeparatorMenuItem(), menuItemExportNCL, menuItemExportHTML5, new SeparatorMenuItem(), menuItemRun, new SeparatorMenuItem(), menuItemExit);
 //		menuEdit.getItems().addAll(menuItemUndo, menuItemRedo, new SeparatorMenuItem(), menuItemCut, menuItemCopy, menuItemPaste, new SeparatorMenuItem(), 
 		menuEdit.getItems().addAll(menuItemPreferences, new SeparatorMenuItem(), menuItemSelectAll);
 		menuView.getItems().addAll(checkMenuItemMediaView, checkMenuItemTemporalView, checkMenuItemSpatialView, checkMenuItemShowRelations);
@@ -130,7 +130,7 @@ public class SteveMenuBar extends MenuBar{
 		    public void handle(ActionEvent t) {
 
 				InputDialog inputDialog = new InputDialog("STEVE", "Spatio-Temporal View Editor - Version 3.0-0" + "\n\n"
-		    			+ "Copyright 2020. Douglas Paulo de Mattos. MidiaCom Lab-UFF." + "\n\n"
+		    			+ "Copyright 2021. Douglas Paulo de Mattos. MidiaCom Lab-UFF." + "\n\n"
 		    			+ "All rights reserved." + "\n\n"
 		    			+ "This product includes software developed by other MidiaCom Lab projects (aNa and NCL4WEB)." + "\n\n"
 		    			+ "https://www.aNa.com.br" + "\n"
@@ -258,6 +258,8 @@ public class SteveMenuBar extends MenuBar{
 		    	}
 
 		    	if(temporalChainPane != null){
+
+					temporalViewPane.clearSelectedNodeList();
 		    		
 		    		for(ArrayList<TimeLineXYChartData> timeLineXYChartDataList : temporalChainPane.getTimeLineXYChartDataLineList()){
 			    		for(TimeLineXYChartData timeLineXYChartData : timeLineXYChartDataList){
@@ -346,7 +348,7 @@ public class SteveMenuBar extends MenuBar{
 		checkMenuItemSpatialView = new CheckMenuItem (Language.translate("spatial.view"), null);
 		checkMenuItemSpatialView.setSelected(true);
 		
-		checkMenuItemShowRelations = new CheckMenuItem (Language.translate("show.relations"), null);
+		checkMenuItemShowRelations = new CheckMenuItem (Language.translate("show.nodes.linked"), null);
 		checkMenuItemShowRelations.setSelected(true);
 		
 	}

@@ -4,6 +4,7 @@ import controller.ApplicationController;
 import javafx.event.EventHandler;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextFormatter;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -13,6 +14,8 @@ import javafx.scene.text.Text;
 import model.common.SensoryEffectNode;
 import model.spatialView.sensoryEffect.temperature.ColdPresentationProperty;
 import view.common.Language;
+
+import java.util.function.UnaryOperator;
 
 public class ColdPresentationPropertyPane extends SensoryEffectPropertyPane {
 
@@ -68,6 +71,39 @@ public class ColdPresentationPropertyPane extends SensoryEffectPropertyPane {
         populatePropertyPane();
 
         createListeners();
+
+        createValidatorListeners();
+
+    }
+
+    private void createValidatorListeners() {
+
+        UnaryOperator<TextFormatter.Change> intensityValueTextFieldFilter = change -> {
+
+            String newTextInput = "";
+            int changeStartIndex = change.getRangeStart();
+
+            if (change.isAdded()) {
+                String stringChange = change.getText();
+                StringBuilder sb = new StringBuilder(intensityValueTextField.getText());
+                sb.insert(changeStartIndex, stringChange);
+                newTextInput = sb.toString();
+            } else if (change.isDeleted()) {
+                String stringChange = intensityValueTextField.getText().substring(changeStartIndex, changeStartIndex + 1);
+                newTextInput = intensityValueTextField.getText().replace(stringChange, "");
+            }
+
+            String regex = "^[0-9]*(\\.)?(\\d{1,2})?$";
+            if (newTextInput.matches(regex)) {
+                return change;
+            } else {
+                change.setText("");
+            }
+            return change;
+        };
+
+        TextFormatter<String> intensityValueTextFormatter = new TextFormatter<>(intensityValueTextFieldFilter);
+        intensityValueTextField.setTextFormatter(intensityValueTextFormatter);
 
     }
 
