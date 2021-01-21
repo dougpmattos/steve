@@ -6,6 +6,6 @@ STEVE is a spatio-temporal view editor for authoring hypermedia applications.
 - Among existing mulsemedia solutions, my work is unique in that it explores the application 
 level proposing a novel mulsemedia (multimedia with sensory effects) conceptual model.
 
-![Image of STEVE](https://github.com/dougpmattos/steve/blob/master/steve-gui.png)
+![Image of STEVE](https://github.com/dougpmattos/steve/blob/master/STEVE GUI.png)
 
 See STEVE's paper published in IEEE Xplore for more detail. https://ieeexplore.ieee.org/abstract/document/9049485
