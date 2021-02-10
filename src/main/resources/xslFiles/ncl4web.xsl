@@ -164,16 +164,16 @@ transicoes["
 </xsl:attribute>
 </xsl:element>
 </xsl:for-each>
-<xsl:for-each select="$originalDoc//media[@descriptor=$descritor/@id][count(@refer)=0]|$originalDoc//e:media[@descriptor=$descritor/@id][count(@refer)=0]">
+<xsl:for-each select="$originalDoc//mediaNode[@descriptor=$descritor/@id][count(@refer)=0]|$originalDoc//e:mediaNode[@descriptor=$descritor/@id][count(@refer)=0]">
 <xsl:call-template name="interpretaMedia">
-<xsl:with-param name="media" select="."/>
+<xsl:with-param name="mediaNode" select="."/>
 <xsl:with-param name="id" select="@id"/>
 </xsl:call-template>
 </xsl:for-each>
 <xsl:if test="$alias!=''">
-<xsl:for-each select="$originalDoc//media[@descriptor=concat($alias,'#',$descritor/@id)][count(@refer)=0]|$originalDoc//e:media[@descriptor=concat($alias,'#',$descritor/@id)][count(@refer)=0]">
+<xsl:for-each select="$originalDoc//mediaNode[@descriptor=concat($alias,'#',$descritor/@id)][count(@refer)=0]|$originalDoc//e:mediaNode[@descriptor=concat($alias,'#',$descritor/@id)][count(@refer)=0]">
 <xsl:call-template name="interpretaMedia">
-<xsl:with-param name="media" select="."/>
+<xsl:with-param name="mediaNode" select="."/>
 <xsl:with-param name="id" select="@id"/>
 </xsl:call-template>
 </xsl:for-each>
@@ -318,9 +318,9 @@ transicoes["
 </xsl:call-template>
 </xsl:for-each>
 </xsl:for-each>
-<xsl:for-each select="media[count(@descriptor)=0][count(@refer)=0]|e:media[count(@descriptor)=0][count(@refer)=0]">
+<xsl:for-each select="mediaNode[count(@descriptor)=0][count(@refer)=0]|e:mediaNode[count(@descriptor)=0][count(@refer)=0]">
 <xsl:call-template name="interpretaMedia">
-<xsl:with-param name="media" select="."/>
+<xsl:with-param name="mediaNode" select="."/>
 <xsl:with-param name="id" select="./@id"/>
 </xsl:call-template>
 </xsl:for-each>
@@ -479,14 +479,14 @@ if($('span.settings>input.property[name="
 <xsl:choose>
 <xsl:when test="$alias!=''">
 <xsl:variable name="target" select="concat($alias,'_',@constituent)"/>
-<xsl:for-each select="$originalDoc//media[@descriptor=$descId]|$originalDoc//e:media[@descriptor=$descId]">
+<xsl:for-each select="$originalDoc//mediaNode[@descriptor=$descId]|$originalDoc//e:mediaNode[@descriptor=$descId]">
 trocaDescritor('
 <xsl:value-of select="@id"/>
 ','
 <xsl:value-of select="$target"/>
 ');
 <xsl:variable name="idReferido" select="@id"/>
-<xsl:for-each select="$originalDoc//media[@refer=$idReferido]|$originalDoc//e:media[@id=$idReferido]">
+<xsl:for-each select="$originalDoc//mediaNode[@refer=$idReferido]|$originalDoc//e:mediaNode[@id=$idReferido]">
 trocaDescritor('
 <xsl:value-of select="@id"/>
 ','
@@ -497,14 +497,14 @@ trocaDescritor('
 </xsl:when>
 <xsl:otherwise>
 <xsl:variable name="target" select="@constituent"/>
-<xsl:for-each select="//media[@descriptor=$descId]|//e:media[@descriptor=$descId]">
+<xsl:for-each select="//mediaNode[@descriptor=$descId]|//e:mediaNode[@descriptor=$descId]">
 trocaDescritor('
 <xsl:value-of select="@id"/>
 ','
 <xsl:value-of select="$target"/>
 ');
 <xsl:variable name="idReferido" select="@id"/>
-<xsl:for-each select="//media[@refer=$idReferido]|//e:media[@refer=$idReferido]">
+<xsl:for-each select="//mediaNode[@refer=$idReferido]|//e:mediaNode[@refer=$idReferido]">
 trocaDescritor('
 <xsl:value-of select="@id"/>
 ','
@@ -522,14 +522,14 @@ if(!entrou){
 <xsl:choose>
 <xsl:when test="$alias!=''">
 <xsl:variable name="target" select="concat($alias,'_',$constituent)"/>
-<xsl:for-each select="$originalDoc//media[@descriptor=$descId]|$originalDoc//e:media[@descriptor=$descId]">
+<xsl:for-each select="$originalDoc//mediaNode[@descriptor=$descId]|$originalDoc//e:mediaNode[@descriptor=$descId]">
 trocaDescritor('
 <xsl:value-of select="@id"/>
 ','
 <xsl:value-of select="$target"/>
 ');
 <xsl:variable name="idReferido" select="@id"/>
-<xsl:for-each select="$originalDoc//media[@refer=$idReferido]|$originalDoc//e:media[@id=$idReferido]">
+<xsl:for-each select="$originalDoc//mediaNode[@refer=$idReferido]|$originalDoc//e:mediaNode[@id=$idReferido]">
 trocaDescritor('
 <xsl:value-of select="@id"/>
 ','
@@ -540,14 +540,14 @@ trocaDescritor('
 </xsl:when>
 <xsl:otherwise>
 <xsl:variable name="target" select="$constituent"/>
-<xsl:for-each select="//media[@descriptor=$descId]|//e:media[@descriptor=$descId]">
+<xsl:for-each select="//mediaNode[@descriptor=$descId]|//e:mediaNode[@descriptor=$descId]">
 trocaDescritor('
 <xsl:value-of select="@id"/>
 ','
 <xsl:value-of select="$target"/>
 ');
 <xsl:variable name="idReferido" select="@id"/>
-<xsl:for-each select="//media[@refer=$idReferido]|//e:media[@refer=$idReferido]">
+<xsl:for-each select="//mediaNode[@refer=$idReferido]|//e:mediaNode[@refer=$idReferido]">
 trocaDescritor('
 <xsl:value-of select="@id"/>
 ','
@@ -561,9 +561,9 @@ trocaDescritor('
 </xsl:if>
 }
 </script>
-<xsl:for-each select="//media[@descriptor=$descIdM]|//e:media[@descriptor=$descIdM]">
+<xsl:for-each select="//mediaNode[@descriptor=$descIdM]|//e:mediaNode[@descriptor=$descIdM]">
 <xsl:call-template name="interpretaMedia">
-<xsl:with-param name="media" select="."/>
+<xsl:with-param name="mediaNode" select="."/>
 <xsl:with-param name="id" select="./@id"/>
 </xsl:call-template>
 </xsl:for-each>
@@ -751,9 +751,9 @@ valor; }
 </li>
 </xsl:if>
 </ul>
-<xsl:for-each select="media[count(@descriptor)=0][count(@refer)=0]|e:media[count(@descriptor)=0][count(@refer)=0]">
+<xsl:for-each select="mediaNode[count(@descriptor)=0][count(@refer)=0]|e:mediaNode[count(@descriptor)=0][count(@refer)=0]">
 <xsl:call-template name="interpretaMedia">
-<xsl:with-param name="media" select="."/>
+<xsl:with-param name="mediaNode" select="."/>
 <xsl:with-param name="id" select="./@id"/>
 </xsl:call-template>
 </xsl:for-each>
@@ -781,9 +781,9 @@ valor; }
 </xsl:choose>
 </xsl:attribute>
 <xsl:apply-templates/>
-<xsl:for-each select="media[count(@descriptor)=0][count(@refer)=0]|e:media[count(@descriptor)=0][count(@refer)=0]">
+<xsl:for-each select="mediaNode[count(@descriptor)=0][count(@refer)=0]|e:mediaNode[count(@descriptor)=0][count(@refer)=0]">
 <xsl:call-template name="interpretaMedia">
-<xsl:with-param name="media" select="."/>
+<xsl:with-param name="mediaNode" select="."/>
 <xsl:with-param name="id" select="./@id"/>
 </xsl:call-template>
 </xsl:for-each>
@@ -918,7 +918,7 @@ $(document).bind('
 <xsl:otherwise>
 <!-- Tratando descriptor -->
 <xsl:variable name="medialocalid" select="@component"/>
-<xsl:variable name="medialocal" select="//media[@id=$medialocalid]|//e:media[@id=$medialocalid]"/>
+<xsl:variable name="medialocal" select="//mediaNode[@id=$medialocalid]|//e:mediaNode[@id=$medialocalid]"/>
 <xsl:choose>
 <xsl:when test="@descriptor != '' and @descriptor!=string($medialocal/@descriptor)">
 trataDescriptorInLink('
@@ -1045,13 +1045,13 @@ $(document).bind('
 <xsl:param name="component"/>
 <xsl:param name="originalDoc"/>
 <xsl:choose>
-<xsl:when test="count(//media[@id=$component][@instance='instSame']|//e:media[@id=$component][@instance='instSame'])>0">
-<xsl:value-of select="//media[@id=$component][@instance='instSame']/@refer|//e:media[@id=$component][@instance='instSame']/@refer"/>
+<xsl:when test="count(//mediaNode[@id=$component][@instance='instSame']|//e:mediaNode[@id=$component][@instance='instSame'])>0">
+<xsl:value-of select="//mediaNode[@id=$component][@instance='instSame']/@refer|//e:mediaNode[@id=$component][@instance='instSame']/@refer"/>
 </xsl:when>
 <xsl:when test="$originalDoc!=''">
 <xsl:choose>
-<xsl:when test="count($originalDoc//media[@id=$component][@instance='instSame']|$originalDoc//e:media[@id=$component][@instance='instSame'])>0">
-<xsl:value-of select="$originalDoc//media[@id=$component][@instance='instSame']/@refer|$originalDoc//e:media[@id=$component][@instance='instSame']/@refer"/>
+<xsl:when test="count($originalDoc//mediaNode[@id=$component][@instance='instSame']|$originalDoc//e:mediaNode[@id=$component][@instance='instSame'])>0">
+<xsl:value-of select="$originalDoc//mediaNode[@id=$component][@instance='instSame']/@refer|$originalDoc//e:mediaNode[@id=$component][@instance='instSame']/@refer"/>
 </xsl:when>
 <xsl:otherwise>
 <xsl:value-of select="$component"/>
@@ -1254,7 +1254,7 @@ if(origin.stopImmediatePropagation) origin.stopImmediatePropagation(); return tr
 <xsl:for-each select="$elo/bind[@role=$role]|$elo/e:bind[@role=$role]">
 <xsl:variable name="interface" select="@interface"/>
 <xsl:variable name="key" select="$connector/simpleCondition[@role=$role]/@key|$connector/e:simpleCondition[@role=$role]/@key"/>
-<xsl:variable name="nosDoContexto" select="$elo/../media|$elo/../e:media|//media[@id=$elo/../media/@refer]|//media[@id=$elo/../media/@refer]"/>
+<xsl:variable name="nosDoContexto" select="$elo/../mediaNode|$elo/../e:mediaNode|//mediaNode[@id=$elo/../mediaNode/@refer]|//mediaNode[@id=$elo/../mediaNode/@refer]"/>
 <xsl:variable name="componentInterface">
 <xsl:choose>
 <xsl:when test="count(@interface) > 0 and count($nosDoContexto/area[@id=$interface]|$nosDoContexto/e:area[@id=$interface])>0">
@@ -1480,7 +1480,7 @@ if(origin.data.id==target){
 <xsl:param name="parent"/>
 <!--
 xsl:attribute name="style">
-			<xsl:for-each select="$media/property|$media/e:property">
+			<xsl:for-each select="$mediaNode/property|$mediaNode/e:property">
 				<xsl:if test="@value!=''">
 				<xsl:choose>
 				<xsl:when test="@name ='bounds'">
@@ -1584,14 +1584,14 @@ xsl:attribute name="style">
 </xsl:for-each>
 </xsl:template>
 <xsl:template name="interpretaArea">
-<xsl:param name="media"/>
-<xsl:for-each select="$media/e:area|$media/area|$media/e:area">
+<xsl:param name="mediaNode"/>
+<xsl:for-each select="$mediaNode/e:area|$mediaNode/area|$mediaNode/e:area">
 <xsl:element name="area">
 <xsl:attribute name="id">
 <xsl:value-of select="@id"/>
 </xsl:attribute>
 <xsl:attribute name="parent">
-<xsl:value-of select="$media/@id"/>
+<xsl:value-of select="$mediaNode/@id"/>
 </xsl:attribute>
 <xsl:if test="@begin!=''">
 <xsl:attribute name="begin">
@@ -1667,7 +1667,7 @@ xsl:attribute name="style">
 </xsl:template>
 <xsl:template name="interPretaAtributosMedia">
 <xsl:param name="id"/>
-<xsl:param name="media"/>
+<xsl:param name="mediaNode"/>
 <xsl:param name="class"/>
 <xsl:attribute name="id">
 <xsl:value-of select="$id"/>
@@ -1677,28 +1677,28 @@ xsl:attribute name="style">
 <xsl:value-of select="$class"/>
 <xsl:text></xsl:text>
 </xsl:if>
-<xsl:if test="count(media[@id=$id]/property[name=@style]|e:media[@id=$id]/e:property[name=@style])>0">
-<xsl:value-of select="media[@id=$id]/property[name=@style]/@value|e:media[@id=$id]/e:property[name=@style]/@value"/>
+<xsl:if test="count(mediaNode[@id=$id]/property[name=@style]|e:mediaNode[@id=$id]/e:property[name=@style])>0">
+<xsl:value-of select="mediaNode[@id=$id]/property[name=@style]/@value|e:mediaNode[@id=$id]/e:property[name=@style]/@value"/>
 <xsl:text></xsl:text>
 </xsl:if>
 </xsl:attribute>
 <xsl:attribute name="context">
 <xsl:choose>
-<xsl:when test="count(//media[@id=$id]/ancestor::node()[name()='context']|//e:media[@id=$id]/ancestor::node()[name()='context'])>0">
-<xsl:value-of select="//media[@id=$id]/parent::node()[local-name()='context']/@id|//e:media[@id=$id]/parent::node()[local-name()='context']/@id"/>
+<xsl:when test="count(//mediaNode[@id=$id]/ancestor::node()[name()='context']|//e:mediaNode[@id=$id]/ancestor::node()[name()='context'])>0">
+<xsl:value-of select="//mediaNode[@id=$id]/parent::node()[local-name()='context']/@id|//e:mediaNode[@id=$id]/parent::node()[local-name()='context']/@id"/>
 </xsl:when>
 <xsl:otherwise>
 <xsl:text>body</xsl:text>
 </xsl:otherwise>
 </xsl:choose>
 </xsl:attribute>
-<xsl:if test="$media/@descriptor != ''">
+<xsl:if test="$mediaNode/@descriptor != ''">
 <xsl:attribute name="descriptor">
-<xsl:if test="not(contains($media/@descriptor,'#'))">
-<xsl:value-of select="$media/@descriptor"/>
+<xsl:if test="not(contains($mediaNode/@descriptor,'#'))">
+<xsl:value-of select="$mediaNode/@descriptor"/>
 </xsl:if>
-<xsl:if test="contains($media/@descriptor,'#')">
-<xsl:value-of select="concat(substring-before($media/@descriptor,'#'),'_',substring-after($media/@descriptor,'#'))"/>
+<xsl:if test="contains($mediaNode/@descriptor,'#')">
+<xsl:value-of select="concat(substring-before($mediaNode/@descriptor,'#'),'_',substring-after($mediaNode/@descriptor,'#'))"/>
 </xsl:if>
 </xsl:attribute>
 </xsl:if>
@@ -1707,17 +1707,17 @@ select('
 <xsl:value-of select="$id"/>
 ')
 </xsl:attribute>
-<xsl:if test="$media/@id!= $id">
+<xsl:if test="$mediaNode/@id!= $id">
 <xsl:attribute name="instance">
-<xsl:value-of select="//media[@id=$id]/@instance|//e:media[@id=$id]/@instance"/>
+<xsl:value-of select="//mediaNode[@id=$id]/@instance|//e:mediaNode[@id=$id]/@instance"/>
 </xsl:attribute>
 <xsl:attribute name="refer">
-<xsl:value-of select="$media/@id"/>
+<xsl:value-of select="$mediaNode/@id"/>
 </xsl:attribute>
 </xsl:if>
-<xsl:if test="$media/@src">
+<xsl:if test="$mediaNode/@src">
 <!-- trata mirror -->
-<xsl:for-each select="//media[@id=substring-after($media/@src,'//')]|//e:media[@id=substring-after($media/@src,'//')]">
+<xsl:for-each select="//mediaNode[@id=substring-after($mediaNode/@src,'//')]|//e:mediaNode[@id=substring-after($mediaNode/@src,'//')]">
 <xsl:attribute name="mirror">
 <xsl:choose>
 <xsl:when test="@refer != '' and @interface = 'instSame'">
@@ -1730,18 +1730,18 @@ select('
 </xsl:attribute>
 </xsl:for-each>
 <xsl:attribute name="src">
-<xsl:value-of select="$media/@src"></xsl:value-of>
+<xsl:value-of select="$mediaNode/@src"></xsl:value-of>
 </xsl:attribute>
 </xsl:if>
 </xsl:template>
 <xsl:template name="interpretaMedia">
-<xsl:param name="media"/>
+<xsl:param name="mediaNode"/>
 <xsl:param name="id"/>
 <xsl:choose>
-<xsl:when test="$media/@id != $id and count(//media[@id=$id][@instance='instSame']|//e:media[@id=$id][@instance='instSame'])>0">
+<xsl:when test="$mediaNode/@id != $id and count(//mediaNode[@id=$id][@instance='instSame']|//e:mediaNode[@id=$id][@instance='instSame'])>0">
 <span>
 <xsl:call-template name="interPretaAtributosMedia">
-<xsl:with-param name="media" select="$media"/>
+<xsl:with-param name="mediaNode" select="$mediaNode"/>
 <xsl:with-param name="id" select="$id"/>
 <xsl:with-param name="class">
 <xsl:text>instSame</xsl:text>
@@ -1749,179 +1749,179 @@ select('
 </xsl:call-template>
 </span>
 </xsl:when>
-<xsl:when test="contains($media/@src,'.txt') or contains($media/@src,'.htm') or contains($media/@src,'.ncl')">
+<xsl:when test="contains($mediaNode/@src,'.txt') or contains($mediaNode/@src,'.htm') or contains($mediaNode/@src,'.ncl')">
 <iframe>
 <xsl:call-template name="interPretaAtributosMedia">
-<xsl:with-param name="media" select="$media"/>
+<xsl:with-param name="mediaNode" select="$mediaNode"/>
 <xsl:with-param name="id" select="$id"/>
 <xsl:with-param name="class">innerRegion</xsl:with-param>
 </xsl:call-template>
 </iframe>
-<xsl:if test="count($media/property|$media/e:property) > 0">
+<xsl:if test="count($mediaNode/property|$mediaNode/e:property) > 0">
 <xsl:call-template name="interpretaPropriedade">
-<xsl:with-param name="parent" select="$media"/>
+<xsl:with-param name="parent" select="$mediaNode"/>
 </xsl:call-template>
 </xsl:if>
-<xsl:for-each select="//media[@refer=$id][@instance='instSame']|//e:media[@refer=$id][@instance='instSame']">
+<xsl:for-each select="//mediaNode[@refer=$id][@instance='instSame']|//e:mediaNode[@refer=$id][@instance='instSame']">
 <xsl:if test="count(property|e:property) > 0">
 <xsl:call-template name="interpretaPropriedade">
 <xsl:with-param name="parent" select="."/>
 </xsl:call-template>
 </xsl:if>
 </xsl:for-each>
-<xsl:if test="count($media/area|$media/e:area) > 0">
+<xsl:if test="count($mediaNode/area|$mediaNode/e:area) > 0">
 <xsl:call-template name="interpretaArea">
-<xsl:with-param name="media" select="$media"/>
+<xsl:with-param name="mediaNode" select="$mediaNode"/>
 </xsl:call-template>
 </xsl:if>
-<xsl:for-each select="//media[@refer=$id][@instance='instSame']|//e:media[@refer=$id][@instance='instSame']">
+<xsl:for-each select="//mediaNode[@refer=$id][@instance='instSame']|//e:mediaNode[@refer=$id][@instance='instSame']">
 <xsl:if test="count(area|e:area) > 0">
 <xsl:call-template name="interpretaArea">
-<xsl:with-param name="media" select="."/>
+<xsl:with-param name="mediaNode" select="."/>
 </xsl:call-template>
 </xsl:if>
 </xsl:for-each>
 </xsl:when>
-<xsl:when test="contains($media/@src,'.png') or contains($media/@src,'.jpg') or contains($media/@src,'.jpeg') or contains($media/@src,'.gif') or contains($media/@src,'.bmp')">
+<xsl:when test="contains($mediaNode/@src,'.png') or contains($mediaNode/@src,'.jpg') or contains($mediaNode/@src,'.jpeg') or contains($mediaNode/@src,'.gif') or contains($mediaNode/@src,'.bmp')">
 <img>
 <xsl:call-template name="interPretaAtributosMedia">
-<xsl:with-param name="media" select="$media"/>
+<xsl:with-param name="mediaNode" select="$mediaNode"/>
 <xsl:with-param name="id" select="$id"/>
 <xsl:with-param name="class">innerRegion</xsl:with-param>
 </xsl:call-template>
 </img>
-<xsl:if test="count($media/property|$media/e:property) > 0">
+<xsl:if test="count($mediaNode/property|$mediaNode/e:property) > 0">
 <xsl:call-template name="interpretaPropriedade">
-<xsl:with-param name="parent" select="$media"/>
+<xsl:with-param name="parent" select="$mediaNode"/>
 </xsl:call-template>
 </xsl:if>
-<xsl:for-each select="//media[@refer=$id][@instance='instSame']|//e:media[@refer=$id][@instance='instSame']">
+<xsl:for-each select="//mediaNode[@refer=$id][@instance='instSame']|//e:mediaNode[@refer=$id][@instance='instSame']">
 <xsl:if test="count(property|e:property) > 0">
 <xsl:call-template name="interpretaPropriedade">
 <xsl:with-param name="parent" select="."/>
 </xsl:call-template>
 </xsl:if>
 </xsl:for-each>
-<xsl:if test="count($media/area|$media/e:area) > 0">
+<xsl:if test="count($mediaNode/area|$mediaNode/e:area) > 0">
 <xsl:call-template name="interpretaArea">
-<xsl:with-param name="media" select="$media"/>
+<xsl:with-param name="mediaNode" select="$mediaNode"/>
 </xsl:call-template>
 </xsl:if>
-<xsl:for-each select="//media[@refer=$id][@instance='instSame']|//e:media[@refer=$id][@instance='instSame']">
+<xsl:for-each select="//mediaNode[@refer=$id][@instance='instSame']|//e:mediaNode[@refer=$id][@instance='instSame']">
 <xsl:if test="count(area|e:area) > 0">
 <xsl:call-template name="interpretaArea">
-<xsl:with-param name="media" select="."/>
+<xsl:with-param name="mediaNode" select="."/>
 </xsl:call-template>
 </xsl:if>
 </xsl:for-each>
 </xsl:when>
-<xsl:when test="contains($media/@type,'audio') or(contains($media/@src,'.mp3') or contains($media/@src,'.mp2') or contains($media/@src,'.wav'))">
+<xsl:when test="contains($mediaNode/@type,'audio') or(contains($mediaNode/@src,'.mp3') or contains($mediaNode/@src,'.mp2') or contains($mediaNode/@src,'.wav'))">
 <audio>
 <xsl:attribute name="preload">none</xsl:attribute>
 <xsl:call-template name="interPretaAtributosMedia">
-<xsl:with-param name="media" select="$media"/>
+<xsl:with-param name="mediaNode" select="$mediaNode"/>
 <xsl:with-param name="id" select="$id"/>
 </xsl:call-template>
-<xsl:if test="count($media/property|$media/e:property) > 0">
+<xsl:if test="count($mediaNode/property|$mediaNode/e:property) > 0">
 <xsl:call-template name="interpretaPropriedade">
-<xsl:with-param name="parent" select="$media"/>
+<xsl:with-param name="parent" select="$mediaNode"/>
 </xsl:call-template>
 </xsl:if>
-<xsl:for-each select="//media[@refer=$id][@instance='instSame']|//e:media[@refer=$id][@instance='instSame']">
+<xsl:for-each select="//mediaNode[@refer=$id][@instance='instSame']|//e:mediaNode[@refer=$id][@instance='instSame']">
 <xsl:if test="count(property|e:property) > 0">
 <xsl:call-template name="interpretaPropriedade">
 <xsl:with-param name="parent" select="."/>
 </xsl:call-template>
 </xsl:if>
 </xsl:for-each>
-<xsl:if test="count($media/area|$media/e:area) > 0">
+<xsl:if test="count($mediaNode/area|$mediaNode/e:area) > 0">
 <xsl:call-template name="interpretaArea">
-<xsl:with-param name="media" select="$media"/>
+<xsl:with-param name="mediaNode" select="$mediaNode"/>
 </xsl:call-template>
 </xsl:if>
-<xsl:for-each select="//media[@refer=$id][@instance='instSame']|//e:media[@refer=$id][@instance='instSame']">
+<xsl:for-each select="//mediaNode[@refer=$id][@instance='instSame']|//e:mediaNode[@refer=$id][@instance='instSame']">
 <xsl:if test="count(area|e:area) > 0">
 <xsl:call-template name="interpretaArea">
-<xsl:with-param name="media" select="."/>
+<xsl:with-param name="mediaNode" select="."/>
 </xsl:call-template>
 </xsl:if>
 </xsl:for-each>
 </audio>
 </xsl:when>
-<xsl:when test="contains($media/@type,'video') or(contains($media/@src,'.mp4') or contains($media/@src,'.mpg4') or contains($media/@src,'.mpeg') or contains($media/@src,'.mpg'))">
+<xsl:when test="contains($mediaNode/@type,'video') or(contains($mediaNode/@src,'.mp4') or contains($mediaNode/@src,'.mpg4') or contains($mediaNode/@src,'.mpeg') or contains($mediaNode/@src,'.mpg'))">
 <video>
 <xsl:attribute name="preload">none</xsl:attribute>
 <xsl:call-template name="interPretaAtributosMedia">
-<xsl:with-param name="media" select="$media"/>
+<xsl:with-param name="mediaNode" select="$mediaNode"/>
 <xsl:with-param name="id" select="$id"/>
 <xsl:with-param name="class">innerRegion</xsl:with-param>
 </xsl:call-template>
-<xsl:if test="count($media/property|$media/e:property) > 0">
+<xsl:if test="count($mediaNode/property|$mediaNode/e:property) > 0">
 <xsl:call-template name="interpretaPropriedade">
-<xsl:with-param name="parent" select="$media"/>
+<xsl:with-param name="parent" select="$mediaNode"/>
 </xsl:call-template>
 </xsl:if>
-<xsl:for-each select="//media[@refer=$id][@instance='instSame']|//e:media[@refer=$id][@instance='instSame']">
+<xsl:for-each select="//mediaNode[@refer=$id][@instance='instSame']|//e:mediaNode[@refer=$id][@instance='instSame']">
 <xsl:if test="count(property|e:property) > 0">
 <xsl:call-template name="interpretaPropriedade">
 <xsl:with-param name="parent" select="."/>
 </xsl:call-template>
 </xsl:if>
 </xsl:for-each>
-<xsl:if test="count($media/area|$media/e:area) > 0">
+<xsl:if test="count($mediaNode/area|$mediaNode/e:area) > 0">
 <xsl:call-template name="interpretaArea">
-<xsl:with-param name="media" select="$media"/>
+<xsl:with-param name="mediaNode" select="$mediaNode"/>
 </xsl:call-template>
 </xsl:if>
-<xsl:for-each select="//media[@refer=$id][@instance='instSame']|//e:media[@refer=$id][@instance='instSame']">
+<xsl:for-each select="//mediaNode[@refer=$id][@instance='instSame']|//e:mediaNode[@refer=$id][@instance='instSame']">
 <xsl:if test="count(area|e:area) > 0">
 <xsl:call-template name="interpretaArea">
-<xsl:with-param name="media" select="."/>
+<xsl:with-param name="mediaNode" select="."/>
 </xsl:call-template>
 </xsl:if>
 </xsl:for-each>
 </video>
 </xsl:when>
-<xsl:when test="$media/@type='application/x-ginga-settings'">
+<xsl:when test="$mediaNode/@type='application/x-ginga-settings'">
 <span>
 <xsl:call-template name="interPretaAtributosMedia">
-<xsl:with-param name="media" select="$media"/>
+<xsl:with-param name="mediaNode" select="$mediaNode"/>
 <xsl:with-param name="id" select="$id"/>
 <xsl:with-param name="class">
 <xsl:text>settings</xsl:text>
 </xsl:with-param>
 </xsl:call-template>
-<xsl:if test="count($media/property|$media/e:property) > 0">
+<xsl:if test="count($mediaNode/property|$mediaNode/e:property) > 0">
 <xsl:call-template name="interpretaPropriedade">
-<xsl:with-param name="parent" select="$media"/>
+<xsl:with-param name="parent" select="$mediaNode"/>
 </xsl:call-template>
 </xsl:if>
-<xsl:for-each select="//media[@refer=$id][@instance='instSame']|//e:media[@refer=$id][@instance='instSame']">
+<xsl:for-each select="//mediaNode[@refer=$id][@instance='instSame']|//e:mediaNode[@refer=$id][@instance='instSame']">
 <xsl:if test="count(property|e:property) > 0">
 <xsl:call-template name="interpretaPropriedade">
 <xsl:with-param name="parent" select="."/>
 </xsl:call-template>
 </xsl:if>
 </xsl:for-each>
-<xsl:if test="count($media/area|$media/e:area) > 0">
+<xsl:if test="count($mediaNode/area|$mediaNode/e:area) > 0">
 <xsl:call-template name="interpretaArea">
-<xsl:with-param name="media" select="$media"/>
+<xsl:with-param name="mediaNode" select="$mediaNode"/>
 </xsl:call-template>
 </xsl:if>
-<xsl:for-each select="//media[@refer=$id][@instance='instSame']|//e:media[@refer=$id][@instance='instSame']">
+<xsl:for-each select="//mediaNode[@refer=$id][@instance='instSame']|//e:mediaNode[@refer=$id][@instance='instSame']">
 <xsl:if test="count(area|e:area) > 0">
 <xsl:call-template name="interpretaArea">
-<xsl:with-param name="media" select="."/>
+<xsl:with-param name="mediaNode" select="."/>
 </xsl:call-template>
 </xsl:if>
 </xsl:for-each>
 </span>
 </xsl:when>
 </xsl:choose>
-<xsl:if test="$id = $media/@id">
-<xsl:for-each select="//media[@refer = $id]|//e:media[@refer = $id]">
+<xsl:if test="$id = $mediaNode/@id">
+<xsl:for-each select="//mediaNode[@refer = $id]|//e:mediaNode[@refer = $id]">
 <xsl:call-template name="interpretaMedia">
-<xsl:with-param name="media" select="$media"/>
+<xsl:with-param name="mediaNode" select="$mediaNode"/>
 <xsl:with-param name="id" select="@id"/>
 </xsl:call-template>
 </xsl:for-each>

@@ -49,8 +49,8 @@ import controller.ApplicationController;
 @SuppressWarnings({"unchecked","rawtypes"})
 public class InteractiveMediaWindow extends Stage {
      
-	private static final int HEIGHT = 610;
-	private static final int WIDTH = 650;
+	private static final int HEIGHT = 640;
+	private static final int WIDTH = 680;
     
 	private ApplicationController applicationController;
 	private TemporalViewPane temporalViewPane;

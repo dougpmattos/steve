@@ -1,11 +1,7 @@
 package model.NCLSupport;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
+import java.net.URL;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 
@@ -78,7 +74,10 @@ public class NCLExportEventHandler implements EventHandler<ActionEvent>{
 	public NCLExportEventHandler(SpatialTemporalApplication temporalView){
 		
 		this.spatialTemporalApplication = temporalView;
-		causalConnectorBaseFile = new File("src/model/NCLSupport/NCLFiles/causalConnectorBase.ncl");
+
+		URL pathName = getClass().getResource("NCLFiles/causalConnectorBase.ncl");
+
+		causalConnectorBaseFile = new File(pathName.toString());
 		
 	}
 	
@@ -214,7 +213,7 @@ public class NCLExportEventHandler implements EventHandler<ActionEvent>{
         } catch (XMLException ex) {
         	logger.error(ex.getMessage());
         	MessageDialog messageDialog = new MessageDialog(Language.translate("error"), 
-					Language.translate("error.during.the.export") + ": " + ex.getMessage(), "OK", 150);
+					Language.translate("error.during.the.export") + ": " + ex.getMessage(), "OK", 250);
             messageDialog.showAndWait();
             return null;
         	

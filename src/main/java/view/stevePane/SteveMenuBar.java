@@ -104,7 +104,7 @@ public class SteveMenuBar extends MenuBar{
 		createHelpMenuItemActions();
 		
 		//menuFile.getItems().addAll(menuItemNew, menuItemOpen, new SeparatorMenuItem(), menuItemClose, new SeparatorMenuItem(), menuItemExportNCL, new SeparatorMenuItem(), menuItemExportHTML5, new SeparatorMenuItem(), menuItemRun, new SeparatorMenuItem(), menuItemExit); 
-		menuFile.getItems().addAll(menuItemNew, menuItemOpen, new SeparatorMenuItem(), menuItemSave, new SeparatorMenuItem(), menuItemExportNCL, menuItemExportHTML5, new SeparatorMenuItem(), menuItemRun, new SeparatorMenuItem(), menuItemExit);
+		menuFile.getItems().addAll(menuItemNew, menuItemOpen, new SeparatorMenuItem(), menuItemSave, new SeparatorMenuItem(), menuItemExit);
 //		menuEdit.getItems().addAll(menuItemUndo, menuItemRedo, new SeparatorMenuItem(), menuItemCut, menuItemCopy, menuItemPaste, new SeparatorMenuItem(), 
 		menuEdit.getItems().addAll(menuItemPreferences, new SeparatorMenuItem(), menuItemSelectAll);
 		menuView.getItems().addAll(checkMenuItemMediaView, checkMenuItemTemporalView, checkMenuItemSpatialView, checkMenuItemShowRelations);
@@ -303,11 +303,11 @@ public class SteveMenuBar extends MenuBar{
 		
 		menuItemSave.setOnAction(new SaveEventHandler(spatialTemporalApplication, repositoryMediaList));
 		
-		menuItemImportNCL.setOnAction(new NCLImportEventHandler());
+		//menuItemImportNCL.setOnAction(new NCLImportEventHandler());
 		
-		menuItemExportNCL.setOnAction(new NCLExportEventHandler(spatialTemporalApplication));
+		//menuItemExportNCL.setOnAction(new NCLExportEventHandler(spatialTemporalApplication));
 		
-		menuItemExportHTML5.setOnAction(new HTMLExportEventHandler(spatialTemporalApplication));
+		//menuItemExportHTML5.setOnAction(new HTMLExportEventHandler(spatialTemporalApplication));
 		
 		menuItemRun.setOnAction(new EventHandler<ActionEvent>() {
 		    public void handle(ActionEvent t) {
