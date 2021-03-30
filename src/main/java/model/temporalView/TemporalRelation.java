@@ -1,12 +1,12 @@
 package model.temporalView;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-
 import model.common.Node;
 import model.common.Relation;
 import model.temporalView.enums.TemporalViewOperator;
 import model.utility.Operation;
+
+import java.io.Serializable;
+import java.util.ArrayList;
 
 @SuppressWarnings("rawtypes")
 

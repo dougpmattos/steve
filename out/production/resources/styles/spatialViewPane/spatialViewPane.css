@@ -1,0 +1,722 @@
+/*******************************************************************************
+ *                                                                             *
+ * Structural Panes                                                            *
+ *                                                                             *
+ ******************************************************************************/
+ 
+#display-pane{
+	-fx-background-color: #000000;
+}
+#screen-pane{
+	-fx-background-color: #000000;
+}
+#property-button-pane{
+    -fx-background-color: #102027;
+    -fx-alignment: center;
+    -fx-spacing: 20px;
+    -fx-padding: 0 0 10px 0;
+}
+#control-button-pane{
+    -fx-background-color: #102027;
+    -fx-alignment: center;
+}
+
+#effect-icons-container{
+    -fx-alignment: bottom-center;
+    -fx-padding: 0 0 10 0;
+}
+
+/*******************************************************************************
+ *                                                                             *
+ * Button Panes                                                                *
+ *                                                                             *
+ ******************************************************************************/
+ 
+#full-pane{
+	-fx-padding: 0 0 0 20px;
+}
+#refresh-pane{
+	-fx-padding: 0 20px 0 0;
+}
+#center-button-pane{
+	-fx-alignment: center;
+	-fx-spacing: 20px;
+}
+
+/*******************************************************************************
+ *                                                                             *
+ * Buttons                                                                     *
+ *                                                                             *
+ ******************************************************************************/
+
+#full-button {
+    -fx-graphic: url("../../images/spatialViewPane/full.png");
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+}
+#full-button:hover {
+	-fx-background-color: #00BFA5;
+    -fx-background-radius: 0;
+}
+
+#previous-frame-button {
+    -fx-graphic: url("../../images/spatialViewPane/pFrame.png");
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+}
+#previous-frame-button:hover {
+    -fx-background-color: #00BFA5;
+    -fx-background-radius: 0;
+}
+
+#next-frame-button {
+    -fx-graphic: url("../../images/spatialViewPane/nFrame.png");
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+}
+#next-frame-button:hover {
+    -fx-background-color: #00BFA5;
+    -fx-background-radius: 0;
+}
+
+#play-button {
+    -fx-graphic: url("../../images/spatialViewPane/play.png");
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+}
+#run-button {
+    -fx-graphic: url("../../images/spatialViewPane/run.png");
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+}
+#pause-button {
+    -fx-graphic: url("../../images/spatialViewPane/pause.png");
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+}
+#play-button:hover {
+    -fx-graphic: url("../../images/spatialViewPane/play-hover.png");
+    -fx-background-radius: 0;
+}
+#run-button:hover {
+    -fx-graphic: url("../../images/spatialViewPane/run-hover.png");
+    -fx-background-radius: 0;
+}
+#pause-button:hover {
+    -fx-graphic: url("../../images/spatialViewPane/pause-hover.png");
+    -fx-background-radius: 0;
+}
+
+#stop-button {
+    -fx-graphic: url("../../images/spatialViewPane/stop.png");
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+}
+#stop-button:hover {
+	-fx-graphic: url("../../images/spatialViewPane/stop-hover.png");
+    -fx-background-radius: 0;
+}
+
+#previous-scene-button {
+    -fx-graphic: url("../../images/spatialViewPane/pScene.png");
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+}
+#previous-scene-button:hover {
+	-fx-background-color: #00BFA5;
+    -fx-background-radius: 0;
+}
+
+#next-scene-button {
+    -fx-graphic: url("../../images/spatialViewPane/nScene.png");
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+}
+#next-scene-button:hover {
+	-fx-background-color: #00BFA5;
+    -fx-background-radius: 0;
+}
+
+#refresh-button {
+    -fx-graphic: url("../../images/spatialViewPane/refresh.png");
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+}
+#refresh-button:hover {
+	-fx-background-color: #00BFA5;
+    -fx-background-radius: 0;
+}
+
+#position-button {
+    -fx-graphic: url("../../images/spatialViewPane/position.png");
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+}
+#position-button:hover {
+	-fx-graphic: url("../../images/spatialViewPane/positionHover.png");
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+}
+
+#size-button {
+    -fx-graphic: url("../../images/spatialViewPane/size.png");
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+}
+#size-button:hover {
+	-fx-graphic: url("../../images/spatialViewPane/sizeHover.png");
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+}
+#crop-button {
+    -fx-graphic: url("../../images/spatialViewPane/crop.png");
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+}
+#crop-button:hover {
+	-fx-graphic: url("../../images/spatialViewPane/cropHover.png");
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+}
+
+/*******************************************************************************
+ *                                                                             *
+ * TabPane                                                                     *
+ *                                                                             *
+ ******************************************************************************/
+ 
+.tab {
+	-fx-background-color: red;
+} 
+.tab-pane {
+	-fx-tab-min-width: 8em;
+    -fx-tab-min-height: 3em;
+} 
+
+.tab-pane > .tab-header-area > .headers-region > .tab > .tab-container > .tab-label {
+    -fx-background-color: #102027;    
+    -fx-text-fill: rgba(255,255,255,0.3);
+    -fx-font-size: 12;
+}
+
+.tab-pane > .tab-header-area > .headers-region > .tab:selected > .tab-container > .tab-label {   
+    -fx-text-fill: #FFFFFF;
+    -fx-font-size: 12;
+}
+
+.tab-pane > .tab-header-area > .headers-region > .tab {
+    -fx-background-color: #102027;
+    -fx-background-insets: 0 0 4 0;
+    -fx-background-radius: 0;
+    -fx-padding: -4 0 4 0;
+}
+
+.tab-pane > .tab-header-area > .headers-region > .tab:selected {
+    -fx-background-color: #102027, #00BFA5;
+    -fx-background-insets: 0, 35 0 0 0;
+    -fx-background-radius: 0, 0;
+}
+
+.tab-pane > .tab-header-area > .tab-header-background {
+    -fx-background-color: #102027;
+    -fx-background-insets: 0;
+}
+
+.tab-pane:focused > .tab-header-area > .headers-region > .tab:selected .focus-indicator {
+    -fx-border-color: transparent;
+}
+
+/*******************************************************************************
+ *                                                                             *
+ * TextField                                                                   *
+ *                                                                             *
+ ******************************************************************************/
+
+.text-field {
+    -fx-background-color: #62727b;
+    -fx-background-insets: 22 1 1 1;
+    -fx-background-radius: 0;
+    -fx-padding: 0 0 9 0;
+    -fx-text-fill: #FFFFFF;
+    -fx-alignment: top-right;
+}
+ 
+.text-field:focused {
+    -fx-background-color: #00BFA5;
+    -fx-background-insets: 22 1 1 1;
+    -fx-background-radius: 0;
+    -fx-padding: 0 0 9 0;
+}
+
+#name-text-field{
+    -fx-background-color: #62727b;
+    -fx-background-insets: 22 1 1 1;
+    -fx-background-radius: 0;
+    -fx-padding: 0 0 9 0;
+    -fx-text-fill: #FFFFFF;
+    -fx-max-width: 100;
+    -fx-alignment: top-left;	
+}
+#name-text-field:focused{
+	-fx-background-color: #62727b;
+    -fx-background-insets: 22 1 1 1;
+    -fx-background-radius: 0;
+    -fx-padding: 0 0 9 0;
+}
+
+#type-text-field{
+    -fx-background-color: #62727b;
+    -fx-background-insets: 22 1 1 1;
+    -fx-background-radius: 0;
+    -fx-padding: 0 0 9 0;
+    -fx-text-fill: #FFFFFF;
+    -fx-max-width: 100;
+    -fx-alignment: top-left;	
+}
+#type-text-field:focused{
+	-fx-background-color: #62727b;
+    -fx-background-insets: 22 1 1 1;
+    -fx-background-radius: 0;
+    -fx-padding: 0 0 9 0;
+}
+
+#start-text-field{
+    -fx-background-color: #62727b;
+    -fx-background-insets: 22 1 1 1;
+    -fx-background-radius: 0;
+    -fx-padding: 0 0 9 0;
+    -fx-text-fill: #FFFFFF;
+    -fx-max-width: 100;
+    -fx-alignment: top-left;	
+}
+#start-text-field:focused{
+	-fx-background-color: #62727b;
+    -fx-background-insets: 22 1 1 1;
+    -fx-background-radius: 0;
+    -fx-padding: 0 0 9 0;
+}
+
+#end-text-field{
+    -fx-background-color: #62727b;
+    -fx-background-insets: 22 1 1 1;
+    -fx-background-radius: 0;
+    -fx-padding: 0 0 9 0;
+    -fx-text-fill: #FFFFFF;
+    -fx-max-width: 100;
+    -fx-alignment: top-left;	
+}
+#end-text-field:focused{
+	-fx-background-color: #62727b;
+    -fx-background-insets: 22 1 1 1;
+    -fx-background-radius: 0;
+    -fx-padding: 0 0 9 0;
+}
+
+#duration-text-field{
+    -fx-background-color: #62727b;
+    -fx-background-insets: 22 1 1 1;
+    -fx-background-radius: 0;
+    -fx-padding: 0 0 9 0;
+    -fx-text-fill: #FFFFFF;
+    -fx-max-width: 100;
+    -fx-alignment: top-left;	
+}
+#duration-text-field:focused{
+	-fx-background-color: #62727b;
+    -fx-background-insets: 22 1 1 1;
+    -fx-background-radius: 0;
+    -fx-padding: 0 0 9 0;
+}
+
+#priority-text-field{
+    -fx-background-color: #62727b;
+    -fx-background-insets: 22 1 1 1;
+    -fx-background-radius: 0;
+    -fx-padding: 0 0 9 0;
+    -fx-text-fill: #FFFFFF;
+    -fx-max-width: 100;
+    -fx-alignment: top-left;
+}
+#priority-text-field:focused{
+	-fx-background-color: #62727b;
+    -fx-background-insets: 22 1 1 1;
+    -fx-background-radius: 0;
+    -fx-padding: 0 0 9 0;
+}
+
+#link-button {
+    -fx-graphic: url("../../images/spatialViewPane/link-off-24dp.png");
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+}
+
+/*******************************************************************************
+ *                                                                             *
+ * Label                                                                       *
+ *                                                                             *
+ ******************************************************************************/
+
+.label {
+    -fx-text-fill: #B0BEC5;
+}
+
+/*******************************************************************************
+ *                                                                             *
+ * ChoiceBox                                                                   *
+ *                                                                             *
+ ******************************************************************************/
+
+.choice-box {
+    -fx-background-color: #62727b;
+    -fx-background-insets: 23 0 1 0;
+    -fx-background-radius: 0;
+    -fx-padding: 0 0 0 0;
+}
+
+.choice-box:focused {
+    -fx-background-color: #00BFA5;
+    -fx-background-insets: 23 0 1 0;
+    -fx-background-radius: 0;
+    -fx-padding: 0 0 0 0;
+}
+.choice-box > .label {
+    -fx-padding: 0 0 10 0;
+    -fx-text-fill: #FFFFFF;
+}
+
+.choice-box-menu-item > * > .menu-item-radio {
+    /* When we show RadioMenuItems in ChoiceBox, we replace the radio shape with
+       a check mark, which looks much better */
+    -fx-shape: "M0,5H2L4,8L8";
+    -fx-scale-shape: false;
+    -fx-background-color: #FFFFFF;
+}
+
+.choice-box > .open-button {
+    -fx-background-color: red;
+    -fx-background-insets: 50;
+    -fx-padding: 0 0 0 10;
+}
+
+.choice-box > .open-button > .arrow {
+    -fx-background-color: #62727b;
+    -fx-background-insets: 1;
+    -fx-padding: 4 5.5 4 5.5;
+    -fx-shape: "M 0 0 h 7 l -3.5 4 z";
+}
+
+/*******************************************************************************
+ *                                                                             *
+ * Color Picker                                                                   *
+ *                                                                             *
+ ******************************************************************************/
+
+.combo-box-base > .arrow-button > .arrow {
+    -fx-background-color: #62727b;
+    -fx-background-insets: 1;
+    -fx-padding: 4 5.5 4 5.5;
+    -fx-shape: "M 0 0 h 7 l -3.5 4 z";
+}
+
+.color-picker {
+	-fx-background-color: #102027;
+	-fx-color-rect-width: 15;
+    -fx-color-rect-height: 15;
+    -fx-min-height: 30;
+}
+
+.color-picker > .arrow-button {
+    -fx-background-color: #102027;
+    -fx-background-insets: 1;
+}
+
+
+.combo-box-base.color-picker.split-button > .arrow-button {
+    -fx-background-color: #62727b;
+    -fx-background-insets: 1;
+    -fx-background-radius: 0;
+    -fx-padding: 1; /* 6 5 6 5 */
+}
+
+.color-picker:hover {
+    -fx-color: #102027;
+}
+
+/** Fix for RT-35422 where border was being shown incorrectly on non-split-buttons */
+.combo-box-base.color-picker:hover > .arrow-button {
+    -fx-background-insets: 1;
+}
+
+.color-picker.button {
+    -fx-padding: 0 0 0 0;
+}
+
+.color-picker.button > .arrow-button {
+    -fx-background-color: #62727b;
+    -fx-background-insets: 1;
+    -fx-background-radius: 0;
+}
+
+.color-picker > .split-button > .arrow-button:hover {
+    -fx-color: #00BFA5;
+}
+
+.color-picker > .split-button > .color-picker-label:hover {
+     -fx-color: #00BFA5;
+}
+
+.color-picker > .color-picker-label > .picker-color {
+    -fx-padding: 0;
+}
+
+.color-picker > .color-picker-label > .picker-color > .picker-color-rect {
+    -fx-stroke: -fx-pressed-base;
+    -fx-stroke-type: inside;
+}
+
+.color-palette {
+    -fx-spacing: 15px;
+    -fx-background-color: #102027;
+    -fx-effect: dropshadow( three-pass-box , rgba(0,0,0,0.6) , 8, 0.0 , 0 , 0 );
+}
+
+.color-palette > .color-picker-grid > .color-square {
+    -fx-background-color: #62727b;
+    -fx-background-insets: -1, 0;
+    -fx-padding: 0.5;
+    -fx-border: #62727b;
+}
+
+.color-palette-region > .color-square.hover-square {
+    -fx-background-color: #62727b;
+    -fx-background-insets: -1;
+    -fx-padding: 1;
+}
+
+
+/*******************************************************************************
+ *                                                                             *
+ * Specific Elements                                                           *
+ *                                                                             *
+ ******************************************************************************/
+#property-pane{
+	-fx-fit-to-height: true;
+	-fx-fit-to-width: true;
+	-fx-padding: 4;
+}
+
+#property-container{
+	-fx-spacing: 6;
+}
+
+#label-container{
+	-fx-alignment: center;
+}
+
+#position-vbox{
+	-fx-background-color: #102027;
+	-fx-padding: 15 15 20 15;
+	-fx-background-insets: 2;
+	-fx-effect: dropshadow( three-pass-box , rgba(0,0,0,0.6) , 8, 0.0 , 0 , 0 );
+	-fx-alignment: top-center;
+	-fx-spacing: 15;
+}
+
+#sensory-effect-vbox{
+	-fx-background-color: #102027;
+	-fx-padding: 15 15 20 15;
+	-fx-background-insets: 2;
+	-fx-effect: dropshadow( three-pass-box , rgba(0,0,0,0.6) , 8, 0.0 , 0 , 0 );
+	-fx-alignment: top-center;
+	-fx-spacing: 15;
+}
+
+#effect-position-choice-box{
+    -fx-min-width: 120;
+}
+
+#position-property-grid-pane{
+	-fx-background-color: #102027;
+	-fx-padding: 0px;
+	-fx-background-insets: 0;
+	-fx-hgap: 10;
+	-fx-vgap: 10;
+}
+#position-title{
+	-fx-fill: #B0BEC5;
+	-fx-font-size: 16;
+}
+
+#size-vbox{
+	-fx-background-color: #102027;
+	-fx-padding: 15 15 20 15;
+	-fx-background-insets: 2;
+	-fx-effect: dropshadow( three-pass-box , rgba(0,0,0,0.6) , 8, 0.0 , 0 , 0 );
+	-fx-alignment: top-center;
+	-fx-spacing: 15;
+}
+#size-property-grid-pane{
+	-fx-background-color: #102027;
+	-fx-padding: 0px;
+	-fx-background-insets: 0;
+	-fx-hgap: 10;
+	-fx-vgap: 10;
+}
+
+#sensory-effect-property-grid-pane{
+	-fx-background-color: #102027;
+	-fx-padding: 0px;
+	-fx-background-insets: 0;
+	-fx-hgap: 25;
+	-fx-vgap: 20;
+}
+
+#size-title{
+	-fx-fill: #B0BEC5;
+	-fx-font-size: 16;
+}
+
+#separator{
+    -fx-background-color: #62727b;
+    -fx-opacity: 0.3;
+}
+
+#sensory-effect-title{
+	-fx-fill: #B0BEC5;
+	-fx-font-size: 16;
+}
+
+#sensory-effect-subtitle{
+	-fx-fill: #B0BEC5;
+	-fx-font-size: 14;
+}
+
+#size-aspect-ratio{
+    -fx-min-width: 50;
+}
+
+#crop-vbox{
+	-fx-background-color: #102027;
+	-fx-padding: 15 15 20 15;
+	-fx-background-insets: 2;
+	-fx-effect: dropshadow( three-pass-box , rgba(0,0,0,0.6) , 8, 0.0 , 0 , 0 );
+	-fx-alignment: top-center;
+	-fx-spacing: 15;
+}
+#crop-property-grid-pane{
+	-fx-background-color: #102027;
+	-fx-padding: 0px;
+	-fx-background-insets: 0;
+	-fx-hgap: 10;
+	-fx-vgap: 10;
+}
+#crop-title{
+	-fx-fill: #B0BEC5;
+	-fx-font-size: 16;
+}
+
+#style-vbox{
+	-fx-background-color: #102027;
+	-fx-padding: 15 15 20 15;
+	-fx-background-insets: 2;
+	-fx-effect: dropshadow( three-pass-box , rgba(0,0,0,0.6) , 8, 0.0 , 0 , 0 );
+	-fx-alignment: top-center;
+	-fx-spacing: 15;
+}
+#style-property-grid-pane{
+	-fx-background-color: #102027;
+	-fx-padding: 0px;
+	-fx-background-insets: 0;
+	-fx-hgap: 10;
+	-fx-vgap: 10;
+}
+#style-title{
+	-fx-fill: #B0BEC5;
+	-fx-font-size: 16;
+}
+
+#level-vbox{
+	-fx-background-color: #102027;
+	-fx-padding: 15 15 20 15;
+	-fx-background-insets: 2;
+	-fx-effect: dropshadow( three-pass-box , rgba(0,0,0,0.6) , 8, 0.0 , 0 , 0 );
+	-fx-alignment: top-center;
+	-fx-spacing: 15;
+}
+#level-property-grid-pane{
+	-fx-background-color: #102027;
+	-fx-padding: 0px;
+	-fx-background-insets: 0;
+	-fx-hgap: 10;
+	-fx-vgap: 10;
+}
+#level-title{
+	-fx-fill: #B0BEC5;
+	-fx-font-size: 16;
+}
+
+
+#info-pane-vbox{
+	-fx-background-color: #102027;
+	-fx-padding: 15 15 20 15;
+	-fx-background-insets: 2;
+	-fx-effect: dropshadow( three-pass-box , rgba(0,0,0,0.6) , 8, 0.0 , 0 , 0 );
+	-fx-alignment: top-center;
+	-fx-spacing: 15;
+	-fx-fit-to-height: true;
+	-fx-fit-to-width: true;
+}
+#info-property-grid-pane{
+	-fx-background-color: #102027;
+	-fx-padding: 0px;
+	-fx-background-insets: 0;
+	-fx-hgap: 10;
+	-fx-vgap: 10;
+}
+#temporal-info-pane{
+	-fx-fit-to-height: true;
+	-fx-fit-to-width: true;
+	-fx-padding: 4;
+}
+
+#repository-info-pane{
+	-fx-fit-to-height: true;
+	-fx-fit-to-width: true;
+	-fx-padding: 4;
+}
+
+#title-icon-container{
+	-fx-spacing: 300;
+}
+#spatial-view-label{
+	-fx-min-width: 40;
+}
+#spatial-view-label-time{
+	-fx-min-width: 70;
+}
+#right-spatial-view-label{
+	-fx-min-width: 55;
+}
+#spatial-view-label-intensity{
+    -fx-min-width: 80;
+}
+#spatial-view-label-intensity-flashlight{
+    -fx-min-width: 90;
+}
+#spatial-view-label-position{
+    -fx-min-width: 40;
+}
+#info-pane-field{
+    -fx-max-width: 100;
+    -fx-alignment: top-left;
+}
+#text-style-field{
+    -fx-max-width: 100;
+    -fx-alignment: top-left;
+}
+#font-style-field{
+	-fx-max-width: 100;
+}
+#right-font-style-field{
+	-fx-max-width: 60;
+}

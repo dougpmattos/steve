@@ -1,10 +1,5 @@
 package model.common;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.Observable;
-
 import controller.ApplicationController;
 import model.temporalView.Interactivity;
 import model.temporalView.TemporalChain;
@@ -13,7 +8,11 @@ import model.temporalView.enums.TemporalViewOperator;
 import model.utility.Operation;
 import view.common.Language;
 import view.common.dialogs.InputDialog;
-import view.temporalViewPane.InteractiveMediaWindow;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Observable;
 
 public class SpatialTemporalApplication extends Observable implements Serializable{
 

@@ -1,10 +1,5 @@
 package model.temporalView;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.Observable;
-
 import model.common.MediaNode;
 import model.common.Node;
 import model.common.SensoryEffectNode;
@@ -13,20 +8,20 @@ import model.temporalView.enums.ConflictType;
 import model.temporalView.enums.TemporalRelationType;
 import model.temporalView.enums.TemporalViewOperator;
 import model.utility.Operation;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import view.common.Language;
 import view.common.dialogs.MessageDialog;
 import view.temporalViewPane.TemporalChainPane;
 import view.temporalViewPane.TimeLineXYChartData;
 
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Observable;
+
 @SuppressWarnings("rawtypes")
 public class TemporalChain extends Observable implements Serializable {
 
 	private static final long serialVersionUID = -6154510036093880684L;
-	final Logger logger = LoggerFactory.getLogger(TemporalChain.class);
 	
 	private static int temporalChainNumber = 0;
 	private static int temporalViewNodeNumber = 0;

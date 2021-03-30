@@ -23,8 +23,6 @@ import model.NCLSupport.NCLExportEventHandler;
 import model.common.SpatialTemporalApplication;
 
 import org.apache.commons.io.FileUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
@@ -35,8 +33,6 @@ import view.utility.AnimationUtil;
 import br.uff.midiacom.ana.NCLDoc;
 
 public class HTMLExportEventHandler implements EventHandler<ActionEvent>{
-
-	final Logger logger = LoggerFactory.getLogger(HTMLExportEventHandler.class);
 
 	private static final String EXPORTED_HTML_DOCUMENT = " Exported HTML Document";
 	
@@ -85,8 +81,7 @@ public class HTMLExportEventHandler implements EventHandler<ActionEvent>{
 			}
 				
 		} catch (Exception e) {
-			
-			logger.error(e.getMessage());
+
 			MessageDialog messageDialog = new MessageDialog(Language.translate("error.during.the.temp.ncl.document.creation"), 
 					Language.translate("could.not.find.the.temp.ncl.document.directory") + ": " + e.getMessage(), "OK", 250);
 	        messageDialog.showAndWait();

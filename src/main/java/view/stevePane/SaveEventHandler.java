@@ -4,25 +4,18 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
-
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.stage.FileChooser;
 import model.common.SpatialTemporalApplication;
 import model.repository.RepositoryMediaList;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import view.common.Language;
 import view.common.dialogs.MessageDialog;
 import view.common.dialogs.ReturnMessage;
 import view.utility.AnimationUtil;
 
 public class SaveEventHandler implements EventHandler<ActionEvent> {
-	
-	final Logger logger = LoggerFactory.getLogger(SaveEventHandler.class);
-	
+
 	private SpatialTemporalApplication spatialTemporalView;
 	private RepositoryMediaList repositoryMediaList;
 	
@@ -60,7 +53,6 @@ public class SaveEventHandler implements EventHandler<ActionEvent> {
 			}
             
 		} catch (IOException e) {
-			logger.error(e.getMessage());
 			MessageDialog messageDialog = new MessageDialog(e.getMessage(), "OK", 150);
 	        messageDialog.showAndWait();
 		}

@@ -1,6 +1,5 @@
 package view.temporalViewPane;
 
-import com.google.common.eventbus.EventBus;
 import controller.ApplicationController;
 import gateway.SensoryEffectExtractionService;
 import javafx.application.Platform;
@@ -22,7 +21,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Rectangle;
 import model.common.MediaNode;
-import model.common.Relation;
 import model.common.SensoryEffectNode;
 import model.common.enums.MediaType;
 import model.common.enums.SensoryEffectType;
@@ -31,8 +29,8 @@ import model.temporalView.*;
 import model.temporalView.enums.TemporalViewOperator;
 import model.utility.MediaUtil;
 import model.utility.Operation;
-import view.common.dialogs.InputDialog;
 import view.common.Language;
+import view.common.dialogs.InputDialog;
 import view.common.dialogs.MessageDialog;
 import view.common.dialogs.ReturnMessage;
 import view.repositoryPane.RepositoryMediaItemContainer;

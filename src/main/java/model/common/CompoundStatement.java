@@ -1,8 +1,8 @@
 package model.common;
 
-import java.util.ArrayList;
-
 import model.common.enums.Operator;
+
+import java.util.ArrayList;
 
 public class CompoundStatement extends ConditionalStatement {
 	

@@ -1,0 +1,97 @@
+/*******************************************************************************
+ *                                                                             *
+ * Label                                                                       *
+ *                                                                             *
+ ******************************************************************************/
+
+.label {
+    -fx-text-fill: #B0BEC5;
+}
+
+/*******************************************************************************
+ *                                                                             *
+ * TreeView and TreeCell                                                       *
+ *                                                                             *
+ ******************************************************************************/
+ 
+ .tree-view {
+	-fx-control-inner-background: #37474f;
+    -fx-padding: 0;
+    -fx-background-insets: 0;
+}
+
+.tree-view:focused {
+    -fx-background-insets: 0;
+    -fx-padding: 0;
+}
+
+.tree-view > .virtual-flow > .scroll-bar:vertical{
+    -fx-padding: 0;
+}
+
+.tree-view > .virtual-flow > .scroll-bar:horizontal{
+	-fx-padding: 0;
+}
+
+.tree-cell {
+    -fx-text-fill: #FFFFFF;
+}
+
+.tree-view:focused > .virtual-flow > .clipped-container > .sheet > .tree-cell:filled:selected, 
+.tree-view:focused > .virtual-flow > .clipped-container > .sheet > .tree-cell:filled:selected:hover {
+    -fx-background-color: #00BFA5;
+    -fx-text-fill: #FFFFFF;
+}
+
+
+.tree-cell:filled:selected:focused, 
+.tree-cell:filled:selected {
+    -fx-background-color: #00BFA5;
+    -fx-text-fill: #FFFFFF;
+}
+
+.tree-cell > .tree-disclosure-node > .arrow,
+.tree-table-row-cell > .tree-disclosure-node > .arrow {
+    -fx-background-color: #FFFFFF;
+}
+
+/*******************************************************************************
+ *                                                                             *
+ * ScrollPane                                                                  *
+ *                                                                             *
+ ******************************************************************************/
+ 
+.scroll-pane {
+	-fx-background-insets: 0;
+    -fx-padding: 0 0 5 5;
+}
+
+.scroll-pane:focused {
+    -fx-background-insets: 0;
+    -fx-padding: 0 0 5 5;
+}
+
+/*******************************************************************************
+ *                                                                             *
+ * Specific Elements                                                            *
+ *                                                                             *
+ ******************************************************************************/
+#label-media-item{
+	-fx-background-color: #102027;
+	-fx-alignment: center;
+ 	-fx-background-radius: 4;
+ 	-fx-pref-width: 120px;
+ 	-fx-pref-height: 35px;
+}
+
+#repo-media-item-container{
+	-fx-background-color: #102027;
+ 	-fx-background-radius: 4;
+ 	-fx-pref-width: 120px;
+ 	-fx-padding: 6;
+ 	-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 3, 0, 0, 0);
+}
+
+#media-repo-label-container{
+	-fx-alignment: center;
+}

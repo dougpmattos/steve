@@ -21,10 +21,6 @@ import model.temporalView.Synchronous;
 import model.temporalView.TemporalChain;
 import model.temporalView.TemporalRelation;
 import model.temporalView.enums.TemporalRelationType;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import view.common.dialogs.InputDialog;
 import view.common.Language;
 import view.common.dialogs.MessageDialog;
@@ -63,8 +59,6 @@ public class NCLExportEventHandler implements EventHandler<ActionEvent>{
 	private static final String DELAY = "delay";
 	private static final String STOP_DELAY = "stopDelay";
 	private static final String START_DELAY = "startDelay";
-
-	final Logger logger = LoggerFactory.getLogger(NCLExportEventHandler.class);
 
 	private SpatialTemporalApplication spatialTemporalApplication;
 	private FileInputStream fileInputStream;
@@ -211,7 +205,7 @@ public class NCLExportEventHandler implements EventHandler<ActionEvent>{
             }
             
         } catch (XMLException ex) {
-        	logger.error(ex.getMessage());
+
         	MessageDialog messageDialog = new MessageDialog(Language.translate("error"), 
 					Language.translate("error.during.the.export") + ": " + ex.getMessage(), "OK", 250);
             messageDialog.showAndWait();
@@ -932,8 +926,7 @@ public class NCLExportEventHandler implements EventHandler<ActionEvent>{
 				}
                 
 			} catch (Exception e) {
-				
-				logger.error(e.getMessage());
+
 				MessageDialog messageDialog = new MessageDialog(Language.translate("error.during.the.export"), 
 						Language.translate("could.not.find.the.ncl.document.directory") + ": " + e.getMessage(), "OK", 250);
 		        messageDialog.showAndWait();

@@ -1,0 +1,22 @@
+#media-name-label{
+	-fx-background-color: #90a0aa;
+	-fx-text-fill: #000000;
+}
+#i-button-container{
+    -fx-background-color: #90a0aa;
+}
+#i-button{
+	-fx-graphic: url("../../images/temporalViewPane/user-interaction-black.png");
+	-fx-background-color: transparent;
+    -fx-padding: 0 3 0 0;
+}
+#i-button:hover{
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.4), 10, 0, 0, 0);
+}
+#right-border-rectangle{
+    -fx-background-color: #90a0aa;
+    -fx-background-radius: 0 5 5 0;
+}
+#right-border-rectangle:hover{
+    -fx-background-color: linear-gradient(from 20% 20% to 100% 100%, derive(#c0d1dc, 10%), derive(#90a0aa, 10%));
+}

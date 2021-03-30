@@ -1,0 +1,258 @@
+/*******************************************************************************
+ *                                                                             *
+ * Label                                                                       *
+ *                                                                             *
+ ******************************************************************************/
+
+.label {
+    -fx-text-fill: #B0BEC5;
+}
+
+/*******************************************************************************
+ *                                                                             *
+ * Timeline Elements                                                           *
+ *                                                                             *
+ ******************************************************************************/
+
+.axis {
+    -fx-tick-label-font-size: 12px;
+    -fx-tick-label-fill: white;
+    -fx-background-color: #102027;
+	-fx-tick-length: 5;
+	-fx-tick-unit: 5; 
+	-fx-tick-label-gap: 3;
+	-fx-tick-mark-visible: true;
+	-fx-minor-tick-visible: true;
+	-fx-side: top;
+}
+#axis-y{
+	-fx-tick-mark-visible: false;
+	-fx-minor-tick-visible: false;
+	-fx-tick-labels-visible: false;
+}
+.axis:top {
+    -fx-border-color: transparent;
+}
+.axis-tick-mark {
+    -fx-stroke: #62727b;
+}
+.axis-minor-tick-mark {
+    -fx-stroke: #62727b;
+}
+.chart{
+	-fx-legend-visible: false;
+	-fx-category-gap: 8;
+	-fx-padding: -11 0 -11 -5;
+	-fx-background-color: #102027;
+}
+.chart-plot-background {
+    -fx-background-color: #37474F;
+}
+.chart-vertical-grid-lines {
+    -fx-stroke: #62727b;
+}
+.chart-horizontal-grid-lines {
+    -fx-grid-lines-visible: false;
+}
+
+/* ====== BAR CHART =========================================================== */
+/* TODO flip gradient vertical for negative bars */
+.chart-bar {
+    -fx-bar-fill: #22bad9;
+    -fx-background-color: linear-gradient(derive(-fx-bar-fill,-30%), derive(-fx-bar-fill,-40%)),
+                          linear-gradient(derive(-fx-bar-fill,80%), derive(-fx-bar-fill, 0%)),
+                          linear-gradient(derive(-fx-bar-fill,30%), derive(-fx-bar-fill,-10%));
+    -fx-background-insets: 0,1,2;
+    -fx-background-radius: 5 5 0 0, 4 4 0 0, 3 3 0 0;
+}
+
+.negative.chart-bar {
+   -fx-background-color: linear-gradient(to top, derive(-fx-bar-fill,-30%), derive(-fx-bar-fill,-40%)),
+                          linear-gradient(to top, derive(-fx-bar-fill, 80%), derive(-fx-bar-fill,0%)),
+                          linear-gradient(to top, derive(-fx-bar-fill,30%), derive(-fx-bar-fill,-10%));
+   -fx-background-radius: 0 0 5 5, 0 0 4 4, 0 0 3 3;
+}
+.bar-chart:horizontal .chart-bar, .stacked-bar-chart:horizontal .chart-bar {
+    -fx-background-color: linear-gradient(to left, derive(-fx-bar-fill,-30%), derive(-fx-bar-fill,-40%)),
+                          linear-gradient(to left, derive(-fx-bar-fill,80%), derive(-fx-bar-fill, 0%)),
+                          linear-gradient(to left, derive(-fx-bar-fill,30%), derive(-fx-bar-fill,-10%));
+    -fx-background-radius: 0 5 5 0, 0 4 4 0, 0 3 3 0;
+}
+.bar-chart:horizontal .negative.chart-bar, .stacked-bar-chart:horizontal .negative.chart-bar {
+    -fx-background-color: red, red, red;
+    -fx-background-radius: 5 0 0 5, 4 0 0 4, 3 0 0 3;
+}
+
+
+/*******************************************************************************
+ *                                                                             *
+ * TabPane                                                                     *
+ *                                                                             *
+ ******************************************************************************/
+
+.tab-pane {
+	-fx-tab-min-width: 12em;
+    -fx-tab-min-height: 3em;
+} 
+
+.tab .tab-label { 
+    -fx-alignment: CENTER;
+    -fx-text-fill: #B0BEC5;
+    -fx-font-size: 11px;
+}
+
+.tab-pane:top *.tab-header-area {
+    -fx-background-insets: 0, 0 0 1 0;
+ /* -fx-padding: 0.416667em 0.166667em 0.0em 0.833em; /* 5 2 0 10 */
+   -fx-padding: 0.416667em 0.166667em 0.0em 0.0em; /* overriden as 5 2 0 0 */
+    -fx-text-fill: #B0BEC5;
+}
+
+.tab-pane > .tab-header-area > .headers-region > .tab:selected > .tab-container > .tab-label {   
+    -fx-text-fill: #FFFFFF;
+    -fx-font-size: 11px;
+}
+
+.tab-pane > .tab-header-area > .headers-region > .tab {
+    -fx-background-color: #102027;
+    -fx-background-insets: 0 0 4 0;
+    -fx-background-radius: 0;
+    -fx-padding: 0 5 5 5;
+    
+}
+
+.tab-pane > .tab-header-area > .headers-region > .tab:selected {
+    -fx-background-color: #102027, #00BFA5;
+    -fx-background-insets: 0, 40 0 0 0;
+    -fx-background-radius: 0, 0;
+}
+
+.tab-pane > .tab-header-area > .tab-header-background {
+    -fx-background-color: #102027; /*nao é esse que muda o back da tab */
+    -fx-background-insets: 0; 
+}
+
+.tab-pane:focused > .tab-header-area > .headers-region > .tab:selected .focus-indicator {
+    -fx-border-color: transparent;
+}
+
+.tab-pane > .tab-header-area > .headers-region > .tab > .tab-container {
+   
+}
+
+.tab-pane > .tab-header-area > .headers-region > .tab > .tab-container > .tab-close-button {
+    -fx-background-color: #62727b;
+    -fx-shape: "M 0,0 H1 L 4,3 7,0 H8 V1 L 5,4 8,7 V8 H7 L 4,5 1,8 H0 V7 L 3,4 0,1 Z";
+    -fx-scale-shape: false;
+    -fx-translate-x: -10;
+    -fx-effect: dropshadow(two-pass-box , rgba(255, 255, 255, 0.4), 1, 0.0 , 0, 1);
+}
+
+.tab-pane > .tab-header-area > .headers-region > .tab > .tab-container > .tab-close-button:hover {
+    -fx-background-color: #00BFA5;
+}
+
+/*******************************************************************************
+ *                                                                             *
+ * MenuItem                                                                    *
+ *                                                                             *
+ ******************************************************************************/
+
+.menu-item:disabled{
+	-fx-background-color: #102027;
+	-fx-opacity: 1;
+}
+
+.menu-item >.label {
+    -fx-text-fill: white;
+}
+
+.menu-item:disabled > .label {
+    -fx-background-color: #102027;
+}
+
+/*******************************************************************************
+ *                                                                             *
+ * Specific Elements                                                           *
+ *                                                                             *
+ ******************************************************************************/
+
+#temporal-view-pane{
+	-fx-background-color: #37474F;
+}
+
+#temporal-chain-scroll-pane {
+    /*-fx-border-color: #102027;*/
+    -fx-border-color: green;
+    -fx-background-color: blue;
+    -fx-border-width: 10 0 0 0;
+    -fx-fit-to-height: true;
+    -fx-fit-to-width: true;
+}
+
+#media-line-container{
+	-fx-background-color: green;
+	
+}
+
+#media-name-label{
+	-fx-background-color: #62727b;
+	-fx-min-width: 0;
+	-fx-padding: 0 0 0 10;
+    -fx-font-size: 11px;
+}
+#i-button-container{
+    -fx-background-color: #62727b;
+    -fx-alignment: CENTER;
+}
+#right-border-rectangle{
+    -fx-background-color: #62727b;
+    -fx-background-radius: 0 4 4 0;
+}
+#right-border-rectangle:hover{
+    -fx-background-color: linear-gradient(from 20% 20% to 100% 100%, derive(#37474f, 50%), derive(#62727b, 50%));
+}
+
+#temporal-media-container{
+	-fx-background-color: #102027;
+	-fx-background-radius: 4;
+}
+
+#name-interactive-icon-container{
+	-fx-alignment: top_right;
+}
+
+#temporal-media-container:pressed{
+	-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);
+}
+#indicative-line{
+	-fx-stroke: #00BFA5;
+	-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);
+}
+#play-line{
+	-fx-stroke: #64FFDA;
+	-fx-fill: #64FFDA;
+	-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);
+}
+#relation-arrow{
+	-fx-stroke: #00BFA5;
+	-fx-fill: #00BFA5;
+	-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);
+	-fx-stroke-width: 200% 
+}
+#i-button{
+	-fx-graphic: url("../../images/temporalViewPane/user-interaction.png");
+	-fx-background-color: transparent;
+    -fx-padding: 0 3 0 0;
+}
+#i-button:hover{
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);
+}
+#tab-add-button{
+	-fx-graphic: url("../../images/temporalViewPane/tab-add-button.png");
+	-fx-background-color: transparent;
+    -fx-padding: 0;
+}
+#tab-add-button:hover{
+	-fx-graphic: url("../../images/temporalViewPane/tab-add-button-hover.png");
+}

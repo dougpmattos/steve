@@ -1,8 +1,12 @@
 package view.spatialViewPane;
 
+import com.google.common.util.concurrent.AtomicDouble;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.concurrent.ScheduledService;
+import javafx.concurrent.Worker;
+import javafx.concurrent.WorkerStateEvent;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.DepthTest;
@@ -17,14 +21,14 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
-import javafx.scene.web.WebView;
 import javafx.util.Duration;
+import model.common.CommonMethods;
 import model.common.MediaNode;
 import model.common.SensoryEffectNode;
 import model.common.SpatialTemporalApplication;
+import model.common.enums.MediaType;
 import model.spatialView.media.enums.AspectRatio;
 import model.temporalView.TemporalChain;
-import model.common.CommonMethods;
 import view.common.Language;
 import view.stevePane.SteveMenuBar;
 import view.temporalViewPane.TemporalChainPane;
@@ -49,31 +53,35 @@ public class ControlButtonPane extends BorderPane{
 	private TemporalViewPane temporalViewPane;
 	private SpatialTemporalApplication spatialTemporalApplication;
 	private SteveMenuBar steveMenuBar;
-	private WebView webView;
 	private HBox effectIconsContainer;
 	private Object nodeContent;
 	private boolean isPlaying = false;
 	private Double playheadPixelPosition = 0.0;
-	private Double currentTime;
+	private Double currentTime = 0.0;
 	private boolean itHasMediaView = false;
 	private Boolean hasStopped = false;
 	private Boolean hasPaused = false;
+	private TimerService timerService;
 	
 	public ControlButtonPane(StackPane screen, TemporalViewPane temporalViewPane,SteveMenuBar steveMenuBar, SpatialTemporalApplication spatialTemporalApplication){
-		
+
 		setId("control-button-pane");
+
+		timerService = new TimerService();
+		timerService.setPeriod(Duration.millis(100));
+		timerService.setDelay(Duration.millis(0.0));
+
 		this.steveMenuBar = steveMenuBar;
 		this.screen = screen;
 		this.temporalViewPane = temporalViewPane;
 		this.spatialTemporalApplication = spatialTemporalApplication;
-		this.webView = new WebView();
 		this.effectIconsContainer = new HBox();
 		effectIconsContainer.setId("effect-icons-container");
 		effectIconsContainer.setDepthTest(DepthTest.ENABLE);
 		effectIconsContainer.setViewOrder(-1);
 		
 	    createButtons();
-	  
+
 	    setLeft(fullButtonPane);
 		setCenter(centerButtonPane);
 		setRight(refreshButtonPane);
@@ -82,7 +90,7 @@ public class ControlButtonPane extends BorderPane{
 		createButtonActions();
 
 	}
-	
+
 	private void createListeners(){
 		
 		temporalViewPane.getTemporalChainTabPane().getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Tab>() {
@@ -175,34 +183,39 @@ public class ControlButtonPane extends BorderPane{
 		stop.setOnAction(new EventHandler<ActionEvent>() {
 			
 			@Override
-			public void handle(ActionEvent event) {	
-				
+			public void handle(ActionEvent event) {
+
 				stop.setDisable(true);
 				pause.setDisable(true);
 				play.setDisable(false);
 
-				selectedTemporalChainPane.getPlayhead().setTranslateX(selectedTemporalChainPane.getTimeLineChart().getXAxis().getDisplayPosition(0));
-	    		hasStopped = true;
-	    		hasPaused = false;
-	    		isPlaying = false;
-	    		for(model.common.Node node : temporalChainModel.getNodeAllList()){
-	    			node.setIsPLayingInPreview(false);
-	    		}
-	    		
-	    		for(Node executionObject : screen.getChildren()){
-	    			if(executionObject instanceof MediaView){
-	    				MediaView currentMediaView = (MediaView) executionObject;
-	    				currentMediaView.getMediaPlayer().stop();
-	    			}
-	    		}
-	    		
-	    		Platform.runLater(new Runnable() {
-					@Override
-					public void run() {
-						effectIconsContainer.getChildren().clear();
-						screen.getChildren().clear();
+				hasStopped = true;
+				isPlaying = false;
+
+				if(hasPaused){
+					//INFO Stop is pressed when the preview is already paused. In this case, the
+					// statement 'else if(hasStopped)' in the service thread is never reached.
+
+					for(Node executionObject : screen.getChildren()){
+						if(executionObject instanceof MediaView){
+							MediaView currentMediaView = (MediaView) executionObject;
+							currentMediaView.getMediaPlayer().stop();
+						}
 					}
-				});
+
+					effectIconsContainer.getChildren().clear();
+					screen.getChildren().clear();
+
+				}
+
+				hasPaused = false;
+
+				selectedTemporalChainPane.getPlayhead().setTranslateX(selectedTemporalChainPane.getTimeLineChart().getXAxis().getDisplayPosition(0));
+
+	    		for(model.common.Node node : temporalChainModel.getNodeAllList()){
+	    			node.setIsShownInPreview(false);
+					node.setIsContinuousMediaPlaying(false);
+	    		}
 
 			}
 			
@@ -212,200 +225,228 @@ public class ControlButtonPane extends BorderPane{
 		pause.setOnAction(new EventHandler<ActionEvent>() {
 			
 			@Override
-			public void handle(ActionEvent event) {	
-				
+			public void handle(ActionEvent event) {
+
 				stop.setDisable(false);
 				pause.setDisable(true);
 				play.setDisable(false);
-				
-	    		hasPaused = true;
-	    		isPlaying = false;
-	    		selectedTemporalChainPane.setHasClickedPlayhead(false);
-	    		
-	    		for(Node executionObject : screen.getChildren()){
-	    			if(executionObject instanceof MediaView){
-	    				MediaView currentMediaView = (MediaView) executionObject;
-	    				currentMediaView.getMediaPlayer().pause();
-	    			}
-	    		}
-	    	
+
+				hasStopped = false;
+				hasPaused = true;
+				isPlaying = false;
+
+				selectedTemporalChainPane.setHasClickedPlayhead(false);
+
+				for(model.common.Node node : temporalChainModel.getNodeAllList()){
+					node.setIsContinuousMediaPlaying(false);
+				}
+
 			}
 			
 		});
-		
+
 		play.setOnAction(new EventHandler<ActionEvent>() {
 			
 			@Override
-			public void handle(ActionEvent event) {	
-				
+			public void handle(ActionEvent event) {
+
 				if(!temporalChainModel.getNodeAllList().isEmpty()){
-					
-					isPlaying = true;
-					hasStopped = false;
-					currentTime = selectedTemporalChainPane.getTimeLineChart().getXAxis().getValueForDisplay(selectedTemporalChainPane.getPlayhead().getTranslateX()).doubleValue();
-					if(hasPaused && !selectedTemporalChainPane.getHasClickedPlayhead()) {
-						for(Node executionObject : screen.getChildren()){
-			    			if(executionObject instanceof MediaView){
-			    				MediaView currentMediaView = (MediaView) executionObject;
-			    				currentMediaView.getMediaPlayer().play();
-			    			}
-			    		}
-					}else if(hasPaused && selectedTemporalChainPane.getHasClickedPlayhead()){
-						for(Node executionObject : screen.getChildren()){
-			    			if(executionObject instanceof MediaView){
-			    				MediaView currentMediaView = (MediaView) executionObject;
-			    				Duration currentMillisDuration = new Duration(currentTime*1000);
-			    				currentMediaView.getMediaPlayer().setStartTime(currentMillisDuration);
-			    				currentMediaView.getMediaPlayer().play();
-			    			}
-			    		}
-					}
-					hasPaused = false;
 
 					stop.setDisable(false);
 					pause.setDisable(false);
 					play.setDisable(true);
-					
-					Runnable task = new Runnable()
-	        		{
-	        			public void run()
-	        			{
-	        				runTask();
-	        			}
-	        		};
-	        		
-	        		Thread backgroundThread = new Thread(task);
-	        		backgroundThread.setDaemon(true);
-	        		backgroundThread.start();
-					
+
+					isPlaying = true;
+					hasStopped = false;
+					hasPaused = false;
+
+					currentTime = selectedTemporalChainPane.getTimeLineChart().getXAxis().
+							getValueForDisplay(selectedTemporalChainPane.getPlayhead().getTranslateX()).doubleValue();
+
+					runTask();
+
 				}
 				
 			}
 			
 		});		
 	}
-	
+
+	public TimerService getTimerService() {
+		return timerService;
+	}
+
 	public void runTask() {
-		
-		while(true && !hasStopped && !hasPaused) {
-			
-			try {
-				
-		    	playheadPixelPosition = selectedTemporalChainPane.getTimeLineChart().getXAxis().getDisplayPosition(currentTime); 
-		    	selectedTemporalChainPane.getPlayhead().setTranslateX(playheadPixelPosition);
-		    	currentTime = currentTime + 0.1;
-		    	System.out.println(currentTime);
-		 
-		    	if(currentTime > temporalChainModel.getNodeWithHighestEnd().getEnd()){
-		    		stop.fire();
-		    		hasStopped = true;
-		    		isPlaying = false;
-		    		for(model.common.Node node : temporalChainModel.getNodeAllList()){
-		    			node.setIsPLayingInPreview(false);
-		    		}
-		    		System.out.println(" termino - remove todos nos da screen e aciona stop do player");
-		    	}
-		    	
-				for(model.common.Node node : temporalChainModel.getNodeAllList()){
-					
-					if(node.getBegin() <= currentTime && currentTime <= node.getEnd()){
-						System.out.println(node.getName() + " - entrou");
-						
-						if(!node.getIsPLayingInPreview()){
-							System.out.println(node.getName() + " - nao esta no pewview ");
-							Platform.runLater(new Runnable(){
 
-								@Override
-								public void run() {
-									
-									node.setIsPLayingInPreview(true);
+		AtomicDouble atomicDouble = new AtomicDouble(currentTime);
+		timerService.setCurrentTime(atomicDouble.get());
 
-									if(node instanceof MediaNode){
+		timerService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
 
-										nodeContent = getMediaContent((MediaNode) node);
+			@Override
+			public void handle(WorkerStateEvent t) {
 
-										if(nodeContent instanceof MediaView){
+				if(!hasPaused && !hasStopped){
+					Double currentTime = (Double) t.getSource().getValue();
 
+					playheadPixelPosition = selectedTemporalChainPane.getTimeLineChart().getXAxis().getDisplayPosition(currentTime);
+					selectedTemporalChainPane.getPlayhead().setTranslateX(playheadPixelPosition);
+
+					if(currentTime > temporalChainModel.getNodeWithHighestEnd().getEnd()){
+						stop.fire();
+						hasStopped = true;
+						isPlaying = false;
+						for(model.common.Node node : temporalChainModel.getNodeAllList()){
+							node.setIsShownInPreview(false);
+							node.setIsContinuousMediaPlaying(false);
+						}
+
+					}
+
+					for(model.common.Node node : temporalChainModel.getNodeAllList()){
+
+						nodeContent = node.getExecutionObject();
+
+						if(node.getBegin() <= currentTime && currentTime <= node.getEnd()){
+
+							if(!node.getIsShownInPreview()){
+
+								node.setIsShownInPreview(true);
+
+								if(node instanceof MediaNode){
+
+									if(nodeContent instanceof MediaView){
+
+										if(((MediaNode) node).getType() == MediaType.VIDEO){
 											setVideoPresentationProperties((MediaView) nodeContent, (MediaNode) node);
-											Double playerStartTime = currentTime - node.getBegin();
-											Duration playerStartTimeMillis = new Duration(playerStartTime*1000);
-											((MediaView) nodeContent).getMediaPlayer().setStartTime(playerStartTimeMillis);
-											screen.getChildren().add((MediaView) nodeContent);
-
-										} else if(nodeContent instanceof ImageView){
-
-											setImagePresentationProperties((ImageView) nodeContent, (MediaNode) node);
-											if(screen.getChildren().isEmpty()){
-
-												screen.getChildren().add((ImageView) nodeContent);
-
-											} else{
-												boolean inserted = false;
-												for(Node executionObject : screen.getChildren()){
-
-													if(((ImageView) nodeContent).getTranslateZ() < executionObject.getTranslateZ()){
-														screen.getChildren().add(screen.getChildren().indexOf(executionObject), (ImageView) nodeContent);
-														inserted = true;
-														break;
-													}
-
-												}
-												if(!inserted){
-													screen.getChildren().add((ImageView) nodeContent);
-												}
-											}
-
 										}
+										screen.getChildren().add((MediaView) nodeContent);
+										((MediaView) nodeContent).getMediaPlayer().play();
+										node.setIsContinuousMediaPlaying(true);
 
-									}else if(node instanceof SensoryEffectNode){
+									} else if(nodeContent instanceof ImageView){
 
-										nodeContent = getSensoryEffectIcon((SensoryEffectNode) node);
-										effectIconsContainer.getChildren().add((ImageView) nodeContent);
-										if(!screen.getChildren().contains(effectIconsContainer)){
-											screen.getChildren().add(effectIconsContainer);
+										setImagePresentationProperties((ImageView) nodeContent, (MediaNode) node);
+										if(screen.getChildren().isEmpty()){
+
+											screen.getChildren().add((ImageView) nodeContent);
+
+										} else{
+											boolean inserted = false;
+											for(Node executionObject : screen.getChildren()){
+
+												if(((ImageView) nodeContent).getTranslateZ() < executionObject.getTranslateZ()){
+													screen.getChildren().add(screen.getChildren().indexOf(executionObject), (ImageView) nodeContent);
+													inserted = true;
+													break;
+												}
+
+											}
+											if(!inserted){
+												screen.getChildren().add((ImageView) nodeContent);
+											}
 										}
 
 									}
 
+								}else if(node instanceof SensoryEffectNode){
+
+									nodeContent = getSensoryEffectIcon((SensoryEffectNode) node);
+									effectIconsContainer.getChildren().add((ImageView) nodeContent);
+									if(!screen.getChildren().contains(effectIconsContainer)){
+										screen.getChildren().add(effectIconsContainer);
+									}
+
 								}
-								
-							});
-							
-						}
-							
-					} else{
-						
-						if(node.getIsPLayingInPreview()){
-							
-							Platform.runLater(new Runnable(){
-					    		@Override
-								public void run() {
-									
-					    			if(!screen.getChildren().isEmpty()){
-					    				if(node instanceof SensoryEffectNode){
-					    					effectIconsContainer.getChildren().remove(node.getExecutionObject());
+							}else if(node.isContinousMedia() && !node.getIsContinuousMediaPlaying()){
+
+								if(selectedTemporalChainPane.getHasClickedPlayhead()){
+									((MediaView) node.getExecutionObject()).getMediaPlayer().stop();
+
+									screen.getChildren().remove(node.getExecutionObject());
+									node.setIsShownInPreview(false);
+									node.setIsContinuousMediaPlaying(false);
+
+									if(getTimerService() != null){
+										Double backTime = node.getBegin() - 1;
+										if(backTime < 0){
+											getTimerService().setCurrentTime(0.0);
 										}else{
-											screen.getChildren().remove(node.getExecutionObject());
+											getTimerService().setCurrentTime(backTime);
 										}
-										node.setIsPLayingInPreview(false);
-										System.out.println(node.getName() + " - saiu");
-					    			}
-	
-					    		}
-					    	});
+									}
+								}else{
+									Double videoCurrentTime = currentTime - node.getBegin();
+									Double frameMillisTime = videoCurrentTime*1000;
+									Duration duration = new Duration(frameMillisTime.intValue());
+									((MediaView) nodeContent).getMediaPlayer().play();
+									((MediaView) nodeContent).getMediaPlayer().seek(duration);
+									node.setIsContinuousMediaPlaying(true);
+								}
+
+							}
+
+						} else{
+
+							if(node.getIsShownInPreview()){
+
+								if(!screen.getChildren().isEmpty()){
+									if(node instanceof SensoryEffectNode){
+										effectIconsContainer.getChildren().remove(node.getExecutionObject());
+									}else{
+										screen.getChildren().remove(node.getExecutionObject());
+									}
+									node.setIsShownInPreview(false);
+									node.setIsContinuousMediaPlaying(false);
+
+								}
+
+							}
+
 						}
-						
+
 					}
-			
+
+					atomicDouble.set(currentTime);
+				}else{
+
+					if(hasPaused) {
+
+						for (Node executionObject : screen.getChildren()) {
+							if (executionObject instanceof MediaView) {
+								MediaView currentMediaView = (MediaView) executionObject;
+								currentMediaView.getMediaPlayer().pause();
+							}
+						}
+
+					}else if(hasStopped){
+
+						for(Node executionObject : screen.getChildren()){
+							if(executionObject instanceof MediaView){
+								MediaView currentMediaView = (MediaView) executionObject;
+								currentMediaView.getMediaPlayer().stop();
+							}
+						}
+
+						effectIconsContainer.getChildren().clear();
+						screen.getChildren().clear();
+
+					}
+
+					timerService.cancel();
+
 				}
-				Thread.sleep(100);
-				
+
+
 			}
-			catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		
+		});
+
+		if(timerService.getState() == Worker.State.CANCELLED){
+			timerService.restart();
+		}else{
+			timerService.start();
 		}
+
 	}
 
 	public ImageView getSensoryEffectIcon(SensoryEffectNode sensoryEffectNode){
@@ -419,11 +460,11 @@ public class ControlButtonPane extends BorderPane{
 	public Object getMediaContent(MediaNode mediaNode){
 
 		nodeContent = null;
-		
+
 		switch(mediaNode.getType()) {
-		   
+
 			case IMAGE:
-				
+
 				ImageView image = new ImageView(new Image(mediaNode.getFile().toURI().toString()));
 				image.setFitWidth(screen.getWidth());
 				image.setFitHeight(screen.getHeight());
@@ -431,70 +472,42 @@ public class ControlButtonPane extends BorderPane{
 				nodeContent = image;
 				mediaNode.setExecutionObject(nodeContent);
 				break;
-	       
-		case VIDEO:
-	
-			final javafx.scene.media.Media video = new javafx.scene.media.Media(mediaNode.getFile().toURI().toString());
-			final MediaPlayer videoPlayer = new MediaPlayer(video);
-			MediaView videoMediaView = new MediaView(videoPlayer);
-			videoMediaView.setFitWidth(screen.getWidth());
-			videoMediaView.setFitHeight(screen.getHeight()); 
-			videoMediaView.setSmooth(true);
-			
-			if(isPlaying){
-				videoPlayer.play();
+
+			case VIDEO:
+
+				final javafx.scene.media.Media video = new javafx.scene.media.Media(mediaNode.getFile().toURI().toString());
+				final MediaPlayer videoPlayer = new MediaPlayer(video);
+				MediaView videoMediaView = new MediaView(videoPlayer);
+				videoMediaView.setFitWidth(screen.getWidth());
+				videoMediaView.setFitHeight(screen.getHeight());
+				videoMediaView.setSmooth(true);
 				nodeContent = videoMediaView;
-			} else {
-				nodeContent = videoMediaView;
-				
-				videoPlayer.statusProperty().addListener(new ChangeListener<MediaPlayer.Status>() {
-							
-				    public void changed(ObservableValue<? extends MediaPlayer.Status> ov,
-				            final MediaPlayer.Status oldStatus, final MediaPlayer.Status newStatus) {
-				    	
-				    	Double frameMillisTime = (mediaNode.getDuration()/2)*1000;
-				    	Duration duration = new Duration(frameMillisTime.intValue()); 
-				    	videoPlayer.seek(duration);
-				    }
-				});
-			}
-			mediaNode.setExecutionObject(nodeContent);
+				mediaNode.setExecutionObject(nodeContent);
 				break;
-	
-		case AUDIO:
-			
-			final javafx.scene.media.Media audio = new javafx.scene.media.Media(mediaNode.getFile().toURI().toString());
-			final MediaPlayer audioPlayer = new MediaPlayer(audio);
-			MediaView audioMediaView = new MediaView(audioPlayer);
-			audioMediaView.setFitWidth(screen.getWidth());
-			audioMediaView.setFitHeight(screen.getHeight()); 
-			audioMediaView.setSmooth(true);
-			
-			if(isPlaying){
-				audioPlayer.play();
+
+			case AUDIO:
+
+				final javafx.scene.media.Media audio = new javafx.scene.media.Media(mediaNode.getFile().toURI().toString());
+				final MediaPlayer audioPlayer = new MediaPlayer(audio);
+				MediaView audioMediaView = new MediaView(audioPlayer);
+				audioMediaView.setFitWidth(screen.getWidth());
+				audioMediaView.setFitHeight(screen.getHeight());
+				audioMediaView.setSmooth(true);
 				nodeContent = audioMediaView;
-			} else {
-				//mediaContent = audioMediaView;
-				//inserir depois a figura do audio tambem alem de tocar
-	//			ImageView imageAudio = new ImageView(new Image(getClass().getResourceAsStream("/view/repositoryPane/images/audioNode.png")));
-	//			imageAudio.setPreserveRatio(true);
-	//			imageAudio.setSmooth(false);
-	//			imageAudio.setFitWidth(ICON_WIDTH);
-			}
-			mediaNode.setExecutionObject(nodeContent);
-			break; 
-	   
-		case TEXT:
-			//TODO pegar o texto.
-			break;
-	           
-		case APPLICATION:
-			nodeContent = mediaNode.generateMediaIcon();
-			break;                
+				mediaNode.setExecutionObject(nodeContent);
+				break;
+
+			case TEXT:
+				//TODO pegar o texto.
+				break;
+
+			case APPLICATION:
+				nodeContent = mediaNode.generateMediaIcon();
+				break;
 		}
 
 		return nodeContent;
-	
+
 	}
 	
 public void setVideoPresentationProperties(MediaView mediaContent, MediaNode mediaNode){

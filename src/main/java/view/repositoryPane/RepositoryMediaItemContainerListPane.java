@@ -9,10 +9,6 @@ import javafx.scene.Node;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.FlowPane;
 import model.common.MediaNode;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import view.common.Observable;
 import view.temporalViewPane.TemporalViewPane;
 
@@ -23,9 +19,7 @@ import view.temporalViewPane.TemporalViewPane;
 
 @SuppressWarnings("rawtypes")
 public class RepositoryMediaItemContainerListPane extends ScrollPane implements view.common.Observer, view.common.Observable {
-	
-	final Logger logger = LoggerFactory.getLogger(RepositoryMediaItemContainerListPane.class);
-	
+
 	private final String APPLICATION = "Application";
 	private final String TEXT = "Text";
 	private final String AUDIO = "Audio";

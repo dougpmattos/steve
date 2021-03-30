@@ -10,10 +10,6 @@ import javafx.event.EventHandler;
 import javafx.stage.FileChooser;
 import model.common.SpatialTemporalApplication;
 import model.repository.RepositoryMediaList;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import view.common.Language;
 import view.common.dialogs.MessageDialog;
 import controller.ApplicationController;
@@ -22,8 +18,6 @@ import view.utility.AnimationUtil;
 
 public class OpenEventHandler implements EventHandler<ActionEvent> {
 
-	final Logger logger = LoggerFactory.getLogger(OpenEventHandler.class);
-	
 	private ApplicationController applicationController;
 	private SpatialTemporalApplication temporalView;
 	private RepositoryMediaList repositoryMediaList;
@@ -66,7 +60,6 @@ public class OpenEventHandler implements EventHandler<ActionEvent> {
 			}
             
 		} catch (IOException | ClassNotFoundException e) {
-			logger.error(e.getMessage());
 			MessageDialog messageDialog = new MessageDialog(e.getMessage(), "OK", 150);
 	        messageDialog.showAndWait();
 		}

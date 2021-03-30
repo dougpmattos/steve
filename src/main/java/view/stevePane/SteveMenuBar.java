@@ -14,23 +14,12 @@ import javafx.scene.control.Tab;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
-import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
-
-import model.HTMLSupport.HTMLExportEventHandler;
-import model.NCLSupport.NCLExportEventHandler;
-import model.NCLSupport.NCLImportEventHandler;
 import model.common.SpatialTemporalApplication;
 import model.repository.RepositoryMediaList;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-//import com.sun.xml.internal.txw2.Document;
-
 import model.common.CommonMethods;
 import view.common.Language;
 import view.common.dialogs.InputDialog;
-import view.common.dialogs.MessageDialog;
 import view.temporalViewPane.TemporalChainPane;
 import view.temporalViewPane.TemporalViewPane;
 import view.temporalViewPane.TimeLineXYChartData;
@@ -39,8 +28,6 @@ import controller.ApplicationController;
 
 @SuppressWarnings({"rawtypes","unchecked"})
 public class SteveMenuBar extends MenuBar{
-
-	final Logger logger = LoggerFactory.getLogger(SteveMenuBar.class);
 
 	private ApplicationController applicationController;
 	private SpatialTemporalApplication spatialTemporalApplication;

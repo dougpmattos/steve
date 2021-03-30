@@ -17,9 +17,6 @@ import javax.xml.transform.stream.StreamSource;
 
 import model.HTMLSupport.HTMLExportEventHandler;
 import model.NCLSupport.NCLExportEventHandler;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 
 import br.uff.midiacom.ana.NCLDoc;
@@ -63,8 +60,6 @@ public class CommonMethods {
 	
 	private static File createTempHTML(SpatialTemporalApplication spatialTemporalApplication) throws org.xml.sax.SAXException{
 		
-		final Logger logger = LoggerFactory.getLogger(HTMLExportEventHandler.class);
-		
 		final Document document;
 		final NCLExportEventHandler nclExportEventHandler;
 		
@@ -100,8 +95,7 @@ public class CommonMethods {
 			}
 				
 		} catch (Exception e) {
-			
-			logger.error(e.getMessage());
+
 			MessageDialog messageDialog = new MessageDialog(Language.translate("error.during.the.temp.ncl.document.creation"),
 					Language.translate("could.not.find.the.temp.ncl.document.directory") + ": " + e.getMessage(), "OK", 250);
 	        messageDialog.showAndWait();

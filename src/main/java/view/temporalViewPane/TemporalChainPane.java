@@ -39,9 +39,11 @@ import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.Path;
 import javafx.scene.shape.PathElement;
 import javafx.scene.shape.VLineTo;
+import javafx.util.Duration;
 import model.common.MediaNode;
 import model.common.SensoryEffectNode;
 import model.common.SpatialTemporalApplication;
+import model.common.enums.MediaType;
 import model.common.enums.SensoryEffectType;
 import model.temporalView.Interactivity;
 import model.temporalView.Synchronous;
@@ -359,6 +361,7 @@ public class TemporalChainPane extends StackPane implements Observer{
 
 		        	MediaNode droppedMediaNode = (MediaNode) dragBoard.getContent((DataFormat) contentTypes[0]);
 					droppedMediaNode.setParentTemporalChain(temporalChainModel);
+					droppedMediaNode.prefetchExecutionObject(applicationController.getScreen());
 
 		        	int duplicatedMediaCount = getDuplicatedMediaNodeCount(droppedMediaNode);
 					duplicatedMediaCount++;
@@ -515,26 +518,38 @@ public class TemporalChainPane extends StackPane implements Observer{
 
 	public void updatePreviewScreen(double xPosition){
 
-		if(!controlButtonPane.getIsPlaying() && !controlButtonPane.getHasPaused()) {
+//		if(!controlButtonPane.getIsPlaying()) {
 
 					Double currentTimeClicked = timeLineChart.getXAxis().getValueForDisplay(xPosition).doubleValue();
+
+					if(controlButtonPane.getTimerService() != null){
+						controlButtonPane.getTimerService().setCurrentTime(currentTimeClicked);
+					}
 
 					for(model.common.Node node : temporalChainModel.getNodeAllList()){
 
 						if(node.getBegin() <= currentTimeClicked && currentTimeClicked <= node.getEnd()){
 
-							if(!node.getIsPLayingInPreview()){
+							if(!node.getIsShownInPreview()){
 
-								node.setIsPLayingInPreview(true);
+								node.setIsShownInPreview(true);
 
 								if(node instanceof MediaNode) {
 
-									Object mediaContent = controlButtonPane.getMediaContent((MediaNode) node);
+									Object mediaContent = node.getExecutionObject();
 
 									if(mediaContent instanceof MediaView){
 
 										controlButtonPane.setVideoPresentationProperties((MediaView) mediaContent, (MediaNode) node);
-										screen.getChildren().add((MediaView) mediaContent);
+										MediaView mediaView = (MediaView) mediaContent;
+
+										MediaNode mediaNode = (MediaNode) node;
+										Double videoCurrentTime = currentTimeClicked - mediaNode.getBegin();
+										Double frameMillisTime = videoCurrentTime*1000;
+										Duration duration = new Duration(frameMillisTime.intValue());
+										((MediaView) mediaNode.getExecutionObject()).getMediaPlayer().seek(duration);
+
+										screen.getChildren().add(mediaView);
 
 									} else if(mediaContent instanceof ImageView){
 
@@ -573,19 +588,38 @@ public class TemporalChainPane extends StackPane implements Observer{
 
 								}
 
+							}else if(node.isContinousMedia()){
+								//INFO If node is a continuous media, the video frame in preview needed to be updated.
+
+								MediaNode mediaNode = (MediaNode) node;
+								Double videoCurrentTime = currentTimeClicked - mediaNode.getBegin();
+								Double frameMillisTime = videoCurrentTime*1000;
+								Duration duration = new Duration(frameMillisTime.intValue());
+								((MediaView) mediaNode.getExecutionObject()).getMediaPlayer().seek(duration);
+
 							}
 
 						}else {
 
-							if(node.getIsPLayingInPreview()){
+							if(node.getIsShownInPreview()){
 
 								if(!screen.getChildren().isEmpty()){
 									if(node instanceof SensoryEffectNode){
 										controlButtonPane.getEffectIconsContainer().getChildren().remove(node.getExecutionObject());
 									}else{
+
+										for(Node executionObject : screen.getChildren()){
+											if(executionObject instanceof MediaView){
+												MediaView currentMediaView = (MediaView) executionObject;
+												currentMediaView.getMediaPlayer().stop();
+											}
+										}
+
 										screen.getChildren().remove(node.getExecutionObject());
+
 									}
-									node.setIsPLayingInPreview(false);
+									node.setIsShownInPreview(false);
+									node.setIsContinuousMediaPlaying(false);
 								}
 
 							}
@@ -594,7 +628,7 @@ public class TemporalChainPane extends StackPane implements Observer{
 
 					}
 
-			}
+//			}
 
 	}
 

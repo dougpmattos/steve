@@ -3,6 +3,13 @@ plugins {
     id 'org.openjfx.javafxplugin' version '0.0.9'
 }
 
+application {
+    mainModule = 'steve'
+    mainClass = 'view.stevePane.Main'
+}
+
+modularity.disableEffectiveArgumentsAdjustment()
+
 repositories {
 
     mavenCentral()
@@ -15,14 +22,11 @@ repositories {
 
 javafx {
     version = "15.0.1"
-    modules = [ 'javafx.controls', 'javafx.fxml', 'javafx.base', 'javafx.media', 'javafx.web', 'javafx.swing' ]
+    modules = [ 'javafx.controls', 'javafx.graphics', 'javafx.fxml', 'javafx.base', 'javafx.media', 'javafx.web', 'javafx.swing' ]
 }
 
 dependencies {
     implementation 'commons-io:commons-io:2.5'
-    implementation  group: 'xuggle', name: 'xuggle-xuggler', version: '5.4'
-    implementation 'org.slf4j:slf4j-api:1.7.25'
-    implementation 'org.slf4j:slf4j-simple:1.7.25'
     implementation 'com.googlecode.json-simple:json-simple:1.1.1'
     implementation 'net.sf.jgrapht:jgrapht:0.8.3'
     implementation  group: 'jgraph', name: 'jgraph', version: '5.13.0.0'
@@ -31,7 +35,14 @@ dependencies {
     implementation 'com.jfoenix:jfoenix:9.0.8'
 }
 
-mainClassName = 'view.stevePane.Main'
-group = 'steve'
-version = '4.0.0-SNAPSHOT'
-sourceCompatibility = '1.8'
+configurations {
+    compile {
+        exclude group: 'junit', module: 'junit'
+        exclude group: 'io.grpc', module: 'grpc-context'
+        exclude group: 'io.grpc', module: 'grpc-api'
+    }
+}
+
+java {
+    modularity.inferModulePath = true
+}

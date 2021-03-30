@@ -2,6 +2,8 @@ package model.NCLSupport.utility;
 
 import java.io.IOException;
 
+import javafx.scene.media.MediaPlayer;
+import javafx.util.Duration;
 import model.utility.MediaUtil;
 import model.utility.OperatingSystemUtil;
 import br.uff.midiacom.ana.NCLDoc;
@@ -10,8 +12,6 @@ import br.uff.midiacom.ana.node.NCLMedia;
 import br.uff.midiacom.ana.util.enums.NCLMediaType;
 import br.uff.midiacom.ana.util.enums.NCLMimeType;
 import br.uff.midiacom.ana.util.exception.XMLException;
-
-import com.xuggle.xuggler.IContainer;
 
 @SuppressWarnings("rawtypes")
 public class NCLMediaUtil {
@@ -31,21 +31,30 @@ public class NCLMediaUtil {
     }
 	
 	private static Double getImplicitDur(NCLMedia nclMedia) throws XMLException, IOException {
-		
-	       NCLMediaType mediaType = nclMedia.getMediaType();
-	       if((mediaType==NCLMediaType.AUDIO)||(mediaType==NCLMediaType.VIDEO)){
-	           IContainer container = IContainer.make();
-	           if (container.open(getMediaAbsolutePath(nclMedia), IContainer.Type.READ, null) < 0){
-	               throw new RuntimeException("Failed to open.");
-	           }
-	           Double mediaDuration = Double.valueOf((double)container.getDuration()/DIVISOR);
-	           container.close();
-	           return MediaUtil.approximateDouble(mediaDuration);
-	       }else{
-	           return null;
-	       }
+
+        NCLMediaType mediaType = nclMedia.getMediaType();
+
+        if((mediaType==NCLMediaType.AUDIO)||(mediaType==NCLMediaType.VIDEO)){
+            javafx.scene.media.Media javaFXMedia = new javafx.scene.media.Media(getMediaAbsolutePath(nclMedia));
+            final Double[] duration = new Double[1];
+
+            MediaPlayer mediaPlayer = new MediaPlayer(javaFXMedia);
+            mediaPlayer.setOnReady(new Runnable() {
+
+                @Override
+                public void run() {
+                    Duration dur = javaFXMedia.getDuration();
+                    duration[0] = MediaUtil.approximateDouble(dur.toSeconds());
+
+                }
+
+            });
+            return duration[0];
+        }else {
+            return null;
+        }
 	       
-	    }
+	}
 	
 	private static Double getExplicitDur(NCLMedia nclMedia) throws XMLException{
 		

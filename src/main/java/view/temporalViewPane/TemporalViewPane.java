@@ -17,7 +17,6 @@ import javafx.scene.layout.StackPane;
 import model.common.MediaNode;
 import model.common.Node;
 import model.common.SpatialTemporalApplication;
-import model.common.enums.SensoryEffectType;
 import model.repository.RepositoryMediaList;
 import model.temporalView.Interactivity;
 import model.temporalView.TemporalChain;
@@ -169,7 +168,8 @@ public class TemporalViewPane extends BorderPane implements Observer, view.commo
 				applicationController.getScreen().getChildren().clear();
 				applicationController.getEffectIconsContainer().getChildren().clear();
 				for(model.common.Node node : temporalChainModel.getNodeAllList()){
-					node.setIsPLayingInPreview(false);
+					node.setIsShownInPreview(false);
+					node.setIsContinuousMediaPlaying(false);
 				}
 	        	
 	        	for(Tab temporalTab : getTemporalChainTabPane().getTabs()){

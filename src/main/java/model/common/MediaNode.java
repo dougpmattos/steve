@@ -8,7 +8,9 @@ import java.util.logging.Logger;
 
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.StackPane;
 import javafx.scene.media.MediaPlayer;
+import javafx.scene.media.MediaView;
 import javafx.util.Duration;
 import model.common.enums.MediaType;
 import model.common.enums.MimeType;
@@ -52,6 +54,56 @@ public class MediaNode extends Node<MediaType> implements Serializable{
 	    	   setImplicitDuration();
 	    }
 	    
+	}
+
+	public void prefetchExecutionObject(StackPane screen){
+
+		Object nodeContent = null;
+
+		switch(getType()) {
+
+			case IMAGE:
+
+				ImageView image = new ImageView(new Image(getFile().toURI().toString()));
+				image.setFitWidth(screen.getWidth());
+				image.setFitHeight(screen.getHeight());
+				image.setSmooth(false);
+				nodeContent = image;
+				break;
+
+			case VIDEO:
+
+				final javafx.scene.media.Media video = new javafx.scene.media.Media(getFile().toURI().toString());
+				final MediaPlayer videoPlayer = new MediaPlayer(video);
+				MediaView videoMediaView = new MediaView(videoPlayer);
+				videoMediaView.setFitWidth(screen.getWidth());
+				videoMediaView.setFitHeight(screen.getHeight());
+				videoMediaView.setSmooth(true);
+				nodeContent = videoMediaView;
+				break;
+
+			case AUDIO:
+
+				final javafx.scene.media.Media audio = new javafx.scene.media.Media(getFile().toURI().toString());
+				final MediaPlayer audioPlayer = new MediaPlayer(audio);
+				MediaView audioMediaView = new MediaView(audioPlayer);
+				audioMediaView.setFitWidth(screen.getWidth());
+				audioMediaView.setFitHeight(screen.getHeight());
+				audioMediaView.setSmooth(true);
+				nodeContent = audioMediaView;
+				break;
+
+			case TEXT:
+				//TODO pegar o texto.
+				break;
+
+			case APPLICATION:
+				nodeContent = generateMediaIcon();
+				break;
+		}
+
+		setExecutionObject(nodeContent);
+
 	}
 
 	public boolean isContinousMedia(){

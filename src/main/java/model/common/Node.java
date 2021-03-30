@@ -26,7 +26,8 @@ public class Node<T> implements Serializable {
     private Boolean interactive = false;
     public T type;
 
-    private Boolean isPLayingInPreview = false;
+    private Boolean isShownInPreview = false;
+	private Boolean isContinuousMediaPlaying = false;
     public transient ImageView icon;
     private transient Object executionObject;
 	public transient HBox containerNode;
@@ -94,12 +95,12 @@ public class Node<T> implements Serializable {
 		this.type = type;
 	}
 	
-    public void setIsPLayingInPreview(Boolean value){
-		this.isPLayingInPreview = value;
+    public void setIsShownInPreview(Boolean value){
+		this.isShownInPreview = value;
 	}
 	
-	public Boolean getIsPLayingInPreview(){
-		return this.isPLayingInPreview;
+	public Boolean getIsShownInPreview(){
+		return this.isShownInPreview;
 	}
 	   
 	public Object getExecutionObject(){
@@ -142,6 +143,14 @@ public class Node<T> implements Serializable {
 			return false;
 		}
 
+	}
+
+	public Boolean getIsContinuousMediaPlaying() {
+		return isContinuousMediaPlaying;
+	}
+
+	public void setIsContinuousMediaPlaying(Boolean isContinuousMediaPlaying) {
+		this.isContinuousMediaPlaying = isContinuousMediaPlaying;
 	}
 
 }

@@ -10,7 +10,6 @@ import javafx.scene.control.SplitPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.shape.Path;
 import model.common.MediaNode;
 import model.common.SensoryEffectNode;
 import model.common.SpatialTemporalApplication;
@@ -242,7 +241,8 @@ public class SpatialViewPane extends SplitPane implements view.common.Observer, 
 			}else{
 				displayPane.getScreen().getChildren().remove(node.getExecutionObject());
 			}
-			node.setIsPLayingInPreview(false);
+			node.setIsShownInPreview(false);
+			node.setIsContinuousMediaPlaying(false);
 		}
 
 		getItems().addAll(labelContainer, displayPane);
