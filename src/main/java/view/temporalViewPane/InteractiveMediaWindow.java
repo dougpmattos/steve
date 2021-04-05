@@ -3,6 +3,7 @@ package view.temporalViewPane;
 import java.util.ArrayList;
 import java.util.function.UnaryOperator;
 
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -1033,7 +1034,7 @@ public class InteractiveMediaWindow extends Stage {
 				}else {
 					applicationController.addInteractivityRelation(temporalChainPane.getTemporalChainModel(), interactivityRelation);
 				}
-				
+
 				InteractiveMediaWindow.this.close();
 
 				String feedbackTitle;
@@ -1064,21 +1065,28 @@ public class InteractiveMediaWindow extends Stage {
 				}
 
 				String finalFeedbackMessage="";
-				int height = 190;
+				int height = 210;
 				if(!newTimelineCreatedMessage.isEmpty() && !existingTimelineUsedMessage.isEmpty()){
 					finalFeedbackMessage = newTimelineCreatedMessage + "\n\n" + nodesToBeStartedMessage
 							+ "\n" + existingTimelineUsedMessage + "\n\n" + existingTimelineToBeStartedMessage;
-					height = 300;
+					height = 330;
 				}else if(!newTimelineCreatedMessage.isEmpty() && existingTimelineUsedMessage.isEmpty()){
 					finalFeedbackMessage = newTimelineCreatedMessage + "\n\n" + nodesToBeStartedMessage;
 				}else if(newTimelineCreatedMessage.isEmpty() && !existingTimelineUsedMessage.isEmpty()){
 					finalFeedbackMessage = existingTimelineUsedMessage + "\n\n" +
 							existingTimelineToBeStartedMessage;
 				}
+				String finalFeedbackMessage1 = finalFeedbackMessage;
+				int finalHeight = height;
+				Platform.runLater(new Runnable() {
+					@Override
+					public void run() {
+						InputDialog showOkInputDialog = new InputDialog(feedbackTitle, finalFeedbackMessage1,
+								"OK", null, null, finalHeight);
+						showOkInputDialog.showAndWait();
+					}
+				});
 
-				InputDialog showOkInputDialog = new InputDialog(feedbackTitle, finalFeedbackMessage,
-						"OK", null, null, height);
-				showOkInputDialog.showAndWait();
 				
     		}
     		

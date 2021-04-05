@@ -11,6 +11,7 @@ import java.util.List;
 public class SEExtractionServiceResponse {
 
     private List<Frame> clarifaiRawData;
+    private ClarifaiError clarifaiError;
     private Node applicationNode;
     private List<SensoryEffectType> selectedSensoryEffects;
     private List<SensoryEffectConcept> sensoryEffectsConceptList;
@@ -124,6 +125,22 @@ public class SEExtractionServiceResponse {
 
         }
 
+    }
+
+    public void setClarifaiError(ClarifaiError clarifaiError) {
+        this.clarifaiError = clarifaiError;
+    }
+
+    public ClarifaiError getClarifaiError(){
+        return this.clarifaiError;
+    }
+
+    public boolean isSuccessful(){
+        if(this.clarifaiError == null ){
+            return true;
+        }else{
+            return false;
+        }
     }
 
 }

@@ -1,10 +1,8 @@
 package view.spatialViewPane;
 
 import com.google.common.util.concurrent.AtomicDouble;
-import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.concurrent.ScheduledService;
 import javafx.concurrent.Worker;
 import javafx.concurrent.WorkerStateEvent;
 import javafx.event.ActionEvent;
@@ -321,6 +319,14 @@ public class ControlButtonPane extends BorderPane{
 											setVideoPresentationProperties((MediaView) nodeContent, (MediaNode) node);
 										}
 										screen.getChildren().add((MediaView) nodeContent);
+										if(currentTime - node.getBegin() > 0.2){
+											Double backTime = node.getBegin() - 1;
+											if(backTime < 0){
+												getTimerService().setCurrentTime(0.0);
+											}else{
+												getTimerService().setCurrentTime(backTime);
+											}
+										}
 										((MediaView) nodeContent).getMediaPlayer().play();
 										node.setIsContinuousMediaPlaying(true);
 

@@ -5,6 +5,7 @@ import gateway.SensoryEffectExtractionService;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.concurrent.WorkerStateEvent;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
@@ -252,38 +253,63 @@ public class TimeLineXYChartData implements Observer {
 				extractEffectsSelectionWindow.showAndWait();
 				if(!extractEffectsSelectionWindow.getHasDiscarded()){
 
+					List<SensoryEffectType> selectedSensoryEffects = extractEffectsSelectionWindow.getSelectedSensoryEffects();
+					sensoryEffectExtractionService  = new SensoryEffectExtractionService(TimeLineXYChartData.this.node, selectedSensoryEffects);
+
 					effectExtractionLoadingDialog = new InputDialog(Language.translate("extracting.effects"),
-							null, null, null, null,
-							null, 120, 350);
+							null, null, Language.translate("cancel"), null,
+							null, 180, 350);
+					effectExtractionLoadingDialog.getRightButton().setOnAction(new EventHandler<ActionEvent>() {
+						@Override
+						public void handle(ActionEvent event) {
+							effectExtractionLoadingDialog.close();
+							sensoryEffectExtractionService.cancel();
+
+						}
+					});
 					effectExtractionLoadingDialog.show();
 					effectExtractionLoadingDialog.setProgressIndicator();
 
-					List<SensoryEffectType> selectedSensoryEffects = extractEffectsSelectionWindow.getSelectedSensoryEffects();
+					sensoryEffectExtractionService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
 
-					sensoryEffectExtractionService  = new SensoryEffectExtractionService(TimeLineXYChartData.this.node, selectedSensoryEffects);
-					Thread effectExtractionServiceThread = new Thread(sensoryEffectExtractionService);
-					effectExtractionServiceThread.setDaemon(true);
-					effectExtractionServiceThread.start();
-
-					Thread callerbackerThread = new Thread(new Runnable() {
 						@Override
-						public void run() {
-							try {
-								effectExtractionServiceThread.join();
-								Platform.runLater(new Runnable() {
-									@Override public void run() {
-										event.consume();
-										callbackFromEffectExtractionService();
-									}
-								});
-							}
-							catch ( InterruptedException e ) {
-								e.printStackTrace();
-							}
-						}
-					});
+						public void handle(WorkerStateEvent t) {
 
-					callerbackerThread.start();
+							SEExtractionServiceResponse sEExtractionServiceResponse = (SEExtractionServiceResponse) t.getSource().getValue();
+
+							if(sEExtractionServiceResponse.isSuccessful()){
+
+								event.consume();
+								if(sEExtractionServiceResponse.getEffectActivationMatrix().length > 0){
+									callbackFromEffectExtractionService(sEExtractionServiceResponse);
+								}else{
+
+									effectExtractionLoadingDialog.close();
+
+									String message = Language.translate("effect.extracted.failed");
+
+									ReturnMessage returnMessage = new ReturnMessage(message, 450);
+									returnMessage.show();
+									AnimationUtil.applyFadeInOut(returnMessage);
+
+								}
+
+							}else{
+
+								effectExtractionLoadingDialog.close();
+
+								ClarifaiError clarifaiError = sEExtractionServiceResponse.getClarifaiError();
+
+								InputDialog showOkInputDialog = new InputDialog(clarifaiError.getDescription(), clarifaiError.getErrorDetails(),
+										"OK", null, null, 200);
+								showOkInputDialog.showAndWait();
+
+							}
+
+						}
+
+					});
+					sensoryEffectExtractionService.start();
 
 				}
 
@@ -293,9 +319,9 @@ public class TimeLineXYChartData implements Observer {
 
 	}
 
-	private void callbackFromEffectExtractionService(){
+	private void callbackFromEffectExtractionService(SEExtractionServiceResponse sEExtractionServiceResponse){
 
-		addSensoryEffectsToTimeline();
+		addSensoryEffectsToTimeline(sEExtractionServiceResponse);
 
 		effectExtractionLoadingDialog.close();
 
@@ -307,9 +333,8 @@ public class TimeLineXYChartData implements Observer {
 
 	}
 
-	private void addSensoryEffectsToTimeline() {
+	private void addSensoryEffectsToTimeline(SEExtractionServiceResponse sEExtractionServiceResponse) {
 
-		SEExtractionServiceResponse sEExtractionServiceResponse = sensoryEffectExtractionService.getSEExtractionServiceResponse();
 		int[][] effectActivationMatrix = sEExtractionServiceResponse.getEffectActivationMatrix();
 		List<SensoryEffectConcept> sensoryEffectsConceptList = sEExtractionServiceResponse.getSensoryEffectsConceptList();
 

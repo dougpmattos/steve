@@ -94,10 +94,6 @@ INSTALLER=installer
 #
 EXTERNAL_MODULES=(
 	  "$REPO/commons-io/commons-io/2.5/2852e6e05fbb95076fc091f6d1780f1f8fe35e0f/commons-io-2.5.jar"
-
-    "$REPO/org.slf4j/slf4j-api/1.7.25/da76ca59f6a57ee3102f8f9bd9cee742973efa8a/slf4j-api-1.7.25.jar"
-    
-    "$REPO/org.slf4j/slf4j-simple/1.7.25/8dacf9514f0c707cbbcdd6fd699e8940d42fb54e/slf4j-simple-1.7.25.jar"
     
     "$REPO/com.googlecode.json-simple/json-simple/1.1.1/c9ad4a0850ab676c5c64461a05ca524cdfff59f1/json-simple-1.1.1.jar"
     
@@ -109,7 +105,29 @@ EXTERNAL_MODULES=(
 
     "$REPO/com.clarifai.clarifai-api2/core/2.8.1/7ef0978deebe8386d0ef8470f0559b0b3109bf9c/core-2.8.1.jar"
 
+    "$REPO/com.squareup.okhttp3/okhttp/3.12.0/b36f4a04584c0fb0d9af2d3401cdff8dacb1ea54/okhttp-3.12.0.jar"
+
+    "$REPO/com.squareup.okio/okio/1.15.0/bc28b5a964c8f5721eb58ee3f3c47a9bcbf4f4d8/okio-1.15.0.jar"
+
+    "$REPO/com.google.guava/guava/26.0-android/ef69663836b339db335fde0df06fb3cd84e3742b/guava-26.0-android.jar"
+
     "$REPO/com.jfoenix/jfoenix/9.0.8/b5a497c80b2ea69e9a68ad81d866ea3c7b7a08d9/jfoenix-9.0.8.jar"
+
+    "$REPO/com.google.code.findbugs/jsr305/3.0.2/25ea2e8b0c338a877313bd4672d3fe056ea78f0d/jsr305-3.0.2.jar"
+
+    "$REPO/com.google.code.gson/gson/2.8.5/f645ed69d595b24d4cf8b3fbb64cc505bede8829/gson-2.8.5.jar"
+
+    "$REPO/io.grpc/grpc-core/1.17.1/bd3c50e6eb7d5024e56cb8737d98d2cc9e1ae4ef/grpc-core-1.17.1.jar"
+
+    "$REPO/com.google.errorprone/error_prone_annotations/2.2.0/88e3c593e9b3586e1c6177f89267da6fc6986f0c/error_prone_annotations-2.2.0.jar"
+
+    "$REPO/org.checkerframework/checker-compat-qual/2.5.2/dc0b20906c9e4b9724af29d11604efa574066892/checker-compat-qual-2.5.2.jar"
+
+    "$REPO/com.google.j2objc/j2objc-annotations/1.1/ed28ded51a8b1c6b112568def5f4b455e6809019/j2objc-annotations-1.1.jar"
+
+    "$REPO/io.grpc/grpc-stub/1.17.1/456090f1a3935fc869ba80b8429d750d4f3b05c4/grpc-stub-1.17.1.jar"
+
+    "$REPO/io.grpc/grpc-protobuf/1.17.1/797b899fa461411414177368679fe37435e2b977/grpc-protobuf-1.17.1.jar"
 
     "$REPO/org.openjfx/javafx-controls/15.0.1/cb743a50156d7eca281bfc3547aff4d146972e02/javafx-controls-15.0.1-$PLATFORM.jar"
 

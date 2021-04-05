@@ -15,6 +15,8 @@ module steve {
     requires jgraph;
     requires com.jfoenix;
     requires commons.io;
+    requires okhttp3;
+    requires okio;
     requires com.google.common;
 
     exports view.stevePane to javafx.graphics;

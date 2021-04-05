@@ -5,6 +5,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
@@ -197,9 +198,10 @@ public class InputDialog extends Stage {
 
         containerTitleProgIndicatorHBox = new HBox();
         containerTitleProgIndicatorHBox.setSpacing(50);
-        containerTitleProgIndicatorHBox.getChildren().add(titleLabel);
+        containerTitleProgIndicatorHBox.setAlignment(Pos.CENTER);
 
         if(title != null){
+            containerTitleMsgVBox.getChildren().add(titleLabel);
             containerTitleMsgVBox.getChildren().add(containerTitleProgIndicatorHBox);
         }
 
