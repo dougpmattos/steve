@@ -98,7 +98,7 @@ public class ApplicationController {
 		this.interactiveKeyMappingJSON = jObj;		
 		try{
 			File saida = new File("saida.json");
-			FileWriter fw = new FileWriter("src/main/java/view/HTMLSupport/saida.json"); // Vai sobrescrever o aquivo
+			FileWriter fw = new FileWriter("saida.json"); // Vai sobrescrever o aquivo
 			//FileWriter fw = new FileWriter("saida.json", true); // Nao vai sobrescrever o aquivo
 			fw.write(this.interactiveKeyMappingJSON.toString());			
 			fw.close();

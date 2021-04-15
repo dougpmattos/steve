@@ -73,6 +73,9 @@ public class SpatialTemporalApplication extends Observable implements Serializab
 			for(Node existingNode : existingTemporalChain.getNodeAllList()){
 				existingNode.setParentTemporalChain(temporalChain);
 				applicationController.addNodeTemporalChain(existingNode, temporalChain);
+				if(existingNode instanceof MediaNode){
+					((MediaNode) existingNode).prefetchExecutionObject(applicationController.getScreen());
+				}
 			}
 
 			temporalChain.setRelationList(existingTemporalChain.getRelationList());

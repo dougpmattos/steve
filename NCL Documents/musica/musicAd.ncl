@@ -82,31 +82,31 @@
 	
 	<port id="entry" component="introduction"/>
 	
-	<media id="introduction" src="introduction.mpg" descriptor="screenDesc">
-	</media>
-	<media id="audio" src="audio.mp3" descriptor="audioDesc">
+	<mediaNode id="introduction" src="introduction.mpg" descriptor="screenDesc">
+	</mediaNode>
+	<mediaNode id="audio" src="audio.mp3" descriptor="audioDesc">
 			<area id="anchorProduct1" begin="5s" end="9s"/>
 			<area id="anchorProduct2" begin="10s" end="14s"/>
-	</media>
+	</mediaNode>
 	
-	<media id="audio2" src="audio.mp3" descriptor="audioDesc">
-	</media>
+	<mediaNode id="audio2" src="audio.mp3" descriptor="audioDesc">
+	</mediaNode>
 	
-	<media id="background" src="background.png" descriptor="screenDesc"/>
-	<media id="icon" src="icon.png" descriptor="iconDesc"/>
-	<media id="logo" src="logo.png" descriptor="logoDesc"/>
-	<media id="end" src="end.png" descriptor="endDesc">
+	<mediaNode id="background" src="background.png" descriptor="screenDesc"/>
+	<mediaNode id="icon" src="icon.png" descriptor="iconDesc"/>
+	<mediaNode id="logo" src="logo.png" descriptor="logoDesc"/>
+	<mediaNode id="end" src="end.png" descriptor="endDesc">
 		<property name="bounds"/>
-	</media>
-	<media id="productInfos" src="productInfos.png" descriptor="productInfosDesc"/>
-	<media id="globalVar" type="application/x-ginga-settings">
+	</mediaNode>
+	<mediaNode id="productInfos" src="productInfos.png" descriptor="productInfosDesc"/>
+	<mediaNode id="globalVar" type="application/x-ginga-settings">
 		<property name="channel.interactivity" value="true"/>
-	</media>
+	</mediaNode>
 	
 	<context id="contextProduct">
-		<media id="product1" src="product1.png" descriptor="productDesc"/>
-		<media id="price1" src="price1.png" descriptor="priceDesc"/>
-		<media id="reusedAudio" refer="audio" instance="instSame"/>
+		<mediaNode id="product1" src="product1.png" descriptor="productDesc"/>
+		<mediaNode id="price1" src="price1.png" descriptor="priceDesc"/>
+		<mediaNode id="reusedAudio" refer="audio" instance="instSame"/>
 		<link id="lProduct1" xconnector="onBeginStartN">
 			<bind role="onBegin" component="reusedAudio" interface="anchorProduct1"/>
 			<bind role="start" component="product1"/>
@@ -120,8 +120,8 @@
 		
 		
 	
-		<media id="product2" src="product2.png" descriptor="productDesc"/>
-		<media id="price2" src="price2.png" descriptor="priceDesc"/>
+		<mediaNode id="product2" src="product2.png" descriptor="productDesc"/>
+		<mediaNode id="price2" src="price2.png" descriptor="priceDesc"/>
 		<link id="lProduct2" xconnector="onBeginStartN">
 			<bind role="onBegin" component="reusedAudio" interface="anchorProduct2"/>
 			<bind role="start" component="product2"/>

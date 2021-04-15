@@ -301,7 +301,7 @@ public class TimeLineXYChartData implements Observer {
 								ClarifaiError clarifaiError = sEExtractionServiceResponse.getClarifaiError();
 
 								InputDialog showOkInputDialog = new InputDialog(clarifaiError.getDescription(), clarifaiError.getErrorDetails(),
-										"OK", null, null, 200);
+										"OK", null, null, 180);
 								showOkInputDialog.showAndWait();
 
 							}
@@ -321,7 +321,12 @@ public class TimeLineXYChartData implements Observer {
 
 	private void callbackFromEffectExtractionService(SEExtractionServiceResponse sEExtractionServiceResponse){
 
-		addSensoryEffectsToTimeline(sEExtractionServiceResponse);
+		Platform.runLater(new Runnable() {
+			@Override
+			public void run() {
+				addSensoryEffectsToTimeline(sEExtractionServiceResponse);
+			}
+		});
 
 		effectExtractionLoadingDialog.close();
 
@@ -330,6 +335,10 @@ public class TimeLineXYChartData implements Observer {
 		ReturnMessage returnMessage = new ReturnMessage(message, 450);
 		returnMessage.show();
 		AnimationUtil.applyFadeInOut(returnMessage);
+
+		if(sEExtractionServiceResponse.getApplicationNode() instanceof MediaNode){
+			((MediaNode) sEExtractionServiceResponse.getApplicationNode()).prefetchExecutionObject(applicationController.getScreen());
+		}
 
 	}
 
@@ -367,8 +376,8 @@ public class TimeLineXYChartData implements Observer {
 					addSensoryEffect((SensoryEffectType) sensoryEffectsConceptList.get(i).getFirst(),
 							node.getBegin() + j, 0.00 + (end - j)); // (end - j) me dá a duração do
 					// efeito
-					System.out.println(sensoryEffectsConceptList.get(i).getFirst() + " inicia em : "
-							+ (node.getBegin() + j) + " e tem duracao de:" + (0.00 + (end - j)));
+					System.out.println(sensoryEffectsConceptList.get(i).getFirst() + " starts at : "
+							+ (node.getBegin() + j) + " with duration:" + (0.00 + (end - j)));
 
 				}
 				// anda com j até o próximo momento de início desse efeito.

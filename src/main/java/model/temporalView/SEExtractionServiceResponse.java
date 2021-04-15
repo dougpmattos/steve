@@ -143,4 +143,9 @@ public class SEExtractionServiceResponse {
         }
     }
 
+    public Node getApplicationNode() {
+        return applicationNode;
+    }
+
+
 }

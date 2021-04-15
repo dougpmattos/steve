@@ -1,4 +1,4 @@
-#!/bin/bash
+grd#!/bin/bash
 
 #
 # Move to the directory containing this script so we can source the env.sh

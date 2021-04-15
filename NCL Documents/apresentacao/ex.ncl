@@ -38,9 +38,9 @@
 	
 	<port id="entry" component="video"/>
 	
-	<media id="video" src="video.mpg" descriptor="screenDesc"/>
-	<media id="botao" src="botao.png" descriptor="botaoDesc"/>
-	<media id="infos" src="infos.png" descriptor="infosDesc"/>
+	<mediaNode id="video" src="video.mpg" descriptor="screenDesc"/>
+	<mediaNode id="botao" src="botao.png" descriptor="botaoDesc"/>
+	<mediaNode id="infos" src="infos.png" descriptor="infosDesc"/>
 	
 
 	<link id="lVideo" xconnector="onBeginStartDelay">

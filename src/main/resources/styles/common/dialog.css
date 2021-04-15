@@ -94,9 +94,20 @@
 	-fx-font-size: 14;
 	-fx-text-fill: #B0BEC5;
 }
-#input-field{
-	-fx-max-width: 100;
-    -fx-alignment: top-left;
+#input-field {
+    -fx-background-color: #62727b;
+    -fx-background-insets: 22 1 1 1;
+    -fx-background-radius: 0;
+    -fx-padding: 0 0 9 0;
+    -fx-text-fill: #FFFFFF;
+    -fx-alignment: top-right;
+}
+
+#input-field:focused {
+    -fx-background-color: #00BFA5;
+    -fx-background-insets: 22 1 1 1;
+    -fx-background-radius: 0;
+    -fx-padding: 0 0 9 0;
 }
 .button{
  	-fx-background-color: #102027;

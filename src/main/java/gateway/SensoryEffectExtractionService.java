@@ -8,7 +8,6 @@ import clarifai2.dto.input.ClarifaiInput;
 import clarifai2.dto.model.Model;
 import clarifai2.dto.model.output.ClarifaiOutput;
 import clarifai2.dto.prediction.Frame;
-import clarifai2.exception.ClarifaiException;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 import model.common.MediaNode;
@@ -22,7 +21,7 @@ import java.util.List;
 
 public class SensoryEffectExtractionService extends Service<SEExtractionServiceResponse> {
 
-    model.common.Node applicationNode;
+    Node applicationNode;
     SEExtractionServiceResponse sEExtractionServiceResponse;
 
     public SensoryEffectExtractionService(Node applicationNode, List<SensoryEffectType> selectedSensoryEffects){
@@ -68,7 +67,16 @@ public class SensoryEffectExtractionService extends Service<SEExtractionServiceR
 
                         ClarifaiError clarifaiError = new ClarifaiError();
                         clarifaiError.setDescription(clarifaiResponse.getStatus().description());
-                        clarifaiError.setErrorDetails(clarifaiResponse.getStatus().errorDetails());
+                        if(clarifaiResponse.getStatus().errorDetails() == null){
+                            String outputs = clarifaiResponse.rawBody().substring(clarifaiResponse.rawBody().indexOf("outputs"));
+                            String description = outputs.substring(outputs.indexOf("description"));
+                            String descriptionValue = description.substring(description.indexOf(":")+1, description.indexOf(","));
+                            descriptionValue = descriptionValue.replace("\"", "");
+                            clarifaiError.setErrorDetails(descriptionValue);
+                        }else{
+                            clarifaiError.setErrorDetails(clarifaiResponse.getStatus().errorDetails());
+                        }
+
                         sEExtractionServiceResponse.setClarifaiError(clarifaiError);
 
                     }

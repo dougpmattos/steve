@@ -537,7 +537,7 @@ public class TemporalChain extends Observable implements Serializable {
 		Boolean atLeastOneSecondaryMediaWasDefined = false;
 		int i;
 		ArrayList<Node> listOfSecondaryNodeToBeRemoved = new ArrayList<>();
-		
+
 		for(i  = 0; i < synchronousRelationToBeDefined.getSecondaryNodeList().size(); i++){
 			
 			Node secondaryNode = synchronousRelationToBeDefined.getSecondaryNodeList().get(i);
@@ -550,34 +550,43 @@ public class TemporalChain extends Observable implements Serializable {
 			ArrayList<TemporalRelation> listOfMasterRelations = getListOfMasterRelations(secondaryNode);
 
 			if(!listOfAllRelations.isEmpty()){
-	
-				if(listOfSecondaryRelations.size() == 2){//INFO Uma mídia pode ser secundária de no máximo 2 relações
-					
+
+				//INFO There is a loop in that case. This prevents the dragChildren method to run in loop.
+				// However, this loop can occur in MultiSEM. Its just a limitation of STEVE.
+				boolean isThereLoopSameRelation = isThereLoopSameRelationForTheCurrentSecondary(synchronousRelationToBeDefined, listOfMasterRelations);
+
+				if(isThereLoopSameRelation){
+
+					showBlockedRelationMessageDialog(secondaryNode, ConflictType.LOOP);
+					secondaryBlockedForChanges = true;
+
+				}else if(listOfSecondaryRelations.size() == 2){//INFO Uma mídia pode ser secundária de no máximo 2 relações
+
 					showBlockedRelationMessageDialog(secondaryNode, ConflictType.BEGIN_END_DEFINED);
 					secondaryBlockedForChanges = true;
-					
+
 				} else if(listOfSecondaryRelations.size() == 1) { //INFO Apenas uma relação
-					
+
 					ConflictType conflictType;
-					
+
 					Synchronous synchronousRelationWhereSecondaryNodeIsSecondary = (Synchronous) listOfSecondaryRelations.get(0);
-					
+
 					conflictType = hasBeginOrEndAlreadyBeenDefined(synchronousRelationToBeDefined, synchronousRelationWhereSecondaryNodeIsSecondary);
-					
+
 					if(conflictType != null){
-						
+
 						showBlockedRelationMessageDialog(secondaryNode, conflictType);
 						secondaryBlockedForChanges = true;
-						
+
 					}else {
-						
+
 						conflictType = isThereBeginGTEndOrEndLTBeginConflict(synchronousRelationToBeDefined, synchronousRelationWhereSecondaryNodeIsSecondary, secondaryNode);
-						
+
 						if(conflictType != null){
-							
+
 							showBlockedRelationMessageDialog(secondaryNode, conflictType);
 							secondaryBlockedForChanges = true;
-							
+
 						}else {
 
 							if(!secondaryNode.isContinousMedia()){
@@ -589,45 +598,45 @@ public class TemporalChain extends Observable implements Serializable {
 							}else{
 
 								MessageDialog messageDialog = new MessageDialog(Language.translate("it.is.not.possible.to.define.alignment.for.this.secondary") + ": " + secondaryNode.getName(),
-										Language.translate("changing.duration.continuos.media"), "OK", 160);
+										Language.translate("changing.duration.continuous.media"), "OK", 185);
 								messageDialog.showAndWait();
 
 								secondaryBlockedForChanges = true;
 							}
-							
+
 						}
-						
+
 					}
-					
+
 				}
-	
+
 				if(!secondaryBlockedForChanges){
-					
+
 					if(!listOfMasterRelations.isEmpty()){
-						
+
 						if(secondaryWasChangedModifyingDuration){
-							
+
 							dragChildren(secondaryNode);
-							
+
 						}else {
-							
+
 							defineRelation(synchronousRelationToBeDefined, i, secondaryNode);
 							atLeastOneSecondaryMediaWasDefined = true;
 							dragChildren(secondaryNode);
 
 						}
-						
+
 					}
-					
+
 				}else {
 					listOfSecondaryNodeToBeRemoved.add(secondaryNode);
 				}
-				
+
 			}else {
-			
+
 				defineRelation(synchronousRelationToBeDefined, i, secondaryNode);
 				atLeastOneSecondaryMediaWasDefined = true;
-				
+
 			}
 			
 		}
@@ -638,7 +647,7 @@ public class TemporalChain extends Observable implements Serializable {
 					Language.translate("no.selected.media.could.be.secondary.for.the.relation"), "OK", 180);
 			messageDialog.showAndWait();
 			
-		}else {
+		}else if(atLeastOneSecondaryMediaWasDefined) {
 
 			for(Node secondaryNode : listOfSecondaryNodeToBeRemoved){
 				synchronousRelationToBeDefined.getSecondaryNodeList().remove(secondaryNode);
@@ -652,6 +661,35 @@ public class TemporalChain extends Observable implements Serializable {
 		Operation<TemporalViewOperator> operation = new Operation<TemporalViewOperator>(TemporalViewOperator.ADD_SYNC_RELATION, synchronousRelationToBeDefined, this);
         notifyObservers(operation);
         
+	}
+
+	private boolean isThereLoopSameRelationForTheCurrentSecondary(Synchronous synchronousRelationToBeDefined, ArrayList<TemporalRelation> listOfMasterRelations) {
+
+		boolean primaryIsSecondaryOfSomeOfItsSecondaryInSameRelation = false;
+
+		Node primaryNodeOfRelationToBeDefined = synchronousRelationToBeDefined.getPrimaryNode();
+
+		for(TemporalRelation temporalRelation : listOfMasterRelations){
+
+			if(temporalRelation instanceof Synchronous){
+
+				Synchronous synchronousRelation = (Synchronous) temporalRelation;
+
+					for(Node synchronousRelationSecondary : synchronousRelation.getSecondaryNodeList()){
+
+						if(primaryNodeOfRelationToBeDefined.equals(synchronousRelationSecondary)){
+							primaryIsSecondaryOfSomeOfItsSecondaryInSameRelation = true;
+							break;
+						}
+					}
+
+					if(primaryIsSecondaryOfSomeOfItsSecondaryInSameRelation){
+						break;
+					}
+
+			}
+		}
+		return primaryIsSecondaryOfSomeOfItsSecondaryInSameRelation;
 	}
 
 	private void dragChildren(Node rootNode) {
@@ -1231,7 +1269,7 @@ public class TemporalChain extends Observable implements Serializable {
 		
 	}
 
-	private ArrayList<TemporalRelation> getListOfAllRelations(Node slaveNode) {
+	private ArrayList<TemporalRelation> getListOfAllRelations(Node secondaryNode) {
 		
 		ArrayList<TemporalRelation> listOfAllRelations = new ArrayList<TemporalRelation>(); 
 		
@@ -1241,13 +1279,13 @@ public class TemporalChain extends Observable implements Serializable {
 				
 				Synchronous synchronousRelation = (Synchronous) relation;
 				
-				if(slaveNode.equals(synchronousRelation.getPrimaryNode())){
+				if(secondaryNode.equals(synchronousRelation.getPrimaryNode())){
 					listOfAllRelations.add(synchronousRelation);
 				}else {
 					
-					for(Node synchronousRelationSlave : synchronousRelation.getSecondaryNodeList()){
+					for(Node synchronousRelationSecondary : synchronousRelation.getSecondaryNodeList()){
 						
-						if(slaveNode.equals(synchronousRelationSlave)){
+						if(secondaryNode.equals(synchronousRelationSecondary)){
 							listOfAllRelations.add(synchronousRelation);
 							break;
 						}
@@ -1273,14 +1311,14 @@ public class TemporalChain extends Observable implements Serializable {
 			case BEGIN_END_DEFINED:
 				
 				showBlockedRelationMessageDialog = new MessageDialog(Language.translate("it.is.not.possible.to.define.alignment.for.this.secondary") + ": " + secondaryNode.getName(),
-						Language.translate("begin.and.end.have.already.been.defined"), "OK", 160);
+						Language.translate("begin.and.end.have.already.been.defined"), "OK", 185);
 				showBlockedRelationMessageDialog.showAndWait();
 				break;
 	
 			case BEGIN_DEFINED:
 				
 				showBlockedRelationMessageDialog = new MessageDialog(Language.translate("it.is.not.possible.to.define.alignment.for.this.secondary") + ": " + secondaryNode.getName(),
-						Language.translate("begin.has.already.been.defined"), "OK", 160);
+						Language.translate("begin.has.already.been.defined"), "OK", 185);
 				showBlockedRelationMessageDialog.showAndWait();
 				break;
 				
@@ -1302,6 +1340,13 @@ public class TemporalChain extends Observable implements Serializable {
 				
 				showBlockedRelationMessageDialog = new MessageDialog(Language.translate("it.is.not.possible.to.define.alignment.for.this.secondary") + ": " + secondaryNode.getName(),
 						Language.translate("new.end.is.less.than.the.begin.defined.by.another.alignment"), "OK", 180);
+				showBlockedRelationMessageDialog.showAndWait();
+				break;
+
+			case LOOP:
+
+				showBlockedRelationMessageDialog = new MessageDialog(Language.translate("it.is.not.possible.to.define.alignment.for.this.secondary") + ": " + secondaryNode.getName(),
+						Language.translate("secondary.primary.secondary"), "OK", 180);
 				showBlockedRelationMessageDialog.showAndWait();
 				break;
 				

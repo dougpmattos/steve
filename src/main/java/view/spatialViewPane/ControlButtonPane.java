@@ -318,7 +318,9 @@ public class ControlButtonPane extends BorderPane{
 										if(((MediaNode) node).getType() == MediaType.VIDEO){
 											setVideoPresentationProperties((MediaView) nodeContent, (MediaNode) node);
 										}
-										screen.getChildren().add((MediaView) nodeContent);
+										if(!screen.getChildren().contains((MediaView) nodeContent)){
+											screen.getChildren().add((MediaView) nodeContent);
+										}
 										if(currentTime - node.getBegin() > 0.2){
 											Double backTime = node.getBegin() - 1;
 											if(backTime < 0){
@@ -327,6 +329,7 @@ public class ControlButtonPane extends BorderPane{
 												getTimerService().setCurrentTime(backTime);
 											}
 										}
+
 										((MediaView) nodeContent).getMediaPlayer().play();
 										node.setIsContinuousMediaPlaying(true);
 
@@ -349,7 +352,9 @@ public class ControlButtonPane extends BorderPane{
 
 											}
 											if(!inserted){
-												screen.getChildren().add((ImageView) nodeContent);
+												if(!screen.getChildren().contains((ImageView) nodeContent)){
+													screen.getChildren().add((ImageView) nodeContent);
+												}
 											}
 										}
 
@@ -446,12 +451,12 @@ public class ControlButtonPane extends BorderPane{
 
 			}
 		});
-
-		if(timerService.getState() == Worker.State.CANCELLED){
+//
+//		if(timerService.getState() == Worker.State.CANCELLED){
+//			timerService.restart();
+//		}else{
 			timerService.restart();
-		}else{
-			timerService.start();
-		}
+//		}
 
 	}
 

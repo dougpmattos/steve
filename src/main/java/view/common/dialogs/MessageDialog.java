@@ -81,6 +81,7 @@ public class MessageDialog extends Stage {
 		
 		if(buttonText != null){
 			button = new Button(buttonText.toUpperCase());
+            button.setId("left-button");
 		}
 
 	}

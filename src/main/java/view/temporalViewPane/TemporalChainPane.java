@@ -532,8 +532,6 @@ public class TemporalChainPane extends StackPane implements Observer{
 
 							if(!node.getIsShownInPreview()){
 
-								node.setIsShownInPreview(true);
-
 								if(node instanceof MediaNode) {
 
 									Object mediaContent = node.getExecutionObject();
@@ -547,16 +545,22 @@ public class TemporalChainPane extends StackPane implements Observer{
 										Double videoCurrentTime = currentTimeClicked - mediaNode.getBegin();
 										Double frameMillisTime = videoCurrentTime*1000;
 										Duration duration = new Duration(frameMillisTime.intValue());
-										((MediaView) mediaNode.getExecutionObject()).getMediaPlayer().seek(duration);
+//										mediaView.getMediaPlayer().seek(duration);
 
-										screen.getChildren().add(mediaView);
+										if(!screen.getChildren().contains(mediaView)){
+											screen.getChildren().add(mediaView);
+										}
 
 									} else if(mediaContent instanceof ImageView){
 
 										controlButtonPane.setImagePresentationProperties((ImageView) mediaContent, (MediaNode) node);
 										if(screen.getChildren().isEmpty()){
 
-											screen.getChildren().add((ImageView) mediaContent);
+											if(!screen.getChildren().contains((ImageView) mediaContent)){
+												screen.getChildren().add((ImageView) mediaContent);
+												node.setIsShownInPreview(true);
+											}
+
 
 										} else{
 											boolean inserted = false;
@@ -564,6 +568,7 @@ public class TemporalChainPane extends StackPane implements Observer{
 
 												if(((ImageView) mediaContent).getTranslateZ() < executionObject.getTranslateZ()){
 													screen.getChildren().add(screen.getChildren().indexOf(executionObject), (ImageView) mediaContent);
+													node.setIsShownInPreview(true);
 													inserted = true;
 													break;
 												}
@@ -571,6 +576,7 @@ public class TemporalChainPane extends StackPane implements Observer{
 											}
 											if(!inserted){
 												screen.getChildren().add((ImageView) mediaContent);
+												node.setIsShownInPreview(true);
 											}
 										}
 
@@ -581,6 +587,7 @@ public class TemporalChainPane extends StackPane implements Observer{
 									Object nodeContent = controlButtonPane.getSensoryEffectIcon((SensoryEffectNode) node);
 									HBox effectIconsContainer = controlButtonPane.getEffectIconsContainer();
 									effectIconsContainer.getChildren().add((ImageView) nodeContent);
+									node.setIsShownInPreview(true);
 
 									if(!screen.getChildren().contains(effectIconsContainer)){
 										screen.getChildren().add(effectIconsContainer);

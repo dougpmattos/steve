@@ -100,32 +100,32 @@
 	
 	<port id="entry" component="introduction"/>
 	
-	<media id="introduction" src="introduction.mpg" descriptor="screenDesc"/>
-	<media id="opening" src="opening.png" descriptor="openingDesc"/>
-	<media id="audio" src="audio.mp3" descriptor="audioDesc">
+	<mediaNode id="introduction" src="introduction.mpg" descriptor="screenDesc"/>
+	<mediaNode id="opening" src="opening.png" descriptor="openingDesc"/>
+	<mediaNode id="audio" src="audio.mp3" descriptor="audioDesc">
 			<area id="anchorOpening" begin="0s" end="4s"/>
 			<area id="anchorProduct1" begin="5s" end="9s"/>
 			<area id="anchorProduct2" begin="10s" end="14s"/>
 			<area id="anchorProduct3" begin="15s" end="19s"/>
-	</media>
-	<media id="firstBackground" src="firstBackground.png" descriptor="screenDesc"/>
-	<media id="logo" src="logo.png" descriptor="logoDesc"/>
-	<media id="final" src="final.mpg" descriptor="screenDesc"/>
-	<media id="icon" src="icon.png" descriptor="iconDesc"/>
-	<media id="end" src="end.png" descriptor="endDesc"/>
-	<media id="secondBackground" src="secondBackground.png" descriptor="secondBackgroundDesc"/>
-	<media id="globalVar" type="application/x-ginga-settings">
+	</mediaNode>
+	<mediaNode id="firstBackground" src="firstBackground.png" descriptor="screenDesc"/>
+	<mediaNode id="logo" src="logo.png" descriptor="logoDesc"/>
+	<mediaNode id="final" src="final.mpg" descriptor="screenDesc"/>
+	<mediaNode id="icon" src="icon.png" descriptor="iconDesc"/>
+	<mediaNode id="end" src="end.png" descriptor="endDesc"/>
+	<mediaNode id="secondBackground" src="secondBackground.png" descriptor="secondBackgroundDesc"/>
+	<mediaNode id="globalVar" type="application/x-ginga-settings">
 		<property name="channel.interactivity" value="true"/>
-	</media>
+	</mediaNode>
 	
 	<context id="contextProduct">
-		<media id="product1" src="product1.png" descriptor="productDesc">
+		<mediaNode id="product1" src="product1.png" descriptor="productDesc">
 			<property name="bounds"/>
-		</media>
-		<media id="price1" src="price1.png" descriptor="priceDesc"/>
-		<media id="description1" src="description1.txt" descriptor="description1Desc"/>
-		<media id="reusedAudio" refer="audio" instance="instSame"/>
-		<media id="reusedSecondBackground" refer="secondBackground" instance="instSame"/>
+		</mediaNode>
+		<mediaNode id="price1" src="price1.png" descriptor="priceDesc"/>
+		<mediaNode id="description1" src="description1.txt" descriptor="description1Desc"/>
+		<mediaNode id="reusedAudio" refer="audio" instance="instSame"/>
+		<mediaNode id="reusedSecondBackground" refer="secondBackground" instance="instSame"/>
 		<link id="lProduct1" xconnector="onBeginStartN">
 			<bind role="onBegin" component="reusedAudio" interface="anchorProduct1"/>
 			<bind role="start" component="product1"/>
@@ -146,11 +146,11 @@
 		</link>
 		
 	
-		<media id="product2" src="product2.png" descriptor="productDesc">
+		<mediaNode id="product2" src="product2.png" descriptor="productDesc">
 			<property name="bounds"/>
-		</media>
-		<media id="price2" src="price2.png" descriptor="priceDesc"/>
-		<media id="description2" src="description2.txt" descriptor="description2Desc"/>
+		</mediaNode>
+		<mediaNode id="price2" src="price2.png" descriptor="priceDesc"/>
+		<mediaNode id="description2" src="description2.txt" descriptor="description2Desc"/>
 		<link id="lProduct2" xconnector="onBeginStartN">
 			<bind role="onBegin" component="reusedAudio" interface="anchorProduct2"/>
 			<bind role="start" component="product2"/>
@@ -171,11 +171,11 @@
 		</link>
 	
 	
-		<media id="product3" src="product3.png" descriptor="productDesc">
+		<mediaNode id="product3" src="product3.png" descriptor="productDesc">
 			<property name="bounds"/>
-		</media>
-		<media id="price3" src="price3.png" descriptor="priceDesc"/>
-		<media id="description3" src="description3.txt" descriptor="description3Desc"/>
+		</mediaNode>
+		<mediaNode id="price3" src="price3.png" descriptor="priceDesc"/>
+		<mediaNode id="description3" src="description3.txt" descriptor="description3Desc"/>
 		<link id="lProduct3" xconnector="onBeginStartN">
 			<bind role="onBegin" component="reusedAudio" interface="anchorProduct3"/>
 			<bind role="start" component="product3"/>
