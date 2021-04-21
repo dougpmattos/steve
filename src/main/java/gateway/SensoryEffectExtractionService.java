@@ -44,7 +44,10 @@ public class SensoryEffectExtractionService extends Service<SEExtractionServiceR
                 //TODO put apiKey in an external config file
                 ClarifaiClient client = null;
 
-                client = new ClarifaiBuilder("c6d097d9aeb64d9790b94fbb69c17ae4").buildSync();
+//                //INFO Raphael's Key
+//                client = new ClarifaiBuilder("c6d097d9aeb64d9790b94fbb69c17ae4").buildSync();
+                //INFO Douglas's Key
+                client = new ClarifaiBuilder("07619fc6cfd24fe88a902dc4197481a3").buildSync();
 
                 if(client != null){
                     Model<Frame> generalVideoModel = client.getDefaultModels().generalVideoModel();
