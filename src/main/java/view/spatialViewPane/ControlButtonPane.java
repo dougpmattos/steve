@@ -211,8 +211,10 @@ public class ControlButtonPane extends BorderPane{
 				selectedTemporalChainPane.getPlayhead().setTranslateX(selectedTemporalChainPane.getTimeLineChart().getXAxis().getDisplayPosition(0));
 
 	    		for(model.common.Node node : temporalChainModel.getNodeAllList()){
+
 	    			node.setIsShownInPreview(false);
 					node.setIsContinuousMediaPlaying(false);
+
 	    		}
 
 			}

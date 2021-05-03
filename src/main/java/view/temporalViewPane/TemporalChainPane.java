@@ -548,6 +548,7 @@ public class TemporalChainPane extends StackPane implements Observer{
 //										mediaView.getMediaPlayer().seek(duration);
 
 										if(!screen.getChildren().contains(mediaView)){
+											//mediaNode.setAuxExecutionObjectForMediaView(mediaNode.generateMediaIcon());
 											screen.getChildren().add(mediaView);
 										}
 
@@ -608,27 +609,26 @@ public class TemporalChainPane extends StackPane implements Observer{
 
 						}else {
 
-							if(node.getIsShownInPreview()){
+							if(!screen.getChildren().isEmpty()){
+								if(node instanceof SensoryEffectNode){
+									controlButtonPane.getEffectIconsContainer().getChildren().remove(node.getExecutionObject());
+								}else{
 
-								if(!screen.getChildren().isEmpty()){
-									if(node instanceof SensoryEffectNode){
-										controlButtonPane.getEffectIconsContainer().getChildren().remove(node.getExecutionObject());
-									}else{
-
-										for(Node executionObject : screen.getChildren()){
-											if(executionObject instanceof MediaView){
+									for(Node executionObject : screen.getChildren()){
+										if(executionObject instanceof MediaView){
+//											if(executionObject == node.getExecutionObject()){
 												MediaView currentMediaView = (MediaView) executionObject;
 												currentMediaView.getMediaPlayer().stop();
-											}
+												//screen.getChildren().remove(((MediaNode) node).getAuxExecutionObjectForMediaView());
+//											}
 										}
-
-										screen.getChildren().remove(node.getExecutionObject());
-
 									}
-									node.setIsShownInPreview(false);
-									node.setIsContinuousMediaPlaying(false);
-								}
 
+									screen.getChildren().remove(node.getExecutionObject());
+
+								}
+								node.setIsShownInPreview(false);
+								node.setIsContinuousMediaPlaying(false);
 							}
 
 						}

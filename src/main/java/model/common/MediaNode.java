@@ -37,6 +37,7 @@ public class MediaNode extends Node<MediaType> implements Serializable{
     private MediaPresentationProperty presentationProperty = new MediaPresentationProperty();
     private ArrayList<TimeSegment> timeSegmentList = new ArrayList<TimeSegment>();
     private MimeType mimeType;
+    private ImageView auxExecutionObjectForMediaView;
 
 	public MediaNode(){
        
@@ -116,10 +117,6 @@ public class MediaNode extends Node<MediaType> implements Serializable{
 
 	}
 	
-	public String getNCLName(){
-		return name.replaceAll("\\s+", "");
-	}
-	
 	public File getFile(){
 		return mediaFile;
 	}
@@ -130,7 +127,15 @@ public class MediaNode extends Node<MediaType> implements Serializable{
 	public MimeType getMimeType() {
 		return mimeType;
 	}
-	
+
+	public void setAuxExecutionObjectForMediaView(ImageView auxExecutionObjectForMediaView){
+		this.auxExecutionObjectForMediaView = auxExecutionObjectForMediaView;
+	}
+
+	public ImageView getAuxExecutionObjectForMediaView(){
+		return this.auxExecutionObjectForMediaView;
+	}
+
 	public ImageView generateMediaIcon() {
 		   
 		   switch(type) {

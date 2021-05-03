@@ -15,6 +15,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import javafx.stage.Stage;
+import model.NCLSupport.NCLExportEventHandler;
 import model.common.SpatialTemporalApplication;
 import model.repository.RepositoryMediaList;
 import model.common.CommonMethods;
@@ -91,7 +92,7 @@ public class SteveMenuBar extends MenuBar{
 		createHelpMenuItemActions();
 		
 		//menuFile.getItems().addAll(menuItemNew, menuItemOpen, new SeparatorMenuItem(), menuItemClose, new SeparatorMenuItem(), menuItemExportNCL, new SeparatorMenuItem(), menuItemExportHTML5, new SeparatorMenuItem(), menuItemRun, new SeparatorMenuItem(), menuItemExit); 
-		menuFile.getItems().addAll(menuItemNew, menuItemOpen, new SeparatorMenuItem(), menuItemSave, new SeparatorMenuItem(), menuItemExit);
+		menuFile.getItems().addAll(menuItemNew, menuItemOpen, new SeparatorMenuItem(), menuItemSave, new SeparatorMenuItem(), menuItemExportNCL, new SeparatorMenuItem(), menuItemExit);
 //		menuEdit.getItems().addAll(menuItemUndo, menuItemRedo, new SeparatorMenuItem(), menuItemCut, menuItemCopy, menuItemPaste, new SeparatorMenuItem(), 
 		menuEdit.getItems().addAll(menuItemPreferences, new SeparatorMenuItem(), menuItemSelectAll);
 		menuView.getItems().addAll(checkMenuItemMediaView, checkMenuItemTemporalView, checkMenuItemSpatialView, checkMenuItemShowRelations);
@@ -292,7 +293,7 @@ public class SteveMenuBar extends MenuBar{
 		
 		//menuItemImportNCL.setOnAction(new NCLImportEventHandler());
 		
-		//menuItemExportNCL.setOnAction(new NCLExportEventHandler(spatialTemporalApplication));
+		menuItemExportNCL.setOnAction(new NCLExportEventHandler(spatialTemporalApplication));
 		
 		//menuItemExportHTML5.setOnAction(new HTMLExportEventHandler(spatialTemporalApplication));
 		

@@ -62,7 +62,11 @@ public class Node<T> implements Serializable {
 	public Double getEnd() {
 		return end;
 	}
-	   
+
+	public String getNCLName(){
+		return name.replaceAll("\\s+", "");
+	}
+
 	public void setDuration(Double duration) {
 			this.duration = MediaUtil.approximateDouble(duration);
 	}
