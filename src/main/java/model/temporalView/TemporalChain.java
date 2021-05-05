@@ -37,7 +37,10 @@ public class TemporalChain extends Observable implements Serializable {
 	private ArrayList<ArrayList<Node>> nodeLineList = new ArrayList<ArrayList<Node>>();
 
 	public TemporalChain(String name) {
-		
+
+		if(name.equalsIgnoreCase("TIMELINE 1")){
+			temporalChainNumber = 0;
+		}
 		this.id = temporalChainNumber;
 		temporalChainNumber++;
 		

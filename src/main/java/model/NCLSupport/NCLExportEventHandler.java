@@ -10,18 +10,20 @@ import br.uff.midiacom.ana.node.NCLEffect;
 import br.uff.midiacom.ana.util.enums.*;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import model.NCLSupport.enums.ImportedNCLCausalConnectorType;
 import model.common.MediaNode;
 import model.common.Node;
 import model.common.SensoryEffectNode;
 import model.common.SpatialTemporalApplication;
+import model.common.enums.SensoryEffectType;
 import model.spatialView.media.MediaPositionProperty;
 import model.spatialView.media.SizeProperty;
 import model.spatialView.media.enums.AspectRatio;
 import model.spatialView.media.enums.Size;
 import model.spatialView.sensoryEffect.*;
-import model.spatialView.sensoryEffect.enums.XPositionType;
+import model.spatialView.sensoryEffect.enums.ScentType;
 import model.spatialView.sensoryEffect.temperature.ColdPresentationProperty;
 import model.spatialView.sensoryEffect.temperature.HotPresentationProperty;
 import model.temporalView.*;
@@ -81,7 +83,7 @@ public class NCLExportEventHandler implements EventHandler<ActionEvent>{
 
 		if(isThereNoApplication()){
 			
-			MessageDialog messageDialog = new MessageDialog(Language.translate("no.multimedia.application.to.be.exported"), "OK", 150);
+			MessageDialog messageDialog = new MessageDialog(Language.translate("no.mulsemedia.application.to.be.exported"), "OK", 120);
             messageDialog.showAndWait();
             
 		} else{
@@ -115,7 +117,7 @@ public class NCLExportEventHandler implements EventHandler<ActionEvent>{
 		
 		ArrayList<TemporalChain> temporalChainList = spatialTemporalApplication.getTemporalChainList();
 		
-		if(temporalChainList.size() == 1 && temporalChainList.get(0).getMediaNodeAllList().isEmpty()){
+		if(temporalChainList.size() == 1 && temporalChainList.get(0).getNodeAllList().isEmpty()){
 			return true;
 		} else{
 			return false;
@@ -208,7 +210,7 @@ public class NCLExportEventHandler implements EventHandler<ActionEvent>{
         } catch (XMLException ex) {
 
         	MessageDialog messageDialog = new MessageDialog(Language.translate("error"), 
-					Language.translate("error.during.the.export") + ": " + ex.getMessage(), "OK", 250);
+					Language.translate("error.during.the.export") + ": " + ex.getMessage(), "OK", 150);
             messageDialog.showAndWait();
             return null;
         	
@@ -333,10 +335,51 @@ public class NCLExportEventHandler implements EventHandler<ActionEvent>{
 
 		NCLEffect nclEffect = new NCLEffect();
 		nclEffect.setId(effectNode.getNCLName());
-		nclEffect.setType(NCLEffectType.getEnumType(effectNode.getType().toString()));
+		NCLEffectType nclEffectType = getNCLEffectType(effectNode.getType());
+		nclEffect.setType(nclEffectType);
 		nclEffect.setDescriptor(nclDescriptor);
 
 		return nclEffect;
+
+	}
+
+	private NCLEffectType getNCLEffectType(SensoryEffectType sensoryEffectType){
+
+		NCLEffectType nclEffectType;
+
+		switch (sensoryEffectType) {
+			case WIND:
+				nclEffectType = NCLEffectType.WIND;
+				break;
+			case WATER_SPRAYER:
+				nclEffectType = NCLEffectType.SPRAYING;
+				break;
+			case VIBRATION:
+				nclEffectType = NCLEffectType.VIBRATION;
+				break;
+			case COLD:
+				nclEffectType = NCLEffectType.TEMPERATURE;
+				break;
+			case HOT:
+				nclEffectType = NCLEffectType.TEMPERATURE;
+				break;
+			case SCENT:
+				nclEffectType = NCLEffectType.SCENT;
+				break;
+			case LIGHT:
+				nclEffectType = NCLEffectType.LIGHT;
+				break;
+			case FOG:
+				nclEffectType = NCLEffectType.FOG;
+				break;
+			case FLASH:
+				nclEffectType = NCLEffectType.FLASH;
+				break;
+			default:
+				throw new IllegalStateException("Unexpected value: " + sensoryEffectType);
+		}
+
+		return nclEffectType;
 
 	}
 
@@ -345,7 +388,8 @@ public class NCLExportEventHandler implements EventHandler<ActionEvent>{
 		NCLDescriptor nclDescriptor = new NCLDescriptor();
 		nclDescriptor.setId("desc_" + effectNode.getNCLName());
 		nclDescriptor.setRegion(nclRegion);
-		if(!isThereRelationFinishesMedia(effectNode, temporalChain)){
+
+		if(temporalChain.getMasterNode() != effectNode && !isThereRelationFinishesMedia(effectNode, temporalChain)){
 			nclDescriptor.setExplicitDur(new TimeType(effectNode.getDuration()));
 		}
 
@@ -450,7 +494,8 @@ public class NCLExportEventHandler implements EventHandler<ActionEvent>{
 
 				NCLDescriptorParam scentTypeParam = new NCLDescriptorParam();
 				scentTypeParam.setName(NCLAttributes.SCENT);
-				scentTypeParam.setValue(scentPresentationProperty.getScentType());
+				NCLScentType nclScentType = getNCLScentType(scentPresentationProperty.getScentType());
+				scentTypeParam.setValue(nclScentType);
 
 				nclDescriptor.addDescriptorParam(scentTypeParam);
 
@@ -469,12 +514,15 @@ public class NCLExportEventHandler implements EventHandler<ActionEvent>{
 						lightPresentationProperty.getIntensityRange().getToValue();
 				intensityRangeParam.setValue(intensityRangeAsString);
 
-				NCLDescriptorParam colorParam = new NCLDescriptorParam();
-				colorParam.setName(NCLAttributes.COLOR);
-				//TODO verify value returned for colors
-				colorParam.setValue(lightPresentationProperty.getColor());
+				NCLDescriptorParam lightColorParam = new NCLDescriptorParam();
+				lightColorParam.setName(NCLAttributes.COLOR);
+				Color lightColor = lightPresentationProperty.getColor();
+				String colorAsString = Math.round(lightColor.getRed() * 255.0) + "," +
+						Math.round(lightColor.getGreen() * 255.0) + "," +
+						Math.round(lightColor.getBlue() * 255.0);
+				lightColorParam.setValue(colorAsString);
 
-				nclDescriptor.addDescriptorParam(colorParam);
+				nclDescriptor.addDescriptorParam(lightColorParam);
 
 				break;
 			case FOG:
@@ -512,8 +560,11 @@ public class NCLExportEventHandler implements EventHandler<ActionEvent>{
 
 				NCLDescriptorParam flashColorParam = new NCLDescriptorParam();
 				flashColorParam.setName(NCLAttributes.COLOR);
-				//TODO verify value returned for colors
-				flashColorParam.setValue(flashPresentationProperty.getColor());
+				Color flashColor = flashPresentationProperty.getColor();
+				String flashColorAsString = Math.round(flashColor.getRed() * 255.0) + "," +
+						Math.round(flashColor.getGreen() * 255.0) + "," +
+						Math.round(flashColor.getBlue() * 255.0) + ",";
+				flashColorParam.setValue(flashColorAsString);
 
 				nclDescriptor.addDescriptorParam(frequencyParam);
 				nclDescriptor.addDescriptorParam(flashColorParam);
@@ -536,6 +587,46 @@ public class NCLExportEventHandler implements EventHandler<ActionEvent>{
 		}
 
 		return nclDescriptor;
+
+	}
+
+	private NCLScentType getNCLScentType(ScentType scentType) {
+
+		NCLScentType nclScentType;
+
+		switch (scentType) {
+			case ROSE:
+				nclScentType = NCLScentType.ROSE;
+				break;
+			case ACACIA:
+				nclScentType = NCLScentType.ACACIA;
+				break;
+			case CHRYSANTHEMUM:
+				nclScentType = NCLScentType.CHRYSANTHEMUM;
+				break;
+			case LILAC:
+				nclScentType = NCLScentType.LILAC;
+				break;
+			case MINT:
+				nclScentType = NCLScentType.MINT;
+				break;
+			case JASMINE:
+				nclScentType = NCLScentType.JASMINE;
+				break;
+			case PINE_TREE:
+				nclScentType = NCLScentType.PINE_TREE;
+				break;
+			case ORANGE:
+				nclScentType = NCLScentType.ORANGE;
+				break;
+			case GRAPE:
+				nclScentType = NCLScentType.GRAPE;
+				break;
+			default:
+				throw new IllegalStateException("Unexpected value: " + scentType);
+		}
+
+		return nclScentType;
 
 	}
 
@@ -1074,7 +1165,7 @@ public class NCLExportEventHandler implements EventHandler<ActionEvent>{
 		NCLDescriptor nclDescriptor = new NCLDescriptor();
 		nclDescriptor.setId("desc_" + mediaNode.getNCLName());
 		nclDescriptor.setRegion(nclRegion);
-		if(!isThereRelationFinishesMedia(mediaNode, temporalChain)){
+		if(temporalChain.getMasterNode() != mediaNode && !isThereRelationFinishesMedia(mediaNode, temporalChain)){
 			nclDescriptor.setExplicitDur(new TimeType(mediaNode.getDuration()));
 		}
 		NCLDescriptorParam transparencyParam = new NCLDescriptorParam();
@@ -1115,7 +1206,6 @@ public class NCLExportEventHandler implements EventHandler<ActionEvent>{
 		
 	}
 
-	//TODO test this method
 	private Boolean isThereRelationFinishesMedia(Node node, TemporalChain temporalChain){
 
 		for(TemporalRelation relation :  temporalChain.getRelationList()){
@@ -1189,7 +1279,7 @@ public class NCLExportEventHandler implements EventHandler<ActionEvent>{
 					FileWriter fileWriter = new FileWriter(auxFile);
 					fileWriter.write(nclCode);
                     fileWriter.close();
-                    ReturnMessage returnMessage = new ReturnMessage(Language.translate("ncl.export.is.ready"), 300);
+                    ReturnMessage returnMessage = new ReturnMessage(Language.translate("ncl.export.is.ready"), 400);
                     returnMessage.show();
                     AnimationUtil.applyFadeInOut(returnMessage);
                     
