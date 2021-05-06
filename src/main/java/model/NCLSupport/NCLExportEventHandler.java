@@ -1071,14 +1071,14 @@ public class NCLExportEventHandler implements EventHandler<ActionEvent>{
 		NCLBind conditionNCLBind;
 		NCLLinkParam nclLinkParamDelay;
 
-		int relationNumber = temporalChain.getRelationList().size();
+		int relationNumber = temporalChain.getRelationList().size() + 1;
 		
-		for(Node node :  temporalChain.getMediaNodeAllList()){
+		for(Node node :  temporalChain.getNodeAllList()){
 			
 			if(!node.equals(temporalChain.getMasterNode()) && !isThereRelationStartsNode(node, temporalChain)){
 				
 				NCLLink nclLink = new NCLLink<>();
-				nclLink.setId("link_" + relationNumber++);
+				nclLink.setId("link_" + relationNumber);
 				
 				importedNCLCausalConnector = nclConnectorBaseOfImportedBase.getCausalConnector(ImportedNCLCausalConnectorType.ONBEGIN_START_DELAY.getDescription());
 

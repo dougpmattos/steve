@@ -1,5 +1,8 @@
 package model.common;
 
+import controller.ApplicationController;
+import model.temporalView.TemporalChain;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Observable;
@@ -8,16 +11,19 @@ public abstract class Relation extends Observable implements Serializable {
 
 	private static final long serialVersionUID = 4519112300170261880L;
 
-	public static int relationNumber = 0;
-	
 	private int id;
 	private ConditionalStatement conditionalStatement;
 	private ArrayList<KeyValue> setActionList = new ArrayList<KeyValue>();
 	
 	public Relation(){
-		
-		this.id = relationNumber; 
-		relationNumber++;
+
+		ArrayList<TemporalChain> temporalChainArrayList = ApplicationController.getInstance().getAllTemporalChains();
+		int relationTotal = 0;
+		for(TemporalChain temporalChain : temporalChainArrayList){
+			relationTotal = relationTotal + temporalChain.getRelationList().size();
+		}
+
+		this.id = relationTotal + 1;
 		
 	}
 	
