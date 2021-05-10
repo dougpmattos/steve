@@ -18,6 +18,9 @@ import model.temporalView.SEExtractionServiceResponse;
 
 import java.io.File;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+import okhttp3.OkHttpClient;
+
 
 public class SensoryEffectExtractionService extends Service<SEExtractionServiceResponse> {
 
@@ -47,7 +50,16 @@ public class SensoryEffectExtractionService extends Service<SEExtractionServiceR
 //                //INFO Raphael's Key
 //                client = new ClarifaiBuilder("c6d097d9aeb64d9790b94fbb69c17ae4").buildSync();
                 //INFO Douglas's Key
-                client = new ClarifaiBuilder("07619fc6cfd24fe88a902dc4197481a3").buildSync();
+                //client = new ClarifaiBuilder("07619fc6cfd24fe88a902dc4197481a3").buildSync();
+
+                client = new ClarifaiBuilder("c6d097d9aeb64d9790b94fbb69c17ae4")
+                        .client(new OkHttpClient.Builder()
+                                .connectTimeout(60, TimeUnit.SECONDS)
+                                .readTimeout(60, TimeUnit.SECONDS)
+                                .writeTimeout(60, TimeUnit.SECONDS)
+                                .build()
+                        )
+                        .buildSync();
 
                 if(client != null){
                     Model<Frame> generalVideoModel = client.getDefaultModels().generalVideoModel();

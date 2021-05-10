@@ -16,7 +16,7 @@ module steve {
     requires com.jfoenix;
     requires commons.io;
     requires com.google.common;
-//    requires okhttp3;
+    requires okhttp3;
 //    requires okio;
     requires java.sql;
 //    requires protobuf.java;
