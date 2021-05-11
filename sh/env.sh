@@ -137,6 +137,8 @@ EXTERNAL_MODULES=(
 
     "$REPO/io.grpc/grpc-netty-shaded/1.17.1/3629761de2800e6dab395fa44b064160adcd8b/grpc-netty-shaded-1.17.1.jar"
 
+    "$REPO/io.opencensus/opencensus-contrib-grpc-metrics/0.17.0/4b82972073361704f57fa2107910242f1143df25/opencensus-contrib-grpc-metrics-0.17.0.jar"
+
     "$REPO/com.google.guava/guava/30.1.1-jre/87e0fd1df874ea3cbe577702fe6f17068b790fd8/guava-30.1.1-jre.jar"
 
     "$REPO/com.google.guava/failureaccess/1.0.1/1dcf1de382a0bf95a3d8b0849546c88bac1292c9/failureaccess-1.0.1.jar"

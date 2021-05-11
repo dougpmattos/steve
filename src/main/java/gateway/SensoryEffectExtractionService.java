@@ -17,9 +17,17 @@ import model.temporalView.ClarifaiError;
 import model.temporalView.SEExtractionServiceResponse;
 
 import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.FileHandler;
+import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
+
 import okhttp3.OkHttpClient;
+import view.common.LoggerToFile;
 
 
 public class SensoryEffectExtractionService extends Service<SEExtractionServiceResponse> {
@@ -62,38 +70,52 @@ public class SensoryEffectExtractionService extends Service<SEExtractionServiceR
                         .buildSync();
 
                 if(client != null){
+
+                    LoggerToFile.getInstance().getLogger().info("Clarifai Client is not null.");
+
                     Model<Frame> generalVideoModel = client.getDefaultModels().generalVideoModel();
 
                     PredictRequest<Frame> videoRequest = generalVideoModel.predict()
                             .withInputs(ClarifaiInput.forVideo(currFile));
 
-                    ClarifaiResponse<List<ClarifaiOutput<Frame>>> clarifaiResponse = videoRequest.executeSync();
+                    try{
+                        ClarifaiResponse<List<ClarifaiOutput<Frame>>> clarifaiResponse = videoRequest.executeSync();
 
-                    if(clarifaiResponse.isSuccessful()){
+                        if(clarifaiResponse.isSuccessful()){
 
-                        List<ClarifaiOutput<Frame>> videoResults = clarifaiResponse.get();
+                            LoggerToFile.getInstance().getLogger().info("Clarifai Response succeeded.");
 
-                        List<Frame> data = videoResults.get(0).data();
+                            List<ClarifaiOutput<Frame>> videoResults = clarifaiResponse.get();
 
-                        sEExtractionServiceResponse.setClarifaiRawData(data);
-                        sEExtractionServiceResponse.translateClarifaiRawDataToSE();
+                            List<Frame> data = videoResults.get(0).data();
 
-                    }else{
+                            sEExtractionServiceResponse.setClarifaiRawData(data);
+                            sEExtractionServiceResponse.translateClarifaiRawDataToSE();
 
-                        ClarifaiError clarifaiError = new ClarifaiError();
-                        clarifaiError.setDescription(clarifaiResponse.getStatus().description());
-                        if(clarifaiResponse.getStatus().errorDetails() == null){
-                            String outputs = clarifaiResponse.rawBody().substring(clarifaiResponse.rawBody().indexOf("outputs"));
-                            String description = outputs.substring(outputs.indexOf("description"));
-                            String descriptionValue = description.substring(description.indexOf(":")+1, description.indexOf(","));
-                            descriptionValue = descriptionValue.replace("\"", "");
-                            clarifaiError.setErrorDetails(descriptionValue);
                         }else{
-                            clarifaiError.setErrorDetails(clarifaiResponse.getStatus().errorDetails());
+
+                            LoggerToFile.getInstance().getLogger().warning("Clarifai Response failed.");
+                            LoggerToFile.getInstance().getLogger().severe("Clarifai error: "
+                                    + clarifaiResponse.getStatus().description());
+
+                            ClarifaiError clarifaiError = new ClarifaiError();
+                            clarifaiError.setDescription(clarifaiResponse.getStatus().description());
+                            if(clarifaiResponse.getStatus().errorDetails() == null){
+                                String outputs = clarifaiResponse.rawBody().substring(clarifaiResponse.rawBody().indexOf("outputs"));
+                                String description = outputs.substring(outputs.indexOf("description"));
+                                String descriptionValue = description.substring(description.indexOf(":")+1, description.indexOf(","));
+                                descriptionValue = descriptionValue.replace("\"", "");
+                                clarifaiError.setErrorDetails(descriptionValue);
+                            }else{
+                                clarifaiError.setErrorDetails(clarifaiResponse.getStatus().errorDetails());
+                            }
+
+                            sEExtractionServiceResponse.setClarifaiError(clarifaiError);
+
                         }
-
-                        sEExtractionServiceResponse.setClarifaiError(clarifaiError);
-
+                    }catch (Exception e){
+                        LoggerToFile.getInstance().getLogger().severe("Error while extracting effects: "
+                                + e.getMessage());
                     }
 
                 }
