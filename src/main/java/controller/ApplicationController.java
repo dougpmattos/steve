@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.Locale;
 import java.util.prefs.Preferences;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;

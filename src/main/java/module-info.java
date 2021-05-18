@@ -15,11 +15,12 @@ module steve {
     requires jgraph;
     requires com.jfoenix;
     requires commons.io;
-    requires com.google.common;
     requires okhttp3;
-//    requires okio;
+    requires okio;
     requires java.sql;
-//    requires protobuf.java;
+    requires com.google.common;
+    requires protobuf.java;
+    requires protobuf.java.util;
 
     exports view.stevePane to javafx.graphics;
 

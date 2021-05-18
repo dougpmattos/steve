@@ -20,6 +20,7 @@ import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.PopupControl;
 import javafx.scene.control.Tab;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.DataFormat;
@@ -518,124 +519,104 @@ public class TemporalChainPane extends StackPane implements Observer{
 
 	public void updatePreviewScreen(double xPosition){
 
-//		if(!controlButtonPane.getIsPlaying()) {
+		Double currentTimeClicked = timeLineChart.getXAxis().getValueForDisplay(xPosition).doubleValue();
 
-					Double currentTimeClicked = timeLineChart.getXAxis().getValueForDisplay(xPosition).doubleValue();
+		if(controlButtonPane.getTimerService() != null){
+			controlButtonPane.getTimerService().setCurrentTime(currentTimeClicked);
+		}
 
-					if(controlButtonPane.getTimerService() != null){
-						controlButtonPane.getTimerService().setCurrentTime(currentTimeClicked);
-					}
+		for(model.common.Node node : temporalChainModel.getNodeAllList()){
 
-					for(model.common.Node node : temporalChainModel.getNodeAllList()){
+			if(node.getBegin() <= currentTimeClicked && currentTimeClicked <= node.getEnd()){
 
-						if(node.getBegin() <= currentTimeClicked && currentTimeClicked <= node.getEnd()){
+				if(!node.getIsShownInPreview()){
 
-							if(!node.getIsShownInPreview()){
+					if(node instanceof MediaNode) {
 
-								if(node instanceof MediaNode) {
+						Object mediaContent = node.getExecutionObject();
 
-									Object mediaContent = node.getExecutionObject();
+						if(mediaContent instanceof MediaView){
 
-									if(mediaContent instanceof MediaView){
+							controlButtonPane.setVideoPresentationProperties((MediaView) mediaContent, (MediaNode) node);
+							MediaView mediaView = (MediaView) mediaContent;
 
-										controlButtonPane.setVideoPresentationProperties((MediaView) mediaContent, (MediaNode) node);
-										MediaView mediaView = (MediaView) mediaContent;
-
-										MediaNode mediaNode = (MediaNode) node;
-										Double videoCurrentTime = currentTimeClicked - mediaNode.getBegin();
-										Double frameMillisTime = videoCurrentTime*1000;
-										Duration duration = new Duration(frameMillisTime.intValue());
-//										mediaView.getMediaPlayer().seek(duration);
-
-										if(!screen.getChildren().contains(mediaView)){
-											//mediaNode.setAuxExecutionObjectForMediaView(mediaNode.generateMediaIcon());
-											screen.getChildren().add(mediaView);
-										}
-
-									} else if(mediaContent instanceof ImageView){
-
-										controlButtonPane.setImagePresentationProperties((ImageView) mediaContent, (MediaNode) node);
-										if(screen.getChildren().isEmpty()){
-
-											if(!screen.getChildren().contains((ImageView) mediaContent)){
-												screen.getChildren().add((ImageView) mediaContent);
-												node.setIsShownInPreview(true);
-											}
-
-
-										} else{
-											boolean inserted = false;
-											for(Node executionObject : screen.getChildren()){
-
-												if(((ImageView) mediaContent).getTranslateZ() < executionObject.getTranslateZ()){
-													screen.getChildren().add(screen.getChildren().indexOf(executionObject), (ImageView) mediaContent);
-													node.setIsShownInPreview(true);
-													inserted = true;
-													break;
-												}
-
-											}
-											if(!inserted){
-												screen.getChildren().add((ImageView) mediaContent);
-												node.setIsShownInPreview(true);
-											}
-										}
-
-									}
-
-								} else if(node instanceof SensoryEffectNode){
-
-									Object nodeContent = controlButtonPane.getSensoryEffectIcon((SensoryEffectNode) node);
-									HBox effectIconsContainer = controlButtonPane.getEffectIconsContainer();
-									effectIconsContainer.getChildren().add((ImageView) nodeContent);
-									node.setIsShownInPreview(true);
-
-									if(!screen.getChildren().contains(effectIconsContainer)){
-										screen.getChildren().add(effectIconsContainer);
-									}
-
-								}
-
-							}else if(node.isContinousMedia()){
-								//INFO If node is a continuous media, the video frame in preview needed to be updated.
-
-								MediaNode mediaNode = (MediaNode) node;
-								Double videoCurrentTime = currentTimeClicked - mediaNode.getBegin();
-								Double frameMillisTime = videoCurrentTime*1000;
-								Duration duration = new Duration(frameMillisTime.intValue());
-								((MediaView) mediaNode.getExecutionObject()).getMediaPlayer().seek(duration);
-
+							if(!screen.getChildren().contains(mediaView)){
+								screen.getChildren().add(mediaView);
 							}
 
-						}else {
+						} else if(mediaContent instanceof ImageView){
 
-							if(!screen.getChildren().isEmpty()){
-								if(node instanceof SensoryEffectNode){
-									controlButtonPane.getEffectIconsContainer().getChildren().remove(node.getExecutionObject());
-								}else{
+							controlButtonPane.setImagePresentationProperties((ImageView) mediaContent, (MediaNode) node);
+							if(screen.getChildren().isEmpty()){
 
-									for(Node executionObject : screen.getChildren()){
-										if(executionObject instanceof MediaView){
-//											if(executionObject == node.getExecutionObject()){
-												MediaView currentMediaView = (MediaView) executionObject;
-												currentMediaView.getMediaPlayer().stop();
-												//screen.getChildren().remove(((MediaNode) node).getAuxExecutionObjectForMediaView());
-//											}
-										}
+								if(!screen.getChildren().contains((ImageView) mediaContent)){
+									screen.getChildren().add((ImageView) mediaContent);
+									node.setIsShownInPreview(true);
+								}
+
+
+							} else{
+								boolean inserted = false;
+								for(Node executionObject : screen.getChildren()){
+
+									if(((ImageView) mediaContent).getTranslateZ() < executionObject.getTranslateZ()){
+										screen.getChildren().add(screen.getChildren().indexOf(executionObject), (ImageView) mediaContent);
+										node.setIsShownInPreview(true);
+										inserted = true;
+										break;
 									}
 
-									screen.getChildren().remove(node.getExecutionObject());
-
 								}
-								node.setIsShownInPreview(false);
-								node.setIsContinuousMediaPlaying(false);
+								if(!inserted){
+									screen.getChildren().add((ImageView) mediaContent);
+									node.setIsShownInPreview(true);
+								}
 							}
 
 						}
 
+					} else if(node instanceof SensoryEffectNode){
+
+						Object nodeContent = controlButtonPane.getSensoryEffectIcon((SensoryEffectNode) node);
+						HBox effectIconsContainer = controlButtonPane.getEffectIconsContainer();
+						effectIconsContainer.getChildren().add((ImageView) nodeContent);
+						node.setIsShownInPreview(true);
+
+						if(!screen.getChildren().contains(effectIconsContainer)){
+							screen.getChildren().add(effectIconsContainer);
+						}
+
 					}
 
-//			}
+				}else if(node.isContinousMedia()){
+					//INFO If node is a continuous media, the video frame in preview needed to be updated.
+
+					MediaNode mediaNode = (MediaNode) node;
+					Double videoCurrentTime = currentTimeClicked - mediaNode.getBegin();
+					Double frameMillisTime = videoCurrentTime*1000;
+					Duration duration = new Duration(frameMillisTime.intValue());
+					((MediaView) mediaNode.getExecutionObject()).getMediaPlayer().seek(duration);
+
+				}
+
+			}else {
+
+				if(!screen.getChildren().isEmpty()){
+
+					if(node instanceof SensoryEffectNode){
+						controlButtonPane.getEffectIconsContainer().getChildren().remove(node.getExecutionObject());
+					}else{
+
+						screen.getChildren().remove(node.getExecutionObject());
+
+					}
+					node.setIsShownInPreview(false);
+					node.setIsContinuousMediaPlaying(false);
+				}
+
+			}
+
+		}
 
 	}
 

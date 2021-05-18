@@ -310,7 +310,7 @@ public class ControlButtonPane extends BorderPane{
 						if(node.getBegin() <= currentTime && currentTime <= node.getEnd()){
 
 							if(!node.getIsShownInPreview()){
-
+								System.out.println("não estava no preview - line 313");
 								node.setIsShownInPreview(true);
 
 								if(node instanceof MediaNode){
@@ -332,6 +332,8 @@ public class ControlButtonPane extends BorderPane{
 											}
 										}
 
+										System.out.println("deu play - line 335");
+										System.out.println("itens no preview: " + screen.getChildren().size());
 										((MediaView) nodeContent).getMediaPlayer().play();
 										node.setIsContinuousMediaPlaying(true);
 
@@ -373,6 +375,8 @@ public class ControlButtonPane extends BorderPane{
 								}
 							}else if(node.isContinousMedia() && !node.getIsContinuousMediaPlaying()){
 
+								System.out.println("é continua media e nao estava tocando - line 377");
+
 								if(selectedTemporalChainPane.getHasClickedPlayhead()){
 									((MediaView) node.getExecutionObject()).getMediaPlayer().stop();
 
@@ -392,6 +396,7 @@ public class ControlButtonPane extends BorderPane{
 									Double videoCurrentTime = currentTime - node.getBegin();
 									Double frameMillisTime = videoCurrentTime*1000;
 									Duration duration = new Duration(frameMillisTime.intValue());
+									System.out.println("deu play - line 398");
 									((MediaView) nodeContent).getMediaPlayer().play();
 									((MediaView) nodeContent).getMediaPlayer().seek(duration);
 									node.setIsContinuousMediaPlaying(true);
@@ -469,61 +474,8 @@ public class ControlButtonPane extends BorderPane{
 		return nodeContent;
 
 	}
-
-	public Object getMediaContent(MediaNode mediaNode){
-
-		nodeContent = null;
-
-		switch(mediaNode.getType()) {
-
-			case IMAGE:
-
-				ImageView image = new ImageView(new Image(mediaNode.getFile().toURI().toString()));
-				image.setFitWidth(screen.getWidth());
-				image.setFitHeight(screen.getHeight());
-				image.setSmooth(false);
-				nodeContent = image;
-				mediaNode.setExecutionObject(nodeContent);
-				break;
-
-			case VIDEO:
-
-				final javafx.scene.media.Media video = new javafx.scene.media.Media(mediaNode.getFile().toURI().toString());
-				final MediaPlayer videoPlayer = new MediaPlayer(video);
-				MediaView videoMediaView = new MediaView(videoPlayer);
-				videoMediaView.setFitWidth(screen.getWidth());
-				videoMediaView.setFitHeight(screen.getHeight());
-				videoMediaView.setSmooth(true);
-				nodeContent = videoMediaView;
-				mediaNode.setExecutionObject(nodeContent);
-				break;
-
-			case AUDIO:
-
-				final javafx.scene.media.Media audio = new javafx.scene.media.Media(mediaNode.getFile().toURI().toString());
-				final MediaPlayer audioPlayer = new MediaPlayer(audio);
-				MediaView audioMediaView = new MediaView(audioPlayer);
-				audioMediaView.setFitWidth(screen.getWidth());
-				audioMediaView.setFitHeight(screen.getHeight());
-				audioMediaView.setSmooth(true);
-				nodeContent = audioMediaView;
-				mediaNode.setExecutionObject(nodeContent);
-				break;
-
-			case TEXT:
-				//TODO pegar o texto.
-				break;
-
-			case APPLICATION:
-				nodeContent = mediaNode.generateMediaIcon();
-				break;
-		}
-
-		return nodeContent;
-
-	}
 	
-public void setVideoPresentationProperties(MediaView mediaContent, MediaNode mediaNode){
+	public void setVideoPresentationProperties(MediaView mediaContent, MediaNode mediaNode){
 		
 		double percentageHeight, percentageWidth; 
 		String temp;

@@ -1,0 +1,48 @@
+May 11, 2021 6:45:30 PM view.common.LoggerToFile <init>
+INFO: My first log
+May 11, 2021 6:45:30 PM view.common.LoggerToFile <init>
+SEVERE: ERROR
+May 11, 2021 6:45:30 PM gateway.SensoryEffectExtractionService$1 call
+INFO: Clarifai Client is not null.
+May 11, 2021 6:45:40 PM gateway.SensoryEffectExtractionService$1 call
+INFO: Clarifai Response succeeded.
+May 15, 2021 8:51:56 PM gateway.SensoryEffectExtractionService$1 call
+INFO: Clarifai Client is not null.
+May 15, 2021 8:56:38 PM gateway.SensoryEffectExtractionService$1 call
+INFO: Clarifai Client is not null.
+May 15, 2021 8:58:42 PM gateway.SensoryEffectExtractionService$1 call
+INFO: Clarifai Client is not null.
+May 15, 2021 9:01:55 PM gateway.SensoryEffectExtractionService$1 call
+INFO: Clarifai Client is not null.
+May 15, 2021 11:51:20 PM gateway.SensoryEffectExtractionService$1 call
+INFO: Clarifai Client is not null.
+May 15, 2021 11:54:11 PM gateway.SensoryEffectExtractionService$1 call
+INFO: Clarifai Client is not null.
+May 15, 2021 11:57:17 PM gateway.SensoryEffectExtractionService$1 call
+INFO: Clarifai Client is not null.
+May 16, 2021 12:24:37 AM gateway.SensoryEffectExtractionService$1 call
+INFO: Clarifai Client is not null.
+May 16, 2021 12:56:14 AM gateway.SensoryEffectExtractionService$1 call
+INFO: Clarifai Client is not null.
+May 16, 2021 1:05:42 AM gateway.SensoryEffectExtractionService$1 call
+INFO: Clarifai Client is not null.
+May 16, 2021 1:07:17 AM gateway.SensoryEffectExtractionService$1 call
+INFO: Clarifai Client is not null.
+May 16, 2021 1:21:59 AM gateway.SensoryEffectExtractionService$1 call
+INFO: Clarifai Client is not null.
+May 16, 2021 1:25:33 AM gateway.SensoryEffectExtractionService$1 call
+INFO: Clarifai Client is not null.
+May 16, 2021 1:30:28 AM gateway.SensoryEffectExtractionService$1 call
+INFO: Clarifai Client is not null.
+May 16, 2021 1:34:00 AM gateway.SensoryEffectExtractionService$1 call
+INFO: Clarifai Client is not null.
+May 16, 2021 1:34:44 AM gateway.SensoryEffectExtractionService$1 call
+INFO: Clarifai Client is not null.
+May 16, 2021 1:36:03 AM gateway.SensoryEffectExtractionService$1 call
+INFO: Clarifai Client is not null.
+May 16, 2021 1:39:07 AM gateway.SensoryEffectExtractionService$1 call
+INFO: Clarifai Client is not null.
+May 16, 2021 1:42:26 AM gateway.SensoryEffectExtractionService$1 call
+INFO: Clarifai Client is not null.
+May 16, 2021 1:42:36 AM gateway.SensoryEffectExtractionService$1 call
+INFO: Clarifai Response succeeded.

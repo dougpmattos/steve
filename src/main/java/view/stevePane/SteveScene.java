@@ -90,6 +90,7 @@ public class SteveScene extends Scene{
     	setEventHandlers();
     	
 		stage.setScene(this);
+		stage.setResizable(false);
 		stage.setTitle(Language.translate("untitled.project") + SEPARATOR + Language.translate("steve"));
 		stage.show();
 		
