@@ -13,8 +13,12 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.media.MediaPlayer;
 import javafx.stage.FileChooser;
+import javafx.util.Duration;
 import model.common.MediaNode;
+import model.common.enums.MediaType;
+import model.utility.MediaUtil;
 import view.common.Language;
 import view.common.dialogs.MessageDialog;
 import controller.ApplicationController;
@@ -95,21 +99,56 @@ public class RepositoryButtonPane extends BorderPane{
                 	for (File file : fileList) {
                 		MediaNode mediaNode = new MediaNode();
                 		mediaNode.setFile(file);
-                		
-                		if(mediaNode.getType() == null){
-                			
-                			MessageDialog messageDialog = new MessageDialog(Language.translate("media.type.not.supported"), "OK", 110);
-                            messageDialog.showAndWait();
-                            
-                		} else {
-                			
-                			if(!applicationController.addRepositoryMedia(mediaNode)){
-                    			MessageDialog messageDialog = new MessageDialog(Language.translate("media.has.already.imported") + ": " + mediaNode.getName(),
-                    												Language.translate("select.other.media"), "OK", 150);
-                    	    	messageDialog.showAndWait();
-                    		}
-                			
-                		}
+
+                        if((mediaNode.getType() == MediaType.AUDIO)||(mediaNode.getType() == MediaType.VIDEO)){
+
+                            javafx.scene.media.Media javaFXMedia = new javafx.scene.media.Media(mediaNode.getFile().toURI().toString());
+
+                            MediaPlayer mediaPlayer = new MediaPlayer(javaFXMedia);
+                            mediaPlayer.setOnReady(new Runnable() {
+
+                                @Override
+                                public void run() {
+                                    Duration dur = javaFXMedia.getDuration();
+                                    mediaNode.setDuration(MediaUtil.approximateDouble(dur.toSeconds()));
+
+                                    if(mediaNode.getType() == null){
+
+                                        MessageDialog messageDialog = new MessageDialog(Language.translate("media.type.not.supported"), "OK", 110);
+                                        messageDialog.showAndWait();
+
+                                    } else {
+
+                                        if(!applicationController.addRepositoryMedia(mediaNode)){
+                                            MessageDialog messageDialog = new MessageDialog(Language.translate("media.has.already.imported") + ": " + mediaNode.getName(),
+                                                    Language.translate("select.other.media"), "OK", 150);
+                                            messageDialog.showAndWait();
+                                        }
+
+                                    }
+
+                                }
+
+                            });
+
+                        }else{
+
+                            if(mediaNode.getType() == null){
+
+                                MessageDialog messageDialog = new MessageDialog(Language.translate("media.type.not.supported"), "OK", 110);
+                                messageDialog.showAndWait();
+
+                            } else {
+
+                                if(!applicationController.addRepositoryMedia(mediaNode)){
+                                    MessageDialog messageDialog = new MessageDialog(Language.translate("media.has.already.imported") + ": " + mediaNode.getName(),
+                                            Language.translate("select.other.media"), "OK", 150);
+                                    messageDialog.showAndWait();
+                                }
+
+                            }
+
+                        }
 
                     }
                 }                      

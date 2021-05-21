@@ -50,10 +50,6 @@ public class MediaNode extends Node<MediaType> implements Serializable{
 	    this.path = mediaFile.getAbsolutePath();
 	    this.type = getMediaType(mediaFile);
 	    this.mimeType = getMimeType(mediaFile);
-
-	    if((type == MediaType.AUDIO)||(type == MediaType.VIDEO)){
-	    	   setImplicitDuration();
-	    }
 	    
 	}
 
@@ -268,23 +264,6 @@ public class MediaNode extends Node<MediaType> implements Serializable{
            
        }
        
-   }
-   
-   private void setImplicitDuration() throws RuntimeException {
-		   
-	   javafx.scene.media.Media javaFXMedia = new javafx.scene.media.Media(mediaFile.toURI().toString());
-		
-	   MediaPlayer mediaPlayer = new MediaPlayer(javaFXMedia);
-	   mediaPlayer.setOnReady(new Runnable() {
-		   
-	        @Override
-	        public void run() {
-	        	Duration dur = javaFXMedia.getDuration();
-				duration = MediaUtil.approximateDouble(dur.toSeconds());
-	        }
-	        
-	    });
-    
    }
 
    @Override
