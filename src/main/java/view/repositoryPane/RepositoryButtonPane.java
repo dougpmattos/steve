@@ -3,6 +3,7 @@ package view.repositoryPane;
 import java.io.File;
 import java.util.List;
 
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Button;
@@ -105,31 +106,46 @@ public class RepositoryButtonPane extends BorderPane{
                             javafx.scene.media.Media javaFXMedia = new javafx.scene.media.Media(mediaNode.getFile().toURI().toString());
 
                             MediaPlayer mediaPlayer = new MediaPlayer(javaFXMedia);
-                            mediaPlayer.setOnReady(new Runnable() {
 
+                            Runnable playerRunnable = new Runnable() {
+                                boolean firstTime = true;
                                 @Override
                                 public void run() {
-                                    Duration dur = javaFXMedia.getDuration();
-                                    mediaNode.setDuration(MediaUtil.approximateDouble(dur.toSeconds()));
 
-                                    if(mediaNode.getType() == null){
+                                    if(firstTime){
 
-                                        MessageDialog messageDialog = new MessageDialog(Language.translate("media.type.not.supported"), "OK", 110);
-                                        messageDialog.showAndWait();
+                                        firstTime = false;
 
-                                    } else {
+                                        Duration dur = javaFXMedia.getDuration();
+                                        mediaNode.setDuration(MediaUtil.approximateDouble(dur.toSeconds()));
 
-                                        if(!applicationController.addRepositoryMedia(mediaNode)){
-                                            MessageDialog messageDialog = new MessageDialog(Language.translate("media.has.already.imported") + ": " + mediaNode.getName(),
-                                                    Language.translate("select.other.media"), "OK", 150);
+                                        if(mediaNode.getType() == null){
+
+                                            MessageDialog messageDialog = new MessageDialog(Language.translate("media.type.not.supported"), "OK", 110);
                                             messageDialog.showAndWait();
-                                        }
 
+                                        } else {
+
+                                            if(!applicationController.addRepositoryMedia(mediaNode)){
+                                                MessageDialog messageDialog = new MessageDialog(Language.translate("media.has.already.imported") + ": " + mediaNode.getName(),
+                                                        Language.translate("select.other.media"), "OK", 150);
+                                                messageDialog.showAndWait();
+                                            }
+
+                                        }
                                     }
 
                                 }
 
-                            });
+                            };
+
+                            try {
+                                Thread.sleep(500);
+                            } catch (InterruptedException interruptedException) {
+                                interruptedException.printStackTrace();
+                            }
+
+                            mediaPlayer.setOnReady(playerRunnable);
 
                         }else{
 
