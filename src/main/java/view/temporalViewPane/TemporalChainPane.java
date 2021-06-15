@@ -477,13 +477,8 @@ public class TemporalChainPane extends StackPane implements Observer{
 
 				currentTimePopup.setMessage(String.valueOf(currentTimeWhileDragging));
 				currentTimePopup.setCursor(Cursor.H_RESIZE);
-				currentTimePopup.setX(dragEvent.getSceneX() + 4);
-
-				if(dragEvent.getDragboard().getContent((DataFormat) contentTypes[0]) instanceof SensoryEffectType) {
-					currentTimePopup.setY(dragEvent.getSceneY() - 5);
-				}else{
-					currentTimePopup.setY(dragEvent.getSceneY() - 15);
-				}
+				currentTimePopup.setX(dragEvent.getScreenX() + 15);
+				currentTimePopup.setY(dragEvent.getScreenY() - 40);
 
 				currentTimePopup.show();
 				

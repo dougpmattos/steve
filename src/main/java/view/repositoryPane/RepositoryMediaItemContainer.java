@@ -84,7 +84,6 @@ public class RepositoryMediaItemContainer extends BorderPane implements view.com
 				snapshotParameters.setTransform(scale);
 
 				dragBoard.setDragView(snapshot(snapshotParameters, null));
-				dragBoard.setDragViewOffsetX(200);
 
 		        content.put(dataFormat, repositoryMediaItemContainerSource.getMediaNode());
 		        
